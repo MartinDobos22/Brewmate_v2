@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Environment (never commit real secrets - only .env.example is tracked)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Testing / coverage
+coverage/
+.vitest/
+
+# Expo
+.expo/
+.expo-shared/
+frontend/ios/
+frontend/android/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+# Metro
+.metro-health-check*
+
+# JetBrains (WebStorm)
+.idea/
+*.iml
+
+# Editors / OS
+.vscode/
+.DS_Store
+Thumbs.db

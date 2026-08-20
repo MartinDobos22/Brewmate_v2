@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Brewmate",
+    "slug": "brewmate",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "brewmate",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "app.brewmate.mobile"
+    },
+    "android": {
+      "package": "app.brewmate.mobile",
+      "edgeToEdgeEnabled": true
+    }
+  }
+}
