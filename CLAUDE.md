@@ -3,8 +3,9 @@
 A mobile companion for brewing specialty coffee. This repository is a pnpm
 workspace holding the mobile app, the API and the contract they share.
 
-**Current state:** monorepo skeleton + working backend. The mobile app is an
-empty shell on purpose; no product features exist yet.
+**Current state:** monorepo skeleton + working backend + mobile app skeleton.
+The app has navigation, a design system and the data plumbing; it has no product
+features on purpose, and no authentication yet.
 
 ---
 
@@ -12,7 +13,7 @@ empty shell on purpose; no product features exist yet.
 
 ```
 brewmate_v2/
-├── frontend/          Expo + React Native + TypeScript (placeholder shell)
+├── frontend/          Expo + React Native + expo-router (app skeleton)
 ├── server/            Fastify + Drizzle + Firebase Admin API
 ├── shared/            @brewmate/shared - Zod schemas + inferred types
 ├── eslint.config.mjs  One flat config for the whole workspace
@@ -161,7 +162,97 @@ lint config.
 
 ---
 
-## 5. Server architecture
+## 5. App architecture
+
+```
+frontend/
+├── app.json            Expo config: permissions, privacy manifest, icons, splash
+├── assets/             Icon, adaptive icon, splash mark, favicon
+└── src/
+    ├── app/            expo-router routes - thin files that delegate to a feature
+    ├── theme/          Tokens, composed theme, ThemeProvider, useTheme
+    ├── constants/      config, routes, navigation, queryKeys, storageKeys, limits, brewing, http, time
+    ├── i18n/           Slovak copy, split by domain under translations/sk/
+    ├── components/
+    │   ├── ui/         Button, Card, Text, Input, Chip, Sheet, ListItem, ChatBubble,
+    │   │               Slider, NumberStepper, EmptyState, LoadingState, ErrorState,
+    │   │               ValueDisplay - each its own folder
+    │   └── layout/     Screen, AppProviders, RootStack, TabsNavigator, TabBarIcon
+    ├── features/       one domain = one folder (home, inventory, brewing, chat,
+    │                   onboarding, profile, designSystem)
+    ├── hooks/          only genuinely global hooks
+    ├── lib/            apiClient, queryClient, formatters
+    ├── stores/         Zustand - UI state only
+    └── types/
+```
+
+### Where things live, and why
+
+- **Design tokens stay in `src/theme/tokens/`.** That path is the single lint
+  exemption for colour literals (section 4). The composed theme, the provider
+  and the hooks sit one level up in `src/theme/`, where a hex colour is still
+  an error.
+- **Routes live in `src/app/`**, not `frontend/app/`, so everything the app is
+  made of stays under `src/`. A route file renders one screen component and
+  nothing else - no logic, no layout.
+- **Slovak copy is split by domain** under `src/i18n/translations/sk/`
+  (`common`, `navigation`, `screens`, `errors`, `designSystem`) and merged in
+  `sk/index.ts`. One file would break the 150-line limit. `SK_TRANSLATIONS` is
+  the source of truth for the key list: every future locale is typed against it,
+  so a missing translation is a type error.
+
+### Theming
+
+Colours depend on the active scheme, so a stylesheet cannot be a module-level
+constant. Every component ships a `create<Component>Styles(theme)` factory in
+its `<Component>.styles.ts`, and the component calls
+`useThemedStyles(createXStyles)`, which memoises the result per theme. The rule
+is unchanged - styles are built from tokens, in a sibling file, never inline.
+
+Geometry that only exists at runtime (a slider fill width, an animated
+transform) is built by a small named function exported from the same styles
+file, so it is still not written inside the JSX.
+
+### Shape language
+
+A deliberate deviation from Material Design 3: MD3 gives buttons and chips a
+pill shape; Brewmate does not. `RADIUS` is the raw scale
+(`xs 4, sm 8, md 12, lg 16, xl 24, full`) and `SHAPE` maps each kind of element
+onto one of them (`SHAPE.button = md`, `SHAPE.card = lg`, `SHAPE.sheet = xl`,
+`SHAPE.avatar = full`). Components read `SHAPE`, never `RADIUS`, so the same
+kind of element has the same radius everywhere.
+
+### Data
+
+- **TanStack Query** owns server state, persisted to AsyncStorage through
+  `PersistQueryClientProvider`. Keys come from `constants/queryKeys.ts`, the
+  storage key from `constants/storageKeys.ts`, every duration from
+  `constants/limits.ts`.
+- **Zustand** owns UI state only (theme preference, onboarding flag). Server
+  data never enters the store.
+- `lib/apiClient` is the only thing that talks to the API. Paths come from
+  `@brewmate/shared` and every response is validated against the shared schema -
+  a body that violates the contract throws, it does not resolve.
+- Authentication is not wired yet. The client takes an `AuthTokenProvider` and
+  currently runs with the anonymous one, which omits the header.
+
+### The design system screen
+
+`/design-system` is development only - in a production build the route
+redirects home, and the way in from the profile screen is hidden. It renders
+every token and every component, with a switch for light, dark, or both schemes
+side by side. Without it there is no way to check that the pieces fit together.
+
+### One inline lint exemption
+
+`src/i18n/translationKeys.ts` carries a single `eslint-disable-next-line` for a
+type assertion, with the reason written next to it: `Object.fromEntries` cannot
+express "every key mapped onto itself". Rule 3 allows exactly this, and it is
+the only one in the app.
+
+---
+
+## 6. Server architecture
 
 ```
 server/src/
@@ -236,7 +327,7 @@ A response that violates the contract is a 500, not a silent success.
 
 ---
 
-## 6. Database
+## 7. Database
 
 PostgreSQL hosted on **Neon**. There is no local database and no Docker Compose -
 do not add one.
@@ -256,7 +347,7 @@ generated migration that has already been applied.
 
 ---
 
-## 7. Testing
+## 8. Testing
 
 Integration tests only, running against the real Neon test branch through
 `app.inject()` - no mocked database, no testcontainers (everything is hosted).
@@ -271,7 +362,7 @@ loudly when it is set but unreachable.
 
 ---
 
-## 8. Environment and secrets
+## 9. Environment and secrets
 
 `.env` files are git-ignored; only `.env.example` is tracked. Never commit a
 filled-in `.env`, a service account JSON or a connection string with a password.
@@ -281,7 +372,7 @@ filled-in `.env`, a service account JSON or a connection string with a password.
 
 ---
 
-## 9. WebStorm
+## 10. WebStorm
 
 - **Package manager:** Settings -> Languages & Frameworks -> Node.js ->
   Package manager -> `pnpm`.
@@ -293,7 +384,7 @@ filled-in `.env`, a service account JSON or a connection string with a password.
 
 ---
 
-## 10. Definition of done
+## 11. Definition of done
 
 Before any change is considered finished:
 

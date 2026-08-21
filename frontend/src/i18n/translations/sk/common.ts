@@ -1,0 +1,22 @@
+/** Shared copy: actions, states and labels reused across screens. */
+export const SK_COMMON = {
+  appName: 'Brewmate',
+  actionRetry: 'Skúsiť znova',
+  actionCancel: 'Zrušiť',
+  actionConfirm: 'Potvrdiť',
+  actionClose: 'Zavrieť',
+  actionSave: 'Uložiť',
+  actionBack: 'Späť',
+  stateLoading: 'Načítava sa…',
+  stateEmptyTitle: 'Zatiaľ nič',
+  stateEmptyBody: 'Keď sem niečo pribudne, uvidíš to tu.',
+  stateErrorTitle: 'Niečo sa pokazilo',
+  stateErrorBody: 'Skús to prosím znova o chvíľu.',
+  unitGrams: 'g',
+  unitSeconds: 's',
+  unitCelsius: '°C',
+  unitDays: 'dní',
+  ratioSeparator: ':',
+  decrease: 'Znížiť',
+  increase: 'Zvýšiť',
+} as const;

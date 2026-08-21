@@ -9,5 +9,5 @@
     "noEmit": true,
     "types": ["react"]
   },
-  "include": ["index.ts", "App.tsx", "src/**/*.ts", "src/**/*.tsx"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "expo-env.d.ts"]
 }

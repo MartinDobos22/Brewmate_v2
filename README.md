@@ -59,10 +59,29 @@ Authenticated requests send `Authorization: Bearer <firebase id token>`. The API
 verifies the token, maps `firebase_uid` to an internal user row (creating it the
 first time) and answers with the shape defined in `@brewmate/shared`.
 
+## App
+
+```bash
+pnpm dev:frontend   # Expo dev server
+```
+
+The app is a skeleton: four tabs (Domov, Moja káva, Variť, Profil), all empty on
+purpose. What is real is the plumbing - expo-router navigation, the Material
+Design 3 design system in `frontend/src/theme`, a persisted TanStack Query
+cache, a Zustand store for UI state and an API client built on the shared
+contract. Authentication is not wired yet.
+
+Every user-visible string comes from `frontend/src/i18n/translations/sk/`.
+The UI is Slovak; the code is English.
+
+In a development build the profile tab opens a **Design system** screen that
+shows every token and component in light and dark side by side. It redirects
+home in a production build.
+
 ## Workspace
 
-| Package    | Contents                                                                 |
-| ---------- | ------------------------------------------------------------------------ |
-| `shared`   | `@brewmate/shared` - Zod schemas, inferred types, API paths, error codes |
-| `server`   | `@brewmate/server` - Fastify, Drizzle, Firebase Admin, integration tests |
-| `frontend` | `@brewmate/frontend` - Expo shell, design tokens, i18n skeleton          |
+| Package    | Contents                                                                   |
+| ---------- | -------------------------------------------------------------------------- |
+| `shared`   | `@brewmate/shared` - Zod schemas, inferred types, API paths, error codes   |
+| `server`   | `@brewmate/server` - Fastify, Drizzle, Firebase Admin, integration tests   |
+| `frontend` | `@brewmate/frontend` - Expo app skeleton: expo-router, design system, i18n |
