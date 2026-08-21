@@ -6,9 +6,8 @@ import { LIMITS } from '../../constants/limits';
 import { ApiClientError } from './ApiClientError';
 import { API_CLIENT_ERROR_CODES } from './apiClientErrorCodes';
 import { anonymousTokenProvider, type AuthTokenProvider } from './authTokenProvider';
-import { buildRequestHeaders } from './buildRequestHeaders';
 import { parseErrorResponse } from './parseErrorResponse';
-import { runRequest } from './runRequest';
+import { runAuthenticatedRequest } from './runAuthenticatedRequest';
 
 export interface ApiRequest<TResponse> {
   readonly path: string;
@@ -45,13 +44,12 @@ export const createApiClient = ({
     body,
     schema,
   }: ApiRequest<TResponse>): Promise<TResponse> => {
-    const token = await getAuthToken();
-    const response = await runRequest({
+    const response = await runAuthenticatedRequest({
       url: `${baseUrl}${path}`,
       method,
       body,
-      headers: buildRequestHeaders(token),
       timeoutMs: LIMITS.requestTimeoutMs,
+      getAuthToken,
     });
 
     if (!isSuccessful(response.status)) {

@@ -1,5 +1,6 @@
-import type { UpdateUserRequest, User } from '@brewmate/shared';
+import type { DeleteAccountResponse, UpdateUserRequest, User } from '@brewmate/shared';
 
+import type { IdentityDeleter } from '../../auth/identityDeleter.js';
 import type { VerifiedToken } from '../../auth/verifiedToken.js';
 import { ERROR_MESSAGES } from '../../errors/errorMessages.js';
 import { notFoundError } from '../../errors/notFoundError.js';
@@ -14,6 +15,8 @@ export interface UserService {
   provisionFromIdentity(token: VerifiedToken): Promise<User>;
   getById(id: string): Promise<User>;
   updateProfile(id: string, changes: UpdateUserRequest): Promise<User>;
+  /** Erases the account: the stored data first, then the Firebase identity. */
+  deleteAccount(user: User): Promise<DeleteAccountResponse>;
 }
 
 const requireUser = (user: User | null): User => {
@@ -24,7 +27,10 @@ const requireUser = (user: User | null): User => {
   return user;
 };
 
-export const createUserService = (repository: UserRepository): UserService => {
+export const createUserService = (
+  repository: UserRepository,
+  identityDeleter: IdentityDeleter,
+): UserService => {
   const getById = async (id: string): Promise<User> => {
     const row = await repository.findById(id);
 
@@ -50,6 +56,22 @@ export const createUserService = (repository: UserRepository): UserService => {
       const row = await repository.updateById(id, changes);
 
       return requireUser(row === null ? null : toUser(row));
+    },
+
+    /**
+     * Stored data goes first: if removing the identity then fails, the request
+     * fails too and a retry converges - the next call re-provisions an empty
+     * row, deletes it again and retries the identity. The reverse order could
+     * strand personal data behind an identity nobody can sign in as.
+     *
+     * Deleting an account that is already partly gone is not an error, so the
+     * client can always retry.
+     */
+    deleteAccount: async (user: User): Promise<DeleteAccountResponse> => {
+      await repository.deleteById(user.id);
+      await identityDeleter.deleteUser(user.firebaseUid);
+
+      return { deletedAt: new Date().toISOString() };
     },
   };
 };

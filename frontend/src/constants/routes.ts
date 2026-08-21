@@ -4,6 +4,10 @@
  */
 export const ROUTES = {
   home: '/',
+  signIn: '/sign-in',
+  signUp: '/sign-up',
+  forgotPassword: '/forgot-password',
+  verifyEmail: '/verify-email',
   inventory: '/inventory',
   brew: '/brew',
   profile: '/profile',
@@ -31,3 +35,9 @@ export const TAB_ORDER = [
   TAB_SEGMENTS.brew,
   TAB_SEGMENTS.profile,
 ] as const;
+
+/**
+ * The expo-router group holding the screens a signed-out visitor may see.
+ * `useProtectedRoute` compares the first segment against it.
+ */
+export const AUTH_GROUP_SEGMENT = '(auth)';

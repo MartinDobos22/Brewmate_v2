@@ -1,5 +1,5 @@
 import { useState, type JSX } from 'react';
-import { TextInput, View, type KeyboardTypeOptions } from 'react-native';
+import { TextInput, View, type KeyboardTypeOptions, type TextInputProps } from 'react-native';
 
 import { useTheme, useThemedStyles } from '../../../theme';
 import { Text } from '../Text';
@@ -15,6 +15,12 @@ export interface InputProps {
   readonly errorText?: string;
   readonly disabled?: boolean;
   readonly keyboardType?: KeyboardTypeOptions;
+  /** Masks the value. Also opts the field out of autocorrect and suggestions. */
+  readonly secureTextEntry?: boolean;
+  readonly autoCapitalize?: TextInputProps['autoCapitalize'];
+  /** Lets the platform offer the right saved value - an e-mail, a password. */
+  readonly autoComplete?: TextInputProps['autoComplete'];
+  readonly textContentType?: TextInputProps['textContentType'];
 }
 
 export const Input = ({
@@ -26,6 +32,10 @@ export const Input = ({
   errorText,
   disabled = false,
   keyboardType,
+  secureTextEntry = false,
+  autoCapitalize,
+  autoComplete,
+  textContentType,
 }: InputProps): JSX.Element => {
   const styles = useThemedStyles(createInputStyles);
   const theme = useTheme();
@@ -53,6 +63,11 @@ export const Input = ({
           placeholderTextColor={theme.colors.onDisabled}
           editable={!disabled}
           keyboardType={keyboardType}
+          secureTextEntry={secureTextEntry}
+          autoCapitalize={autoCapitalize}
+          autoComplete={autoComplete}
+          textContentType={textContentType}
+          autoCorrect={!secureTextEntry}
           accessibilityLabel={label}
           onFocus={(): void => {
             setFocused(true);

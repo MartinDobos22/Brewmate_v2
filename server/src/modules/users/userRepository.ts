@@ -19,7 +19,11 @@ export interface UserRepository {
   findByFirebaseUid(firebaseUid: string): Promise<UserRow | null>;
   upsertByFirebaseUid(input: ProvisionUserInput): Promise<UserRow>;
   updateById(id: string, changes: UpdatableUserFields): Promise<UserRow | null>;
+  /** Resolves to false when the row was already gone. */
+  deleteById(id: string): Promise<boolean>;
 }
+
+const NO_ROWS = 0;
 
 const firstRowOrNull = (rows: readonly UserRow[]): UserRow | null => rows[0] ?? null;
 
@@ -70,4 +74,11 @@ export const createUserRepository = (db: Database): UserRepository => ({
         .where(eq(usersTable.id, id))
         .returning(),
     ),
+
+  /**
+   * Everything the product stores for a user hangs off `users.id` with an
+   * `on delete cascade`, so removing this row removes the account's data.
+   */
+  deleteById: async (id) =>
+    (await db.delete(usersTable).where(eq(usersTable.id, id)).returning()).length > NO_ROWS,
 });
