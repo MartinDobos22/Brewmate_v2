@@ -1,3 +1,4 @@
+import { createFirebaseIdentityDeleter } from '../auth/firebaseIdentityDeleter.js';
 import { createFirebaseTokenVerifier } from '../auth/firebaseTokenVerifier.js';
 import type { AppConfig } from '../config/appConfig.js';
 import { CONFIG_ERROR_MESSAGES } from '../config/configErrorMessages.js';
@@ -24,6 +25,7 @@ export const createAppDependencies = (config: AppConfig): RuntimeDependencies =>
       config,
       db: connection.db,
       tokenVerifier: createFirebaseTokenVerifier(config.firebase),
+      identityDeleter: createFirebaseIdentityDeleter(config.firebase),
     },
     close: connection.close,
   };

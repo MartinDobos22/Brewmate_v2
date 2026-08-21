@@ -9,6 +9,8 @@ import { COLOR_SCHEMES, useTheme } from '../../../theme';
 type StackScreenOptions = NonNullable<ComponentProps<typeof Stack>['screenOptions']>;
 
 const TABS_SEGMENT = '(tabs)';
+const AUTH_SEGMENT = '(auth)';
+const VERIFY_EMAIL_SEGMENT = 'verify-email';
 const DESIGN_SYSTEM_SEGMENT = 'design-system';
 
 /**
@@ -30,7 +32,9 @@ export const RootStack = (): JSX.Element => {
     <>
       <StatusBar style={theme.scheme === COLOR_SCHEMES.dark ? BAR_STYLES.light : BAR_STYLES.dark} />
       <Stack screenOptions={screenOptions}>
+        <Stack.Screen name={AUTH_SEGMENT} />
         <Stack.Screen name={TABS_SEGMENT} />
+        <Stack.Screen name={VERIFY_EMAIL_SEGMENT} />
         <Stack.Screen
           name={DESIGN_SYSTEM_SEGMENT}
           options={{

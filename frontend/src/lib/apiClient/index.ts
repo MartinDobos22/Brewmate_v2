@@ -6,3 +6,5 @@ export type { AuthTokenProvider } from './authTokenProvider';
 export { createApiClient } from './createApiClient';
 export type { ApiClient, ApiClientOptions, ApiRequest } from './createApiClient';
 export { getApiClient } from './getApiClient';
+export { runAuthenticatedRequest } from './runAuthenticatedRequest';
+export type { AuthenticatedRequestOptions } from './runAuthenticatedRequest';

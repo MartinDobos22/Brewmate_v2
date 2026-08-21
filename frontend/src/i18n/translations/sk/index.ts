@@ -1,3 +1,4 @@
+import { SK_AUTH } from './auth';
 import { SK_COMMON } from './common';
 import { SK_DESIGN_SYSTEM } from './designSystem';
 import { SK_ERRORS } from './errors';
@@ -10,6 +11,7 @@ import { SK_SCREENS } from './screens';
  */
 export const SK_TRANSLATIONS = {
   ...SK_COMMON,
+  ...SK_AUTH,
   ...SK_NAVIGATION,
   ...SK_SCREENS,
   ...SK_ERRORS,

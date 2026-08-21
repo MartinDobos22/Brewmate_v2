@@ -3,9 +3,9 @@
 A mobile companion for brewing specialty coffee. This repository is a pnpm
 workspace holding the mobile app, the API and the contract they share.
 
-**Current state:** monorepo skeleton + working backend + mobile app skeleton.
-The app has navigation, a design system and the data plumbing; it has no product
-features on purpose, and no authentication yet.
+**Current state:** monorepo skeleton + working backend + mobile app skeleton
+with authentication. The app has navigation, a design system, the data plumbing
+and a complete sign-in flow; it has no product features on purpose.
 
 ---
 
@@ -86,6 +86,7 @@ Everything goes through a named constant or a design token.
 | API paths, header names, auth scheme                 | `shared/src/api/`                                  |
 | Error codes and the error envelope                   | `shared/src/errors/`                               |
 | Field limits shared by app and API                   | `shared/src/users/userFieldLimits.ts` and siblings |
+| Firebase and OAuth error codes                       | the `constants/` folder of the owning package      |
 | HTTP status codes, methods, server/database defaults | `server/src/constants/`                            |
 | Log messages                                         | `server/src/logging/logMessages.ts`                |
 | Client-facing error messages                         | `server/src/errors/errorMessages.ts`               |
@@ -178,10 +179,10 @@ frontend/
     │   │               Slider, NumberStepper, EmptyState, LoadingState, ErrorState,
     │   │               ValueDisplay - each its own folder
     │   └── layout/     Screen, AppProviders, RootStack, TabsNavigator, TabBarIcon
-    ├── features/       one domain = one folder (home, inventory, brewing, chat,
-    │                   onboarding, profile, designSystem)
+    ├── features/       one domain = one folder (auth, home, inventory, brewing,
+    │                   chat, onboarding, profile, designSystem)
     ├── hooks/          only genuinely global hooks
-    ├── lib/            apiClient, queryClient, formatters
+    ├── lib/            apiClient, firebase, queryClient, formatters
     ├── stores/         Zustand - UI state only
     └── types/
 ```
@@ -233,8 +234,9 @@ kind of element has the same radius everywhere.
 - `lib/apiClient` is the only thing that talks to the API. Paths come from
   `@brewmate/shared` and every response is validated against the shared schema -
   a body that violates the contract throws, it does not resolve.
-- Authentication is not wired yet. The client takes an `AuthTokenProvider` and
-  currently runs with the anonymous one, which omits the header.
+- `lib/apiClient` takes an `AuthTokenProvider` and runs with the Firebase one:
+  every request carries `Authorization: Bearer <id token>`, and a 401 is retried
+  exactly once with a force-refreshed token before it reaches the caller.
 
 ### The design system screen
 
@@ -242,6 +244,54 @@ kind of element has the same radius everywhere.
 redirects home, and the way in from the profile screen is hidden. It renders
 every token and every component, with a switch for light, dark, or both schemes
 side by side. Without it there is no way to check that the pieces fit together.
+
+### Authentication
+
+The app signs in with **email + password, Google and Apple** - Apple is not
+optional next to Google, an app that offers one third-party login without
+Apple's does not pass review.
+
+```
+src/features/auth/
+├── constants/   auth status, provider ids, Firebase error codes
+├── services/    one file per action; the only place a provider error is read
+├── context/     AuthProvider + useAuthSession, fed by onIdTokenChanged
+├── hooks/       useAuthMutation/useAuthAction, the social hooks, the route guard
+└── components/  the four screens, the shared form, the account card, AuthGate
+```
+
+- **The flow is splash -> sign-in/registration -> app.** `AuthGate` holds the
+  splash screen until Firebase has said who the user is, so the first screen a
+  user sees is already the right one. `useProtectedRoute` then keeps the visible
+  screen and the session in step in both directions.
+- **Tokens refresh themselves.** Firebase renews an ID token shortly before it
+  expires and `firebaseTokenProvider` hands the current one to every request.
+  The app tracks no expiry of its own.
+- **Sessions survive a cold start** because `getFirebaseAuth` wires Firebase Auth
+  to AsyncStorage. Without an explicit persistence the React Native build keeps
+  the session in memory only.
+- **The backend user is provisioned by the first `/me` call**, which `AuthGate`
+  makes as soon as anyone signs in.
+- **Errors are Slovak sentences.** `resolveAuthErrorKey` is the only code that
+  reads `error.code`; every screen renders a translation key. A raw
+  `auth/invalid-credential` must never reach the interface.
+- **Being offline is a state, not a failure.** `useIsOnline` puts a notice above
+  the form and blocks the submit button before an attempt is made; the network
+  error code is mapped as a backstop.
+- **Deleting the account is in the app**, as Apple has required since 2022 of
+  any app that can create one. `DELETE /me` removes the stored data and the
+  Firebase identity, and the app signs out and empties the query cache.
+
+Google Sign-In is optional: a build without `EXPO_PUBLIC_GOOGLE_*_CLIENT_ID`
+hides the button rather than failing when it is pressed. Apple's button hides
+itself wherever the platform does not support it.
+
+### One typing augmentation
+
+`src/types/firebaseAuth.d.ts` declares `getReactNativePersistence`, which the
+React Native bundle of `firebase/auth` exports at runtime but leaves out of the
+package's published typings. It declares what is already there rather than
+asserting a type, so Rule 3 is untouched.
 
 ### One inline lint exemption
 
@@ -263,7 +313,7 @@ server/src/
 ├── logging/          Pino options, redaction paths, log messages
 ├── db/               Drizzle client, schema, migrations
 ├── errors/           AppError, typed factories, error handler, not-found handler
-├── auth/             Token verifier interface, Firebase implementation, auth plugin
+├── auth/             Token verifier + identity deleter, Firebase implementations, auth plugin
 ├── modules/
 │   ├── health/       healthService + healthRoutes
 │   └── users/        repository -> service -> routes, plus row->contract mapper
@@ -281,9 +331,10 @@ never touches Fastify's request or reply.
 
 ### Dependency injection
 
-`buildApp(dependencies)` takes `{ config, db, tokenVerifier }`. Production wiring
-lives in `createAppDependencies`; integration tests pass a stub verifier. Nothing
-in `src/` reaches for a global singleton.
+`buildApp(dependencies)` takes `{ config, db, tokenVerifier, identityDeleter }`.
+Production wiring lives in `createAppDependencies`; integration tests pass a stub
+verifier and a recording deleter. Nothing in `src/` reaches for a global
+singleton.
 
 ### Auth flow
 
@@ -297,7 +348,16 @@ in `src/` reaches for a global singleton.
 
 `TokenVerifier` is an interface on purpose: real Firebase ID tokens cannot be
 minted in CI, and the HTTP layer must be testable without a live identity
-provider.
+provider. `IdentityDeleter` is separate for the same reason - it is the one
+thing the API does _to_ Firebase rather than _with_ it.
+
+### Deleting an account
+
+`DELETE /me` erases the stored data first and the Firebase identity second. If
+the identity call then fails, the request fails and a retry converges: the next
+authenticated call re-provisions an empty row, deletes it again and retries the
+identity. The reverse order could strand personal data behind an identity nobody
+can sign in as. Deleting an account that is already partly gone is a success.
 
 ### Error shape
 
@@ -321,6 +381,7 @@ on the message. Throw an `AppError` (via `unauthorizedError`, `notFoundError`,
 | GET    | `/health` | no   | liveness + database check (503 when degraded) |
 | GET    | `/me`     | yes  | current user, auto-provisioned on first call  |
 | PATCH  | `/me`     | yes  | update `displayName`                          |
+| DELETE | `/me`     | yes  | erase the account and its Firebase identity   |
 
 Both request bodies and responses are validated against the shared Zod schemas.
 A response that violates the contract is a 500, not a silent success.
@@ -368,7 +429,9 @@ loudly when it is set but unreachable.
 filled-in `.env`, a service account JSON or a connection string with a password.
 
 - `server/.env` - database URLs, Firebase Admin credentials
-- `frontend/.env` - `EXPO_PUBLIC_*` only (see Rule 6)
+- `frontend/.env` - `EXPO_PUBLIC_*` only (see Rule 6): the API base URL, the
+  public Firebase _client_ configuration and the Google OAuth client IDs. None
+  of those are secrets; all of them identify rather than authorise.
 
 ---
 

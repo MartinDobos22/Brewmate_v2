@@ -1,5 +1,6 @@
 import {
   API_ROUTES,
+  deleteAccountResponseSchema,
   errorResponseSchema,
   updateUserRequestSchema,
   userSchema,
@@ -49,6 +50,25 @@ export const userRoutes: FastifyPluginAsyncZod<UserRoutesOptions> = async (app, 
     },
     async (request) =>
       options.userService.updateProfile(requireCurrentUser(request).id, request.body),
+  );
+
+  /**
+   * Apple requires an app that can create an account to be able to delete it
+   * from inside the app, so this endpoint removes the stored data *and* the
+   * Firebase identity behind it.
+   */
+  app.delete(
+    API_ROUTES.me,
+    {
+      onRequest: app.authenticate,
+      schema: {
+        response: {
+          [HTTP_STATUS.ok]: deleteAccountResponseSchema,
+          [HTTP_STATUS.unauthorized]: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => options.userService.deleteAccount(requireCurrentUser(request)),
   );
 
   await Promise.resolve();

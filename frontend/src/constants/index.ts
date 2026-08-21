@@ -6,7 +6,7 @@ export { LIMITS } from './limits';
 export type { LimitToken } from './limits';
 export { QUERY_KEYS } from './queryKeys';
 export type { QueryKeyFactory } from './queryKeys';
-export { ROUTES, TAB_SEGMENTS, TAB_ORDER } from './routes';
+export { ROUTES, TAB_SEGMENTS, TAB_ORDER, AUTH_GROUP_SEGMENT } from './routes';
 export type { Route, TabSegment } from './routes';
 export { STORAGE_KEYS } from './storageKeys';
 export type { StorageKey } from './storageKeys';

@@ -5,12 +5,13 @@ import { Screen } from '../../../../components/layout';
 import { Button, Card, Text } from '../../../../components/ui';
 import { APP_CONFIG } from '../../../../constants/config';
 import { ROUTES } from '../../../../constants/routes';
+import { AccountCard } from '../../../auth';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { AppearancePicker } from '../AppearancePicker';
 
 /**
- * The only screen with content so far, and only infrastructure content: the
- * theme switch, plus the way into the design system while developing.
+ * Infrastructure content only: the account, the theme switch, plus the way
+ * into the design system while developing.
  */
 export const ProfileScreen = (): JSX.Element => {
   const { t } = useTranslation();
@@ -18,6 +19,7 @@ export const ProfileScreen = (): JSX.Element => {
 
   return (
     <Screen scrollable>
+      <AccountCard />
       <Card>
         <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileAppearanceTitle)}</Text>
         <AppearancePicker />

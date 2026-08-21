@@ -14,6 +14,8 @@
     "plugins": [
       "expo-router",
       "expo-font",
+      "expo-apple-authentication",
+      "expo-web-browser",
       [
         "expo-splash-screen",
         {
@@ -84,7 +86,8 @@
             "NSPrivacyAccessedAPITypeReasons": ["35F9.1"]
           }
         ]
-      }
+      },
+      "usesAppleSignIn": true
     },
     "android": {
       "package": "app.brewmate.mobile",

@@ -18,7 +18,7 @@ import type { AppDependencies } from './appDependencies.js';
  * it through `app.inject()`.
  */
 export const buildApp = async (dependencies: AppDependencies): Promise<FastifyInstance> => {
-  const { config, db, tokenVerifier } = dependencies;
+  const { config, db, tokenVerifier, identityDeleter } = dependencies;
 
   const app = Fastify({
     logger: createLoggerOptions(config.environment, config.logging.level),
@@ -31,7 +31,7 @@ export const buildApp = async (dependencies: AppDependencies): Promise<FastifyIn
   app.setErrorHandler(errorHandler);
   app.setNotFoundHandler(notFoundHandler);
 
-  const userService = createUserService(createUserRepository(db));
+  const userService = createUserService(createUserRepository(db), identityDeleter);
 
   await app.register(authPlugin, { tokenVerifier, userService });
   await app.register(healthRoutes, { db });

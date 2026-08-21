@@ -1,10 +1,11 @@
 /**
  * Supplies the Firebase ID token for the Authorization header.
  *
- * Authentication lands in a later milestone; until then the app runs with a
- * provider that returns null and the client simply omits the header.
+ * `forceRefresh` asks the provider to skip its cache and fetch a new token; the
+ * client uses it to retry once after a 401.
  */
-export type AuthTokenProvider = () => Promise<string | null>;
+export type AuthTokenProvider = (forceRefresh: boolean) => Promise<string | null>;
 
+/** Used before anyone is signed in: the client omits the header entirely. */
 export const anonymousTokenProvider: AuthTokenProvider = (): Promise<string | null> =>
   Promise.resolve(null);
