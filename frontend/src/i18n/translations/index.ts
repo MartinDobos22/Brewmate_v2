@@ -1,8 +1,10 @@
 import { LOCALES, type Locale } from '../locales';
 import type { TranslationKey } from '../translationKeys';
 
-import { EN_TRANSLATIONS } from './en';
+import { SK_TRANSLATIONS } from './sk';
 
 export const TRANSLATIONS: Record<Locale, Record<TranslationKey, string>> = {
-  [LOCALES.en]: EN_TRANSLATIONS,
+  [LOCALES.sk]: SK_TRANSLATIONS,
 };
+
+export { SK_TRANSLATIONS } from './sk';
