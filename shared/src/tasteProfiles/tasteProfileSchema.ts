@@ -6,11 +6,7 @@ import { ROAST_LEVELS } from '../enums/roastLevels.js';
 import { flavorAffinitiesSchema } from './flavorAffinitiesSchema.js';
 import { sourceWeightsSchema } from './sourceWeightsSchema.js';
 import { tasteAxesSchema } from './tasteAxesSchema.js';
-import {
-  BREW_COUNT_MIN,
-  CONFIDENCE_MAX,
-  CONFIDENCE_MIN,
-} from './tasteProfileFieldLimits.js';
+import { BREW_COUNT_MIN, CONFIDENCE_MAX, CONFIDENCE_MIN } from './tasteProfileFieldLimits.js';
 
 /**
  * What Brewmate believes about one person's taste.

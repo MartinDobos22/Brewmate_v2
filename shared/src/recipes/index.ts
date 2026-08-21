@@ -6,4 +6,4 @@ export type { CreateRecipeRequest } from './createRecipeSchema.js';
 export { updateRecipeRequestSchema } from './updateRecipeSchema.js';
 export type { UpdateRecipeRequest } from './updateRecipeSchema.js';
 export { recipeQuerySchema } from './recipeQuerySchema.js';
-export type { RecipeQuery } from './recipeQuerySchema.js';
+export type { RecipeQuery, RecipeFilter } from './recipeQuerySchema.js';

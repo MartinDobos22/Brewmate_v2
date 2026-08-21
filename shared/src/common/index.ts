@@ -6,7 +6,7 @@ export {
   LIST_OFFSET_DEFAULT,
 } from './paginationLimits.js';
 export { listQuerySchema } from './listQuerySchema.js';
-export type { ListQuery } from './listQuerySchema.js';
+export type { ListQuery, ListFilter } from './listQuerySchema.js';
 export { listResponseSchema } from './listResponseSchema.js';
 export type { ListResponse } from './listResponseSchema.js';
 export { idParamSchema } from './idParamSchema.js';

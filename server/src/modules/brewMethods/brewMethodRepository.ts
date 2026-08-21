@@ -27,12 +27,7 @@ export interface BrewMethodRepository {
 }
 
 export const createBrewMethodRepository = (db: Database): BrewMethodRepository => ({
-  list: async ({
-    limit,
-    offset,
-    category,
-    includeInactive,
-  }): Promise<readonly BrewMethodRow[]> => {
+  list: async ({ limit, offset, category, includeInactive }): Promise<readonly BrewMethodRow[]> => {
     const conditions: SQL[] = [];
 
     if (category !== undefined) {

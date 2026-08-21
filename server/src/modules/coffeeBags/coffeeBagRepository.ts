@@ -32,12 +32,7 @@ const ownedBy = (id: string, userId: string): SQL | undefined =>
   and(eq(coffeeBagsTable.id, id), eq(coffeeBagsTable.userId, userId));
 
 export const createCoffeeBagRepository = (db: Database): CoffeeBagRepository => ({
-  list: async ({
-    userId,
-    limit,
-    offset,
-    includeArchived,
-  }): Promise<readonly CoffeeBagRow[]> => {
+  list: async ({ userId, limit, offset, includeArchived }): Promise<readonly CoffeeBagRow[]> => {
     const conditions: (SQL | undefined)[] = [eq(coffeeBagsTable.userId, userId)];
 
     if (includeArchived !== true) {

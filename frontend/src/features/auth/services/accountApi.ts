@@ -3,6 +3,7 @@ import {
   deleteAccountResponseSchema,
   userSchema,
   type DeleteAccountResponse,
+  type UpdateUserRequest,
   type User,
 } from '@brewmate/shared';
 
@@ -16,6 +17,18 @@ import { getApiClient } from '../../../lib/apiClient';
  */
 export const fetchCurrentUser = async (): Promise<User> =>
   getApiClient().request({ path: API_ROUTES.me, schema: userSchema });
+
+/**
+ * Edits the fields the user owns - their display name, the water they brew
+ * with, how far they got through onboarding. Identity stays with Firebase.
+ */
+export const updateCurrentUser = async (changes: UpdateUserRequest): Promise<User> =>
+  getApiClient().request({
+    path: API_ROUTES.me,
+    method: HTTP_METHODS.patch,
+    body: changes,
+    schema: userSchema,
+  });
 
 /** Erases the account: the data on the server first, then the Firebase identity. */
 export const requestAccountDeletion = async (): Promise<DeleteAccountResponse> =>

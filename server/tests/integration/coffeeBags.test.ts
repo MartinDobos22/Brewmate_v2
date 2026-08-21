@@ -19,8 +19,9 @@ describe('coffee bags', () => {
   let api: TestApi;
 
   const createBag = async (payload: Record<string, unknown>): Promise<string> =>
-    coffeeBagSchema.parse((await api.post(API_ROUTES.coffeeBags, RETURNING_IDENTITY, payload)).json())
-      .id;
+    coffeeBagSchema.parse(
+      (await api.post(API_ROUTES.coffeeBags, RETURNING_IDENTITY, payload)).json(),
+    ).id;
 
   beforeAll(async () => {
     context = await createTestContext();

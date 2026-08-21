@@ -73,9 +73,7 @@ export const equipmentRoutes: FastifyPluginAsyncZod<EquipmentRoutesOptions> = as
     async (request, reply) =>
       reply
         .status(HTTP_STATUS.created)
-        .send(
-          await options.equipmentService.create(requireCurrentUser(request).id, request.body),
-        ),
+        .send(await options.equipmentService.create(requireCurrentUser(request).id, request.body)),
   );
 
   app.patch(

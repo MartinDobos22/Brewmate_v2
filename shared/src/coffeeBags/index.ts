@@ -22,4 +22,4 @@ export type { CreateCoffeeBagRequest } from './createCoffeeBagSchema.js';
 export { updateCoffeeBagRequestSchema } from './updateCoffeeBagSchema.js';
 export type { UpdateCoffeeBagRequest } from './updateCoffeeBagSchema.js';
 export { coffeeBagQuerySchema } from './coffeeBagQuerySchema.js';
-export type { CoffeeBagQuery } from './coffeeBagQuerySchema.js';
+export type { CoffeeBagQuery, CoffeeBagFilter } from './coffeeBagQuerySchema.js';

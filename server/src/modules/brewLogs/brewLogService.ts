@@ -68,9 +68,9 @@ export const createBrewLogService = ({
 
     list: async (userId, { limit, offset, bagId, recipeId, equipmentSetId }) =>
       toPage({
-        rows: (await repository.list({ userId, limit, offset, bagId, recipeId, equipmentSetId })).map(
-          toBrewLog,
-        ),
+        rows: (
+          await repository.list({ userId, limit, offset, bagId, recipeId, equipmentSetId })
+        ).map(toBrewLog),
         limit,
         offset,
       }),

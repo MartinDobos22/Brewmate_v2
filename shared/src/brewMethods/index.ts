@@ -10,4 +10,4 @@ export type { RatioRange } from './ratioRangeSchema.js';
 export { brewMethodSchema } from './brewMethodSchema.js';
 export type { BrewMethod } from './brewMethodSchema.js';
 export { brewMethodQuerySchema } from './brewMethodQuerySchema.js';
-export type { BrewMethodQuery } from './brewMethodQuerySchema.js';
+export type { BrewMethodQuery, BrewMethodFilter } from './brewMethodQuerySchema.js';

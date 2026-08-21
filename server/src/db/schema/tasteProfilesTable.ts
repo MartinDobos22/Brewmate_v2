@@ -1,8 +1,4 @@
-import {
-  TASTE_AXIS_NEUTRAL,
-  type FlavorAffinities,
-  type SourceWeights,
-} from '@brewmate/shared';
+import { TASTE_AXIS_NEUTRAL, type FlavorAffinities, type SourceWeights } from '@brewmate/shared';
 import { integer, pgTable, real, timestamp, uuid, jsonb } from 'drizzle-orm/pg-core';
 
 import { milkUsageEnum, roastLevelEnum } from './columnEnums.js';

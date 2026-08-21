@@ -1,4 +1,8 @@
-import type { TasteProfileDelta, TasteProfileSource, TasteProfileEventPayload } from '@brewmate/shared';
+import type {
+  TasteProfileDelta,
+  TasteProfileSource,
+  TasteProfileEventPayload,
+} from '@brewmate/shared';
 
 import { clampWeight } from './blendValue.js';
 import {

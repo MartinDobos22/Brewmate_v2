@@ -3,7 +3,12 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import { HTTP_STATUS } from '../../src/constants/httpStatus.js';
 import { RETURNING_IDENTITY } from '../fixtures/testIdentities.js';
-import { AEROPRESS_KEY, RETIRED_KEY, V60_KEY, insertTestBrewMethods } from '../fixtures/testBrewMethods.js';
+import {
+  AEROPRESS_KEY,
+  RETIRED_KEY,
+  V60_KEY,
+  insertTestBrewMethods,
+} from '../fixtures/testBrewMethods.js';
 import { createTestContext, type TestContext } from '../setup/createTestContext.js';
 import { createTestApi, type TestApi } from '../setup/testApi.js';
 

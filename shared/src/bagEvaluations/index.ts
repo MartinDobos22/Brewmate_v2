@@ -12,10 +12,7 @@ export {
   evaluationReasoningSchema,
   evaluationUncertaintiesSchema,
 } from './evaluationReasoningSchema.js';
-export type {
-  EvaluationReasoning,
-  EvaluationUncertainties,
-} from './evaluationReasoningSchema.js';
+export type { EvaluationReasoning, EvaluationUncertainties } from './evaluationReasoningSchema.js';
 export { bagEvaluationSchema } from './bagEvaluationSchema.js';
 export type { BagEvaluation } from './bagEvaluationSchema.js';
 export { createBagEvaluationRequestSchema } from './createBagEvaluationSchema.js';

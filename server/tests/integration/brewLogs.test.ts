@@ -108,11 +108,9 @@ describe('brew logs', () => {
 
     const corrected = brewLogSchema.parse(
       (
-        await api.patch(
-          buildApiPath(API_ROUTES.brewLogById, { id: log.id }),
-          RETURNING_IDENTITY,
-          { constraints: {} },
-        )
+        await api.patch(buildApiPath(API_ROUTES.brewLogById, { id: log.id }), RETURNING_IDENTITY, {
+          constraints: {},
+        })
       ).json(),
     );
 
@@ -190,8 +188,6 @@ describe('brew logs', () => {
   });
 
   it('requires authentication', async () => {
-    expect((await api.anonymousGet(API_ROUTES.brewLogs)).statusCode).toBe(
-      HTTP_STATUS.unauthorized,
-    );
+    expect((await api.anonymousGet(API_ROUTES.brewLogs)).statusCode).toBe(HTTP_STATUS.unauthorized);
   });
 });

@@ -4,10 +4,7 @@ import { EXTRA_ROW_FOR_HAS_MORE } from '../../constants/pagination.js';
 import type { Database } from '../../db/databaseTypes.js';
 import { firstRowOrNull } from '../../db/rows/firstRowOrNull.js';
 import { requireRow } from '../../db/rows/requireRow.js';
-import type {
-  BagEvaluationRow,
-  NewBagEvaluationRow,
-} from '../../db/schema/bagEvaluationsTable.js';
+import type { BagEvaluationRow, NewBagEvaluationRow } from '../../db/schema/bagEvaluationsTable.js';
 import { bagEvaluationsTable } from '../../db/schema/bagEvaluationsTable.js';
 
 export interface BagEvaluationListFilter {

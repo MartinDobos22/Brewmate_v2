@@ -10,3 +10,6 @@ export const brewMethodQuerySchema = listQuerySchema.extend({
 });
 
 export type BrewMethodQuery = z.infer<typeof brewMethodQuerySchema>;
+
+/** The same filter as the app supplies it, before the API applies its defaults. */
+export type BrewMethodFilter = Partial<BrewMethodQuery>;

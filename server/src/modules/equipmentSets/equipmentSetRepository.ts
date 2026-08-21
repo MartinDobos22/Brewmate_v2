@@ -108,17 +108,16 @@ export const createEquipmentSetRepository = (db: Database): EquipmentSetReposito
       );
 
       await Promise.all(
-        affected.map(
-          async (row: EquipmentSetRow): Promise<unknown> =>
-            db
-              .update(equipmentSetsTable)
-              .set({
-                equipmentIds: row.equipmentIds.filter(
-                  (candidate: string): boolean => candidate !== equipmentId,
-                ),
-                updatedAt: new Date(),
-              })
-              .where(eq(equipmentSetsTable.id, row.id)),
+        affected.map(async (row: EquipmentSetRow): Promise<unknown> =>
+          db
+            .update(equipmentSetsTable)
+            .set({
+              equipmentIds: row.equipmentIds.filter(
+                (candidate: string): boolean => candidate !== equipmentId,
+              ),
+              updatedAt: new Date(),
+            })
+            .where(eq(equipmentSetsTable.id, row.id)),
         ),
       );
     },

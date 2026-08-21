@@ -42,13 +42,7 @@ const ownedBy = (id: string, userId: string): SQL | undefined =>
   and(eq(equipmentTable.id, id), eq(equipmentTable.userId, userId));
 
 export const createEquipmentRepository = (db: Database): EquipmentRepository => ({
-  list: async ({
-    userId,
-    limit,
-    offset,
-    type,
-    activeOnly,
-  }): Promise<readonly EquipmentRow[]> => {
+  list: async ({ userId, limit, offset, type, activeOnly }): Promise<readonly EquipmentRow[]> => {
     const conditions: (SQL | undefined)[] = [eq(equipmentTable.userId, userId)];
 
     if (type !== undefined) {

@@ -8,3 +8,5 @@ export type { ApiClient, ApiClientOptions, ApiRequest } from './createApiClient'
 export { getApiClient } from './getApiClient';
 export { runAuthenticatedRequest } from './runAuthenticatedRequest';
 export type { AuthenticatedRequestOptions } from './runAuthenticatedRequest';
+export { withQuery } from './withQuery';
+export type { QueryValue } from './withQuery';

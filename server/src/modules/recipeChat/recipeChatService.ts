@@ -12,7 +12,11 @@ import { toRecipeChatMessage } from './recipeChatMessageMapper.js';
 import type { RecipeChatRepository } from './recipeChatRepository.js';
 
 export interface RecipeChatService {
-  list(userId: string, recipeId: string, query: ListQuery): Promise<ListResponse<RecipeChatMessage>>;
+  list(
+    userId: string,
+    recipeId: string,
+    query: ListQuery,
+  ): Promise<ListResponse<RecipeChatMessage>>;
   append(
     userId: string,
     recipeId: string,

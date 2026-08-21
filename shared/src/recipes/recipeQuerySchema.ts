@@ -11,3 +11,6 @@ export const recipeQuerySchema = listQuerySchema.extend({
 });
 
 export type RecipeQuery = z.infer<typeof recipeQuerySchema>;
+
+/** The same filter as the app supplies it, before the API applies its defaults. */
+export type RecipeFilter = Partial<RecipeQuery>;

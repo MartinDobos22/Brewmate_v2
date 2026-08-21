@@ -55,9 +55,7 @@ export const createTasteProfileEventRepository = (db: Database): TasteProfileEve
       await db
         .select()
         .from(tasteProfileEventsTable)
-        .where(
-          and(eq(tasteProfileEventsTable.id, id), eq(tasteProfileEventsTable.userId, userId)),
-        ),
+        .where(and(eq(tasteProfileEventsTable.id, id), eq(tasteProfileEventsTable.userId, userId))),
     ),
 
   findBySourceRef: async (userId, source, sourceRef) =>

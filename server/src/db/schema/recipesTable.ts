@@ -57,10 +57,7 @@ export const recipesTable = pgTable(
     methodId: uuid('method_id')
       .notNull()
       .references(() => brewMethodsTable.id, { onDelete: 'restrict' }),
-    equipmentIds: jsonb('equipment_ids')
-      .$type<readonly string[]>()
-      .notNull()
-      .default(NO_EQUIPMENT),
+    equipmentIds: jsonb('equipment_ids').$type<readonly string[]>().notNull().default(NO_EQUIPMENT),
     params: jsonb('params').$type<BrewParams>().notNull(),
     rationale: text('rationale'),
     source: recipeSourceEnum('source').notNull(),

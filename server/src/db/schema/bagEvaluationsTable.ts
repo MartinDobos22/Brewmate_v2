@@ -1,8 +1,4 @@
-import type {
-  EvaluationReasoning,
-  EvaluationUncertainties,
-  ParsedBagData,
-} from '@brewmate/shared';
+import type { EvaluationReasoning, EvaluationUncertainties, ParsedBagData } from '@brewmate/shared';
 import { boolean, index, jsonb, pgTable, real, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 import { coffeeBagsTable } from './coffeeBagsTable.js';

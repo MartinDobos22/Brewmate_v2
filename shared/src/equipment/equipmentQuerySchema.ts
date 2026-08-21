@@ -10,3 +10,6 @@ export const equipmentQuerySchema = listQuerySchema.extend({
 });
 
 export type EquipmentQuery = z.infer<typeof equipmentQuerySchema>;
+
+/** The same filter as the app supplies it, before the API applies its defaults. */
+export type EquipmentFilter = Partial<EquipmentQuery>;

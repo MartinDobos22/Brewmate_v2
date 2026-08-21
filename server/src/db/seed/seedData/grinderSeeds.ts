@@ -6,7 +6,10 @@ import type { NewGrinderRow } from '../../schema/grindersCatalogTable.js';
  * Seeded grinders are verified by definition and belong to nobody, so neither
  * flag is written by hand.
  */
-export type GrinderSeed = Omit<NewGrinderRow, 'id' | 'isVerified' | 'createdByUserId' | 'createdAt'>;
+export type GrinderSeed = Omit<
+  NewGrinderRow,
+  'id' | 'isVerified' | 'createdByUserId' | 'createdAt'
+>;
 
 /**
  * The grinders Brewmate ships with.

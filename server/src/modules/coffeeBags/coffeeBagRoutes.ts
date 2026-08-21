@@ -73,9 +73,7 @@ export const coffeeBagRoutes: FastifyPluginAsyncZod<CoffeeBagRoutesOptions> = as
     async (request, reply) =>
       reply
         .status(HTTP_STATUS.created)
-        .send(
-          await options.coffeeBagService.create(requireCurrentUser(request).id, request.body),
-        ),
+        .send(await options.coffeeBagService.create(requireCurrentUser(request).id, request.body)),
   );
 
   app.patch(

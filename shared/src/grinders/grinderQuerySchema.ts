@@ -11,3 +11,6 @@ export const grinderQuerySchema = listQuerySchema.extend({
 });
 
 export type GrinderQuery = z.infer<typeof grinderQuerySchema>;
+
+/** The same filter as the app supplies it, before the API applies its defaults. */
+export type GrinderFilter = Partial<GrinderQuery>;

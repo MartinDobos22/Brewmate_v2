@@ -92,11 +92,7 @@ export const recipeRoutes: FastifyPluginAsyncZod<RecipeRoutesOptions> = async (a
       },
     },
     async (request) =>
-      options.recipeService.update(
-        requireCurrentUser(request).id,
-        request.params.id,
-        request.body,
-      ),
+      options.recipeService.update(requireCurrentUser(request).id, request.params.id, request.body),
   );
 
   app.delete(

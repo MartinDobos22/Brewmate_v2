@@ -270,7 +270,8 @@ describe('recipes', () => {
     const id = await createRecipe({ bagId, methodId: v60Id, params: TEST_BREW_PARAMS });
 
     expect(
-      (await api.remove(buildApiPath(API_ROUTES.recipeById, { id }), RETURNING_IDENTITY)).statusCode,
+      (await api.remove(buildApiPath(API_ROUTES.recipeById, { id }), RETURNING_IDENTITY))
+        .statusCode,
     ).toBe(HTTP_STATUS.ok);
   });
 });

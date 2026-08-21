@@ -8,3 +8,6 @@ export const coffeeBagQuerySchema = listQuerySchema.extend({
 });
 
 export type CoffeeBagQuery = z.infer<typeof coffeeBagQuerySchema>;
+
+/** The same filter as the app supplies it, before the API applies its defaults. */
+export type CoffeeBagFilter = Partial<CoffeeBagQuery>;

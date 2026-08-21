@@ -1,4 +1,10 @@
-import { API_ROUTES, grinderSchema, listResponseSchema, GRINDER_UNIT_TYPES, GRINDER_TYPICAL_USES } from '@brewmate/shared';
+import {
+  API_ROUTES,
+  grinderSchema,
+  listResponseSchema,
+  GRINDER_UNIT_TYPES,
+  GRINDER_TYPICAL_USES,
+} from '@brewmate/shared';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import { HTTP_STATUS } from '../../src/constants/httpStatus.js';
@@ -95,8 +101,6 @@ describe('grinder catalogue', () => {
   });
 
   it('requires authentication', async () => {
-    expect((await api.anonymousGet(API_ROUTES.grinders)).statusCode).toBe(
-      HTTP_STATUS.unauthorized,
-    );
+    expect((await api.anonymousGet(API_ROUTES.grinders)).statusCode).toBe(HTTP_STATUS.unauthorized);
   });
 });

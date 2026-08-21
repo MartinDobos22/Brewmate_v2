@@ -9,8 +9,7 @@ export const TASTE_PROFILE_SOURCES = {
   manual: 'manual',
 } as const;
 
-export type TasteProfileSource =
-  (typeof TASTE_PROFILE_SOURCES)[keyof typeof TASTE_PROFILE_SOURCES];
+export type TasteProfileSource = (typeof TASTE_PROFILE_SOURCES)[keyof typeof TASTE_PROFILE_SOURCES];
 
 /** Tuple form, required by Drizzle's `pgEnum`. */
 export const TASTE_PROFILE_SOURCE_VALUES = [

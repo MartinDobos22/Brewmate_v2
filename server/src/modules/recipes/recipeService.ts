@@ -138,9 +138,7 @@ export const createRecipeService = ({
     create: async (userId, { isPinned, ...input }): Promise<Recipe> => {
       await requireReferences(userId, input);
 
-      const created = toRecipe(
-        await repository.create({ ...input, isPinned: NOT_PINNED, userId }),
-      );
+      const created = toRecipe(await repository.create({ ...input, isPinned: NOT_PINNED, userId }));
 
       return isPinned === true ? applyPin(userId, created.id) : created;
     },

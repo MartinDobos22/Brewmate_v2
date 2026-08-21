@@ -85,7 +85,9 @@ describe('recipe chat', () => {
     expect(messages.items[0]?.recipePatch?.params.grindSetting).toBe(COARSER_GRIND);
 
     const recipe = recipeSchema.parse(
-      (await api.get(buildApiPath(API_ROUTES.recipeById, { id: recipeId }), RETURNING_IDENTITY)).json(),
+      (
+        await api.get(buildApiPath(API_ROUTES.recipeById, { id: recipeId }), RETURNING_IDENTITY)
+      ).json(),
     );
 
     expect(recipe.params.grindSetting).toBe(TEST_BREW_PARAMS.grindSetting);
@@ -121,8 +123,6 @@ describe('recipe chat', () => {
 
     await api.remove(buildApiPath(API_ROUTES.recipeById, { id: recipeId }), RETURNING_IDENTITY);
 
-    expect((await api.get(messagesPath, RETURNING_IDENTITY)).statusCode).toBe(
-      HTTP_STATUS.notFound,
-    );
+    expect((await api.get(messagesPath, RETURNING_IDENTITY)).statusCode).toBe(HTTP_STATUS.notFound);
   });
 });

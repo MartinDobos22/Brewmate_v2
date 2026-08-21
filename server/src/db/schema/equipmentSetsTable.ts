@@ -45,10 +45,7 @@ export const equipmentSetsTable = pgTable(
       .notNull()
       .references(() => usersTable.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
-    equipmentIds: jsonb('equipment_ids')
-      .$type<readonly string[]>()
-      .notNull()
-      .default(NO_EQUIPMENT),
+    equipmentIds: jsonb('equipment_ids').$type<readonly string[]>().notNull().default(NO_EQUIPMENT),
     /** What this place is usually missing, so a brew logged there starts honest. */
     defaultConstraints: jsonb('default_constraints')
       .$type<BrewConstraints>()
@@ -61,7 +58,9 @@ export const equipmentSetsTable = pgTable(
   },
   (table) => [
     uniqueIndex(USER_NAME_INDEX_NAME).on(table.userId, table.name),
-    uniqueIndex(SINGLE_DEFAULT_INDEX_NAME).on(table.userId).where(sql`${table.isDefault}`),
+    uniqueIndex(SINGLE_DEFAULT_INDEX_NAME)
+      .on(table.userId)
+      .where(sql`${table.isDefault}`),
     index(USER_SORT_INDEX_NAME).on(table.userId, table.sortOrder),
   ],
 );

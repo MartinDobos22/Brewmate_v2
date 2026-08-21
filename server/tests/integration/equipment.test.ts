@@ -72,9 +72,13 @@ describe('equipment', () => {
   it('updates equipment the caller owns', async () => {
     const id = await createGrinder();
 
-    const response = await api.patch(buildApiPath(API_ROUTES.equipmentById, { id }), RETURNING_IDENTITY, {
-      model: NEW_MODEL,
-    });
+    const response = await api.patch(
+      buildApiPath(API_ROUTES.equipmentById, { id }),
+      RETURNING_IDENTITY,
+      {
+        model: NEW_MODEL,
+      },
+    );
 
     expect(equipmentSchema.parse(response.json()).model).toBe(NEW_MODEL);
   });
@@ -82,9 +86,13 @@ describe('equipment', () => {
   it('refuses to update equipment belonging to somebody else', async () => {
     const id = await createGrinder();
 
-    const response = await api.patch(buildApiPath(API_ROUTES.equipmentById, { id }), SECOND_IDENTITY, {
-      model: NEW_MODEL,
-    });
+    const response = await api.patch(
+      buildApiPath(API_ROUTES.equipmentById, { id }),
+      SECOND_IDENTITY,
+      {
+        model: NEW_MODEL,
+      },
+    );
 
     expect(response.statusCode).toBe(HTTP_STATUS.notFound);
 
@@ -98,9 +106,10 @@ describe('equipment', () => {
   it('deletes equipment the caller owns', async () => {
     const id = await createGrinder();
 
-    expect((await api.remove(buildApiPath(API_ROUTES.equipmentById, { id }), RETURNING_IDENTITY)).statusCode).toBe(
-      HTTP_STATUS.ok,
-    );
+    expect(
+      (await api.remove(buildApiPath(API_ROUTES.equipmentById, { id }), RETURNING_IDENTITY))
+        .statusCode,
+    ).toBe(HTTP_STATUS.ok);
 
     const remaining = listResponseSchema(equipmentSchema).parse(
       (await api.get(API_ROUTES.equipment, RETURNING_IDENTITY)).json(),
