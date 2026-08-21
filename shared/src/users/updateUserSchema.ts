@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+import { WATER_TYPES } from '../enums/waterTypes.js';
+
+import { onboardingStateSchema } from './onboardingStateSchema.js';
 import { DISPLAY_NAME_MAX_LENGTH, DISPLAY_NAME_MIN_LENGTH } from './userFieldLimits.js';
 
 /**
@@ -14,6 +17,8 @@ export const updateUserRequestSchema = z
       .max(DISPLAY_NAME_MAX_LENGTH)
       .nullable()
       .optional(),
+    waterType: z.enum(WATER_TYPES).optional(),
+    onboardingState: onboardingStateSchema.nullable().optional(),
   })
   .strict();
 

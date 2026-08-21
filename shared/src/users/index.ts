@@ -5,7 +5,11 @@ export {
   DISPLAY_NAME_MAX_LENGTH,
   EMAIL_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
+  ONBOARDING_STEP_MAX_LENGTH,
+  ONBOARDING_VERSION_MIN,
 } from './userFieldLimits.js';
+export { onboardingStateSchema } from './onboardingStateSchema.js';
+export type { OnboardingState } from './onboardingStateSchema.js';
 export { userSchema } from './userSchema.js';
 export type { User } from './userSchema.js';
 export { updateUserRequestSchema } from './updateUserSchema.js';
