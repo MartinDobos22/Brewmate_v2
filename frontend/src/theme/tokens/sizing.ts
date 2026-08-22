@@ -18,6 +18,12 @@ export const SIZE = {
   sliderThumbSize: 24,
   stepperButtonSize: 40,
   swatchSize: 56,
+  /** A bar in the taste profile chart: readable, but not a block of colour. */
+  profileBarHeight: 10,
+  /** The onboarding progress bar, thinner than a slider track is tall. */
+  progressBarHeight: 6,
+  /** A questionnaire answer card. Big enough to tap without aiming. */
+  optionCardMinHeight: 72,
   /** Height of a boxed preview on the design system screen. */
   previewBoxHeight: 180,
   motionTrackHeight: 8,

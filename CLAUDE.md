@@ -3,12 +3,14 @@
 A mobile companion for brewing specialty coffee. This repository is a pnpm
 workspace holding the mobile app, the API and the contract they share.
 
-**Current state:** monorepo skeleton + working backend + mobile app skeleton
-with authentication, plus the complete data layer: the PostgreSQL schema, the
-REST API for every entity and the TanStack Query hooks that talk to it. The
+**Current state:** monorepo skeleton + working backend + mobile app with
+authentication, plus the complete data layer: the PostgreSQL schema, the REST
+API for every entity and the TanStack Query hooks that talk to it. The
 reference data is filled in - the brewing methods and the grinder catalogue -
-and the grinder catalogue is the first screen of real product UI: searching it
-and contributing to it. There is still no AI.
+and the product UI now covers the whole first run: the grinder catalogue, the
+onboarding flow (taste questionnaire, equipment, water, sets, a calibration
+brew) and the profile screen it all ends up in. There is still no AI: the
+calibration brew is read by a Slovak keyword lexicon, not by a model.
 
 ---
 
@@ -183,9 +185,9 @@ frontend/
     ├── constants/      config, routes, navigation, queryKeys, storageKeys, limits, brewing, http, time
     ├── i18n/           Slovak copy, split by domain under translations/sk/
     ├── components/
-    │   ├── ui/         Button, Card, Text, Input, Chip, Sheet, ListItem, ChatBubble,
-    │   │               Slider, NumberStepper, EmptyState, LoadingState, ErrorState,
-    │   │               ValueDisplay - each its own folder
+    │   ├── ui/         Button, Card, Text, Input, Chip, OptionCard, Sheet, ListItem,
+    │   │               ChatBubble, Slider, NumberStepper, EmptyState, LoadingState,
+    │   │               ErrorState, ValueDisplay - each its own folder
     │   └── layout/     Screen, AppProviders, RootStack, TabsNavigator, TabBarIcon
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
     │                   chat, tasteProfile, bagEvaluations, onboarding, profile,
@@ -193,7 +195,8 @@ frontend/
     │                   hooks/ for the queries and mutations over them
     ├── hooks/          only genuinely global hooks, incl. useEntityMutation and
     │                   useDebouncedValue
-    ├── lib/            apiClient, firebase, queryClient, queryCache, formatters
+    ├── lib/            apiClient, firebase, queryClient, queryCache, formatters,
+    │                   fingerprint
     ├── stores/         Zustand - UI state only
     └── types/
 ```
@@ -208,10 +211,12 @@ frontend/
   made of stays under `src/`. A route file renders one screen component and
   nothing else - no logic, no layout.
 - **Slovak copy is split by domain** under `src/i18n/translations/sk/`
-  (`common`, `navigation`, `screens`, `errors`, `designSystem`) and merged in
-  `sk/index.ts`. One file would break the 150-line limit. `SK_TRANSLATIONS` is
-  the source of truth for the key list: every future locale is typed against it,
-  so a missing translation is a type error.
+  (`common`, `auth`, `navigation`, `screens`, `grinders`, `onboarding`,
+  `tasteQuestionsDirect`, `tasteQuestionsIndirect`, `equipmentSetup`,
+  `waterAndSets`, `calibration`, `tasteProfile`, `errors`, `designSystem`) and
+  merged in `sk/index.ts`. One file would break the 150-line limit.
+  `SK_TRANSLATIONS` is the source of truth for the key list: every future locale
+  is typed against it, so a missing translation is a type error.
 
 ### Theming
 
@@ -240,8 +245,10 @@ kind of element has the same radius everywhere.
   `PersistQueryClientProvider`. Keys come from `constants/queryKeys.ts`, the
   storage key from `constants/storageKeys.ts`, every duration from
   `constants/limits.ts`.
-- **Zustand** owns UI state only (theme preference, onboarding flag). Server
-  data never enters the store.
+- **Zustand** owns UI state only - at present the theme preference and nothing
+  else. Server data never enters the store, and neither does onboarding
+  progress: that belongs to the account rather than to the device, so it lives
+  in `users.onboarding_state` and is read through `/me`.
 - `lib/apiClient` is the only thing that talks to the API. Paths come from
   `@brewmate/shared` and every response is validated against the shared schema -
   a body that violates the contract throws, it does not resolve.
@@ -288,6 +295,127 @@ The first product screen: `/grinders`, reached from the inventory tab.
   form, and so does a button under the list. The form asks for brand, model,
   scale, range and step - never a calibration curve, because nobody has one to
   hand and an entry without one still works.
+
+### Onboarding
+
+The first run, on one route (`/onboarding`) with nine steps: welcome, taste,
+grinder, brewers, gear, water, sets, calibration, done. One route rather than
+nine, because the steps are a single conversation - going back a step must not
+pop somebody out of the flow.
+
+- **The state lives on the server**, in `users.onboarding_state`. Three fields
+  carry two facts and the combination _is_ the state machine:
+  `completedAt === null` means still inside the flow; `completedAt` set with
+  `currentStep === null` means finished; `completedAt` set with `currentStep`
+  still named means they left early, at that step. There is deliberately no
+  `skipped` flag - it would be a third field restating what the other two
+  already say, and two of them could disagree.
+- **Every screen can be left**, and says so. Onboarding a user cannot escape is
+  onboarding they leave the app from instead, and whatever they answered so far
+  is already saved.
+- **`OnboardingGate` only ever redirects _into_ the flow**, once per account.
+  Leaving is the flow's own business; a gate that also pushed people out would
+  fight the step machine every time it moved, and the last screen would bounce
+  back into the flow through the gap before its optimistic write lands.
+- **`ONBOARDING_FLOW_VERSION` invalidates a stored state.** "You were on step
+  five" means nothing once step five is a different screen, so a state from an
+  older version is started over and its answers are dropped with it.
+- **The profile screen reopens a single step** through `/onboarding?step=<id>`.
+  One screen for "which grinder", used the first time and every time after -
+  and in that mode the step saves its own changes and returns, without claiming
+  the whole flow was completed.
+
+### The taste questionnaire
+
+Ten questions, one per screen, answered by tapping a card - no confirm button,
+because the card the finger is already on is the confirmation.
+
+- **Direct and indirect questions alternate.** Ten questions about coffee in a
+  row turn into an exam somebody feels unqualified to sit. A question about tea
+  or chocolate between them keeps it a conversation, and is the better evidence
+  of the two: most people cannot say how much body they want, but everybody
+  knows whether they reach for milk chocolate or dark.
+- **One file per question** under `constants/tasteQuestions/`, each carrying its
+  options and what each option claims. Adding a question is a file and a line in
+  the index.
+- **The answers fold into one observation, not ten events.** Every option states
+  where this person's cup sits on an axis, so several answers about the same
+  axis are averaged, weighted by how far their question is trusted. Ten separate
+  events would let the last question shout down the first nine by arriving last.
+- **`sourceRef` is a fingerprint of the answers** (`q-1-<hash>`, FNV-1a from
+  `lib/fingerprint`). Identical answers are the same evidence and count once,
+  which makes a retry on a flaky connection safe; different answers are new
+  evidence, which is what makes retaking the questionnaire mean anything.
+- **Each tap is written to the server before the next question appears**, so
+  closing the app halfway through loses nothing. The taste event itself is sent
+  once, at the end.
+
+### The calibration brew
+
+Optional, offered after the questionnaire: Brewmate proposes one reference
+recipe for the gear the user just wrote down, they brew it, and they describe
+the cup in their own words.
+
+- **The screen opens by saying it is not a test.** Somebody who thinks they are
+  being marked brews more carefully than they ever will again and describes the
+  result the way they think they should - the one outcome that makes this step
+  worthless.
+- **The description is read by a Slovak keyword lexicon**, not by a model:
+  deterministic, offline, and - the part that matters - showable back to the
+  drinker word for word before anything is written. "Rozumiem tomu takto" is
+  only an honest sentence if the app really can say what it understood.
+  Understanding nothing is a normal outcome and saves nothing.
+- **The lexicon reads preferences, not measurements.** "Bola príliš kyslá" is a
+  complaint about this cup and a statement about the next one, so it lands as a
+  low acidity preference. Order is the mechanism: specific phrasings come first,
+  so "nebola horká" is matched before the bare "hork" inside it, and each axis
+  is claimed only once.
+- **The description is stored as a chat message on the recipe**, and the taste
+  event points at that message id. What the app concluded can always be traced
+  back to the sentence somebody actually wrote, and re-sending it counts once.
+
+### The profile screen
+
+Everything the app believes about somebody, and every way to change it: the
+five axes as a bar chart, the flavour tags it has an opinion about, the
+confidence indicator, the cupboard, the water, the sets, and the two ways out
+of the product.
+
+- **The confidence line matters more than the chart.** A profile built from one
+  questionnaire is a guess, and a guess drawn as a neat bar chart stops looking
+  like one. `confidenceLevel` is shown as one of four words rather than a
+  percentage - "0,18" invites the reader to believe the second digit - with the
+  brew count beside it, because "celkom slušne" after no brews means something
+  different from the same word after twenty.
+- **The bars are always the same five, in the same order, against the full
+  scale**, so a profile that has barely moved off neutral looks like one.
+- **Two ways to correct it, side by side.** Answering the questionnaire again is
+  evidence; moving the sliders is an instruction. The manual event is sent from
+  the most trusted source at full weight, so what the user leaves on the sliders
+  is what the profile says afterwards - anything less would be an app arguing
+  with somebody about their own taste. Its `sourceRef` fingerprints the values,
+  so saving the same sliders twice counts once.
+- **A flavour tag the app has no Slovak word for is printed as it was stored**,
+  the way a coffee's variety is. The vocabulary belongs to the world.
+
+### Equipment, and what it is for
+
+- **A brewer points at a brew method** through `params.methodId`, and that link
+  is the whole reason the cupboard is written down: a method nothing points at
+  is never offered. `useAvailableBrewMethods` is the one place that rule lives,
+  and the brew screen shows its result.
+- **The screen offers methods, not equipment types.** Nobody thinks of a V60 as
+  "a piece of equipment of type brewer with a method id"; they think of it as
+  the thing they make coffee in. Each tick writes or removes the row behind it.
+- **Everything measurable is optional.** A brewer nobody measured is still a
+  brewer, and Brewmate would rather say it does not know a kettle's capacity
+  than assume one and recommend a dose that overflows it.
+- **"Nemám" is a first-class answer** for the scale and the grinder. It changes
+  what the app may recommend, and the API prices exactly that difference into a
+  brew's learning weight.
+- **A set introduces no equipment.** It is a named selection of what is already
+  owned, plus what that place is usually missing, and the default one switches
+  with a single tap above the brew screen.
 
 ### The design system screen
 
@@ -517,6 +645,15 @@ knowing before changing anything:
 - **`jsonb` only where the shape is genuinely open** - brew parameters,
   constraints, calibration curves, onboarding state. Every one of them is still
   typed by a Zod schema in `shared` and validated at the edge.
+- **`equipment.params` stays open, but has typed corners.** A kettle and a
+  scale have nothing in common, so the column accepts anything; the handful of
+  properties Brewmate actually reasons about - a brewer's method, capacity, dose
+  window and basket, a kettle's temperature control - are described by
+  `shared/src/equipment/equipmentParamsSchema.ts` and read back through
+  `readBrewerParams` and its siblings. A blob that does not match is read as
+  "nothing known" rather than thrown away or asserted into shape: the column is
+  open by design, so meeting something the schema does not describe is a normal
+  event, not a failure.
 - **`ai_usage_logs.cost_estimate` is `numeric`** and travels as a decimal
   string. Everything else here is a measurement where `real` is right; these
   rows get summed over months, and a float sum of fractions of a cent is wrong

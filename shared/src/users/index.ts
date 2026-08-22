@@ -7,6 +7,7 @@ export {
   PASSWORD_MIN_LENGTH,
   ONBOARDING_STEP_MAX_LENGTH,
   ONBOARDING_VERSION_MIN,
+  ONBOARDING_ANSWER_MAX_LENGTH,
 } from './userFieldLimits.js';
 export { onboardingStateSchema } from './onboardingStateSchema.js';
 export type { OnboardingState } from './onboardingStateSchema.js';

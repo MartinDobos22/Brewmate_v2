@@ -18,3 +18,6 @@ export const PASSWORD_MIN_LENGTH = 6;
 /** Bounds for the onboarding state blob. */
 export const ONBOARDING_STEP_MAX_LENGTH = 64;
 export const ONBOARDING_VERSION_MIN = 1;
+
+/** The id of a tapped questionnaire option, as stored against its question. */
+export const ONBOARDING_ANSWER_MAX_LENGTH = 64;

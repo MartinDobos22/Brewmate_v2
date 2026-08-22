@@ -1,1 +1,9 @@
 export { OnboardingScreen } from './OnboardingScreen';
+export { OnboardingGate } from './OnboardingGate';
+export type { OnboardingGateProps } from './OnboardingGate';
+export { OnboardingStepLayout } from './OnboardingStepLayout';
+export type { OnboardingStepLayoutProps } from './OnboardingStepLayout';
+export { OnboardingProgress } from './OnboardingProgress';
+export type { OnboardingProgressProps } from './OnboardingProgress';
+export { OnboardingStepContent } from './OnboardingStepContent';
+export type { OnboardingStepContentProps } from './OnboardingStepContent';
