@@ -1,0 +1,1 @@
+ALTER TYPE "public"."brew_method_category" ADD VALUE 'batch';

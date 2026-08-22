@@ -9,6 +9,7 @@ export const ROUTES = {
   forgotPassword: '/forgot-password',
   verifyEmail: '/verify-email',
   inventory: '/inventory',
+  grinders: '/grinders',
   brew: '/brew',
   profile: '/profile',
   onboarding: '/onboarding',

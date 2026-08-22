@@ -1,4 +1,4 @@
-import type { GrinderTypicalUse } from '@brewmate/shared';
+import { GRINDER_SEARCH_TERMS_MAX, type GrinderTypicalUse } from '@brewmate/shared';
 import { and, asc, eq, or, sql, type SQL } from 'drizzle-orm';
 
 import { EXTRA_ROW_FOR_HAS_MORE } from '../../constants/pagination.js';
@@ -7,6 +7,8 @@ import { firstRowOrNull } from '../../db/rows/firstRowOrNull.js';
 import { requireRow } from '../../db/rows/requireRow.js';
 import type { GrinderRow, NewGrinderRow } from '../../db/schema/grindersCatalogTable.js';
 import { grindersCatalogTable } from '../../db/schema/grindersCatalogTable.js';
+import { splitSearchTerms } from '../../db/sql/splitSearchTerms.js';
+import { toContainsPattern } from '../../db/sql/toContainsPattern.js';
 
 const VERIFIED = true;
 
@@ -16,6 +18,8 @@ export interface GrinderListFilter {
   readonly offset: number;
   readonly typicalUse?: GrinderTypicalUse;
   readonly verifiedOnly?: boolean;
+  /** Free text, matched word by word against the brand and the model. */
+  readonly search?: string;
 }
 
 export interface GrinderRepository {
@@ -39,6 +43,21 @@ const visibleTo = (userId: string): SQL | undefined =>
     eq(grindersCatalogTable.createdByUserId, userId),
   );
 
+/** The searchable text of a row: "Comandante C40 MK4", not two columns. */
+const searchableName = sql`${grindersCatalogTable.brand} || ' ' || ${grindersCatalogTable.model}`;
+
+/**
+ * Every word has to appear somewhere in the brand and model together, so a
+ * half-remembered "1zpresso pro" still finds the JX-Pro, and the order the
+ * words were typed in does not matter.
+ */
+const matchesSearch = (search: string): SQL | undefined =>
+  and(
+    ...splitSearchTerms(search, GRINDER_SEARCH_TERMS_MAX).map(
+      (term: string): SQL => sql`${searchableName} ilike ${toContainsPattern(term)}`,
+    ),
+  );
+
 export const createGrinderRepository = (db: Database): GrinderRepository => ({
   list: async ({
     userId,
@@ -46,6 +65,7 @@ export const createGrinderRepository = (db: Database): GrinderRepository => ({
     offset,
     typicalUse,
     verifiedOnly,
+    search,
   }): Promise<readonly GrinderRow[]> => {
     const conditions: (SQL | undefined)[] = [
       verifiedOnly === true ? eq(grindersCatalogTable.isVerified, VERIFIED) : visibleTo(userId),
@@ -53,6 +73,10 @@ export const createGrinderRepository = (db: Database): GrinderRepository => ({
 
     if (typicalUse !== undefined) {
       conditions.push(eq(grindersCatalogTable.typicalUse, typicalUse));
+    }
+
+    if (search !== undefined) {
+      conditions.push(matchesSearch(search));
     }
 
     return db

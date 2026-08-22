@@ -30,11 +30,11 @@ export const createGrinderService = (repository: GrinderRepository): GrinderServ
   return {
     getById,
 
-    list: async (userId, { limit, offset, typicalUse, verifiedOnly }) =>
+    list: async (userId, { limit, offset, typicalUse, verifiedOnly, search }) =>
       toPage({
-        rows: (await repository.list({ userId, limit, offset, typicalUse, verifiedOnly })).map(
-          toGrinder,
-        ),
+        rows: (
+          await repository.list({ userId, limit, offset, typicalUse, verifiedOnly, search })
+        ).map(toGrinder),
         limit,
         offset,
       }),
