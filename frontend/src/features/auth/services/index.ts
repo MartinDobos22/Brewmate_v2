@@ -1,4 +1,4 @@
-export { fetchCurrentUser, requestAccountDeletion } from './accountApi';
+export { fetchCurrentUser, updateCurrentUser, requestAccountDeletion } from './accountApi';
 export { signInWithApple } from './appleAuth';
 export { toAppleDisplayName } from './appleDisplayName';
 export { AUTH_ERROR_KEYS, API_ERROR_KEYS } from './authErrorKeys';

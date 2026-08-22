@@ -16,3 +16,7 @@ export const HTTP_STATUS = {
 } as const;
 
 export const CONTENT_TYPE_JSON = 'application/json';
+
+/** Punctuation of a query string. Even this is not written at a call site. */
+export const QUERY_STRING_PREFIX = '?';
+export const QUERY_STRING_SEPARATOR = '&';

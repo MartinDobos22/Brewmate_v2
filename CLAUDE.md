@@ -4,8 +4,9 @@ A mobile companion for brewing specialty coffee. This repository is a pnpm
 workspace holding the mobile app, the API and the contract they share.
 
 **Current state:** monorepo skeleton + working backend + mobile app skeleton
-with authentication. The app has navigation, a design system, the data plumbing
-and a complete sign-in flow; it has no product features on purpose.
+with authentication, plus the complete data layer: the PostgreSQL schema, the
+REST API for every entity and the TanStack Query hooks that talk to it. There
+is still no AI and no product UI on purpose.
 
 ---
 
@@ -51,6 +52,7 @@ Server-only:
 | -------------------------------------------- | --------------------------------------------- |
 | `pnpm --filter @brewmate/server db:generate` | Generate a migration from the Drizzle schema  |
 | `pnpm --filter @brewmate/server db:migrate`  | Apply pending migrations                      |
+| `pnpm --filter @brewmate/server db:seed`     | Fill the two catalogues (idempotent)          |
 | `pnpm --filter @brewmate/server db:studio`   | Drizzle Studio                                |
 | `pnpm --filter @brewmate/server test`        | Integration tests (needs `TEST_DATABASE_URL`) |
 
@@ -180,9 +182,11 @@ frontend/
     │   │               ValueDisplay - each its own folder
     │   └── layout/     Screen, AppProviders, RootStack, TabsNavigator, TabBarIcon
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
-    │                   chat, onboarding, profile, designSystem)
-    ├── hooks/          only genuinely global hooks
-    ├── lib/            apiClient, firebase, queryClient, formatters
+    │                   chat, tasteProfile, bagEvaluations, onboarding, profile,
+    │                   designSystem); each has services/ for the API calls and
+    │                   hooks/ for the queries and mutations over them
+    ├── hooks/          only genuinely global hooks, incl. useEntityMutation
+    ├── lib/            apiClient, firebase, queryClient, queryCache, formatters
     ├── stores/         Zustand - UI state only
     └── types/
 ```
@@ -237,6 +241,24 @@ kind of element has the same radius everywhere.
 - `lib/apiClient` takes an `AuthTokenProvider` and runs with the Firebase one:
   every request carries `Authorization: Bearer <id token>`, and a 401 is retried
   exactly once with a force-refreshed token before it reaches the caller.
+
+**Optimistic updates, and where they stop.** Two hooks in
+`hooks/useEntityMutation/` divide every write in the app:
+
+- `useOptimisticEntityMutation` is for changes whose outcome is not in doubt -
+  pinning a recipe, archiving a bag, weighing out a dose, renaming a set,
+  marking a bag as bought. The patch goes into every cached page and the detail
+  entry, the previous contents are kept, a failure puts them back, and the
+  domain is refetched afterwards so the guess never outlives the answer.
+- `useInvalidatingMutation` is for everything the server decides: logging a brew
+  (the bag comes from the recipe and the learning weight is priced from the
+  declared constraints), adding a taste event (which re-folds the whole
+  profile), contributing a grinder (which may already exist), deleting a recipe
+  (which is refused once it has been brewed).
+
+The line is deliberate. Guessing at a value the API is about to compute means
+showing the user a number that is about to change underneath them, and the
+numbers in question are exactly the ones this product exists to get right.
 
 ### The design system screen
 
@@ -314,9 +336,20 @@ server/src/
 ├── db/               Drizzle client, schema, migrations
 ├── errors/           AppError, typed factories, error handler, not-found handler
 ├── auth/             Token verifier + identity deleter, Firebase implementations, auth plugin
-├── modules/
+├── modules/          one domain each: repository -> service -> routes + mapper
 │   ├── health/       healthService + healthRoutes
-│   └── users/        repository -> service -> routes, plus row->contract mapper
+│   ├── users/        the account behind a Firebase identity
+│   ├── tasteProfiles/ profile, its audit trail and the fold that rebuilds it
+│   ├── brewMethods/  the method catalogue, as data
+│   ├── grinders/     the shared grinder catalogue, extensible by users
+│   ├── equipment/    what somebody owns
+│   ├── equipmentSets/ saved combinations of it
+│   ├── coffeeBags/   the cupboard
+│   ├── bagEvaluations/ "should I buy this bag?", asked and answered
+│   ├── recipes/      one way of brewing one coffee
+│   ├── recipeChat/   the conversation about a recipe
+│   ├── brewLogs/     cups that were actually brewed
+│   └── aiUsage/      model calls, recorded for cost
 └── types/            Fastify module augmentation
 ```
 
@@ -376,12 +409,33 @@ on the message. Throw an `AppError` (via `unauthorizedError`, `notFoundError`,
 
 ### Endpoints
 
-| Method | Path      | Auth | Purpose                                       |
-| ------ | --------- | ---- | --------------------------------------------- |
-| GET    | `/health` | no   | liveness + database check (503 when degraded) |
-| GET    | `/me`     | yes  | current user, auto-provisioned on first call  |
-| PATCH  | `/me`     | yes  | update `displayName`                          |
-| DELETE | `/me`     | yes  | erase the account and its Firebase identity   |
+`/health` is the only unauthenticated route. Everything else requires a Firebase
+ID token and is scoped to the caller _in the WHERE clause_ - a row belonging to
+somebody else answers with the same 404 as a row that does not exist, so the API
+is not an oracle for other people's ids.
+
+| Method           | Path                         | Purpose                                          |
+| ---------------- | ---------------------------- | ------------------------------------------------ |
+| GET              | `/health`                    | liveness + database check (503 when degraded)    |
+| GET/PATCH/DELETE | `/me`                        | the account; PATCH edits name, water, onboarding |
+| GET              | `/taste-profile`             | the profile, neutral until something teaches it  |
+| GET/POST         | `/taste-profile/events`      | the audit trail; POST is safe to retry           |
+| POST             | `/taste-profile/recompute`   | rebuild the profile from its events              |
+| GET              | `/brew-methods`              | the method catalogue                             |
+| GET/POST         | `/grinders`, `/grinders/:id` | the grinder catalogue, extensible by users       |
+| CRUD             | `/equipment`                 | what the user owns                               |
+| CRUD             | `/equipment-sets`            | saved combinations of it                         |
+| CRUD             | `/coffee-bags`               | the cupboard; DELETE archives, it does not erase |
+| GET/POST/PATCH   | `/bag-evaluations`           | verdicts on bags seen in a shop                  |
+| CRUD             | `/recipes`                   | recipes; DELETE is refused once one was brewed   |
+| GET/POST         | `/recipes/:id/messages`      | the conversation about a recipe                  |
+| CRUD             | `/brew-logs`                 | cups actually brewed                             |
+| GET              | `/ai-usage`                  | this account's model usage; read-only by design  |
+
+Every list endpoint takes `limit` and `offset` and answers
+`{ items, limit, offset, hasMore }`. `hasMore` comes from reading one row beyond
+the page rather than from a `count(*)`, which on a growing table would cost more
+than the page it describes.
 
 Both request bodies and responses are validated against the shared Zod schemas.
 A response that violates the contract is a 500, not a silent success.
@@ -392,6 +446,63 @@ A response that violates the contract is a 500, not a silent success.
 
 PostgreSQL hosted on **Neon**. There is no local database and no Docker Compose -
 do not add one.
+
+### The schema, and why it looks like this
+
+Thirteen tables. Everything a user owns carries
+`user_id references users(id) on delete cascade`, which is what makes
+`DELETE /me` erase an account rather than merely disown it. The decisions worth
+knowing before changing anything:
+
+- **Closed sets the code branches on are `pgEnum`s** built from the value lists
+  in `shared/src/enums/`, so a column cannot accept what the contract rejects.
+  Anything only a human reads - a coffee's process, its variety - is `text`,
+  because that vocabulary belongs to the world rather than to the code.
+- **`brew_methods` are rows, not an enum.** Nothing branches on `key`; adding a
+  method is an insert. Retired methods are flagged, never deleted, because
+  recipes point at them.
+- **`taste_profiles` has `user_id` as its primary key.** A profile is a
+  singleton per account, so a second one is impossible rather than unlikely.
+- **`taste_profile_events` is append-only and the profile is its fold.** Adding
+  an event replays the whole trail rather than patching the row, so the profile
+  is always exactly what its evidence says. `source_ref`, with a partial unique
+  index on `(user_id, source, source_ref)`, is what makes a repeated submission
+  count once.
+- **Pinned recipes need two partial unique indexes, not one.** `bag_id` is
+  nullable for a quick brew, and SQL treats two NULLs as different values - a
+  single index over `(user, bag, method)` would let every bagless recipe stay
+  pinned. Pinning itself is done transactionally by the service; the indexes are
+  the backstop.
+- **`brew_logs.profile_learning_weight` is computed once, on the way in**, from
+  the constraints declared for that brew. Derived on read, it would rewrite
+  history: the day somebody buys a kettle with temperature control, every
+  disappointing cup they made at a cabin would turn into evidence about their
+  taste.
+- **`grinders_catalog.created_by_user_id` is nulled, not cascaded.** The entry
+  is shared data other people's equipment points at; only the attribution is
+  personal.
+- **`equipment_sets.equipment_ids` is `jsonb`,** so the database cannot enforce
+  those references and the service does it instead: every id must exist and
+  belong to the caller, and deleting a piece of gear prunes it out of that
+  user's sets. This is the one place where code stands in for the database.
+- **`jsonb` only where the shape is genuinely open** - brew parameters,
+  constraints, calibration curves, onboarding state. Every one of them is still
+  typed by a Zod schema in `shared` and validated at the edge.
+- **`ai_usage_logs.cost_estimate` is `numeric`** and travels as a decimal
+  string. Everything else here is a measurement where `real` is right; these
+  rows get summed over months, and a float sum of fractions of a cent is wrong
+  in the way nobody notices until the invoice.
+- **`roast_date` is a `date`.** A roast date has no time and no timezone;
+  stored as `timestamptz` the resting window would come out a day wrong.
+
+Foreign keys cascade rather than restrict even where a rule says "you cannot
+delete this" - a `restrict` anywhere in the graph would make deleting an account
+fail against its own history. Those rules live in the services, which is where
+they can answer with a 409 instead of a constraint violation.
+
+Reference data lives in `server/src/db/seed/`. `db:seed` is idempotent: methods
+are matched on `key`, grinders on brand and model, so it can be run against a
+fresh branch or an existing one with the same result.
 
 Two branches:
 
@@ -415,8 +526,18 @@ Integration tests only, running against the real Neon test branch through
 
 - `tests/setup/globalSetup.ts` migrates the test branch once per run
 - `tests/setup/createTestContext.ts` boots the real app with a stub verifier
-- `truncateTables` resets state between tests
+- `tests/setup/testApi.ts` cuts the `app.inject` boilerplate out of every test
+- `truncateTables` resets state between tests, naming only the roots -
+  everything a user owns cascades from `users`
 - `fileParallelism` is off: all test files share one database branch
+
+The tests are written around the schema decisions rather than around the CRUD:
+that both pinned-recipe rules hold (including the bagless one SQL would
+otherwise let through), that constraints discount a brew's learning weight and
+correcting them re-prices it, that a repeated questionnaire counts once, that a
+recompute reproduces the stored profile exactly, that deleting an account takes
+everything but leaves a contributed catalogue entry without its author, and that
+one account's rows are invisible to another.
 
 Tests are skipped in CI when `TEST_DATABASE_URL` is not configured, and fail
 loudly when it is set but unreachable.

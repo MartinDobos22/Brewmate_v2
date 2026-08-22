@@ -8,6 +8,8 @@ export const toUser = (row: UserRow): User => ({
   firebaseUid: row.firebaseUid,
   email: row.email,
   displayName: row.displayName,
+  waterType: row.waterType,
+  onboardingState: row.onboardingState ?? null,
   createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),
 });

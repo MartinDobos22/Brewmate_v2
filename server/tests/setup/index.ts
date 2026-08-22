@@ -1,5 +1,7 @@
 export { authorizationHeaderFor } from './authorizationHeader.js';
 export { createTestContext } from './createTestContext.js';
+export { createTestApi } from './testApi.js';
+export type { TestApi } from './testApi.js';
 export type { TestContext } from './createTestContext.js';
 export { createFakeIdentityDeleter } from './fakeIdentityDeleter.js';
 export type { RecordingIdentityDeleter } from './fakeIdentityDeleter.js';

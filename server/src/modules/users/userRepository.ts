@@ -1,3 +1,4 @@
+import type { OnboardingState, WaterType } from '@brewmate/shared';
 import { eq, sql } from 'drizzle-orm';
 
 import type { Database } from '../../db/databaseTypes.js';
@@ -12,6 +13,8 @@ export interface ProvisionUserInput {
 
 export interface UpdatableUserFields {
   readonly displayName?: string | null;
+  readonly waterType?: WaterType;
+  readonly onboardingState?: OnboardingState | null;
 }
 
 export interface UserRepository {
