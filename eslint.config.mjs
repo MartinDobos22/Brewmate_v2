@@ -23,8 +23,16 @@ const TOKEN_FILES = ['frontend/src/theme/tokens/**/*.ts'];
 /**
  * The only directories where a numeric literal may sit inside an object
  * literal. Everywhere else a number must come from one of these files.
+ *
+ * The seed folder is reference data - ratio windows, collar ranges, micron
+ * curves - which is nothing but numbers written down once. Naming each of them
+ * would produce a constants file that is a worse copy of the same list.
  */
-const CONSTANT_FILES = ['**/constants/**/*.ts', 'frontend/src/theme/tokens/**/*.ts'];
+const CONSTANT_FILES = [
+  '**/constants/**/*.ts',
+  'frontend/src/theme/tokens/**/*.ts',
+  'server/src/db/seed/seedData/**/*.ts',
+];
 
 const TOOLING_FILES = ['eslint.config.mjs', '**/*.config.js', '**/*.config.mjs', '**/*.config.ts'];
 

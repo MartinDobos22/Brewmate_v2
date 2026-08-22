@@ -22,3 +22,5 @@ export { useDeleteEquipmentSet } from './useDeleteEquipmentSet';
 export { useGrinders } from './useGrinders';
 export { useGrinder } from './useGrinder';
 export { useCreateGrinder } from './useCreateGrinder';
+export { useGrinderCatalog } from './useGrinderCatalog';
+export type { GrinderCatalog } from './useGrinderCatalog';

@@ -1,3 +1,4 @@
-export { InventoryScreen } from './components';
+export { InventoryScreen, GrinderCatalogScreen } from './components';
+export * from './constants';
 export * from './hooks';
 export * from './services';

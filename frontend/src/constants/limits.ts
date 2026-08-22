@@ -14,6 +14,8 @@ export const LIMITS = {
   queryRetryCount: 2,
   /** A request that takes longer than this is aborted. */
   requestTimeoutMs: MILLISECONDS_PER_MINUTE / 4,
+  /** How long typing has to stop before a search reaches the API. */
+  searchDebounceMs: 300,
 } as const;
 
 export type LimitToken = keyof typeof LIMITS;

@@ -41,5 +41,7 @@ export const createSheetStyles = (theme: Theme): SheetStyleMap =>
       paddingHorizontal: theme.layout.screenEdge,
       paddingTop: theme.spacing.md,
       gap: theme.spacing.md,
+      /** Lets tall content scroll inside the panel instead of past its edge. */
+      flexShrink: 1,
     },
   });

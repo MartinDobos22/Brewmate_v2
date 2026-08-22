@@ -5,8 +5,10 @@ workspace holding the mobile app, the API and the contract they share.
 
 **Current state:** monorepo skeleton + working backend + mobile app skeleton
 with authentication, plus the complete data layer: the PostgreSQL schema, the
-REST API for every entity and the TanStack Query hooks that talk to it. There
-is still no AI and no product UI on purpose.
+REST API for every entity and the TanStack Query hooks that talk to it. The
+reference data is filled in - the brewing methods and the grinder catalogue -
+and the grinder catalogue is the first screen of real product UI: searching it
+and contributing to it. There is still no AI.
 
 ---
 
@@ -157,6 +159,10 @@ Exemptions, and only these:
 - `frontend/src/theme/tokens/**` - the only place a hex colour may exist.
 - `**/constants/**` and the token folder - the only places a number may sit
   inside an object literal.
+- `server/src/db/seed/seedData/**` - reference data, which is nothing but
+  numbers written down once: ratio windows, collar ranges, micron curves.
+  Naming each of them would produce a constants file that is a worse copy of
+  the same list.
 - `*.config.ts` / `*.config.js` / `eslint.config.mjs` - tooling, not application
   code; `no-magic-numbers` is off there.
 
@@ -185,7 +191,8 @@ frontend/
     │                   chat, tasteProfile, bagEvaluations, onboarding, profile,
     │                   designSystem); each has services/ for the API calls and
     │                   hooks/ for the queries and mutations over them
-    ├── hooks/          only genuinely global hooks, incl. useEntityMutation
+    ├── hooks/          only genuinely global hooks, incl. useEntityMutation and
+    │                   useDebouncedValue
     ├── lib/            apiClient, firebase, queryClient, queryCache, formatters
     ├── stores/         Zustand - UI state only
     └── types/
@@ -259,6 +266,28 @@ kind of element has the same radius everywhere.
 The line is deliberate. Guessing at a value the API is about to compute means
 showing the user a number that is about to change underneath them, and the
 numbers in question are exactly the ones this product exists to get right.
+
+### The grinder catalogue
+
+The first product screen: `/grinders`, reached from the inventory tab.
+
+- **Search is a server query, not a filter over a page.** `GET /grinders`
+  takes `search`, and every word of it has to appear somewhere in the brand and
+  the model together, so "1zpresso pro" and "pro 1zpresso" both find the JX-Pro.
+  Wildcards typed into the box are escaped: `%` is a character somebody typed,
+  never a query they wrote by accident.
+- **Typing is debounced, not throttled at the request.** `useDebouncedValue`
+  holds the term until it settles, and the settled term travels in the query
+  key, so each term keeps its own cache entry.
+- **Every entry says how much its numbers are worth.**
+  `resolveGrinderPrecision` reduces an entry to measured, estimated or missing,
+  and the list prints the matching sentence underneath it. A micron figure
+  reads like a fact whatever it says, so the interface is the place that has to
+  disagree.
+- **Not finding a grinder is a normal outcome.** The empty state offers the add
+  form, and so does a button under the list. The form asks for brand, model,
+  scale, range and step - never a calibration curve, because nobody has one to
+  hand and an entry without one still works.
 
 ### The design system screen
 
@@ -422,7 +451,7 @@ is not an oracle for other people's ids.
 | GET/POST         | `/taste-profile/events`      | the audit trail; POST is safe to retry           |
 | POST             | `/taste-profile/recompute`   | rebuild the profile from its events              |
 | GET              | `/brew-methods`              | the method catalogue                             |
-| GET/POST         | `/grinders`, `/grinders/:id` | the grinder catalogue, extensible by users       |
+| GET/POST         | `/grinders`, `/grinders/:id` | the grinder catalogue, searchable and extensible |
 | CRUD             | `/equipment`                 | what the user owns                               |
 | CRUD             | `/equipment-sets`            | saved combinations of it                         |
 | CRUD             | `/coffee-bags`               | the cupboard; DELETE archives, it does not erase |
@@ -503,6 +532,22 @@ they can answer with a 409 instead of a constraint violation.
 Reference data lives in `server/src/db/seed/`. `db:seed` is idempotent: methods
 are matched on `key`, grinders on brand and model, so it can be run against a
 fresh branch or an existing one with the same result.
+
+The catalogue itself is eighteen brewing methods and a little over ninety
+grinders, split across `seedData/grinders/` only to keep the lists readable.
+Two things there are deliberate, and changing them is a decision rather than an
+edit:
+
+- **A seeded grinder is `is_verified = true`.** That flag is about visibility,
+  not accuracy: verified means the entry belongs to the catalogue everybody
+  sees, unverified means it is one person's contribution and only they can see
+  it. A shipped entry nobody can see would be no entry at all.
+- **How good a micron curve is, is a separate question,** answered by
+  `micronCalibration.isEstimated`. Published microns-per-click figures exist for
+  a minority of grinders and are approximate even there, so every shipped curve
+  is flagged as an estimate and most entries carry no curve at all. The app
+  states which of the three cases it is on every entry. Nothing here invents a
+  number to fill a hole.
 
 Two branches:
 

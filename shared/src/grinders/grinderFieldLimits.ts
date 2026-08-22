@@ -15,3 +15,13 @@ export const GRIND_MICRONS_MAX = 3000;
 
 /** Enough points to describe a curve, few enough to keep the row small. */
 export const MICRON_CALIBRATION_POINTS_MAX = 32;
+
+/** What the catalogue search accepts: a brand, a model, or a few words of both. */
+export const GRINDER_SEARCH_MIN_LENGTH = 1;
+export const GRINDER_SEARCH_MAX_LENGTH = 64;
+
+/**
+ * Words beyond this are ignored. Every word narrows the result with another
+ * pattern match, and nobody identifies a grinder with a sentence.
+ */
+export const GRINDER_SEARCH_TERMS_MAX = 6;

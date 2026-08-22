@@ -2,6 +2,7 @@ import { SK_AUTH } from './auth';
 import { SK_COMMON } from './common';
 import { SK_DESIGN_SYSTEM } from './designSystem';
 import { SK_ERRORS } from './errors';
+import { SK_GRINDERS } from './grinders';
 import { SK_NAVIGATION } from './navigation';
 import { SK_SCREENS } from './screens';
 
@@ -14,6 +15,7 @@ export const SK_TRANSLATIONS = {
   ...SK_AUTH,
   ...SK_NAVIGATION,
   ...SK_SCREENS,
+  ...SK_GRINDERS,
   ...SK_ERRORS,
   ...SK_DESIGN_SYSTEM,
 } as const;

@@ -8,6 +8,7 @@ export const BREW_METHOD_CATEGORIES = {
   espresso: 'espresso',
   cold: 'cold',
   stovetop: 'stovetop',
+  batch: 'batch',
 } as const;
 
 export type BrewMethodCategory =
@@ -20,4 +21,5 @@ export const BREW_METHOD_CATEGORY_VALUES = [
   BREW_METHOD_CATEGORIES.espresso,
   BREW_METHOD_CATEGORIES.cold,
   BREW_METHOD_CATEGORIES.stovetop,
+  BREW_METHOD_CATEGORIES.batch,
 ] as const;

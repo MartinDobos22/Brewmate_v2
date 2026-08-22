@@ -7,10 +7,14 @@ export {
   GRIND_MICRONS_MIN,
   GRIND_MICRONS_MAX,
   MICRON_CALIBRATION_POINTS_MAX,
+  GRINDER_SEARCH_MIN_LENGTH,
+  GRINDER_SEARCH_MAX_LENGTH,
+  GRINDER_SEARCH_TERMS_MAX,
 } from './grinderFieldLimits.js';
 export {
   micronCalibrationPointSchema,
   micronCalibrationSchema,
+  CALIBRATION_ESTIMATED_BY_DEFAULT,
 } from './micronCalibrationSchema.js';
 export type { MicronCalibrationPoint, MicronCalibration } from './micronCalibrationSchema.js';
 export { grinderSchema } from './grinderSchema.js';
