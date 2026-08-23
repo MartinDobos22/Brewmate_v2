@@ -59,3 +59,8 @@ export {
 } from './coffeeBagForm';
 export type { CoffeeBagFormValues } from './coffeeBagForm';
 export { coffeeBagSummary } from './coffeeBagSummary';
+export { parsedBagToForm } from './parsedBagToForm';
+export { BAG_FRESHNESS, resolveBagFreshness } from './resolveBagFreshness';
+export type { BagFreshness, BagAge } from './resolveBagFreshness';
+export { groupRecipesByMethod } from './groupRecipesByMethod';
+export type { RecipeMethodGroup } from './groupRecipesByMethod';

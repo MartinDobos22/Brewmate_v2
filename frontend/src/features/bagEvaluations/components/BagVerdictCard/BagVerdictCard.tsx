@@ -1,71 +1,76 @@
-import type { JSX } from 'react';
+import { useState, type JSX } from 'react';
 import { View } from 'react-native';
 
-import { Card, Text } from '../../../../components/ui';
+import { Button, Card, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { ConfidenceNotice } from '../../../tasteProfile/components';
-import { BAG_VERDICT_BODY_KEYS, BAG_VERDICT_TITLE_KEYS } from '../../constants/bagScan';
-import type { BagUncertainty, BagVerdictPoint } from '../../services/bagVerdictTypes';
-import type { BagVerdict } from '../../services/evaluateBag';
+import type { BagVerdictUncertainty, BagVerdictView } from '../../services/bagVerdictView';
 
 import { createBagVerdictCardStyles } from './BagVerdictCard.styles';
+import { VerdictReasonList } from './VerdictReasonList';
 
 const NOTHING = 0;
 
 export interface BagVerdictCardProps {
-  readonly verdict: BagVerdict;
+  readonly verdict: BagVerdictView;
 }
 
 /**
  * The answer, and everything it rests on.
  *
- * The reasoning and the gaps are printed separately and both in full: an
- * opinion somebody can argue with is worth something in a shop, and a verdict
- * that hides what it did not see is worth nothing.
+ * The reasons start folded away and the verdict does not: in a shop the first
+ * thing wanted is the sentence, and the argument is what somebody opens when
+ * they want to disagree with it. Both are always there - a verdict that hid
+ * what it did not see would be worth nothing.
  */
 export const BagVerdictCard = ({ verdict }: BagVerdictCardProps): JSX.Element => {
   const styles = useThemedStyles(createBagVerdictCardStyles);
   const { t } = useTranslation();
+  const [expanded, setExpanded] = useState(false);
 
   return (
     <Card>
       <Text variant="labelMedium" tone="muted">
         {t(TRANSLATION_KEYS.scanVerdictTitle)}
       </Text>
-      <Text variant="headlineSmall">{t(BAG_VERDICT_TITLE_KEYS[verdict.level])}</Text>
-      <Text variant="bodyMedium" tone="muted">
-        {t(BAG_VERDICT_BODY_KEYS[verdict.level])}
-      </Text>
+      {verdict.headline === null ? null : <Text variant="headlineSmall">{verdict.headline}</Text>}
+      <Text variant="bodyMedium">{verdict.text}</Text>
+      {verdict.isFromHistory ? (
+        <Text variant="bodySmall" tone="muted">
+          {t(TRANSLATION_KEYS.scanVerdictFromHistory)}
+        </Text>
+      ) : null}
+      {verdict.isLocal ? (
+        <Text variant="bodySmall" tone="tertiary">
+          {t(TRANSLATION_KEYS.scanVerdictLocalNotice)}
+        </Text>
+      ) : null}
       <ConfidenceNotice />
-      {verdict.points.length === NOTHING ? null : (
-        <View style={styles.section}>
-          <Text variant="titleSmall">{t(TRANSLATION_KEYS.scanReasoningTitle)}</Text>
-          <View style={styles.points}>
-            {verdict.points.map((point: BagVerdictPoint): JSX.Element => (
-              <Text
-                key={point.key}
-                variant="bodySmall"
-                tone={point.isAgainst ? 'error' : 'default'}
-              >
-                {t(point.key)}
-              </Text>
-            ))}
-          </View>
-        </View>
+      {verdict.reasons.length === NOTHING && verdict.uncertainties.length === NOTHING ? null : (
+        <Button
+          label={t(
+            expanded ? TRANSLATION_KEYS.scanReasoningHide : TRANSLATION_KEYS.scanReasoningShow,
+          )}
+          variant="tertiary"
+          onPress={(): void => {
+            setExpanded(!expanded);
+          }}
+        />
       )}
-      {verdict.uncertainties.length === NOTHING ? null : (
+      {expanded ? (
         <View style={styles.section}>
-          <Text variant="titleSmall">{t(TRANSLATION_KEYS.scanUncertaintyTitle)}</Text>
-          <View style={styles.points}>
-            {verdict.uncertainties.map((item: BagUncertainty): JSX.Element => (
-              <Text key={item.field} variant="bodySmall" tone="muted">
-                {t(item.reasonKey)}
-              </Text>
-            ))}
-          </View>
+          <VerdictReasonList
+            title={t(TRANSLATION_KEYS.scanReasoningTitle)}
+            lines={verdict.reasons}
+          />
+          <VerdictReasonList
+            title={t(TRANSLATION_KEYS.scanUncertaintyTitle)}
+            lines={verdict.uncertainties.map((item: BagVerdictUncertainty): string => item.reason)}
+            muted
+          />
         </View>
-      )}
+      ) : null}
     </Card>
   );
 };

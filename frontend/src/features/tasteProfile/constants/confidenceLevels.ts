@@ -1,27 +1,15 @@
+import { CONFIDENCE_LEVELS, type ConfidenceLevel } from '@brewmate/shared';
+
 import { TRANSLATION_KEYS, type TranslationKey } from '../../../i18n';
 
-/** How well Brewmate claims to know somebody, as a person would say it. */
-export const CONFIDENCE_LEVELS = {
-  none: 'none',
-  low: 'low',
-  medium: 'medium',
-  high: 'high',
-} as const;
-
-export type ConfidenceLevel = (typeof CONFIDENCE_LEVELS)[keyof typeof CONFIDENCE_LEVELS];
-
 /**
- * Where the stored `confidenceLevel` crosses from one word to the next.
- *
- * A questionnaire on its own lands around 0.12, which is deliberately still
- * "len zhruba": ten answers about chocolate and tea are a starting point, not
- * an understanding.
+ * The bands themselves live in `@brewmate/shared`: the server writes the shop
+ * verdict and has to admit the same amount of ignorance the screen does, so
+ * both sides read one definition. What stays here is the only part that is the
+ * app's business - which Slovak word each band is printed as.
  */
-export const CONFIDENCE_THRESHOLDS = {
-  low: 0.05,
-  medium: 0.35,
-  high: 0.7,
-} as const;
+export { CONFIDENCE_LEVELS, CONFIDENCE_THRESHOLDS } from '@brewmate/shared';
+export type { ConfidenceLevel } from '@brewmate/shared';
 
 export const CONFIDENCE_LABEL_KEYS: Record<ConfidenceLevel, TranslationKey> = {
   [CONFIDENCE_LEVELS.none]: TRANSLATION_KEYS.profileConfidenceNone,

@@ -38,6 +38,9 @@ export const API_ROUTES = {
   tasteProfileRecompute: '/taste-profile/recompute',
 
   aiUsage: '/ai-usage',
+
+  aiParseCoffeeBag: '/ai/parse-coffee-bag',
+  aiEvaluateCoffee: '/ai/evaluate-coffee',
 } as const;
 
 export type ApiRoute = (typeof API_ROUTES)[keyof typeof API_ROUTES];

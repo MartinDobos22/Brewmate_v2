@@ -10,8 +10,38 @@ export const SK_SCANNER = {
   scanTitle: 'Poradím ti v obchode',
   scanIntro:
     'Nepotrebujem na to inventár ani históriu varení. Stačí to, čo je napísané na balíčku.',
-  scanPhotoNote:
-    'Fotku balíčka zatiaľ neviem prečítať sám, tak mi to prosím prepíš. Stačí to, čo vidíš - prázdne polia ničomu nevadia.',
+
+  scanModeVerdictTitle: 'Stojím v obchode a rozmýšľam',
+  scanModeVerdictBody: 'Poviem ti, či ti tá káva podľa mňa sadne - a prečo si to myslím.',
+  scanModeInventoryTitle: 'Túto kávu už mám',
+  scanModeInventoryBody: 'Zapíšem ti ju do inventára aj s tým, čo je na balíčku.',
+
+  scanPhotoTitle: 'Odfoť balíček',
+  scanPhotoBody:
+    'Prečítam z etikety, čo sa dá. Čo neprečítam, nechám prázdne - nikdy si nič nevymyslím.',
+  scanPhotoTake: 'Odfotiť',
+  scanPhotoChoose: 'Vybrať z galérie',
+  scanPhotoSkip: 'Zadám to radšej ručne',
+  scanPhotoReading: 'Čítam etiketu...',
+  scanPhotoFailed:
+    'Fotku sa mi nepodarilo poslať alebo prečítať. Nevadí - prepíš mi z balíčka, čo vidíš.',
+
+  scanLabelCheckUncertain:
+    'Toto som vyčítal z fotky. Zvýraznené polia som čítal na hranici čitateľnosti - mrkni na ne, prosím.',
+  scanLabelTypeItIn: 'Stačí to, čo vidíš na balíčku. Prázdne polia ničomu nevadia.',
+  scanFieldUncertain: 'Toto som čítal ťažko, over to prosím.',
+  scanRoastLabelUncertain: 'Praženie (čítal som ho ťažko)',
+  scanRoastDateUncertain: 'Dátum praženia som čítal ťažko, over ho prosím.',
+
+  scanDetailTitle: 'Ďalšie údaje z balíčka',
+  scanRegionLabel: 'Región',
+  scanFarmLabel: 'Farma',
+  scanVarietyLabel: 'Odroda',
+  scanProcessLabel: 'Spracovanie',
+  scanProcessPlaceholder: 'Napríklad: washed, natural',
+  scanAltitudeLabel: 'Nadmorská výška (m)',
+  scanWeightLabel: 'Hmotnosť balíčka (g)',
+  scanWeightHelp: 'Podľa toho ti počítam, koľko ti kávy ostáva.',
 
   scanLabelTitle: 'Čo je na balíčku?',
   scanNameLabel: 'Názov kávy',
@@ -36,6 +66,14 @@ export const SK_SCANNER = {
   scanVerdictUnknown: 'Toto ti nepoviem',
   scanVerdictUnknownBody:
     'Z toho, čo som sa dozvedel, sa nedá seriózne povedať, či ti sadne. Radšej to priznám, než aby som hádal.',
+  scanVerdictWaiting: 'Rozmýšľam nad ňou...',
+  scanVerdictFromHistory: 'Túto kávu som ti už raz hodnotil - hovorím ti to isté, čo vtedy.',
+  scanVerdictOffline:
+    'Nedostal som sa teraz k tomu, aby som to premyslel poriadne. Toto je to, čo viem povedať sám, offline.',
+  scanVerdictLocalNotice:
+    'Napísali to tri jednoduché pravidlá v telefóne, nie ja celý. Keď budeš mať signál, spýtaj sa ma znova.',
+  scanReasoningShow: 'Prečo si to myslím',
+  scanReasoningHide: 'Skryť dôvody',
   scanReasoningTitle: 'Prečo si to myslím',
   scanUncertaintyTitle: 'Čo som nevidel',
 
@@ -61,6 +99,15 @@ export const SK_SCANNER = {
   scanSavedBody: 'Kávu som ti pridal do inventára aj s tým, čo o nej viem.',
   scanSkippedTitle: 'Dobre',
   scanSkippedBody: 'Zapamätal som si, čo som ti radil. Nabudúce to bude presnejšie.',
+  scanAddedTitle: 'Pridané',
+  scanAddedBody: 'Kávu máš v inventári. Odteraz ti k nej viem odkladať recepty aj varenia.',
+
+  scanHistoryTitle: 'Čo som ti už hodnotil',
+  scanHistoryBody: 'Aby som tú istú kávu neposudzoval dvakrát inak.',
+  scanHistoryBought: 'Kúpil si ju',
+  scanHistoryLeft: 'Nechal si ju tam',
+  scanHistoryUndecided: 'Nepovedal si mi, ako to dopadlo',
+
   scanDone: 'Hotovo',
   scanAgain: 'Pozrieť ďalšiu',
   scanError: 'Nepodarilo sa to uložiť. Skús to prosím znova.',

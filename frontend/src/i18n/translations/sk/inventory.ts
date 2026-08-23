@@ -20,4 +20,21 @@ export const SK_INVENTORY = {
   inventoryUnnamedCoffee: 'Káva bez názvu',
   inventoryOpenGrinders: 'Katalóg mlynčekov',
   inventoryBagUnknownDetails: 'Bez ďalších údajov',
+  inventoryBagOpen: 'Otvoriť',
+  inventoryBagArchive: 'Dopil som ju',
+  inventoryRemainingUnknown: 'Neviem, koľko ti jej ostáva',
+
+  inventoryFreshnessUnknown: 'Dátum praženia neviem',
+  inventoryFreshnessResting: 'Ešte odpočíva',
+  inventoryFreshnessIdeal: 'Ideálne teraz',
+  inventoryFreshnessPastPeak: 'Má to najlepšie za sebou',
+  inventoryFreshnessAging: 'Starne - dopi ju čoskoro',
+
+  bagRecipesTitle: 'Ako si ju varil',
+  bagRecipesEmptyTitle: 'Túto kávu si ešte nevaril',
+  bagRecipesEmptyBody:
+    'Keď si z nej uvaríš prvú kávu, nájdeš tu recept aj to, ako ti chutila - zvlášť pre každú metódu.',
+  bagRecipesUnknownMethod: 'Neznáma metóda',
+  bagRecipePinned: 'Toto je tvoj recept na ňu',
+  bagRecipeSaved: 'Uložený recept',
 } as const;

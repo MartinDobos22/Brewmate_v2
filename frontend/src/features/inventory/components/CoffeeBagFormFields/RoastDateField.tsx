@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Chip, NumberStepper } from '../../../../components/ui';
+import { Chip, NumberStepper, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { DAYS_SINCE_ROAST } from '../../constants/coffeeBagForm';
@@ -13,6 +13,8 @@ const UNKNOWN_DATE = null;
 export interface RoastDateFieldProps {
   readonly value: number | null;
   readonly onChange: (daysSinceRoast: number | null) => void;
+  /** True when a camera read this off the bag and was not sure of it. */
+  readonly unverified?: boolean;
 }
 
 /**
@@ -22,12 +24,21 @@ export interface RoastDateFieldProps {
  * in front of a shelf - and because a date picker is a poor thing to operate
  * with one hand while holding a bag of coffee in the other.
  */
-export const RoastDateField = ({ value, onChange }: RoastDateFieldProps): JSX.Element => {
+export const RoastDateField = ({
+  value,
+  onChange,
+  unverified = false,
+}: RoastDateFieldProps): JSX.Element => {
   const styles = useThemedStyles(createCoffeeBagFormFieldsStyles);
   const { t } = useTranslation();
 
   return (
     <View style={styles.wrapper}>
+      {unverified ? (
+        <Text variant="bodySmall" tone="tertiary">
+          {t(TRANSLATION_KEYS.scanRoastDateUncertain)}
+        </Text>
+      ) : null}
       <View style={styles.chips}>
         <Chip
           label={t(TRANSLATION_KEYS.scanRoastDateUnknown)}

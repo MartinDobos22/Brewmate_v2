@@ -27,4 +27,12 @@ export const ERROR_MESSAGES = {
   parentRecipeNotFound: 'The recipe this one was adjusted from no longer exists.',
   brewLogNotFound: 'No such brew log belongs to this account.',
   brewLogBagMismatch: 'A brew log must reference the same bag as the recipe it belongs to.',
+
+  aiUnavailable:
+    'Reading coffee bags is not available right now. The label can still be typed in by hand.',
+  bagPhotoUnreadable:
+    'That photograph could not be read. Try another picture of the label, or type it in by hand.',
+  bagLabelUnreadable:
+    'Nothing could be read off that photograph. The label can still be typed in by hand.',
+  coffeeVerdictUnavailable: 'The verdict could not be written right now. Try again in a moment.',
 } as const;

@@ -17,6 +17,15 @@ export { flavorAffinitiesSchema } from './flavorAffinitiesSchema.js';
 export type { FlavorAffinities } from './flavorAffinitiesSchema.js';
 export { sourceWeightsSchema } from './sourceWeightsSchema.js';
 export type { SourceWeights } from './sourceWeightsSchema.js';
+export {
+  CONFIDENCE_LEVELS,
+  CONFIDENCE_THRESHOLDS,
+  CONFIDENCE_THRESHOLD_LOW,
+  CONFIDENCE_THRESHOLD_MEDIUM,
+  CONFIDENCE_THRESHOLD_HIGH,
+  resolveConfidenceLevel,
+} from './confidenceLevels.js';
+export type { ConfidenceLevel } from './confidenceLevels.js';
 export { tasteProfileSchema } from './tasteProfileSchema.js';
 export type { TasteProfile } from './tasteProfileSchema.js';
 export { tasteProfileDeltaSchema } from './tasteProfileDeltaSchema.js';

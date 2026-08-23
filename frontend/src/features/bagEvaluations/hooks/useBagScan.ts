@@ -1,156 +1,145 @@
-import type { BagEvaluation, TasteProfile } from '@brewmate/shared';
+import { lowConfidenceFieldNames, type ParsedBagFieldName } from '@brewmate/shared';
 import { useState } from 'react';
 
-import { useTranslation } from '../../../i18n';
 import { useCreateCoffeeBag } from '../../inventory/hooks';
 import {
   EMPTY_COFFEE_BAG_FORM,
+  parsedBagToForm,
   toCreateCoffeeBagRequest,
   toParsedBagData,
   type CoffeeBagFormValues,
 } from '../../inventory/services';
-import { useTasteProfile } from '../../tasteProfile/hooks';
-import { BAG_SCAN_STAGES, BAG_VERDICT_BODY_KEYS, type BagScanStage } from '../constants/bagScan';
-import type { BagUncertainty, BagVerdictPoint } from '../services/bagVerdictTypes';
-import { evaluateBag, type BagVerdict } from '../services/evaluateBag';
-import { useCreateBagEvaluation } from './useCreateBagEvaluation';
-import { useUpdateBagEvaluation } from './useUpdateBagEvaluation';
+import {
+  BAG_SCAN_MODES,
+  BAG_SCAN_STAGES,
+  type BagScanMode,
+  type BagScanStage,
+} from '../constants/bagScan';
+import { BAG_CAPTURE_RESULTS } from '../constants/bagPhoto';
+import type { BagPhotoSource } from '../services/pickBagPhoto';
 
-const NOT_PURCHASED = false;
-const PURCHASED = true;
+import { useBagPhoto, type BagCapture, type BagPhoto } from './useBagPhoto';
+import { useBagOutcome, type BagOutcome } from './useBagOutcome';
+import { useBagVerdict, type BagVerdict } from './useBagVerdict';
+
+const NOTHING_UNVERIFIED: readonly ParsedBagFieldName[] = [];
 
 export interface BagScan {
   readonly stage: BagScanStage;
+  readonly mode: BagScanMode;
   readonly label: CoffeeBagFormValues;
-  readonly verdict: BagVerdict | null;
-  readonly profile: TasteProfile | undefined;
-  readonly isLoading: boolean;
-  readonly isError: boolean;
-  readonly error: unknown;
-  readonly retry: () => void;
-  readonly isPending: boolean;
+  readonly unverified: readonly ParsedBagFieldName[];
+  readonly photo: BagPhoto;
+  readonly verdict: BagVerdict;
+  readonly outcome: BagOutcome;
+  readonly isSaving: boolean;
   readonly hasFailed: boolean;
-  readonly wasPurchased: boolean;
+  readonly chooseMode: (mode: BagScanMode) => void;
+  readonly capture: (source: BagPhotoSource) => void;
+  readonly skipPhoto: () => void;
   readonly describeLabel: (patch: Partial<CoffeeBagFormValues>) => void;
-  readonly ask: () => void;
-  readonly recordPurchase: (fallbackName: string) => void;
-  readonly recordSkipped: () => void;
+  readonly submit: (fallbackName: string) => void;
   readonly reset: () => void;
 }
 
 /**
- * One bag, weighed up in a shop.
+ * One bag, from the shelf to an answer.
  *
- * The verdict is computed on the phone and only then written down, so what the
- * app said is stored word for word next to the label it was said about - and
- * the API stamps how confident the profile was at that moment, which is what
- * makes the advice auditable a month later.
+ * Two modes over one parsing layer. The photograph is taken, uploaded and read
+ * identically either way; what differs is the last step - an opinion about
+ * whether to buy it, or a row in the cupboard.
  *
- * Whether the bag was actually bought is recorded afterwards, because that is
- * the only way the app ever finds out whether it was any good at this.
+ * Every stage can be reached without a camera. The photograph is an offer, not
+ * a gate: nobody standing in a shop should be unable to ask a question because
+ * the light is bad or the signal is worse.
  */
-export const useBagScan = (): BagScan => {
-  const { t } = useTranslation();
-  const profileQuery = useTasteProfile();
-  const createEvaluation = useCreateBagEvaluation();
-  const updateEvaluation = useUpdateBagEvaluation();
+export const useBagScan = (initialMode?: BagScanMode): BagScan => {
+  const photo = useBagPhoto();
+  const verdict = useBagVerdict();
   const createBag = useCreateCoffeeBag();
-  const [stage, setStage] = useState<BagScanStage>(BAG_SCAN_STAGES.label);
+  const [stage, setStage] = useState<BagScanStage>(
+    initialMode === undefined ? BAG_SCAN_STAGES.mode : BAG_SCAN_STAGES.capture,
+  );
+  const [mode, setMode] = useState<BagScanMode>(initialMode ?? BAG_SCAN_MODES.verdict);
   const [label, setLabel] = useState<CoffeeBagFormValues>(EMPTY_COFFEE_BAG_FORM);
-  const [verdict, setVerdict] = useState<BagVerdict | null>(null);
-  const [evaluationId, setEvaluationId] = useState<string | null>(null);
-  const [wasPurchased, setWasPurchased] = useState(NOT_PURCHASED);
-
-  const settle = (purchased: boolean): void => {
-    setWasPurchased(purchased);
+  const [unverified, setUnverified] = useState<readonly ParsedBagFieldName[]>(NOTHING_UNVERIFIED);
+  const outcome = useBagOutcome(verdict.evaluationId, (): void => {
     setStage(BAG_SCAN_STAGES.done);
-  };
+  });
 
-  const recordOutcome = (purchased: boolean, linkedBagId: string | null): void => {
-    if (evaluationId === null) {
-      settle(purchased);
-
-      return;
-    }
-
-    updateEvaluation.mutate(
-      { id: evaluationId, changes: { wasPurchased: purchased, linkedBagId } },
-      {
-        onSuccess: (): void => {
-          settle(purchased);
-        },
+  const saveToCupboard = (fallbackName: string): void => {
+    createBag.mutate(toCreateCoffeeBagRequest(label, fallbackName), {
+      onSuccess: (): void => {
+        setStage(BAG_SCAN_STAGES.done);
       },
-    );
+    });
   };
 
   return {
     stage,
+    mode,
     label,
+    unverified,
+    photo,
     verdict,
-    wasPurchased,
-    profile: profileQuery.data,
-    isLoading: profileQuery.isPending,
-    isError: profileQuery.isError,
-    error: profileQuery.error,
-    isPending: createEvaluation.isPending || updateEvaluation.isPending || createBag.isPending,
-    hasFailed: createEvaluation.isError || updateEvaluation.isError || createBag.isError,
-    retry: (): void => {
-      void profileQuery.refetch();
+    outcome,
+    isSaving: createBag.isPending || verdict.isPending,
+    hasFailed: createBag.isError || verdict.hasFailed || outcome.hasFailed,
+
+    chooseMode: (chosen: BagScanMode): void => {
+      setMode(chosen);
+      setStage(photo.isSupported ? BAG_SCAN_STAGES.capture : BAG_SCAN_STAGES.label);
+    },
+
+    /**
+     * Backing out of the camera leaves somebody where they were; everything
+     * else moves on to the form, with whatever was read already in it.
+     */
+    capture: (source: BagPhotoSource): void => {
+      void photo.capture(source).then(({ outcome, fields }: BagCapture): void => {
+        if (outcome === BAG_CAPTURE_RESULTS.cancelled) {
+          return;
+        }
+
+        if (fields !== null) {
+          setLabel(parsedBagToForm(fields));
+          setUnverified(lowConfidenceFieldNames(fields));
+        }
+
+        setStage(BAG_SCAN_STAGES.label);
+      });
+    },
+
+    skipPhoto: (): void => {
+      setStage(BAG_SCAN_STAGES.label);
     },
 
     describeLabel: (patch: Partial<CoffeeBagFormValues>): void => {
       setLabel({ ...label, ...patch });
     },
 
-    ask: (): void => {
-      if (profileQuery.data === undefined) {
+    submit: (fallbackName: string): void => {
+      if (mode === BAG_SCAN_MODES.inventory) {
+        saveToCupboard(fallbackName);
+
         return;
       }
 
-      const parsedData = toParsedBagData(label);
-      const answer = evaluateBag(parsedData, profileQuery.data);
-
-      setVerdict(answer);
       setStage(BAG_SCAN_STAGES.verdict);
-      createEvaluation.mutate(
-        {
-          parsedData,
-          verdictText: t(BAG_VERDICT_BODY_KEYS[answer.level]),
-          reasoning: {
-            points: answer.points.map((point: BagVerdictPoint): string => t(point.key)),
-          },
-          uncertainties: {
-            items: answer.uncertainties.map((item: BagUncertainty) => ({
-              field: item.field,
-              reason: t(item.reasonKey),
-            })),
-          },
-        },
-        {
-          onSuccess: (evaluation: BagEvaluation): void => {
-            setEvaluationId(evaluation.id);
-          },
-        },
-      );
+      void verdict.ask(toParsedBagData(label), photo.imageUrl);
     },
 
-    recordPurchase: (fallbackName: string): void => {
-      createBag.mutate(toCreateCoffeeBagRequest(label, fallbackName), {
-        onSuccess: ({ id }): void => {
-          recordOutcome(PURCHASED, id);
-        },
-      });
-    },
-
-    recordSkipped: (): void => {
-      recordOutcome(NOT_PURCHASED, null);
-    },
-
+    /**
+     * Back to the beginning - to the mode question, or straight to the camera
+     * for somebody the cupboard sent here, who never saw that question.
+     */
     reset: (): void => {
       setLabel(EMPTY_COFFEE_BAG_FORM);
-      setVerdict(null);
-      setEvaluationId(null);
-      setStage(BAG_SCAN_STAGES.label);
+      setUnverified(NOTHING_UNVERIFIED);
+      photo.forget();
+      verdict.forget();
+      outcome.forget();
+      setStage(initialMode === undefined ? BAG_SCAN_STAGES.mode : BAG_SCAN_STAGES.capture);
     },
   };
 };

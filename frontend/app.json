@@ -15,6 +15,13 @@
       "expo-router",
       "expo-font",
       "expo-apple-authentication",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Výber fotografie balíčka kávy z galérie, aby Brewmate načítal údaje o pražení a odrode",
+          "cameraPermission": "Fotografovanie balíčkov kávy na rozpoznanie údajov o káve"
+        }
+      ],
       "expo-web-browser",
       [
         "expo-splash-screen",

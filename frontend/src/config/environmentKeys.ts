@@ -13,6 +13,7 @@ export const ENVIRONMENT_KEYS = {
   firebaseAuthDomain: 'EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN',
   firebaseProjectId: 'EXPO_PUBLIC_FIREBASE_PROJECT_ID',
   firebaseAppId: 'EXPO_PUBLIC_FIREBASE_APP_ID',
+  firebaseStorageBucket: 'EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET',
   googleWebClientId: 'EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID',
   googleIosClientId: 'EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID',
   googleAndroidClientId: 'EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID',

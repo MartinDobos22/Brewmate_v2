@@ -26,6 +26,12 @@ export const envSchema = z
     FIREBASE_PROJECT_ID: z.string().min(1).optional(),
     FIREBASE_CLIENT_EMAIL: z.email().optional(),
     FIREBASE_PRIVATE_KEY: z.string().min(1).optional(),
+
+    /**
+     * Optional everywhere. A build without it serves every screen that asks no
+     * model anything, and answers the two AI routes with 503.
+     */
+    ANTHROPIC_API_KEY: z.string().min(1).optional(),
   })
   .superRefine((env, ctx) => {
     const isTest = env.NODE_ENV === NODE_ENVIRONMENTS.test;

@@ -1,10 +1,14 @@
 import type { CoffeeBag } from '@brewmate/shared';
+import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { ListItem } from '../../../../components/ui';
-import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { coffeeBagSummary } from '../../services/coffeeBagSummary';
+import { buildBagRoute } from '../../../../constants/routes';
+import { useThemedStyles } from '../../../../theme';
+import { useArchiveCoffeeBag } from '../../hooks';
+import { CoffeeBagCard } from '../CoffeeBagCard';
+
+import { createCoffeeBagListStyles } from './CoffeeBagList.styles';
 
 export interface CoffeeBagListProps {
   readonly bags: readonly CoffeeBag[];
@@ -12,16 +16,23 @@ export interface CoffeeBagListProps {
 
 /** The cupboard, newest bag first, as the API returns it. */
 export const CoffeeBagList = ({ bags }: CoffeeBagListProps): JSX.Element => {
-  const { t } = useTranslation();
+  const styles = useThemedStyles(createCoffeeBagListStyles);
+  const router = useRouter();
+  const archive = useArchiveCoffeeBag();
 
   return (
-    <View>
+    <View style={styles.list}>
       {bags.map((bag: CoffeeBag): JSX.Element => (
-        <ListItem
+        <CoffeeBagCard
           key={bag.id}
-          title={bag.name}
-          subtitle={coffeeBagSummary(bag, t(TRANSLATION_KEYS.inventoryBagUnknownDetails))}
-          showDivider
+          bag={bag}
+          archiving={archive.isPending && archive.variables === bag.id}
+          onOpen={(opened: CoffeeBag): void => {
+            router.push(buildBagRoute(opened.id));
+          }}
+          onArchive={(archived: CoffeeBag): void => {
+            archive.mutate(archived.id);
+          }}
         />
       ))}
     </View>

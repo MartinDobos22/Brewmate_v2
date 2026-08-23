@@ -13,7 +13,14 @@ export { LIMITS } from './limits';
 export type { LimitToken } from './limits';
 export { QUERY_KEYS, QUERY_ROOTS } from './queryKeys';
 export type { AppQueryKey, QueryFilter, QueryKeyFactory } from './queryKeys';
-export { ROUTES, TAB_SEGMENTS, TAB_ORDER, AUTH_GROUP_SEGMENT } from './routes';
+export {
+  ROUTES,
+  TAB_SEGMENTS,
+  TAB_ORDER,
+  AUTH_GROUP_SEGMENT,
+  buildBagRoute,
+  buildScanRoute,
+} from './routes';
 export type { Route, TabSegment } from './routes';
 export { STORAGE_KEYS } from './storageKeys';
 export type { StorageKey } from './storageKeys';
@@ -28,6 +35,7 @@ export {
 } from './time';
 export {
   RESTING_DAYS,
+  BAG_FRESHNESS_DAYS,
   BREW_RATIO,
   WATER_TEMPERATURE_C,
   DOSE_GRAMS,

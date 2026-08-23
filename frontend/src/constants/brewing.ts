@@ -12,6 +12,26 @@ export const RESTING_DAYS = {
   max: 60,
 } as const;
 
+/**
+ * The bands the cupboard prints beside a bag, in days since roasting.
+ *
+ * Narrower than `RESTING_DAYS` above, and deliberately a different thing. That
+ * one is the window the shop verdict argues about - is this bag worth buying
+ * at all - and it is generous on both sides because a bag bought today will be
+ * drunk over the next month. This one is about the coffee sitting on somebody's
+ * shelf right now, so it says what to do with it this morning: leave it alone,
+ * drink it, or drink it soon.
+ *
+ * The fourth band, between the ideal window and the aging one, is the honest
+ * consequence of the other three: a three-week-old bag is neither at its best
+ * nor going off, and saying so beats rounding it into one of the neighbours.
+ */
+export const BAG_FRESHNESS_DAYS = {
+  restingUntil: 4,
+  idealUntil: 21,
+  agingFrom: 30,
+} as const;
+
 /** Coffee-to-water ratio, expressed as parts of water per part of coffee. */
 export const BREW_RATIO = {
   min: 10,

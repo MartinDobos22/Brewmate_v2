@@ -5,6 +5,7 @@ import { BODY_LIMIT_BYTES } from '../constants/serverDefaults.js';
 import type { AppConfig } from './appConfig.js';
 import { CONFIG_ERROR_MESSAGES } from './configErrorMessages.js';
 import { envSchema } from './envSchema.js';
+import { resolveAiConfig } from './resolveAiConfig.js';
 import { resolveDatabaseConfig } from './resolveDatabaseConfig.js';
 import { resolveFirebaseCredentials } from './resolveFirebaseCredentials.js';
 
@@ -36,6 +37,7 @@ export const loadConfig = (source: NodeJS.ProcessEnv = process.env): AppConfig =
     },
     database: resolveDatabaseConfig(env),
     firebase: resolveFirebaseCredentials(env),
+    ai: resolveAiConfig(env),
     logging: { level: env.LOG_LEVEL },
   };
 };

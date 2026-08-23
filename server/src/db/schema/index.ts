@@ -30,6 +30,8 @@ export { coffeeBagsTable } from './coffeeBagsTable.js';
 export type { CoffeeBagRow, NewCoffeeBagRow } from './coffeeBagsTable.js';
 export { bagEvaluationsTable } from './bagEvaluationsTable.js';
 export type { BagEvaluationRow, NewBagEvaluationRow } from './bagEvaluationsTable.js';
+export { coffeeBagParsesTable } from './coffeeBagParsesTable.js';
+export type { CoffeeBagParseRow, NewCoffeeBagParseRow } from './coffeeBagParsesTable.js';
 export { recipesTable } from './recipesTable.js';
 export type { RecipeRow, NewRecipeRow } from './recipesTable.js';
 export { brewLogsTable } from './brewLogsTable.js';

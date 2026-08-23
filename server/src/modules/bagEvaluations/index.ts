@@ -3,6 +3,7 @@ export { createBagEvaluationRepository } from './bagEvaluationRepository.js';
 export type {
   BagEvaluationListFilter,
   BagEvaluationRepository,
+  CoffeeKey,
 } from './bagEvaluationRepository.js';
 export { createBagEvaluationService } from './bagEvaluationService.js';
 export type { BagEvaluationService } from './bagEvaluationService.js';

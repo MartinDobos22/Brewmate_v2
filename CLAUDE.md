@@ -12,8 +12,11 @@ onboarding flow (taste questionnaire, equipment, water, sets, a calibration
 brew) and the profile screen it all ends up in. On top of that sits the empty
 app: the home screen a brand-new account sees, quick brewing without an
 inventory, the cupboard, the shop scanner and the states every screen falls
-back to. There is still no AI: the calibration brew and the shop verdict are
-read by Slovak lexicons and three arithmetic rules, not by a model.
+back to. Coffee bag scanning is the first thing here that asks a model
+anything: a photographed label is read into fields, and the shop verdict is
+written as an argument rather than picked from three sentences. The calibration
+brew is still read by a Slovak lexicon, and the three arithmetic rules survive
+as the scanner's offline fallback.
 
 ---
 
@@ -317,29 +320,139 @@ here is allowed to be a blank screen with the words "žiadne dáta".
   taking. "Opíš mi kávu" is a favour the user does the app, and a favour
   deserves a reason.
 
+### Reading a coffee bag
+
+The first thing in Brewmate that asks a model anything, and the reason
+`POST /ai/parse-coffee-bag` exists.
+
+- **Every model call goes through the server.** Everything in an Expo bundle is
+  readable by anybody who installs the app, so `ANTHROPIC_API_KEY` lives in
+  `server/.env` and nowhere else. The app uploads the photograph and sends a
+  URL; the bytes never travel through the Brewmate API, which keeps a request
+  small enough to survive a shop's signal and makes a retry cost one short call
+  rather than a second upload.
+- **Every field carries its own confidence, and anything unreadable is null.**
+  Those two rules are the same rule. An invented roast date becomes a resting
+  window, which becomes a recommendation, which becomes a bad cup nobody can
+  trace back to a guess made in a shop. What was read badly is marked in the
+  form rather than corrected - the app does not know better than the person
+  holding the bag, it only knows which boxes it squinted at.
+- **The answer is validated against the shared schema and retried exactly
+  once**, with the validation error handed back. Once, because the second
+  attempt is what tells a model that slipped apart from a photograph nothing
+  can be read from; a third only spends somebody's afternoon proving the same
+  thing. Both attempts are billed into `ai_usage_logs` - a usage log that hides
+  a retry is one that disagrees with the invoice.
+- **Readings are cached under two keys, in `coffee_bag_parses`.** The
+  photograph's own hash catches the cheap repeat; the normalised
+  `(roaster, name)` pair catches the same coffee shot by somebody else in
+  another shop, which is what makes the second scan of a popular bag free for
+  everybody. The table has no `user_id` and survives an account deletion, like
+  the grinder catalogue: what is stored is a printed label - public information
+  about a product on a shelf - and nothing about who photographed it.
+- **A known coffee answers with the stored reading rather than this
+  photograph's.** Shop lighting against daylight is the same coffee described
+  twice, and the entry that has been standing long enough for somebody to have
+  corrected it is the better of the two.
+- **Reading the bytes is the server's job, not the provider's.** The hash that
+  makes a repeated scan free can only be taken from the bytes, and a storage
+  URL that needs credentials is then this server's problem rather than a silent
+  failure somewhere else. The URL comes from a client, so the size, the format
+  and the time it may take are limits rather than expectations.
+
 ### The shop verdict
 
 "Mám si ju kúpiť?", asked in front of a shelf and answered on the phone.
 
-- **Three rules, not a model:** the roast against what this person reaches for,
-  the printed tasting notes against the flavours they like, and the roast date
-  against the calendar. Deterministic, offline, and showable in full - an
-  opinion somebody can argue with is worth something in a shop.
-- **Roast levels are compared as a distance, not for equality.** They are
-  ordered light to dark, so a medium next to a medium-light is the same answer
-  as far as anybody's tongue is concerned. Calling that a mismatch would make
-  the app disagree with people over nothing.
-- **"Neviem posúdiť" is a first-class verdict.** An account whose profile has
-  learnt nothing gets no taste argument at all, only the freshness one, and the
-  screen says so. This is the first screen a new user reaches; repaying that
-  with an invented opinion about them is the one thing it must not do.
+- **The verdict is written, not chosen.** `POST /ai/evaluate-coffee` produces
+  two to four Slovak sentences, a list of reasons and a list of gaps. The rules
+  it is held to are in `coffeeVerdictPrompt.ts`, and each of them says why it
+  exists, because a model told why a rule exists keeps it in the cases the rule
+  did not anticipate.
+- **Nothing may be scored.** No percentages, no stars, no grade, no bare yes or
+  no. A number in front of a shelf reads as a measurement of somebody's taste,
+  and nobody has measured that. The phrasing is always probabilistic - "táto ti
+  pravdepodobne bude chutiť, pretože..." - and marketing language is banned
+  outright: the screen describes the coffee and the person, never the purchase.
+- **Every reason names both sides.** "Praženie je svetlé a ty máš radšej
+  tmavšie" is a reason; "svetlé praženie" is not. Reasons against the coffee
+  are as welcome as reasons for it, because a verdict that only ever agrees is
+  one nobody will believe twice.
+- **Nothing about the person travels in the request.** The profile, its
+  confidence, the brew count and the history are read off the caller's own rows.
+  A profile a client could declare would be a profile anybody could declare,
+  and the one thing that makes this verdict worth reading is that it is about
+  this person.
+- **A low confidence has to be admitted in the text itself.** The bands live in
+  `@brewmate/shared` precisely so the sentence the server writes and the notice
+  the app prints beside it cannot contradict each other. At `none` the verdict
+  gives no taste argument at all and says so - this is the first screen a new
+  account reaches, and repaying that with an invented opinion is the one thing
+  it must not do.
+- **A coffee already judged is answered from that verdict.** A shelf is exactly
+  where somebody picks up the same bag a second time, and advice that comes out
+  differently every time it is asked for is advice nobody can rely on. The card
+  says which afternoon it was given, and `/scan` lists everything ever judged.
+- **The three offline rules survive as the fallback.** No signal, no provider,
+  a model that will not answer - the roast against what this person reaches for,
+  the printed notes against what they like, and the roast date against the
+  calendar still produce an answer, and the card says plainly that a phone wrote
+  it. This screen exists to be used inside a building on one bar, and an app
+  that answers "skús to znova" there has answered nothing.
 - **The reasoning and the gaps are stored separately**, as the API already
-  models them, and both are printed. `profileConfidenceAtTime` is stamped by
-  the server, so how much that afternoon's advice was worth stays readable a
-  month later.
-- **Reading a label from a photograph is not implemented.** The screen says so
-  and asks for the fields instead. A camera button that quietly did nothing
-  would be worse than the sentence admitting it.
+  models them, and both are printed - folded away behind one tap, because in a
+  shop the sentence is wanted first and the argument is what somebody opens when
+  they want to disagree with it. `profileConfidenceAtTime` is stamped by the
+  server, so how much that afternoon's advice was worth stays readable a month
+  later.
+
+### Two modes, one parsing layer
+
+`/scan` is both the shop scanner and the way a bag gets into the cupboard.
+
+- **The mode is asked, not guessed.** A bag in a shop is a question; a bag in a
+  carrier bag is a row in the cupboard. Guessing wrong would put a verdict in
+  front of somebody who already owns the coffee. The cupboard's own buttons
+  skip the question with `?mode=inventory`, because it already knows.
+- **The photograph is an offer, not a gate.** "Zadám to radšej ručne" sits
+  beside the camera at the same weight, and every failure along the way - a
+  refused permission, an upload that will not go, a label nothing could be read
+  from - lands on the same form with whatever was read so far. A build with no
+  storage bucket hides the camera rather than failing when it is pressed.
+- **The upload is retried with a widening wait.** The failure this is built for
+  is a signal that comes and goes: inside a shop an upload fails, and a few
+  seconds later it does not. Three attempts with doubling waits span several
+  seconds of walking rather than three tries in one dead spot.
+- **Buying a bag writes it into the cupboard.** Somebody who has just decided to
+  buy a coffee should not then be asked to type its label a second time, and
+  everything needed is already on the screen. The bag opens full: its remaining
+  amount starts at the printed weight.
+
+### The cupboard
+
+- **A bag is a card, not a list row.** The two things wanted at a glance - how
+  much is left and whether it is ready to drink - are facts about the bag, not a
+  subtitle under its name.
+- **The resting indicator has four bands, not three.** Under five days it is
+  still resting, five to twenty-one is the window, and past thirty it is aging.
+  The band between them is the honest consequence of the other three: a
+  three-week-old bag is neither at its best nor going off, and saying so beats
+  rounding it into a neighbour. These are narrower than the `RESTING_DAYS` the
+  shop verdict argues with, and deliberately a different thing - that one asks
+  whether a bag is worth buying at all, this one asks what to do with it this
+  morning.
+- **A bag nobody weighed says so rather than showing a zero.** Zero grams and
+  "not recorded" are different facts, and only one of them means somebody has to
+  go shopping.
+- **A finished bag is archived, never deleted**, because the brew logs point at
+  it and a bag somebody drank their way through is the most valuable history
+  this app has.
+- **A bag's own screen splits its recipes by method.** A recipe belongs to the
+  pair (bag, method), not to the coffee: the same beans want a different dose in
+  a V60 than in an AeroPress, and one flat list would invite somebody to read
+  one method's numbers as an improvement on another's.
+- **Only what is recorded is printed.** A row of dashes where a farm would be
+  tells somebody nothing except that the app has a farm field.
 
 ### What the app admits about itself
 
@@ -592,6 +705,7 @@ server/src/
 ├── logging/          Pino options, redaction paths, log messages
 ├── db/               Drizzle client, schema, migrations
 ├── errors/           AppError, typed factories, error handler, not-found handler
+├── ai/               Model + image ports, the Anthropic and HTTP implementations, pricing
 ├── auth/             Token verifier + identity deleter, Firebase implementations, auth plugin
 ├── modules/          one domain each: repository -> service -> routes + mapper
 │   ├── health/       healthService + healthRoutes
@@ -621,10 +735,17 @@ never touches Fastify's request or reply.
 
 ### Dependency injection
 
-`buildApp(dependencies)` takes `{ config, db, tokenVerifier, identityDeleter }`.
-Production wiring lives in `createAppDependencies`; integration tests pass a stub
-verifier and a recording deleter. Nothing in `src/` reaches for a global
-singleton.
+`buildApp(dependencies)` takes
+`{ config, db, tokenVerifier, identityDeleter, ai }`. Production wiring lives in
+`createAppDependencies`; integration tests pass a stub verifier, a recording
+deleter and a recording model. Nothing in `src/` reaches for a global singleton.
+
+`ai` is `{ completionClient, imageFetcher }` or null - one nullable field rather
+than two, because a model with no way to fetch the photograph and a photograph
+with nothing to read it are both half a feature, and two fields that must agree
+are two fields that eventually will not. Null is a working state: a deployment
+without `ANTHROPIC_API_KEY` serves every screen that asks no model anything, and
+the two AI routes answer 503, which the app shows as "zadaj to ručne".
 
 ### Auth flow
 
@@ -688,6 +809,8 @@ is not an oracle for other people's ids.
 | GET/POST         | `/recipes/:id/messages`      | the conversation about a recipe                  |
 | CRUD             | `/brew-logs`                 | cups actually brewed                             |
 | GET              | `/ai-usage`                  | this account's model usage; read-only by design  |
+| POST             | `/ai/parse-coffee-bag`       | reads a photographed label into the bag's fields |
+| POST             | `/ai/evaluate-coffee`        | writes the shop verdict and stores it            |
 
 Every list endpoint takes `limit` and `offset` and answers
 `{ items, limit, offset, hasMore }`. `hasMore` comes from reading one row beyond
@@ -706,7 +829,7 @@ do not add one.
 
 ### The schema, and why it looks like this
 
-Thirteen tables. Everything a user owns carries
+Fourteen tables. Everything a user owns carries
 `user_id references users(id) on delete cascade`, which is what makes
 `DELETE /me` erase an account rather than merely disown it. The decisions worth
 knowing before changing anything:
@@ -738,6 +861,15 @@ knowing before changing anything:
 - **`grinders_catalog.created_by_user_id` is nulled, not cascaded.** The entry
   is shared data other people's equipment points at; only the attribution is
   personal.
+- **`coffee_bag_parses` belongs to nobody.** It caches what was read off a
+  label, under two keys: the photograph's hash, and a partial unique index on
+  the normalised `(roaster_key, name_key)` pair. There is no `user_id`, so the
+  row survives an account deletion the way the catalogues do - what is stored is
+  a printed label, public information about a product on a shelf, and nothing
+  about who photographed it. A cache scoped to one person would answer for the
+  roaster-and-name pair almost never, which is the case it exists for. The
+  partial index leaves unreadable labels out of the rule entirely: several
+  unreadable bags are several different bags.
 - **`equipment_sets.equipment_ids` is `jsonb`,** so the database cannot enforce
   those references and the service does it instead: every id must exist and
   belong to the caller, and deleting a piece of gear prunes it out of that
@@ -821,6 +953,15 @@ recompute reproduces the stored profile exactly, that deleting an account takes
 everything but leaves a contributed catalogue entry without its author, and that
 one account's rows are invisible to another.
 
+The AI routes are tested the same way, through a recording stub model rather
+than a live one: real vision calls cannot be made in CI, cost money and are not
+deterministic - and none of the behaviour worth testing is the model's. What is
+worth testing is everything around it: that a malformed answer is retried
+exactly once and both attempts are billed, that a photograph read before is not
+read again, that the same coffee shot by somebody else answers from the stored
+reading, that a coffee already judged is not judged twice, and that a verdict
+that will not validate is refused rather than stored broken.
+
 Tests are skipped in CI when `TEST_DATABASE_URL` is not configured, and fail
 loudly when it is set but unreachable.
 
@@ -831,10 +972,13 @@ loudly when it is set but unreachable.
 `.env` files are git-ignored; only `.env.example` is tracked. Never commit a
 filled-in `.env`, a service account JSON or a connection string with a password.
 
-- `server/.env` - database URLs, Firebase Admin credentials
+- `server/.env` - database URLs, Firebase Admin credentials, `ANTHROPIC_API_KEY`
 - `frontend/.env` - `EXPO_PUBLIC_*` only (see Rule 6): the API base URL, the
-  public Firebase _client_ configuration and the Google OAuth client IDs. None
-  of those are secrets; all of them identify rather than authorise.
+  public Firebase _client_ configuration, the storage bucket and the Google
+  OAuth client IDs. None of those are secrets; all of them identify rather than
+  authorise. The model provider's key is not among them and never will be:
+  every model call goes through the API, which is the whole reason
+  `/ai/parse-coffee-bag` and `/ai/evaluate-coffee` exist.
 
 ---
 

@@ -1,7 +1,13 @@
 export { ScanBagScreen } from './ScanBagScreen';
+export type { ScanBagScreenProps } from './ScanBagScreen';
+export { ScanHistoryList } from './ScanHistoryList';
 export { BagLabelForm } from './BagLabelForm';
 export type { BagLabelFormProps } from './BagLabelForm';
 export { BagVerdictCard } from './BagVerdictCard';
 export type { BagVerdictCardProps } from './BagVerdictCard';
+export { ScanModeStep } from './ScanModeStep';
+export type { ScanModeStepProps } from './ScanModeStep';
+export { BagPhotoStep } from './BagPhotoStep';
+export type { BagPhotoStepProps } from './BagPhotoStep';
 export { ScanOutcomeStep } from './ScanOutcomeStep';
 export type { ScanOutcomeStepProps } from './ScanOutcomeStep';

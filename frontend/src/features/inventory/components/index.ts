@@ -34,6 +34,22 @@ export { EquipmentSetList } from './EquipmentSetList';
 export { EquipmentSetSwitcher } from './EquipmentSetSwitcher';
 export { CoffeeBagFormFields } from './CoffeeBagFormFields';
 export type { CoffeeBagFormFieldsProps } from './CoffeeBagFormFields';
+export { CoffeeBagCard, BagFreshnessLabel, BagRemainingLabel } from './CoffeeBagCard';
+export type {
+  CoffeeBagCardProps,
+  BagFreshnessLabelProps,
+  BagRemainingLabelProps,
+} from './CoffeeBagCard';
+export {
+  CoffeeBagDetailScreen,
+  CoffeeBagInfoCard,
+  BagRecipeHistory,
+} from './CoffeeBagDetailScreen';
+export type {
+  CoffeeBagDetailScreenProps,
+  CoffeeBagInfoCardProps,
+  BagRecipeHistoryProps,
+} from './CoffeeBagDetailScreen';
 export { CoffeeBagList } from './CoffeeBagList';
 export type { CoffeeBagListProps } from './CoffeeBagList';
 export { AddCoffeeBagSheet, AddCoffeeBagForm } from './AddCoffeeBagSheet';

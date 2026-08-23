@@ -6,5 +6,6 @@ export { readApiConfig } from './apiConfig';
 export type { ApiConfig } from './apiConfig';
 export { readFirebaseConfig } from './firebaseConfig';
 export type { FirebaseConfig } from './firebaseConfig';
+export { readStorageBucket, isPhotoScanningConfigured } from './storageConfig';
 export { readGoogleAuthConfig, isGoogleAuthConfigured } from './googleAuthConfig';
 export type { GoogleAuthConfig } from './googleAuthConfig';
