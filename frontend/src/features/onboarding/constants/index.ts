@@ -12,10 +12,9 @@ export { TASTE_QUESTIONS } from './tasteQuestions';
 export { QUESTION_WEIGHTS } from './tasteQuestions/questionWeights';
 export { QUESTIONNAIRE_SOURCE_REF } from './fingerprint';
 export {
-  CALIBRATION_RECIPE,
   CALIBRATION_METHOD_PREFERENCE,
   CALIBRATION_EVENT_WEIGHT,
   CALIBRATION_STAGES,
 } from './calibrationRecipe';
 export type { CalibrationStage } from './calibrationRecipe';
-export { CALIBRATION_LEXICON, TEXT_NORMALIZATION } from './calibrationLexicon';
+export { CALIBRATION_LEXICON } from './calibrationLexicon';

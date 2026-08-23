@@ -19,6 +19,16 @@ import type { ThemePreference } from '../../theme/colorScheme';
 export interface UiState {
   readonly themePreference: ThemePreference;
   readonly setThemePreference: (preference: ThemePreference) => void;
+  /**
+   * Whether the "Začni tu" card on the home screen has been dismissed.
+   *
+   * A preference about this screen on this phone, like the theme beside it -
+   * not progress. What the user has actually done still lives on the account,
+   * so hiding the card loses nothing and unhiding it would show the same three
+   * ticks back.
+   */
+  readonly gettingStartedHidden: boolean;
+  readonly hideGettingStarted: () => void;
 }
 
 export const useUiStore = create<UiState>()(
@@ -28,11 +38,18 @@ export const useUiStore = create<UiState>()(
       setThemePreference: (themePreference: ThemePreference): void => {
         set({ themePreference });
       },
+      gettingStartedHidden: false,
+      hideGettingStarted: (): void => {
+        set({ gettingStartedHidden: true });
+      },
     }),
     {
       name: STORAGE_KEYS.uiPreferences,
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: ({ themePreference }: UiState) => ({ themePreference }),
+      partialize: ({ themePreference, gettingStartedHidden }: UiState) => ({
+        themePreference,
+        gettingStartedHidden,
+      }),
     },
   ),
 );

@@ -1,14 +1,7 @@
-/**
- * Placeholder copy for the empty screens. The app is a skeleton on purpose -
- * these strings say so out loud instead of pretending a feature exists.
- */
+/** Copy that belongs to one screen and has nowhere better to live. */
 export const SK_SCREENS = {
-  homeEmptyTitle: 'Zatiaľ prázdno',
-  homeEmptyBody: 'Domovská obrazovka dostane obsah, keď pribudnú prvé funkcie.',
-  inventoryEmptyTitle: 'Žiadna káva',
-  inventoryEmptyBody: 'Tu bude zoznam tvojich balíčkov kávy.',
-  brewEmptyTitle: 'Žiadny recept',
-  brewEmptyBody: 'Tu bude sprievodca prípravou a časovač.',
+  brewEmptyTitle: 'Nemáš zapísanú kávu?',
+  brewEmptyBody: 'Nevadí. Povedz mi, v čom variš, a recept dostaneš aj tak.',
   profileEmptyTitle: 'Profil',
   profileEmptyBody: 'Tu budú tvoje nastavenia a preferencie chuti.',
   onboardingEmptyTitle: 'Vitaj v Brewmate',

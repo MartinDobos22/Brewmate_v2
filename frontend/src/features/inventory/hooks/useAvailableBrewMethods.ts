@@ -13,6 +13,9 @@ export interface AvailableBrewMethods {
   readonly brewers: readonly Equipment[];
   readonly isLoading: boolean;
   readonly isError: boolean;
+  /** Whichever of the two queries failed, tried again together. */
+  readonly error: unknown;
+  readonly refetch: () => void;
 }
 
 /**
@@ -32,5 +35,10 @@ export const useAvailableBrewMethods = (): AvailableBrewMethods => {
     methods: filterBrewableMethods(catalog.methods, brewers),
     isLoading: catalog.isLoading || equipment.isPending,
     isError: catalog.isError || equipment.isError,
+    error: equipment.error ?? catalog.error,
+    refetch: (): void => {
+      catalog.refetch();
+      void equipment.refetch();
+    },
   };
 };

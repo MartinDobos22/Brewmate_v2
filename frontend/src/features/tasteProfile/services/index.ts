@@ -11,3 +11,4 @@ export { rankFlavorAffinities } from './rankFlavorAffinities';
 export type { FlavorAffinityEntry } from './rankFlavorAffinities';
 export { resolveFlavorLabelKey } from './resolveFlavorLabelKey';
 export { roastPreferenceLabelKey, milkUsageLabelKey } from './resolvePreferenceLabels';
+export { resolveConfidenceNoticeKey } from './resolveConfidenceNotice';

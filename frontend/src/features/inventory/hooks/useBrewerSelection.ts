@@ -13,6 +13,8 @@ export interface BrewerSelection {
   readonly selectedCount: number;
   readonly isLoading: boolean;
   readonly isError: boolean;
+  readonly error: unknown;
+  readonly refetch: () => void;
   readonly isPending: boolean;
   readonly brewerFor: (method: BrewMethod) => Equipment | undefined;
   readonly toggle: (method: BrewMethod) => void;
@@ -44,6 +46,11 @@ export const useBrewerSelection = (): BrewerSelection => {
     selectedCount: owned.brewers.length,
     isLoading: catalog.isLoading || owned.isLoading,
     isError: catalog.isError || owned.isError,
+    error: catalog.error ?? owned.error,
+    refetch: (): void => {
+      catalog.refetch();
+      owned.refetch();
+    },
     isPending: create.isPending || remove.isPending,
 
     toggle: (method: BrewMethod): void => {

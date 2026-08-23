@@ -16,14 +16,6 @@ export const SK_CALIBRATION = {
   calibrationRecipeTitle: 'Referenčný recept',
   calibrationRationale:
     'Referenčné varenie z úvodného nastavenia. Zámerne jednoduché, aby sa dalo zopakovať.',
-  calibrationDose: 'Dávka',
-  calibrationWater: 'Voda',
-  calibrationRatio: 'Pomer',
-  calibrationTemperature: 'Teplota',
-  calibrationGrind: 'Mletie',
-  calibrationGrindMedium: 'stredné',
-  calibrationNoTemperatureNote: 'Nemáš reguláciu teploty, tak vodu po zovretí nechaj minútu stáť.',
-  calibrationNoScaleNote: 'Bez váhy ber dávku ako dve zarovnané polievkové lyžice.',
   calibrationBrewedAction: 'Uvaril som, ideme na to',
 
   calibrationChatTitle: 'Aké to bolo?',

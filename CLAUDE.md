@@ -9,8 +9,11 @@ API for every entity and the TanStack Query hooks that talk to it. The
 reference data is filled in - the brewing methods and the grinder catalogue -
 and the product UI now covers the whole first run: the grinder catalogue, the
 onboarding flow (taste questionnaire, equipment, water, sets, a calibration
-brew) and the profile screen it all ends up in. There is still no AI: the
-calibration brew is read by a Slovak keyword lexicon, not by a model.
+brew) and the profile screen it all ends up in. On top of that sits the empty
+app: the home screen a brand-new account sees, quick brewing without an
+inventory, the cupboard, the shop scanner and the states every screen falls
+back to. There is still no AI: the calibration brew and the shop verdict are
+read by Slovak lexicons and three arithmetic rules, not by a model.
 
 ---
 
@@ -186,8 +189,9 @@ frontend/
     ├── i18n/           Slovak copy, split by domain under translations/sk/
     ├── components/
     │   ├── ui/         Button, Card, Text, Input, Chip, OptionCard, Sheet, ListItem,
-    │   │               ChatBubble, Slider, NumberStepper, EmptyState, LoadingState,
-    │   │               ErrorState, ValueDisplay - each its own folder
+    │   │               ChatBubble, Slider, NumberStepper, ProgressBar, EmptyState,
+    │   │               LoadingState, ErrorState, QueryState, ValueDisplay - each
+    │   │               its own folder
     │   └── layout/     Screen, AppProviders, RootStack, TabsNavigator, TabBarIcon
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
     │                   chat, tasteProfile, bagEvaluations, onboarding, profile,
@@ -196,7 +200,7 @@ frontend/
     ├── hooks/          only genuinely global hooks, incl. useEntityMutation and
     │                   useDebouncedValue
     ├── lib/            apiClient, firebase, queryClient, queryCache, formatters,
-    │                   fingerprint
+    │                   fingerprint, requestErrors, text
     ├── stores/         Zustand - UI state only
     └── types/
 ```
@@ -211,9 +215,10 @@ frontend/
   made of stays under `src/`. A route file renders one screen component and
   nothing else - no logic, no layout.
 - **Slovak copy is split by domain** under `src/i18n/translations/sk/`
-  (`common`, `auth`, `navigation`, `screens`, `grinders`, `onboarding`,
-  `tasteQuestionsDirect`, `tasteQuestionsIndirect`, `equipmentSetup`,
-  `waterAndSets`, `calibration`, `tasteProfile`, `errors`, `designSystem`) and
+  (`common`, `auth`, `navigation`, `screens`, `home`, `inventory`, `grinders`,
+  `onboarding`, `tasteQuestionsDirect`, `tasteQuestionsIndirect`,
+  `equipmentSetup`, `waterAndSets`, `calibration`, `brewing`, `scanner`,
+  `tasteProfile`, `errors`, `designSystem`) and
   merged in `sk/index.ts`. One file would break the 150-line limit.
   `SK_TRANSLATIONS` is the source of truth for the key list: every future locale
   is typed against it, so a missing translation is a type error.
@@ -273,6 +278,101 @@ kind of element has the same radius everywhere.
 The line is deliberate. Guessing at a value the API is about to compute means
 showing the user a number that is about to change underneath them, and the
 numbers in question are exactly the ones this product exists to get right.
+
+### The empty app
+
+The state most users see first, and the one a product is judged on. Nothing
+here is allowed to be a blank screen with the words "žiadne dáta".
+
+- **The home screen is not a dashboard.** A dashboard with no data is a set of
+  empty frames. A new account gets three things to do instead - "Začni tu" -
+  each a tap into the flow it names: the questionnaire, adding or scanning a
+  coffee, and brewing the first cup.
+- **The ticks are read from the account, not from a checklist beside it.**
+  `useGettingStarted` asks the profile, the cupboard, the shop verdicts and the
+  brew logs, one row each. Somebody who answered the questionnaire from the
+  profile screen, or added a bag in a shop, has done that step whatever route
+  they took to it - a tick that can disagree with the data is worse than no
+  tick.
+- **The card leaves twice over:** on its own once all three are done, and by
+  hand at any point. The dismissal is the one piece of this that lives in
+  `uiStore` rather than on the account, because it is a preference about this
+  screen on this phone, like the theme beside it - not progress.
+- **The shop scanner sits above everything else on that screen.** It is the
+  only feature a brand-new account can use in the first minute and get
+  something real back from: it needs no cupboard and no history, only the
+  questionnaire. Burying it three taps inside the inventory would be hiding the
+  one door that is already open.
+- **Quick brewing does not need an inventory.** `/quick-brew` asks for the
+  method, then for whatever the drinker happens to know about the beans - a
+  roast level, a name, or nothing at all - and answers with a recipe whose
+  `bagId` is null. The cupboard is offered _after_ the cup, not as a gate in
+  front of it. Nobody wants to fill in a database before they are allowed to
+  make coffee.
+- **The empty cupboard offers three ways out**, in the order they suit the
+  person reading them: scan a bag, type one in, or - quieter, for somebody with
+  nothing at home - go and be advised in a shop.
+- **The empty brewing history describes itself.** Three lines of what will
+  appear after the first brew, and one sentence about why the trouble is worth
+  taking. "Opíš mi kávu" is a favour the user does the app, and a favour
+  deserves a reason.
+
+### The shop verdict
+
+"Mám si ju kúpiť?", asked in front of a shelf and answered on the phone.
+
+- **Three rules, not a model:** the roast against what this person reaches for,
+  the printed tasting notes against the flavours they like, and the roast date
+  against the calendar. Deterministic, offline, and showable in full - an
+  opinion somebody can argue with is worth something in a shop.
+- **Roast levels are compared as a distance, not for equality.** They are
+  ordered light to dark, so a medium next to a medium-light is the same answer
+  as far as anybody's tongue is concerned. Calling that a mismatch would make
+  the app disagree with people over nothing.
+- **"Neviem posúdiť" is a first-class verdict.** An account whose profile has
+  learnt nothing gets no taste argument at all, only the freshness one, and the
+  screen says so. This is the first screen a new user reaches; repaying that
+  with an invented opinion about them is the one thing it must not do.
+- **The reasoning and the gaps are stored separately**, as the API already
+  models them, and both are printed. `profileConfidenceAtTime` is stamped by
+  the server, so how much that afternoon's advice was worth stays readable a
+  month later.
+- **Reading a label from a photograph is not implemented.** The screen says so
+  and asks for the fields instead. A camera button that quietly did nothing
+  would be worse than the sentence admitting it.
+
+### What the app admits about itself
+
+`confidence_level` is not decoration, so it is not only on the profile screen.
+
+- **`ConfidenceNotice` sits next to every recommendation** - the quick brew
+  recipe and the shop verdict - and reads the profile itself rather than taking
+  one as a prop, so adding the caveat is one line at the call site. A
+  disclaimer somebody has to remember to add is one that will eventually be
+  left off.
+- **It says which of three things is true**: nothing is known, only the
+  questionnaire is known, or a couple of brews are behind it. Above `medium`
+  confidence there is no notice at all: a caveat that never goes away is read
+  as boilerplate, and then the honest ones stop being read too.
+- **The profile screen says what would raise it**, and links to the one thing
+  that actually does. A confidence figure with no way to move it is a score,
+  and nobody asked to be scored.
+
+### Loading, empty and failed
+
+- **`QueryState` is the waiting room every screen shares.** One component for
+  the two states that otherwise turn into a blank screen: a query that has not
+  answered yet, and one that failed. The failure always carries a retry.
+- **No raw error code ever reaches the interface.** `resolveRequestErrorKeys`
+  maps every `ERROR_CODES` value and every client-side failure onto a Slovak
+  sentence, and the map is total, so a new error code is a type error here
+  rather than a `CONFLICT` on somebody's screen.
+- **Being offline outranks whatever code came back.** A request that never left
+  the phone failed for a reason the user can see out of the window; telling
+  them the server had a problem would send them looking in the wrong place.
+- **`EmptyState` takes a list of actions rather than one.** An empty screen
+  with nothing to press is a dead end, and the two or three ways forward are
+  exactly what makes an empty screen useful.
 
 ### The grinder catalogue
 

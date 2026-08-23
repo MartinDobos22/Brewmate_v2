@@ -8,6 +8,7 @@ export interface BrewMethodCatalog {
   readonly methods: readonly BrewMethod[];
   readonly isLoading: boolean;
   readonly isError: boolean;
+  readonly error: unknown;
   readonly refetch: () => void;
 }
 
@@ -19,6 +20,7 @@ export const useBrewMethodCatalog = (): BrewMethodCatalog => {
     methods: query.data?.items ?? NONE,
     isLoading: query.isPending,
     isError: query.isError,
+    error: query.error,
     refetch: (): void => {
       void query.refetch();
     },

@@ -12,3 +12,9 @@ export const useThemePreference = (): ThemePreference =>
 
 export const useSetThemePreference = (): ((preference: ThemePreference) => void) =>
   useUiStore((state: UiState) => state.setThemePreference);
+
+export const useGettingStartedHidden = (): boolean =>
+  useUiStore((state: UiState) => state.gettingStartedHidden);
+
+export const useHideGettingStarted = (): (() => void) =>
+  useUiStore((state: UiState) => state.hideGettingStarted);

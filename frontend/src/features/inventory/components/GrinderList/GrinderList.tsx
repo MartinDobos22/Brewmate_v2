@@ -65,8 +65,13 @@ export const GrinderList = ({
         description={t(
           isFiltered ? TRANSLATION_KEYS.grinderNoResultsBody : TRANSLATION_KEYS.grinderEmptyBody,
         )}
-        actionLabel={t(TRANSLATION_KEYS.grinderNotFoundAction)}
-        onAction={onAddOwn}
+        actions={[
+          {
+            label: t(TRANSLATION_KEYS.grinderNotFoundAction),
+            variant: 'primary',
+            onPress: onAddOwn,
+          },
+        ]}
       />
     );
   }

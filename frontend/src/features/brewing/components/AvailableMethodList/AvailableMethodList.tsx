@@ -2,7 +2,7 @@ import type { BrewMethod } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, LoadingState, Text } from '../../../../components/ui';
+import { Button, Card, QueryState, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { useAvailableBrewMethods } from '../../../inventory/hooks';
@@ -32,8 +32,13 @@ export const AvailableMethodList = (): JSX.Element => {
       <Text variant="bodySmall" tone="muted">
         {t(TRANSLATION_KEYS.brewAvailableBody)}
       </Text>
-      {available.isLoading ? <LoadingState label={t(TRANSLATION_KEYS.stateLoading)} /> : null}
-      {!available.isLoading && available.methods.length === NOTHING ? (
+      <QueryState
+        isPending={available.isLoading}
+        isError={available.isError}
+        error={available.error}
+        onRetry={available.refetch}
+      />
+      {!available.isLoading && !available.isError && available.methods.length === NOTHING ? (
         <>
           <Text variant="bodyMedium" tone="muted">
             {t(TRANSLATION_KEYS.brewAvailableEmpty)}

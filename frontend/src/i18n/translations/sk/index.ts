@@ -1,12 +1,16 @@
 import { SK_AUTH } from './auth';
+import { SK_BREWING } from './brewing';
 import { SK_CALIBRATION } from './calibration';
 import { SK_COMMON } from './common';
 import { SK_DESIGN_SYSTEM } from './designSystem';
 import { SK_EQUIPMENT_SETUP } from './equipmentSetup';
 import { SK_ERRORS } from './errors';
 import { SK_GRINDERS } from './grinders';
+import { SK_HOME } from './home';
+import { SK_INVENTORY } from './inventory';
 import { SK_NAVIGATION } from './navigation';
 import { SK_ONBOARDING } from './onboarding';
+import { SK_SCANNER } from './scanner';
 import { SK_SCREENS } from './screens';
 import { SK_TASTE_PROFILE } from './tasteProfile';
 import { SK_TASTE_QUESTIONS_DIRECT } from './tasteQuestionsDirect';
@@ -29,6 +33,10 @@ export const SK_TRANSLATIONS = {
   ...SK_EQUIPMENT_SETUP,
   ...SK_WATER_AND_SETS,
   ...SK_CALIBRATION,
+  ...SK_BREWING,
+  ...SK_SCANNER,
+  ...SK_HOME,
+  ...SK_INVENTORY,
   ...SK_TASTE_PROFILE,
   ...SK_ERRORS,
   ...SK_DESIGN_SYSTEM,

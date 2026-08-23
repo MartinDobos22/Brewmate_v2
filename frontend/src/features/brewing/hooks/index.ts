@@ -15,3 +15,6 @@ export { useCreateBrewLog } from './useCreateBrewLog';
 export { useUpdateBrewLog } from './useUpdateBrewLog';
 export type { UpdateBrewLogVariables } from './useUpdateBrewLog';
 export { useDeleteBrewLog } from './useDeleteBrewLog';
+
+export { useQuickBrew } from './useQuickBrew';
+export type { QuickBrew } from './useQuickBrew';

@@ -18,3 +18,4 @@ export {
   EMPTY_EQUIPMENT_SET_FORM,
   EQUIPMENT_SET_NAME_SUGGESTION_KEYS,
 } from './equipmentSetDefaults';
+export { TASTING_NOTES_SEPARATOR, DAYS_SINCE_ROAST } from './coffeeBagForm';
