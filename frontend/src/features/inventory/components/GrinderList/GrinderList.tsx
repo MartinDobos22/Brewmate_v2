@@ -18,6 +18,8 @@ export interface GrinderListProps {
   readonly isFiltered: boolean;
   readonly onRetry: () => void;
   readonly onAddOwn: () => void;
+  /** Turns the list into a picker. Left out, the entries are read-only. */
+  readonly onSelect?: (grinder: Grinder) => void;
 }
 
 const NOTHING = 0;
@@ -34,6 +36,7 @@ export const GrinderList = ({
   isFiltered,
   onRetry,
   onAddOwn,
+  onSelect,
 }: GrinderListProps): JSX.Element => {
   const styles = useThemedStyles(createGrinderListStyles);
   const { t } = useTranslation();
@@ -73,7 +76,7 @@ export const GrinderList = ({
       data={items}
       keyExtractor={(grinder: Grinder): string => grinder.id}
       renderItem={({ item }: ListRenderItemInfo<Grinder>): JSX.Element => (
-        <GrinderListItem grinder={item} />
+        <GrinderListItem grinder={item} onPress={onSelect} />
       )}
       contentContainerStyle={styles.content}
       keyboardShouldPersistTaps="handled"

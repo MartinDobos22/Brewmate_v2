@@ -5,13 +5,18 @@ import { Screen } from '../../../../components/layout';
 import { Button, Card, Text } from '../../../../components/ui';
 import { APP_CONFIG } from '../../../../constants/config';
 import { ROUTES } from '../../../../constants/routes';
-import { AccountCard } from '../../../auth';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { AccountCard } from '../../../auth';
 import { AppearancePicker } from '../AppearancePicker';
+import { EquipmentSection } from '../EquipmentSection';
+import { SetsSection } from '../SetsSection';
+import { TasteProfileSection } from '../TasteProfileSection';
+import { WaterSection } from '../WaterSection';
 
 /**
- * Infrastructure content only: the account, the theme switch, plus the way
- * into the design system while developing.
+ * Everything the app believes about this person, and every way to change it:
+ * the taste profile and its two correction routes, the cupboard, the water,
+ * the saved sets - and, at the bottom, the two ways out of the product.
  */
 export const ProfileScreen = (): JSX.Element => {
   const { t } = useTranslation();
@@ -19,11 +24,15 @@ export const ProfileScreen = (): JSX.Element => {
 
   return (
     <Screen scrollable>
-      <AccountCard />
+      <TasteProfileSection />
+      <EquipmentSection />
+      <WaterSection />
+      <SetsSection />
       <Card>
         <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileAppearanceTitle)}</Text>
         <AppearancePicker />
       </Card>
+      <AccountCard />
       {APP_CONFIG.designSystemScreenEnabled ? (
         <Card>
           <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileDeveloperTitle)}</Text>
@@ -36,9 +45,6 @@ export const ProfileScreen = (): JSX.Element => {
           />
         </Card>
       ) : null}
-      <Text variant="bodySmall" tone="muted">
-        {t(TRANSLATION_KEYS.profileEmptyBody)}
-      </Text>
     </Screen>
   );
 };

@@ -1,10 +1,17 @@
 import { SK_AUTH } from './auth';
+import { SK_CALIBRATION } from './calibration';
 import { SK_COMMON } from './common';
 import { SK_DESIGN_SYSTEM } from './designSystem';
+import { SK_EQUIPMENT_SETUP } from './equipmentSetup';
 import { SK_ERRORS } from './errors';
 import { SK_GRINDERS } from './grinders';
 import { SK_NAVIGATION } from './navigation';
+import { SK_ONBOARDING } from './onboarding';
 import { SK_SCREENS } from './screens';
+import { SK_TASTE_PROFILE } from './tasteProfile';
+import { SK_TASTE_QUESTIONS_DIRECT } from './tasteQuestionsDirect';
+import { SK_TASTE_QUESTIONS_INDIRECT } from './tasteQuestionsIndirect';
+import { SK_WATER_AND_SETS } from './waterAndSets';
 
 /**
  * Slovak copy. This object is the source of truth for the key list: every
@@ -16,6 +23,13 @@ export const SK_TRANSLATIONS = {
   ...SK_NAVIGATION,
   ...SK_SCREENS,
   ...SK_GRINDERS,
+  ...SK_ONBOARDING,
+  ...SK_TASTE_QUESTIONS_DIRECT,
+  ...SK_TASTE_QUESTIONS_INDIRECT,
+  ...SK_EQUIPMENT_SETUP,
+  ...SK_WATER_AND_SETS,
+  ...SK_CALIBRATION,
+  ...SK_TASTE_PROFILE,
   ...SK_ERRORS,
   ...SK_DESIGN_SYSTEM,
 } as const;

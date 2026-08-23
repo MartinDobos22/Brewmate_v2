@@ -9,33 +9,30 @@ import type { ThemePreference } from '../../theme/colorScheme';
 /**
  * UI state only - what the user is looking at and how they want it to look.
  * Server data lives in TanStack Query, never here.
+ *
+ * Onboarding progress deliberately does not live here. It belongs to the
+ * account rather than to the device, so it is stored in
+ * `users.onboarding_state` and read through `/me`: reinstalling the app or
+ * signing in on a second phone must not hand somebody a flow they already
+ * finished.
  */
 export interface UiState {
   readonly themePreference: ThemePreference;
-  readonly hasCompletedOnboarding: boolean;
   readonly setThemePreference: (preference: ThemePreference) => void;
-  readonly setHasCompletedOnboarding: (completed: boolean) => void;
 }
 
 export const useUiStore = create<UiState>()(
   persist(
     (set) => ({
       themePreference: APP_CONFIG.defaultThemePreference,
-      hasCompletedOnboarding: false,
       setThemePreference: (themePreference: ThemePreference): void => {
         set({ themePreference });
-      },
-      setHasCompletedOnboarding: (hasCompletedOnboarding: boolean): void => {
-        set({ hasCompletedOnboarding });
       },
     }),
     {
       name: STORAGE_KEYS.uiPreferences,
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: ({ themePreference, hasCompletedOnboarding }: UiState) => ({
-        themePreference,
-        hasCompletedOnboarding,
-      }),
+      partialize: ({ themePreference }: UiState) => ({ themePreference }),
     },
   ),
 );

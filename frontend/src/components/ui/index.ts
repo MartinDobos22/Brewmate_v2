@@ -16,6 +16,8 @@ export { ListItem } from './ListItem';
 export type { ListItemProps } from './ListItem';
 export { LoadingState } from './LoadingState';
 export type { LoadingStateProps } from './LoadingState';
+export { OptionCard } from './OptionCard';
+export type { OptionCardProps } from './OptionCard';
 export { NumberStepper } from './NumberStepper';
 export type { NumberStepperProps } from './NumberStepper';
 export { Sheet } from './Sheet';

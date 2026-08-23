@@ -1,4 +1,5 @@
 export { APP_CONFIG } from './config';
+export { FINGERPRINT, FINGERPRINT_SEPARATORS } from './fingerprint';
 export type { AppConfig } from './config';
 export {
   HTTP_METHODS,

@@ -13,6 +13,7 @@ const AUTH_SEGMENT = '(auth)';
 const VERIFY_EMAIL_SEGMENT = 'verify-email';
 const DESIGN_SYSTEM_SEGMENT = 'design-system';
 const GRINDERS_SEGMENT = 'grinders';
+const ONBOARDING_SEGMENT = 'onboarding';
 
 /**
  * The root navigator. Screen transitions are the only place the app animates
@@ -37,6 +38,7 @@ export const RootStack = (): JSX.Element => {
         <Stack.Screen name={TABS_SEGMENT} />
         <Stack.Screen name={VERIFY_EMAIL_SEGMENT} />
         <Stack.Screen name={GRINDERS_SEGMENT} />
+        <Stack.Screen name={ONBOARDING_SEGMENT} />
         <Stack.Screen
           name={DESIGN_SYSTEM_SEGMENT}
           options={{
