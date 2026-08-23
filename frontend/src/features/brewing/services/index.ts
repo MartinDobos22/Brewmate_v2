@@ -7,3 +7,8 @@ export {
   updateBrewLog,
   deleteBrewLog,
 } from './brewLogsApi';
+export { buildReferenceParams } from './buildReferenceRecipe';
+export type { ReferenceRecipeInput } from './buildReferenceRecipe';
+export { buildRecipeNoteKeys } from './buildRecipeNotes';
+export type { RecipeNoteInput } from './buildRecipeNotes';
+export { buildQuickBrewRecipe } from './buildQuickBrewRecipe';

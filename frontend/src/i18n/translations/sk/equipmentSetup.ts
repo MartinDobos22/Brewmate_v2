@@ -22,7 +22,6 @@ export const SK_EQUIPMENT_SETUP = {
   setupBrewersEmptyNotice: 'Zatiaľ si nevybral žiadnu metódu.',
   setupBrewersDetailAction: 'Doplniť podrobnosti',
   setupBrewersLoading: 'Načítavam metódy…',
-  setupBrewersError: 'Zoznam metód sa nenačítal.',
 
   setupBrewerDetailTitle: 'Podrobnosti o vybavení',
   setupBrewerCapacityLabel: 'Objem (ml)',

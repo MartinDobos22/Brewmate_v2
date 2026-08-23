@@ -34,6 +34,19 @@ export const SK_TASTE_PROFILE = {
   profileConfidenceBrewsLabel: 'Varení, z ktorých som sa učil',
   profileConfidenceHint: 'Číslo rastie s každým varením, ktoré mi opíšeš.',
 
+  confidenceNoticeNone: 'Zatiaľ o tvojej chuti neviem nič. Toto je bežné odporúčanie, nie tvoje.',
+  confidenceNoticeQuestionnaire:
+    'Zatiaľ ťa poznám len z dotazníka. Ber to ako začiatok, nie ako pravdu o tebe.',
+  confidenceNoticeFewBrews:
+    'Poznám ťa zatiaľ len z pár varení. Čím viac mi ich opíšeš, tým lepšie budem radiť.',
+
+  profileConfidenceBoostTitle: 'Čo mi pomôže spoznať ťa lepšie',
+  profileConfidenceBoostBrew:
+    'Uvar kávu podľa môjho receptu - aj bez toho, aby si ju mal zapísanú.',
+  profileConfidenceBoostDescribe:
+    'Potom mi vlastnými slovami povedz, aká bola. To ma posunie najviac.',
+  profileConfidenceBoostAction: 'Uvariť a opísať',
+
   profileRoastPreference: 'Praženie',
   profileMilkUsage: 'Mlieko',
   profileRoastLight: 'Svetlé',

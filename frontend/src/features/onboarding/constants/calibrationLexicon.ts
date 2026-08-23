@@ -71,9 +71,3 @@ export const CALIBRATION_LEXICON: readonly CalibrationEntry[] = [
     axes: {},
   },
 ];
-
-/** Turning "chuťová" into "chutova", so a missing diacritic still matches. */
-export const TEXT_NORMALIZATION = {
-  form: 'NFD',
-  diacritics: /\p{Diacritic}/gu,
-} as const;

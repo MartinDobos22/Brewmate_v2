@@ -1,23 +1,6 @@
 import { BREW_METHOD_CATEGORIES, type BrewMethodCategory } from '@brewmate/shared';
 
 /**
- * The reference brew.
- *
- * Deliberately unremarkable numbers: the point of this cup is not to be the
- * best coffee somebody has made, it is to be a cup Brewmate knows the recipe
- * for, so that whatever the drinker says about it can be read as a difference
- * from a known starting point.
- */
-export const CALIBRATION_RECIPE = {
-  doseGrams: 15,
-  espressoDoseGrams: 18,
-  /** Only offered when the kettle can actually hold a temperature. */
-  waterTempC: 93,
-  /** Half a range, for reading a method's default window at its middle. */
-  midpointDivisor: 2,
-} as const;
-
-/**
  * Which method to propose when somebody owns several.
  *
  * A pour over first: it is the method where a change in grind or temperature

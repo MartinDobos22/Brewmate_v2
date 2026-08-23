@@ -4,8 +4,9 @@ import {
   type TasteProfileEventPayload,
 } from '@brewmate/shared';
 
+import { normalizeText } from '../../../lib/text';
 import { CALIBRATION_EVENT_WEIGHT } from '../constants/calibrationRecipe';
-import { CALIBRATION_LEXICON, TEXT_NORMALIZATION } from '../constants/calibrationLexicon';
+import { CALIBRATION_LEXICON } from '../constants/calibrationLexicon';
 
 import type { CalibrationEntry, CalibrationReading } from './calibrationLexiconTypes';
 
@@ -19,10 +20,6 @@ export interface CalibrationUnderstanding {
   readonly readings: readonly CalibrationReading[];
   readonly payload: TasteProfileEventPayload;
 }
-
-/** Lower case, no diacritics - so "kyslá" and "kysla" are the same word here. */
-const normalize = (text: string): string =>
-  text.toLowerCase().normalize(TEXT_NORMALIZATION.form).replace(TEXT_NORMALIZATION.diacritics, '');
 
 /**
  * A term is one stem, or several that have to turn up in order.
@@ -66,7 +63,7 @@ const claims = (axes: PartialTasteAxes, entry: CalibrationEntry): boolean =>
  * no axis at all rather than a guess.
  */
 export const readCalibrationDescription = (description: string): CalibrationUnderstanding => {
-  const text = normalize(description);
+  const text = normalizeText(description);
   const readings: CalibrationReading[] = [];
   let axes: PartialTasteAxes = {};
 

@@ -2,7 +2,7 @@ import type { BrewMethod, Equipment } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { LoadingState, Text } from '../../../../components/ui';
+import { QueryState } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import type { BrewerSelection } from '../../hooks';
@@ -29,15 +29,15 @@ export const BrewMethodPicker = ({
   const styles = useThemedStyles(createBrewMethodPickerStyles);
   const { t } = useTranslation();
 
-  if (selection.isLoading) {
-    return <LoadingState label={t(TRANSLATION_KEYS.setupBrewersLoading)} />;
-  }
-
-  if (selection.isError) {
+  if (selection.isLoading || selection.isError) {
     return (
-      <Text variant="bodyMedium" tone="error">
-        {t(TRANSLATION_KEYS.setupBrewersError)}
-      </Text>
+      <QueryState
+        isPending={selection.isLoading}
+        isError={selection.isError}
+        error={selection.error}
+        onRetry={selection.refetch}
+        loadingLabel={t(TRANSLATION_KEYS.setupBrewersLoading)}
+      />
     );
   }
 

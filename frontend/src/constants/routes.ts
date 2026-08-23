@@ -11,6 +11,8 @@ export const ROUTES = {
   inventory: '/inventory',
   grinders: '/grinders',
   brew: '/brew',
+  quickBrew: '/quick-brew',
+  scan: '/scan',
   profile: '/profile',
   onboarding: '/onboarding',
   chat: '/chat',

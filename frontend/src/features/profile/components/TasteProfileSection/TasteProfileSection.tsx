@@ -1,10 +1,11 @@
 import { useState, type JSX } from 'react';
 
-import { Button, Card, ErrorState, LoadingState, Text } from '../../../../components/ui';
+import { Button, Card, QueryState, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { ONBOARDING_STEPS } from '../../../onboarding/constants';
 import { useOnboardingStepLink } from '../../../onboarding/hooks';
 import {
+  ConfidenceBoost,
   ConfidenceIndicator,
   FlavorAffinityChips,
   TasteProfileChart,
@@ -24,20 +25,16 @@ import { TastePreferenceRows } from './TastePreferenceRows';
  */
 export const TasteProfileSection = (): JSX.Element => {
   const { t } = useTranslation();
-  const { data: profile, isPending, isError, refetch } = useTasteProfile();
+  const { data: profile, isPending, isError, error, refetch } = useTasteProfile();
   const openStep = useOnboardingStepLink();
   const [tuning, setTuning] = useState(false);
 
-  if (isPending) {
-    return <LoadingState label={t(TRANSLATION_KEYS.stateLoading)} />;
-  }
-
-  if (isError) {
+  if (isPending || isError) {
     return (
-      <ErrorState
-        title={t(TRANSLATION_KEYS.stateErrorTitle)}
-        description={t(TRANSLATION_KEYS.stateErrorBody)}
-        retryLabel={t(TRANSLATION_KEYS.actionRetry)}
+      <QueryState
+        isPending={isPending}
+        isError={isError}
+        error={error}
         onRetry={(): void => {
           void refetch();
         }}
@@ -52,6 +49,7 @@ export const TasteProfileSection = (): JSX.Element => {
       <TastePreferenceRows profile={profile} />
       <FlavorAffinityChips affinities={profile.flavorAffinities} />
       <ConfidenceIndicator profile={profile} />
+      <ConfidenceBoost profile={profile} />
       <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileRetakeTitle)}</Text>
       <Button
         label={t(TRANSLATION_KEYS.profileRetakeAction)}

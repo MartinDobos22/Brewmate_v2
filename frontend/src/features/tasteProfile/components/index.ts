@@ -6,3 +6,6 @@ export { FlavorAffinityChips } from './FlavorAffinityChips';
 export type { FlavorAffinityChipsProps } from './FlavorAffinityChips';
 export { TasteAxisSliders } from './TasteAxisSliders';
 export type { TasteAxisSlidersProps } from './TasteAxisSliders';
+export { ConfidenceNotice } from './ConfidenceNotice';
+export { ConfidenceBoost } from './ConfidenceBoost';
+export type { ConfidenceBoostProps } from './ConfidenceBoost';
