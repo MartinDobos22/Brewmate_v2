@@ -3,8 +3,9 @@ import { useState, type JSX } from 'react';
 
 import { Screen } from '../../../../components/layout';
 import { Button, QueryState, Text } from '../../../../components/ui';
-import { ROUTES } from '../../../../constants/routes';
+import { buildScanRoute, ROUTES } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { BAG_SCAN_MODES } from '../../../bagEvaluations/constants';
 import { useCoffeeBags } from '../../hooks';
 import { AddCoffeeBagSheet } from '../AddCoffeeBagSheet';
 import { CoffeeBagList } from '../CoffeeBagList';
@@ -58,7 +59,7 @@ export const InventoryScreen = (): JSX.Element => {
             variant="tertiary"
             fullWidth
             onPress={(): void => {
-              router.push(ROUTES.scan);
+              router.push(buildScanRoute(BAG_SCAN_MODES.inventory));
             }}
           />
         </>

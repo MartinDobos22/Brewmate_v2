@@ -13,6 +13,7 @@ export const ROUTES = {
   brew: '/brew',
   quickBrew: '/quick-brew',
   scan: '/scan',
+  coffeeBags: '/coffee-bags',
   profile: '/profile',
   onboarding: '/onboarding',
   chat: '/chat',
@@ -20,6 +21,29 @@ export const ROUTES = {
 } as const;
 
 export type Route = (typeof ROUTES)[keyof typeof ROUTES];
+
+const ROUTE_SEPARATOR = '/';
+
+/**
+ * One coffee's own screen.
+ *
+ * Built here rather than at the call site for the same reason every other path
+ * is a constant: a screen is reached through one definition, so renaming the
+ * route is one edit rather than a search for string concatenation.
+ */
+export const buildBagRoute = (bagId: string): string =>
+  [ROUTES.coffeeBags, encodeURIComponent(bagId)].join(ROUTE_SEPARATOR);
+
+const MODE_PARAM = '?mode=';
+
+/**
+ * The scanner, opened straight into one of its two modes.
+ *
+ * The cupboard already knows somebody came to add a bag rather than to ask
+ * about one, so it says so instead of making them answer that question again.
+ */
+export const buildScanRoute = (mode: string): string =>
+  `${ROUTES.scan}${MODE_PARAM}${encodeURIComponent(mode)}`;
 
 /** Route segment names, as expo-router addresses the files inside `(tabs)`. */
 export const TAB_SEGMENTS = {

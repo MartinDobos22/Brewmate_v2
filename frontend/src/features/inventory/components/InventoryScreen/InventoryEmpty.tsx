@@ -2,8 +2,9 @@ import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 
 import { EmptyState } from '../../../../components/ui';
-import { ROUTES } from '../../../../constants/routes';
+import { buildScanRoute, ROUTES } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { BAG_SCAN_MODES } from '../../../bagEvaluations/constants';
 
 export interface InventoryEmptyProps {
   readonly onAddManually: () => void;
@@ -29,7 +30,7 @@ export const InventoryEmpty = ({ onAddManually }: InventoryEmptyProps): JSX.Elem
           label: t(TRANSLATION_KEYS.inventoryAddScan),
           variant: 'primary',
           onPress: (): void => {
-            router.push(ROUTES.scan);
+            router.push(buildScanRoute(BAG_SCAN_MODES.inventory));
           },
         },
         {

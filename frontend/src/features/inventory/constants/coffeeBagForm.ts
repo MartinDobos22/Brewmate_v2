@@ -1,6 +1,9 @@
 /** How several tasting notes are written into one field. */
 export const TASTING_NOTES_SEPARATOR = ',';
 
+/** How the app writes them back into the box after reading a label. */
+export const TASTING_NOTES_JOIN = ', ';
+
 /**
  * What the days-since-roast stepper accepts.
  *

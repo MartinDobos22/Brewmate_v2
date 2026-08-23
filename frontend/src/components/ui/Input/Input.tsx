@@ -13,6 +13,12 @@ export interface InputProps {
   readonly placeholder?: string;
   readonly helpText?: string;
   readonly errorText?: string;
+  /**
+   * Marks a value the app filled in but is not sure of - a field read off a
+   * photograph in bad light. Distinct from an error: nothing is wrong, it is
+   * simply worth a glance before it is saved.
+   */
+  readonly unverified?: boolean;
   readonly disabled?: boolean;
   readonly keyboardType?: KeyboardTypeOptions;
   /** Masks the value. Also opts the field out of autocorrect and suggestions. */
@@ -30,6 +36,7 @@ export const Input = ({
   placeholder,
   helpText,
   errorText,
+  unverified = false,
   disabled = false,
   keyboardType,
   secureTextEntry = false,
@@ -50,6 +57,7 @@ export const Input = ({
       <View
         style={[
           styles.field,
+          unverified && !hasError && styles.unverified,
           focused && !hasError && styles.focused,
           hasError && styles.errored,
           disabled && styles.disabled,
@@ -83,7 +91,7 @@ export const Input = ({
         </Text>
       ) : null}
       {!hasError && helpText !== undefined ? (
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodySmall" tone={unverified ? 'tertiary' : 'muted'}>
           {helpText}
         </Text>
       ) : null}

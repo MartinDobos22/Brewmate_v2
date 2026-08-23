@@ -18,4 +18,5 @@ export {
   EMPTY_EQUIPMENT_SET_FORM,
   EQUIPMENT_SET_NAME_SUGGESTION_KEYS,
 } from './equipmentSetDefaults';
-export { TASTING_NOTES_SEPARATOR, DAYS_SINCE_ROAST } from './coffeeBagForm';
+export { TASTING_NOTES_SEPARATOR, TASTING_NOTES_JOIN, DAYS_SINCE_ROAST } from './coffeeBagForm';
+export { BAG_FRESHNESS_LABEL_KEYS, BAG_FRESHNESS_TONES } from './bagFreshnessLabels';

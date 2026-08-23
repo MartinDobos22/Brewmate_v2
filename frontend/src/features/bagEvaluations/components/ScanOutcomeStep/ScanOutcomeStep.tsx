@@ -24,7 +24,7 @@ export const ScanOutcomeStep = ({ scan }: ScanOutcomeStepProps): JSX.Element => 
       <Text variant="bodySmall" tone="muted">
         {t(TRANSLATION_KEYS.scanOutcomeBody)}
       </Text>
-      {scan.hasFailed ? (
+      {scan.outcome.hasFailed ? (
         <Text variant="bodySmall" tone="error">
           {t(TRANSLATION_KEYS.scanError)}
         </Text>
@@ -32,16 +32,16 @@ export const ScanOutcomeStep = ({ scan }: ScanOutcomeStepProps): JSX.Element => 
       <Button
         label={t(TRANSLATION_KEYS.scanOutcomeBought)}
         fullWidth
-        loading={scan.isPending}
+        loading={scan.outcome.isPending}
         onPress={(): void => {
-          scan.recordPurchase(t(TRANSLATION_KEYS.quickBrewUnnamedCoffee));
+          scan.outcome.recordPurchase(scan.label, t(TRANSLATION_KEYS.inventoryUnnamedCoffee));
         }}
       />
       <Button
         label={t(TRANSLATION_KEYS.scanOutcomeSkipped)}
         variant="tertiary"
         fullWidth
-        onPress={scan.recordSkipped}
+        onPress={scan.outcome.recordSkipped}
       />
     </Card>
   );

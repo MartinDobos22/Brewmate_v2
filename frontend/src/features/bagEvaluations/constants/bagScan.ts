@@ -1,7 +1,24 @@
 import { TRANSLATION_KEYS, type TranslationKey } from '../../../i18n';
 
-/** Where somebody is inside one shop verdict. */
+/**
+ * What somebody came here to do.
+ *
+ * Two modes over one parsing layer: the label is read the same way either
+ * way, and only what happens afterwards differs - an opinion, or a row in the
+ * cupboard. Asking first is cheaper than guessing, and the two answers lead to
+ * genuinely different screens.
+ */
+export const BAG_SCAN_MODES = {
+  verdict: 'verdict',
+  inventory: 'inventory',
+} as const;
+
+export type BagScanMode = (typeof BAG_SCAN_MODES)[keyof typeof BAG_SCAN_MODES];
+
+/** Where somebody is inside one scan. */
 export const BAG_SCAN_STAGES = {
+  mode: 'mode',
+  capture: 'capture',
   label: 'label',
   verdict: 'verdict',
   done: 'done',

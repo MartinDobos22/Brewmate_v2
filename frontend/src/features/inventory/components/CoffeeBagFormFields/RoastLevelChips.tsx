@@ -14,17 +14,23 @@ const UNKNOWN_ROAST = null;
 export interface RoastLevelChipsProps {
   readonly value: RoastLevel | null;
   readonly onChange: (roastLevel: RoastLevel | null) => void;
+  /** True when a camera picked this and was not sure of it. */
+  readonly unverified?: boolean;
 }
 
 /** The roast on the label, with "neviem" as an answer rather than a gap. */
-export const RoastLevelChips = ({ value, onChange }: RoastLevelChipsProps): JSX.Element => {
+export const RoastLevelChips = ({
+  value,
+  onChange,
+  unverified = false,
+}: RoastLevelChipsProps): JSX.Element => {
   const styles = useThemedStyles(createCoffeeBagFormFieldsStyles);
   const { t } = useTranslation();
 
   return (
     <>
-      <Text variant="labelMedium" tone="muted">
-        {t(TRANSLATION_KEYS.scanRoastLabel)}
+      <Text variant="labelMedium" tone={unverified ? 'tertiary' : 'muted'}>
+        {t(unverified ? TRANSLATION_KEYS.scanRoastLabelUncertain : TRANSLATION_KEYS.scanRoastLabel)}
       </Text>
       <View style={styles.chips}>
         <Chip
