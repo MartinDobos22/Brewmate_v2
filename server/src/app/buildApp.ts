@@ -6,6 +6,7 @@ import { authPlugin } from '../auth/authPlugin.js';
 import { errorHandler } from '../errors/errorHandler.js';
 import { notFoundHandler } from '../errors/notFoundHandler.js';
 import { createLoggerOptions } from '../logging/createLoggerOptions.js';
+import { aiRoutes } from '../modules/ai/aiRoutes.js';
 import { aiUsageRoutes } from '../modules/aiUsage/aiUsageRoutes.js';
 import { bagEvaluationRoutes } from '../modules/bagEvaluations/bagEvaluationRoutes.js';
 import { brewLogRoutes } from '../modules/brewLogs/brewLogRoutes.js';
@@ -32,7 +33,7 @@ import { createServices } from './createServices.js';
  * into anybody's coffee.
  */
 export const buildApp = async (dependencies: AppDependencies): Promise<FastifyInstance> => {
-  const { config, db, tokenVerifier, identityDeleter } = dependencies;
+  const { config, db, tokenVerifier, identityDeleter, ai } = dependencies;
 
   const app = Fastify({
     logger: createLoggerOptions(config.environment, config.logging.level),
@@ -45,7 +46,7 @@ export const buildApp = async (dependencies: AppDependencies): Promise<FastifyIn
   app.setErrorHandler(errorHandler);
   app.setNotFoundHandler(notFoundHandler);
 
-  const services = createServices(db, identityDeleter);
+  const services = createServices({ db, identityDeleter, ai });
 
   await app.register(authPlugin, { tokenVerifier, userService: services.userService });
   await app.register(healthRoutes, { db });
@@ -61,6 +62,10 @@ export const buildApp = async (dependencies: AppDependencies): Promise<FastifyIn
   await app.register(recipeChatRoutes, { recipeChatService: services.recipeChatService });
   await app.register(brewLogRoutes, { brewLogService: services.brewLogService });
   await app.register(aiUsageRoutes, { aiUsageService: services.aiUsageService });
+  await app.register(aiRoutes, {
+    coffeeBagParseService: services.coffeeBagParseService,
+    coffeeEvaluationService: services.coffeeEvaluationService,
+  });
 
   return app;
 };

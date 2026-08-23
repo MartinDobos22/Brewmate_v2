@@ -7,6 +7,7 @@ export { internalError } from './internalError.js';
 export { isClientError } from './isClientError.js';
 export { notFoundError } from './notFoundError.js';
 export { notFoundHandler } from './notFoundHandler.js';
+export { serviceUnavailableError } from './serviceUnavailableError.js';
 export { statusToErrorCode } from './statusToErrorCode.js';
 export { toErrorResponse } from './toErrorResponse.js';
 export { unauthorizedError } from './unauthorizedError.js';

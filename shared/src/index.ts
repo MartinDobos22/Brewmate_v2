@@ -16,3 +16,4 @@ export * from './recipes/index.js';
 export * from './recipeChat/index.js';
 export * from './brewLogs/index.js';
 export * from './aiUsage/index.js';
+export * from './ai/index.js';

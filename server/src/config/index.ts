@@ -1,3 +1,4 @@
+export type { AiConfig } from './aiConfig.js';
 export type { AppConfig } from './appConfig.js';
 export { CONFIG_ERROR_MESSAGES } from './configErrorMessages.js';
 export type { DatabaseConfig } from './databaseConfig.js';
@@ -11,4 +12,5 @@ export type { LoggingConfig } from './loggingConfig.js';
 export { NODE_ENVIRONMENTS } from './nodeEnvironment.js';
 export type { NodeEnvironment } from './nodeEnvironment.js';
 export { normalizePrivateKey } from './normalizePrivateKey.js';
+export { resolveAiConfig } from './resolveAiConfig.js';
 export type { ServerConfig } from './serverConfig.js';

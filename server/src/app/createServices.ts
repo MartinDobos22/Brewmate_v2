@@ -1,5 +1,14 @@
 import type { IdentityDeleter } from '../auth/identityDeleter.js';
 import type { Database } from '../db/databaseTypes.js';
+import { createCoffeeBagParseRepository } from '../modules/ai/coffeeBagParse/coffeeBagParseRepository.js';
+import {
+  createCoffeeBagParseService,
+  type CoffeeBagParseService,
+} from '../modules/ai/coffeeBagParse/coffeeBagParseService.js';
+import {
+  createCoffeeEvaluationService,
+  type CoffeeEvaluationService,
+} from '../modules/ai/coffeeEvaluation/coffeeEvaluationService.js';
 import { createAiUsageRepository } from '../modules/aiUsage/aiUsageRepository.js';
 import { createAiUsageService, type AiUsageService } from '../modules/aiUsage/aiUsageService.js';
 import { createBagEvaluationRepository } from '../modules/bagEvaluations/bagEvaluationRepository.js';
@@ -47,6 +56,8 @@ import {
 import { createUserRepository } from '../modules/users/userRepository.js';
 import { createUserService, type UserService } from '../modules/users/userService.js';
 
+import type { AiDependencies } from './aiDependencies.js';
+
 /** Everything the HTTP layer delegates to. */
 export interface AppServices {
   readonly userService: UserService;
@@ -61,6 +72,15 @@ export interface AppServices {
   readonly recipeChatService: RecipeChatService;
   readonly brewLogService: BrewLogService;
   readonly aiUsageService: AiUsageService;
+  /** Null wherever no model provider is configured; the AI routes then 503. */
+  readonly coffeeBagParseService: CoffeeBagParseService | null;
+  readonly coffeeEvaluationService: CoffeeEvaluationService | null;
+}
+
+export interface ServiceDependencies {
+  readonly db: Database;
+  readonly identityDeleter: IdentityDeleter;
+  readonly ai: AiDependencies | null;
 }
 
 /**
@@ -70,12 +90,15 @@ export interface AppServices {
  * for globally, which is what lets a test swap the database branch and the
  * identity provider without the modules knowing.
  */
-export const createServices = (db: Database, identityDeleter: IdentityDeleter): AppServices => {
+export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies): AppServices => {
   const equipmentRepository = createEquipmentRepository(db);
   const equipmentSetRepository = createEquipmentSetRepository(db);
   const coffeeBagRepository = createCoffeeBagRepository(db);
   const recipeRepository = createRecipeRepository(db);
   const brewLogRepository = createBrewLogRepository(db);
+
+  const bagEvaluationRepository = createBagEvaluationRepository(db);
+  const aiUsageService = createAiUsageService(createAiUsageRepository(db));
 
   const userService = createUserService(createUserRepository(db), identityDeleter);
   const brewMethodService = createBrewMethodService(createBrewMethodRepository(db));
@@ -92,20 +115,23 @@ export const createServices = (db: Database, identityDeleter: IdentityDeleter): 
     brewLogRepository,
   });
 
+  const bagEvaluationService = createBagEvaluationService(
+    bagEvaluationRepository,
+    coffeeBagRepository,
+    tasteProfileService,
+  );
+
   return {
     userService,
     tasteProfileService,
+    aiUsageService,
+    bagEvaluationService,
     brewMethodService,
     recipeService,
     grinderService: createGrinderService(createGrinderRepository(db)),
     equipmentService: createEquipmentService(equipmentRepository, equipmentSetRepository),
     equipmentSetService: createEquipmentSetService(equipmentSetRepository, equipmentRepository),
     coffeeBagService: createCoffeeBagService(coffeeBagRepository),
-    bagEvaluationService: createBagEvaluationService(
-      createBagEvaluationRepository(db),
-      coffeeBagRepository,
-      tasteProfileService,
-    ),
     recipeChatService: createRecipeChatService(createRecipeChatRepository(db), recipeService),
     brewLogService: createBrewLogService({
       repository: brewLogRepository,
@@ -113,6 +139,24 @@ export const createServices = (db: Database, identityDeleter: IdentityDeleter): 
       equipmentSetRepository,
       userService,
     }),
-    aiUsageService: createAiUsageService(createAiUsageRepository(db)),
+    coffeeBagParseService:
+      ai === null
+        ? null
+        : createCoffeeBagParseService({
+            repository: createCoffeeBagParseRepository(db),
+            imageFetcher: ai.imageFetcher,
+            completionClient: ai.completionClient,
+            aiUsageService,
+          }),
+    coffeeEvaluationService:
+      ai === null
+        ? null
+        : createCoffeeEvaluationService({
+            completionClient: ai.completionClient,
+            repository: bagEvaluationRepository,
+            bagEvaluationService,
+            tasteProfileService,
+            aiUsageService,
+          }),
   };
 };

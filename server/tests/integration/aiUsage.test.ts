@@ -24,7 +24,11 @@ describe('ai usage', () => {
   let api: TestApi;
 
   const recordUsageFor = async (userId: string): Promise<void> => {
-    await createServices(context.db, createFakeIdentityDeleter()).aiUsageService.record({
+    await createServices({
+      db: context.db,
+      identityDeleter: createFakeIdentityDeleter(),
+      ai: null,
+    }).aiUsageService.record({
       userId,
       functionName: FUNCTION_NAME,
       model: MODEL_NAME,

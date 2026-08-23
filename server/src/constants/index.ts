@@ -2,7 +2,13 @@ export { HTTP_METHODS } from './httpMethods.js';
 export type { HttpMethod } from './httpMethods.js';
 export { HTTP_STATUS } from './httpStatus.js';
 export type { HttpStatus } from './httpStatus.js';
-export { MILLISECONDS_PER_SECOND, SECONDS_PER_MINUTE } from './timeUnits.js';
+export {
+  MILLISECONDS_PER_SECOND,
+  SECONDS_PER_MINUTE,
+  MINUTES_PER_HOUR,
+  HOURS_PER_DAY,
+  MILLISECONDS_PER_DAY,
+} from './timeUnits.js';
 export {
   DEFAULT_PORT,
   MIN_PORT,
