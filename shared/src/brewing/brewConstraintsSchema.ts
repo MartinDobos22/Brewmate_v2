@@ -61,3 +61,18 @@ const NOTHING = 0;
 export const hasAnyConstraint = (constraints: BrewConstraints): boolean =>
   BREW_CONSTRAINT_NAMES.some((name: BrewConstraintName): boolean => constraints[name] === true) ||
   (constraints.other?.length ?? NOTHING) > NOTHING;
+
+/**
+ * Which of the named flags were set, in the order the app offers them.
+ *
+ * Shared rather than derived at each call site, because three places read it
+ * for three different purposes - the history marks a cup that was brewed with
+ * something missing, the pre-brew screen counts what is folded away, and the
+ * prompt tells a model what it may not suggest - and a badge that disagreed
+ * with the weight the same brew was priced at would be the app arguing with
+ * its own record.
+ */
+export const readActiveConstraints = (
+  constraints: BrewConstraints,
+): readonly BrewConstraintName[] =>
+  BREW_CONSTRAINT_NAMES.filter((name: BrewConstraintName): boolean => constraints[name] === true);

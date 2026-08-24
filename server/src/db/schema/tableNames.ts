@@ -14,6 +14,8 @@ export const TABLE_NAMES = {
   brewLogs: 'brew_logs',
   recipeChatMessages: 'recipe_chat_messages',
   aiUsageLogs: 'ai_usage_logs',
+  insightSuggestions: 'insight_suggestions',
+  analyticsEvents: 'analytics_events',
 } as const;
 
 export type TableName = (typeof TABLE_NAMES)[keyof typeof TABLE_NAMES];

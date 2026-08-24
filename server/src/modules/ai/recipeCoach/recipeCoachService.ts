@@ -255,6 +255,7 @@ export const createRecipeCoachService = ({
       const completion = await completeJson<CoachAnswer>({
         client: completionClient,
         schema: resolveCoachAnswerSchema(constraints),
+        functionName: AI_FUNCTION_NAMES.recipeChat,
         system: RECIPE_COACH_SYSTEM_PROMPT,
         prompt: sections.join(PROMPT_SECTION_SEPARATOR),
         maxTokens: AI_CHAT_MAX_TOKENS,
@@ -263,11 +264,7 @@ export const createRecipeCoachService = ({
         throw serviceUnavailableError(ERROR_MESSAGES.recipeChatUnavailable, cause);
       });
 
-      await recordJsonUsage(aiUsageService, {
-        userId,
-        functionName: AI_FUNCTION_NAMES.recipeChat,
-        completion,
-      });
+      await recordJsonUsage(aiUsageService, { userId, completion });
 
       const patch: RecipePatch | null = toRecipePatch(completion.value, recipe.params);
       const assistantMessage = await recipeChatService.append(userId, recipe.id, {

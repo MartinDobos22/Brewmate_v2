@@ -13,6 +13,7 @@ export const AI_FUNCTION_NAMES = {
   parseRecipe: 'parse-recipe',
   convertRecipe: 'convert-recipe',
   espressoDialIn: 'espresso-dial-in',
+  tuneProfile: 'tune-profile',
 } as const;
 
 export type AiFunctionName = (typeof AI_FUNCTION_NAMES)[keyof typeof AI_FUNCTION_NAMES];

@@ -13,4 +13,6 @@ export { NODE_ENVIRONMENTS } from './nodeEnvironment.js';
 export type { NodeEnvironment } from './nodeEnvironment.js';
 export { normalizePrivateKey } from './normalizePrivateKey.js';
 export { resolveAiConfig } from './resolveAiConfig.js';
+export { resolveTelemetryConfig } from './resolveTelemetryConfig.js';
+export type { TelemetryConfig } from './telemetryConfig.js';
 export type { ServerConfig } from './serverConfig.js';

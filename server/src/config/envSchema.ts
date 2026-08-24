@@ -32,6 +32,13 @@ export const envSchema = z
      * model anything, and answers the two AI routes with 503.
      */
     ANTHROPIC_API_KEY: z.string().min(1).optional(),
+
+    /**
+     * Optional everywhere, and absent in every test run. Unset means errors
+     * are logged and not reported anywhere else, which is a deployment choice
+     * rather than a misconfiguration.
+     */
+    SENTRY_DSN: z.string().min(1).optional(),
   })
   .superRefine((env, ctx) => {
     const isTest = env.NODE_ENV === NODE_ENVIRONMENTS.test;

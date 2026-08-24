@@ -115,6 +115,7 @@ export const createRecipeParseService = ({
     const completion = await completeJson({
       client: completionClient,
       schema: parsedSourceRecipeSchema,
+      functionName: AI_FUNCTION_NAMES.parseRecipe,
       system: SOURCE_RECIPE_SYSTEM_PROMPT,
       prompt: sections.join(PROMPT_SECTION_SEPARATOR),
       image,
@@ -126,11 +127,7 @@ export const createRecipeParseService = ({
         : serviceUnavailableError(ERROR_MESSAGES.recipeImportUnavailable, cause);
     });
 
-    await recordJsonUsage(aiUsageService, {
-      userId,
-      functionName: AI_FUNCTION_NAMES.parseRecipe,
-      completion,
-    });
+    await recordJsonUsage(aiUsageService, { userId, completion });
 
     return completion.value;
   };

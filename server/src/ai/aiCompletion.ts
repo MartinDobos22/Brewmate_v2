@@ -1,9 +1,17 @@
 import type { AiImage } from './aiImage.js';
 import type { AiTokenUsage } from './aiTokenUsage.js';
-import type { AiEffort } from './constants/aiModels.js';
+import type { AiEffort, AiModelId } from './constants/aiModels.js';
 
-/** One question put to a model, with an optional photograph attached. */
+/**
+ * One question put to a model, with an optional photograph attached.
+ *
+ * The model is named by the caller rather than chosen here, because which
+ * model answers which question is a routing decision that belongs beside the
+ * function names the usage log is grouped by - not inside the client that
+ * makes the call.
+ */
 export interface AiCompletionRequest {
+  readonly model: AiModelId;
   readonly system: string;
   readonly prompt: string;
   readonly image?: AiImage;

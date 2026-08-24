@@ -1,5 +1,6 @@
 export { AI_FUNCTION_NAMES } from './aiFunctionNames.js';
 export type { AiFunctionName } from './aiFunctionNames.js';
+export { AI_MODEL_ROUTES } from './aiModelRoutes.js';
 export {
   JSON_OBJECT_OPEN,
   JSON_OBJECT_CLOSE,

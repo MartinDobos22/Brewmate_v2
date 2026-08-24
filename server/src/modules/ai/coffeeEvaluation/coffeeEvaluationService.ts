@@ -96,6 +96,7 @@ export const createCoffeeEvaluationService = ({
     const completion = await completeJson({
       client: completionClient,
       schema: coffeeVerdictSchema,
+      functionName: AI_FUNCTION_NAMES.evaluateCoffee,
       system: COFFEE_VERDICT_SYSTEM_PROMPT,
       prompt: sections.join(PROMPT_SECTION_SEPARATOR),
       maxTokens: AI_VERDICT_MAX_TOKENS,
@@ -104,11 +105,7 @@ export const createCoffeeEvaluationService = ({
       throw serviceUnavailableError(ERROR_MESSAGES.coffeeVerdictUnavailable, cause);
     });
 
-    await recordJsonUsage(aiUsageService, {
-      userId,
-      functionName: AI_FUNCTION_NAMES.evaluateCoffee,
-      completion,
-    });
+    await recordJsonUsage(aiUsageService, { userId, completion });
 
     return completion.value;
   };

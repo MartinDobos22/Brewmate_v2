@@ -38,6 +38,7 @@ export {
   brewConstraintsSchema,
   BREW_CONSTRAINT_NAMES,
   hasAnyConstraint,
+  readActiveConstraints,
 } from './brewConstraintsSchema.js';
 export type { BrewConstraints, BrewConstraintName } from './brewConstraintsSchema.js';
 export { resolveRatio, resolveWaterGrams, resolveDoseGrams } from './ratioCalculator.js';

@@ -4,6 +4,7 @@ import type { FirebaseCredentials } from './firebaseCredentials.js';
 import type { LoggingConfig } from './loggingConfig.js';
 import type { NodeEnvironment } from './nodeEnvironment.js';
 import type { ServerConfig } from './serverConfig.js';
+import type { TelemetryConfig } from './telemetryConfig.js';
 
 /** Fully validated, immutable application configuration. */
 export interface AppConfig {
@@ -14,5 +15,7 @@ export interface AppConfig {
   readonly firebase: FirebaseCredentials | null;
   /** Null wherever no model provider is configured; the AI routes then 503. */
   readonly ai: AiConfig | null;
+  /** Null wherever no DSN is configured; failures are then only logged. */
+  readonly telemetry: TelemetryConfig | null;
   readonly logging: LoggingConfig;
 }

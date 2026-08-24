@@ -40,3 +40,7 @@ export { recipeChatMessagesTable } from './recipeChatMessagesTable.js';
 export type { RecipeChatMessageRow, NewRecipeChatMessageRow } from './recipeChatMessagesTable.js';
 export { aiUsageLogsTable } from './aiUsageLogsTable.js';
 export type { AiUsageLogRow, NewAiUsageLogRow } from './aiUsageLogsTable.js';
+export { insightSuggestionsTable } from './insightSuggestionsTable.js';
+export type { InsightSuggestionRow, NewInsightSuggestionRow } from './insightSuggestionsTable.js';
+export { analyticsEventsTable } from './analyticsEventsTable.js';
+export type { AnalyticsEventRow, NewAnalyticsEventRow } from './analyticsEventsTable.js';

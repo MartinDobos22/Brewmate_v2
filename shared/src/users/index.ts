@@ -17,3 +17,5 @@ export { updateUserRequestSchema } from './updateUserSchema.js';
 export type { UpdateUserRequest } from './updateUserSchema.js';
 export { deleteAccountResponseSchema } from './deleteAccountSchema.js';
 export type { DeleteAccountResponse } from './deleteAccountSchema.js';
+export { ACCOUNT_EXPORT_FORMAT_VERSION, accountExportSchema } from './accountExportSchema.js';
+export type { AccountExport } from './accountExportSchema.js';
