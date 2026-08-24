@@ -23,10 +23,8 @@ const backoffFor = (attempt: number): number =>
   BAG_PHOTO_RETRY_BASE_MS * BAG_PHOTO_RETRY_FACTOR ** attempt;
 
 /** A path nobody else can collide with, and nothing can be guessed from. */
-const photoPath = (userId: string, takenAt: number): string =>
-  [BAG_PHOTO_FOLDER, userId, `${String(takenAt)}${BAG_PHOTO_EXTENSION}`].join(
-    BAG_PHOTO_PATH_SEPARATOR,
-  );
+const photoPath = (folder: string, userId: string, takenAt: number): string =>
+  [folder, userId, `${String(takenAt)}${BAG_PHOTO_EXTENSION}`].join(BAG_PHOTO_PATH_SEPARATOR);
 
 const readLocalFile = async (localUri: string): Promise<Blob> => {
   const response = await fetch(localUri);
@@ -45,10 +43,18 @@ const readLocalFile = async (localUri: string): Promise<Blob> => {
  * When all of them fail the error reaches the caller, which puts the label
  * form in front of the user. Somebody standing in front of a shelf must never
  * be stuck behind a photograph that will not send.
+ *
+ * The folder is a parameter because the same walk-and-retry is what a
+ * photographed recipe needs too, and two copies of a backoff loop are two
+ * places for it to drift.
  */
-export const uploadBagPhoto = async (localUri: string, userId: string): Promise<string> => {
+export const uploadBagPhoto = async (
+  localUri: string,
+  userId: string,
+  folder: string = BAG_PHOTO_FOLDER,
+): Promise<string> => {
   const file = await readLocalFile(localUri);
-  const target = ref(getFirebaseStorage(), photoPath(userId, Date.now()));
+  const target = ref(getFirebaseStorage(), photoPath(folder, userId, Date.now()));
   let lastError: unknown = null;
 
   for (let attempt = FIRST_ATTEMPT; attempt < BAG_PHOTO_UPLOAD_ATTEMPTS; attempt += 1) {

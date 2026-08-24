@@ -9,5 +9,7 @@ export * from './coffeeEvaluation/index.js';
 export * from './brewContext/index.js';
 export * from './recipeEngine/index.js';
 export * from './recipeCoach/index.js';
+export * from './recipeImport/index.js';
+export * from './espressoDialIn/index.js';
 export { aiRoutes } from './aiRoutes.js';
 export type { AiRoutesOptions } from './aiRoutes.js';

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { conversionReportSchema } from '../conversion/conversionReportSchema.js';
 import { WATER_TYPES } from '../enums/waterTypes.js';
 
 import { brewStepSchema } from './brewStepSchema.js';
@@ -87,6 +88,16 @@ export const brewParamsSchema = z.object({
   constraintHints: z.array(constraintHintSchema).max(BREW_CONSTRAINT_HINTS_MAX).optional(),
   /** Present only where the method is an espresso; see `espressoParamsSchema`. */
   espresso: espressoParamsSchema.nullable().optional(),
+  /**
+   * Where this recipe was converted from, and which of its numbers are guesses.
+   *
+   * Present only on an imported recipe. Stored rather than returned once,
+   * because "the grind is a starting point, the dose is exact" is not a fact
+   * about one response - it is a fact about this recipe, and a card reopened
+   * next month that has quietly lost it has turned an estimate into a
+   * measurement by doing nothing at all.
+   */
+  conversion: conversionReportSchema.nullable().optional(),
 });
 
 export type BrewParams = z.infer<typeof brewParamsSchema>;

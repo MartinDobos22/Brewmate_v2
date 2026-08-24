@@ -12,6 +12,8 @@ export const ROUTES = {
   grinders: '/grinders',
   brew: '/brew',
   brewMode: '/brew-mode',
+  importRecipe: '/import-recipe',
+  dialIn: '/dial-in',
   quickBrew: '/quick-brew',
   scan: '/scan',
   coffeeBags: '/coffee-bags',
@@ -71,6 +73,17 @@ export const buildRecipeChatRoute = (recipeId: string, brewLogId?: string): stri
     encodeURIComponent(recipeId),
     ...(brewLogId === undefined ? [] : [BREW_LOG_PARAM, encodeURIComponent(brewLogId)]),
   ].join('');
+
+/**
+ * One coffee's dial-in, addressed by the recipe it started from.
+ *
+ * The recipe travels in the path rather than being remembered, because a
+ * dial-in happens over minutes with the phone in a pocket between shots: a
+ * screen that lost its place when the app was backgrounded would lose the run
+ * the whole mode is built on.
+ */
+export const buildDialInRoute = (recipeId: string): string =>
+  [ROUTES.dialIn, RECIPE_PARAM, encodeURIComponent(recipeId)].join('');
 
 const MODE_PARAM = '?mode=';
 

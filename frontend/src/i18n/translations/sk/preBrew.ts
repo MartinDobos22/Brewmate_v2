@@ -51,6 +51,8 @@ export const SK_PRE_BREW = {
   preBrewWaterSection: 'Voda',
   preBrewWaterHint: 'Predvyplnené z profilu. Pre toto varenie to môžeš zmeniť.',
 
+  preBrewImportRecipe: 'Mám recept odinakiaľ',
+  preBrewStartDialIn: 'Nová káva - poď ju vyladiť',
   preBrewAmountsSection: 'Dávka a pomer',
   preBrewDoseLabel: 'Káva',
   preBrewWaterLabel: 'Voda',

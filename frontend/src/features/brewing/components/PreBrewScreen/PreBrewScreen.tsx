@@ -9,6 +9,7 @@ import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { EquipmentSetSwitcher } from '../../../inventory/components';
 import { useBrewSetup } from '../../hooks/useBrewSetup';
 
+import { PreBrewExtras } from './PreBrewExtras';
 import { PreBrewSections } from './PreBrewSections';
 import { PreBrewSubmit } from './PreBrewSubmit';
 
@@ -40,6 +41,7 @@ export const PreBrewScreen = (): JSX.Element => {
           router.replace(buildBrewModeRoute(recipe.id, setup.activeSet?.id));
         }}
       />
+      <PreBrewExtras setup={setup} />
     </Screen>
   );
 };

@@ -1,12 +1,18 @@
 import {
   API_ROUTES,
+  convertRecipeRequestSchema,
+  convertRecipeResponseSchema,
   errorResponseSchema,
+  espressoDialInRequestSchema,
+  espressoDialInResponseSchema,
   evaluateCoffeeRequestSchema,
   evaluateCoffeeResponseSchema,
   generateRecipeRequestSchema,
   generateRecipeResponseSchema,
   parseCoffeeBagRequestSchema,
   parseCoffeeBagResponseSchema,
+  parseRecipeRequestSchema,
+  parseRecipeResponseSchema,
   recipeChatRequestSchema,
   recipeChatResponseSchema,
 } from '@brewmate/shared';
@@ -19,6 +25,9 @@ import { serviceUnavailableError } from '../../errors/serviceUnavailableError.js
 
 import type { CoffeeBagParseService } from './coffeeBagParse/coffeeBagParseService.js';
 import type { CoffeeEvaluationService } from './coffeeEvaluation/coffeeEvaluationService.js';
+import type { EspressoDialInService } from './espressoDialIn/espressoDialInService.js';
+import type { RecipeConversionService } from './recipeImport/recipeConversionService.js';
+import type { RecipeParseService } from './recipeImport/recipeParseService.js';
 import type { RecipeCoachService } from './recipeCoach/recipeCoachService.js';
 import type { RecipeGenerationService } from './recipeEngine/recipeGenerationService.js';
 
@@ -28,6 +37,9 @@ export interface AiRoutesOptions {
   readonly coffeeEvaluationService: CoffeeEvaluationService | null;
   readonly recipeGenerationService: RecipeGenerationService | null;
   readonly recipeCoachService: RecipeCoachService | null;
+  readonly recipeParseService: RecipeParseService | null;
+  readonly recipeConversionService: RecipeConversionService | null;
+  readonly espressoDialInService: EspressoDialInService | null;
 }
 
 const requireService = <TService>(service: TService | null): TService => {
@@ -140,6 +152,82 @@ export const aiRoutes: FastifyPluginAsyncZod<AiRoutesOptions> = async (app, opti
         .status(HTTP_STATUS.created)
         .send(
           await requireService(options.recipeCoachService).answer(
+            requireCurrentUser(request).id,
+            request.body,
+          ),
+        ),
+  );
+
+  app.post(
+    API_ROUTES.aiParseRecipe,
+    {
+      onRequest: app.authenticate,
+      schema: {
+        body: parseRecipeRequestSchema,
+        response: {
+          [HTTP_STATUS.ok]: parseRecipeResponseSchema,
+          [HTTP_STATUS.badRequest]: errorResponseSchema,
+          [HTTP_STATUS.unauthorized]: errorResponseSchema,
+          [HTTP_STATUS.unprocessableEntity]: errorResponseSchema,
+          [HTTP_STATUS.serviceUnavailable]: errorResponseSchema,
+        },
+      },
+    },
+    async (request) =>
+      requireService(options.recipeParseService).parse(
+        requireCurrentUser(request).id,
+        request.body,
+      ),
+  );
+
+  app.post(
+    API_ROUTES.aiConvertRecipe,
+    {
+      onRequest: app.authenticate,
+      schema: {
+        body: convertRecipeRequestSchema,
+        response: {
+          [HTTP_STATUS.created]: convertRecipeResponseSchema,
+          [HTTP_STATUS.badRequest]: errorResponseSchema,
+          [HTTP_STATUS.unauthorized]: errorResponseSchema,
+          [HTTP_STATUS.notFound]: errorResponseSchema,
+          [HTTP_STATUS.unprocessableEntity]: errorResponseSchema,
+          [HTTP_STATUS.serviceUnavailable]: errorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) =>
+      reply
+        .status(HTTP_STATUS.created)
+        .send(
+          await requireService(options.recipeConversionService).convert(
+            requireCurrentUser(request).id,
+            request.body,
+          ),
+        ),
+  );
+
+  app.post(
+    API_ROUTES.aiEspressoDialIn,
+    {
+      onRequest: app.authenticate,
+      schema: {
+        body: espressoDialInRequestSchema,
+        response: {
+          [HTTP_STATUS.created]: espressoDialInResponseSchema,
+          [HTTP_STATUS.badRequest]: errorResponseSchema,
+          [HTTP_STATUS.unauthorized]: errorResponseSchema,
+          [HTTP_STATUS.notFound]: errorResponseSchema,
+          [HTTP_STATUS.unprocessableEntity]: errorResponseSchema,
+          [HTTP_STATUS.serviceUnavailable]: errorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) =>
+      reply
+        .status(HTTP_STATUS.created)
+        .send(
+          await requireService(options.espressoDialInService).answer(
             requireCurrentUser(request).id,
             request.body,
           ),

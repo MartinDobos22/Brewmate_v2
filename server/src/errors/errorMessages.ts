@@ -39,4 +39,14 @@ export const ERROR_MESSAGES = {
     'A recipe could not be written right now. The numbers already chosen still stand.',
   recipeChatUnavailable: 'That could not be answered right now. Try again in a moment.',
   recipeChatBrewMismatch: 'That brew log belongs to a different recipe.',
+
+  recipeImportUnavailable:
+    'A recipe could not be read right now. It can still be typed in by hand.',
+  recipePhotoUnreadable:
+    'That picture could not be read. Try another one, or type the recipe in by hand.',
+  recipeSourceUnreadable: 'No recipe could be found in that. It can still be typed in by hand.',
+  recipeConversionUnavailable:
+    'The recipe could not be converted right now. Try again in a moment.',
+  espressoDialInUnavailable: 'That shot could not be answered right now. Try again in a moment.',
+  espressoDialInMethodMismatch: 'Dialling in is only for a recipe brewed on an espresso machine.',
 } as const;

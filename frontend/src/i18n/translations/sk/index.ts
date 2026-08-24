@@ -4,6 +4,7 @@ import { SK_BREW_MODE } from './brewMode';
 import { SK_CALIBRATION } from './calibration';
 import { SK_COMMON } from './common';
 import { SK_DESIGN_SYSTEM } from './designSystem';
+import { SK_DIAL_IN } from './dialIn';
 import { SK_EQUIPMENT_SETUP } from './equipmentSetup';
 import { SK_ERRORS } from './errors';
 import { SK_GRINDERS } from './grinders';
@@ -13,6 +14,7 @@ import { SK_NAVIGATION } from './navigation';
 import { SK_ONBOARDING } from './onboarding';
 import { SK_PRE_BREW } from './preBrew';
 import { SK_RECIPE_CHAT } from './recipeChat';
+import { SK_RECIPE_IMPORT } from './recipeImport';
 import { SK_SCANNER } from './scanner';
 import { SK_SCREENS } from './screens';
 import { SK_TASTE_PROFILE } from './tasteProfile';
@@ -40,6 +42,8 @@ export const SK_TRANSLATIONS = {
   ...SK_PRE_BREW,
   ...SK_BREW_MODE,
   ...SK_RECIPE_CHAT,
+  ...SK_RECIPE_IMPORT,
+  ...SK_DIAL_IN,
   ...SK_SCANNER,
   ...SK_HOME,
   ...SK_INVENTORY,
