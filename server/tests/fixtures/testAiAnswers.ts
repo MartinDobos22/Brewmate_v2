@@ -35,6 +35,14 @@ export const TEST_VERDICT_ANSWER = JSON.stringify({
 /** Answers that are the right shape only on the second attempt, and never. */
 export const MALFORMED_ANSWER = 'I could not read this label, sorry.';
 
+export const TEST_SUGGESTION_EXPLANATION =
+  'Z posledných ôsmich káv malo osem svetlé praženie, tvoj profil o pražení zatiaľ nehovorí nič. Vychádzam z toho, čo si varil - ak to tak nie je, pokojne odmietni.';
+
+/** The one answer the smaller model is ever asked for: a paragraph, no numbers. */
+export const TEST_SUGGESTION_ANSWER = JSON.stringify({
+  explanation: TEST_SUGGESTION_EXPLANATION,
+});
+
 /**
  * Photograph URLs, assembled rather than written out.
  *

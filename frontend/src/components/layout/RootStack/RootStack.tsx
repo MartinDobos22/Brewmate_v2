@@ -18,6 +18,9 @@ const QUICK_BREW_SEGMENT = 'quick-brew';
 const BREW_MODE_SEGMENT = 'brew-mode';
 const CHAT_SEGMENT = 'chat';
 const SCAN_SEGMENT = 'scan';
+const INSIGHTS_SEGMENT = 'insights';
+const TIMELINE_SEGMENT = 'timeline';
+const AI_COSTS_SEGMENT = 'ai-costs';
 
 /**
  * The root navigator. Screen transitions are the only place the app animates
@@ -52,6 +55,9 @@ export const RootStack = (): JSX.Element => {
         <Stack.Screen name={BREW_MODE_SEGMENT} options={{ gestureEnabled: false }} />
         <Stack.Screen name={CHAT_SEGMENT} />
         <Stack.Screen name={SCAN_SEGMENT} />
+        <Stack.Screen name={INSIGHTS_SEGMENT} />
+        <Stack.Screen name={TIMELINE_SEGMENT} />
+        <Stack.Screen name={AI_COSTS_SEGMENT} />
         <Stack.Screen
           name={DESIGN_SYSTEM_SEGMENT}
           options={{

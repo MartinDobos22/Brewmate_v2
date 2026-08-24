@@ -1,0 +1,12 @@
+export { createInsightsRepository } from './insightsRepository.js';
+export type { InsightsRepository, BrewHistoryRow, PinnedRecipeRow } from './insightsRepository.js';
+export { foldBrewHistory } from './foldBrewHistory.js';
+export type { BrewHistoryFold, ValueTally } from './foldBrewHistory.js';
+export { buildTasteSuggestion } from './buildTasteSuggestion.js';
+export type { SuggestionDraft } from './buildTasteSuggestion.js';
+export { fingerprintEvidence } from './suggestionFingerprint.js';
+export { normalizeAttributeValue, isCountableValue } from './normalizeAttributeValue.js';
+export { createInsightsService } from './insightsService.js';
+export type { InsightsService, InsightsServiceDependencies } from './insightsService.js';
+export { insightsRoutes } from './insightsRoutes.js';
+export type { InsightsRoutesOptions } from './insightsRoutes.js';

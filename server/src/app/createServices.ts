@@ -27,6 +27,10 @@ import {
   type RecipeConversionService,
 } from '../modules/ai/recipeImport/recipeConversionService.js';
 import {
+  createProfileTuningService,
+  type ProfileTuningService,
+} from '../modules/ai/profileTuning/profileTuningService.js';
+import {
   createRecipeParseService,
   type RecipeParseService,
 } from '../modules/ai/recipeImport/recipeParseService.js';
@@ -61,6 +65,13 @@ import {
 } from '../modules/equipmentSets/equipmentSetService.js';
 import { createGrinderRepository } from '../modules/grinders/grinderRepository.js';
 import { createGrinderService, type GrinderService } from '../modules/grinders/grinderService.js';
+import { createHistoryRepository } from '../modules/history/historyRepository.js';
+import { createHistoryService, type HistoryService } from '../modules/history/historyService.js';
+import { createInsightsRepository } from '../modules/insights/insightsRepository.js';
+import {
+  createInsightsService,
+  type InsightsService,
+} from '../modules/insights/insightsService.js';
 import { createRecipeChatRepository } from '../modules/recipeChat/recipeChatRepository.js';
 import {
   createRecipeChatService,
@@ -74,6 +85,16 @@ import {
   createTasteProfileService,
   type TasteProfileService,
 } from '../modules/tasteProfiles/tasteProfileService.js';
+import { createAnalyticsRepository } from '../modules/analytics/analyticsRepository.js';
+import {
+  createAnalyticsService,
+  type AnalyticsService,
+} from '../modules/analytics/analyticsService.js';
+import { createAccountExportRepository } from '../modules/users/accountExportRepository.js';
+import {
+  createAccountExportService,
+  type AccountExportService,
+} from '../modules/users/accountExportService.js';
 import { createUserRepository } from '../modules/users/userRepository.js';
 import { createUserService, type UserService } from '../modules/users/userService.js';
 
@@ -82,6 +103,8 @@ import type { AiDependencies } from './aiDependencies.js';
 /** Everything the HTTP layer delegates to. */
 export interface AppServices {
   readonly userService: UserService;
+  readonly accountExportService: AccountExportService;
+  readonly analyticsService: AnalyticsService;
   readonly tasteProfileService: TasteProfileService;
   readonly brewMethodService: BrewMethodService;
   readonly grinderService: GrinderService;
@@ -92,6 +115,8 @@ export interface AppServices {
   readonly recipeService: RecipeService;
   readonly recipeChatService: RecipeChatService;
   readonly brewLogService: BrewLogService;
+  readonly historyService: HistoryService;
+  readonly insightsService: InsightsService;
   readonly aiUsageService: AiUsageService;
   /** Null wherever no model provider is configured; the AI routes then 503. */
   readonly coffeeBagParseService: CoffeeBagParseService | null;
@@ -101,6 +126,7 @@ export interface AppServices {
   readonly recipeParseService: RecipeParseService | null;
   readonly recipeConversionService: RecipeConversionService | null;
   readonly espressoDialInService: EspressoDialInService | null;
+  readonly profileTuningService: ProfileTuningService | null;
 }
 
 export interface ServiceDependencies {
@@ -177,7 +203,36 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
     userService,
   });
 
+  /**
+   * The one auxiliary model call in the product, and the only reason the
+   * insights need a provider at all. Built here rather than inside the
+   * insights service so that a deployment without a key produces `null` in
+   * exactly the same way every other AI service does.
+   */
+  const profileTuningService =
+    ai === null
+      ? null
+      : createProfileTuningService({ completionClient: ai.completionClient, aiUsageService });
+
   return {
+    profileTuningService,
+    analyticsService: createAnalyticsService(createAnalyticsRepository(db)),
+    accountExportService: createAccountExportService({
+      repository: createAccountExportRepository(db),
+      userService,
+      tasteProfileService,
+    }),
+    historyService: createHistoryService({
+      repository: createHistoryRepository(db),
+      brewMethodService,
+      coffeeBagRepository,
+    }),
+    insightsService: createInsightsService({
+      repository: createInsightsRepository(db),
+      tasteProfileService,
+      aiUsageService,
+      profileTuningService,
+    }),
     userService,
     tasteProfileService,
     aiUsageService,

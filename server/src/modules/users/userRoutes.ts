@@ -1,5 +1,6 @@
 import {
   API_ROUTES,
+  accountExportSchema,
   deleteAccountResponseSchema,
   errorResponseSchema,
   updateUserRequestSchema,
@@ -10,10 +11,12 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { requireCurrentUser } from '../../auth/requireCurrentUser.js';
 import { HTTP_STATUS } from '../../constants/httpStatus.js';
 
+import type { AccountExportService } from './accountExportService.js';
 import type { UserService } from './userService.js';
 
 export interface UserRoutesOptions {
   readonly userService: UserService;
+  readonly accountExportService: AccountExportService;
 }
 
 /**
@@ -50,6 +53,30 @@ export const userRoutes: FastifyPluginAsyncZod<UserRoutesOptions> = async (app, 
     },
     async (request) =>
       options.userService.updateProfile(requireCurrentUser(request).id, request.body),
+  );
+
+  /**
+   * The right to a copy, answered in the app rather than by email.
+   *
+   * A GET so it can be opened, saved and shared with whatever somebody wants
+   * to read it in, and deliberately the same document every time: nothing here
+   * is generated asynchronously or delivered later, because a request that
+   * ends in "we will send you a link" is one people give up on. It reads every
+   * user-owned table whole - an export that quietly stopped at the first
+   * thousand brews would look complete and not be.
+   */
+  app.get(
+    API_ROUTES.meExport,
+    {
+      onRequest: app.authenticate,
+      schema: {
+        response: {
+          [HTTP_STATUS.ok]: accountExportSchema,
+          [HTTP_STATUS.unauthorized]: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => options.accountExportService.export(requireCurrentUser(request).id),
   );
 
   /**

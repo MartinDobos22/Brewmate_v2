@@ -3,7 +3,6 @@ import Anthropic from '@anthropic-ai/sdk';
 import type { AiConfig } from '../config/aiConfig.js';
 
 import type { AiCompletion, AiCompletionRequest } from './aiCompletion.js';
-import { AI_MODEL_ID } from './constants/aiModels.js';
 import { AI_ERROR_MESSAGES } from './aiErrorMessages.js';
 import type { TextCompletionClient } from './textCompletionClient.js';
 
@@ -69,7 +68,7 @@ export const createAnthropicTextCompletionClient = (config: AiConfig): TextCompl
   return {
     complete: async (request: AiCompletionRequest): Promise<AiCompletion> => {
       const response = await client.messages.create({
-        model: AI_MODEL_ID,
+        model: request.model,
         max_tokens: request.maxTokens,
         system: [{ type: TEXT_BLOCK_TYPE, text: request.system, cache_control: CACHE_CONTROL }],
         output_config: { effort: request.effort },

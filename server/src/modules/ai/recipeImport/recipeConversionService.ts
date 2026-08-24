@@ -136,6 +136,7 @@ export const createRecipeConversionService = ({
       const completion = await completeJson<ConversionAnswer>({
         client: completionClient,
         schema: resolveConversionAnswerSchema({ result, targetCategory: method.category }),
+        functionName: AI_FUNCTION_NAMES.convertRecipe,
         system: CONVERSION_SYSTEM_PROMPT,
         prompt: sections.join(PROMPT_SECTION_SEPARATOR),
         maxTokens: AI_RECIPE_MAX_TOKENS,
@@ -144,11 +145,7 @@ export const createRecipeConversionService = ({
         throw serviceUnavailableError(ERROR_MESSAGES.recipeConversionUnavailable, cause);
       });
 
-      await recordJsonUsage(aiUsageService, {
-        userId,
-        functionName: AI_FUNCTION_NAMES.convertRecipe,
-        completion,
-      });
+      await recordJsonUsage(aiUsageService, { userId, completion });
 
       return {
         recipe: await recipeService.create(userId, {

@@ -22,6 +22,7 @@ import { requireCurrentUser } from '../../auth/requireCurrentUser.js';
 import { HTTP_STATUS } from '../../constants/httpStatus.js';
 import { ERROR_MESSAGES } from '../../errors/errorMessages.js';
 import { serviceUnavailableError } from '../../errors/serviceUnavailableError.js';
+import type { AiUsageService } from '../aiUsage/aiUsageService.js';
 
 import type { CoffeeBagParseService } from './coffeeBagParse/coffeeBagParseService.js';
 import type { CoffeeEvaluationService } from './coffeeEvaluation/coffeeEvaluationService.js';
@@ -32,6 +33,8 @@ import type { RecipeCoachService } from './recipeCoach/recipeCoachService.js';
 import type { RecipeGenerationService } from './recipeEngine/recipeGenerationService.js';
 
 export interface AiRoutesOptions {
+  /** Reads the caller's spending; the only thing standing in front of these routes. */
+  readonly aiUsageService: AiUsageService;
   /** Null wherever no model provider is configured; every route then answers 503. */
   readonly coffeeBagParseService: CoffeeBagParseService | null;
   readonly coffeeEvaluationService: CoffeeEvaluationService | null;
@@ -60,6 +63,24 @@ const requireService = <TService>(service: TService | null): TService => {
  * phone as a 404 and read like a bug in the app.
  */
 export const aiRoutes: FastifyPluginAsyncZod<AiRoutesOptions> = async (app, options) => {
+  /**
+   * The allowance is checked once, here, in front of every route in this file
+   * and in front of no route anywhere else.
+   *
+   * A hook rather than a line in each of the seven handlers, because the rule
+   * is "the routes that cost money", and a handler that forgot the line would
+   * be a hole nobody notices until an invoice. It runs after `authenticate`,
+   * so the caller is already resolved - and it deliberately does not run for
+   * `/brew-logs`, `/recipes`, `/coffee-bags` or anything else: an account over
+   * its limit can still brew from a stored recipe, add a bag by hand and read
+   * its whole history.
+   */
+  const withinLimits = async (request: Parameters<typeof requireCurrentUser>[0]): Promise<void> => {
+    await options.aiUsageService.assertWithinLimits(requireCurrentUser(request).id);
+  };
+
+  app.addHook('preHandler', withinLimits);
+
   app.post(
     API_ROUTES.aiParseCoffeeBag,
     {

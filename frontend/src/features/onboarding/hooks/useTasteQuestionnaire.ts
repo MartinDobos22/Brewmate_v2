@@ -1,6 +1,7 @@
-import { TASTE_PROFILE_SOURCES } from '@brewmate/shared';
+import { ANALYTICS_EVENT_NAMES, TASTE_PROFILE_SOURCES } from '@brewmate/shared';
 import { useState } from 'react';
 
+import { trackEvent } from '../../../lib/analytics';
 import { useAddTasteProfileEvent } from '../../tasteProfile/hooks';
 import { TASTE_QUESTIONS } from '../constants/tasteQuestions';
 import { buildQuestionnairePayload } from '../services/buildQuestionnairePayload';
@@ -65,7 +66,17 @@ export const useTasteQuestionnaire = (flow: OnboardingFlow): TasteQuestionnaire 
         sourceRef: buildQuestionnaireSourceRef(submitted),
         payload: buildQuestionnairePayload(submitted),
       },
-      { onSuccess: flow.goNext },
+      {
+        onSuccess: (): void => {
+          /**
+           * Counted when the event was accepted rather than when the tenth
+           * card was tapped: a questionnaire that never reached the server is
+           * one nobody answered, whatever it looked like on the phone.
+           */
+          trackEvent(ANALYTICS_EVENT_NAMES.questionnaireCompleted);
+          flow.goNext();
+        },
+      },
     );
   };
 

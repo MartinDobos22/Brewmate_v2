@@ -21,6 +21,9 @@ const ROOT = {
   recipeMessages: 'recipeMessages',
   brewLogs: 'brewLogs',
   aiUsage: 'aiUsage',
+  aiUsageSummary: 'aiUsageSummary',
+  recipeTimeline: 'recipeTimeline',
+  insights: 'insights',
 } as const;
 
 export type AppQueryKey = readonly unknown[];
@@ -64,6 +67,20 @@ export const QUERY_KEYS = {
   brewLog: (id: string): AppQueryKey => [ROOT.brewLogs, id],
 
   aiUsage: (filter?: QueryFilter): AppQueryKey => [ROOT.aiUsage, filter],
+  aiUsageSummary: (): AppQueryKey => [ROOT.aiUsageSummary],
+
+  /**
+   * One recipe line, keyed by the pair it belongs to. An absent bag is the
+   * quick-brew line rather than "any bag", so it has to be part of the key -
+   * two lines that both mean something different must not share a cache entry.
+   */
+  recipeTimeline: (methodId: string, bagId?: string): AppQueryKey => [
+    ROOT.recipeTimeline,
+    methodId,
+    bagId ?? null,
+  ],
+
+  insights: (): AppQueryKey => [ROOT.insights],
 } as const;
 
 const domainRoot = (name: string): AppQueryKey => [name];
@@ -82,6 +99,9 @@ export const QUERY_ROOTS = {
   recipeMessages: domainRoot(ROOT.recipeMessages),
   brewLogs: domainRoot(ROOT.brewLogs),
   aiUsage: domainRoot(ROOT.aiUsage),
+  aiUsageSummary: domainRoot(ROOT.aiUsageSummary),
+  recipeTimeline: domainRoot(ROOT.recipeTimeline),
+  insights: domainRoot(ROOT.insights),
 } as const;
 
 export type QueryKeyFactory = typeof QUERY_KEYS;

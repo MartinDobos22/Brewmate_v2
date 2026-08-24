@@ -31,6 +31,17 @@ with its own unit tests, with a model used only to read the source and to
 explain the result. And a new bag on an espresso machine gets its own mode: one
 change per shot, a timeline of the run, and a pinned recipe at the end.
 
+On top of all of it sits what the loop leaves behind. Every recipe line has a
+timeline - the versions, the cups and what was said about each - and a stretch
+of brewing adds up to counts the app is allowed to draw one careful conclusion
+from, offered and never applied. The model calls are routed by what they are
+for, priced per model, capped per account per day and per month, and shown back
+as a dashboard - and a spent allowance takes away nothing that does not need a
+model. And the parts a product needs before it ships: error reporting on both
+sides, a funnel over the flows that matter, an account export beside the
+deletion that was already there, and the build and store configuration to get
+it onto a phone.
+
 ---
 
 ## 1. Repository layout
@@ -40,6 +51,7 @@ brewmate_v2/
 ├── frontend/          Expo + React Native + expo-router (app skeleton)
 ├── server/            Fastify + Drizzle + Firebase Admin API
 ├── shared/            @brewmate/shared - Zod schemas + inferred types
+├── docs/              Release and store material (see section 12)
 ├── eslint.config.mjs  One flat config for the whole workspace
 ├── tsconfig.base.json Strict compiler options + cross-package path aliases
 ├── pnpm-workspace.yaml
@@ -219,17 +231,20 @@ frontend/
     │   └── layout/     Screen, AppProviders, RootStack, TabsNavigator, TabBarIcon
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
     │                   chat, tasteProfile, bagEvaluations, recipeImport,
-    │                   espresso, onboarding, profile, designSystem); each has
-    │                   services/ for the API calls and hooks/ for the queries
-    │                   and mutations over them. `brewing` owns the pre-brew
-    │                   screen, the recipe engine client and brew mode; `chat`
-    │                   owns the conversation after the cup; `recipeImport`
-    │                   converts a recipe found elsewhere; `espresso` owns the
-    │                   dial-in mode
-    ├── hooks/          only genuinely global hooks, incl. useEntityMutation and
-    │                   useDebouncedValue
+    │                   espresso, history, onboarding, profile, designSystem);
+    │                   each has services/ for the API calls and hooks/ for the
+    │                   queries and mutations over them. `brewing` owns the
+    │                   pre-brew screen, the recipe engine client and brew mode;
+    │                   `chat` owns the conversation after the cup;
+    │                   `recipeImport` converts a recipe found elsewhere;
+    │                   `espresso` owns the dial-in mode; `history` owns the
+    │                   timeline and the insights; `profile` owns the cost
+    │                   dashboard and the data export
+    ├── hooks/          only genuinely global hooks, incl. useEntityMutation,
+    │                   useDebouncedValue and useAnalyticsFlush
     ├── lib/            apiClient, firebase, queryClient, queryCache, formatters,
-    │                   fingerprint, requestErrors, text
+    │                   fingerprint, requestErrors, text, analytics,
+    │                   errorTracking
     ├── stores/         Zustand - UI state only
     └── types/
 ```
@@ -248,7 +263,8 @@ frontend/
   `onboarding`, `tasteQuestionsDirect`, `tasteQuestionsIndirect`,
   `equipmentSetup`, `waterAndSets`, `calibration`, `brewing`, `preBrew`,
   `brewMode`, `recipeChat`, `recipeImport`, `dialIn`, `scanner`,
-  `tasteProfile`, `errors`, `designSystem`) and merged in `sk/index.ts`. One file would break the 150-line limit.
+  `tasteProfile`, `history`, `aiCosts`, `errors`, `designSystem`) and merged in
+  `sk/index.ts`. One file would break the 150-line limit.
   `SK_TRANSLATIONS` is the source of truth for the key list: every future locale
   is typed against it, so a missing translation is a type error.
 - **A sentence with a hole in it stays one string.** `t(key, values)` fills
@@ -716,6 +732,113 @@ reason}` in machine names: `exact` came across untouched or is arithmetic
   actually pulled with. The version that finally works is saved and pinned for
   the pair (bag, method), which is what the whole exercise was for.
 
+### The history, and what it adds up to
+
+Two screens over the same rows, answering two different questions: what
+happened to this recipe, and what all of it says about the person brewing.
+
+- **A timeline belongs to a pair, not to a coffee.** `/timeline` takes a method
+  and a bag, and an absent bag is the quick-brew line rather than "any bag" -
+  the same rule pinning already follows. Reached from a bag's own screen, under
+  the versions rather than instead of them: the list answers "what have I got"
+  and the timeline answers "how did it get here", and those are questions
+  somebody asks on different days.
+- **Oldest version first, because it is read as a story.** These were the
+  numbers, this is what was said about the cup, this is what changed because of
+  it. Each version carries its own cups and its own notes rather than a list
+  beside them, because an answer to "what did changing that do?" needs the
+  change and its consequences in the same place.
+- **A cup brewed with something missing is marked, not hidden.** The badges come
+  from `readActiveConstraints` in `@brewmate/shared` - the same list the API
+  prices a brew's learning weight from - so a badge can never disagree with what
+  that cup was recorded as being worth. Read from the cups rather than from the
+  recipe: what a recipe was written around and what was actually missing that
+  morning are different facts, and only the second explains a disappointing cup.
+  They are outlined rather than filled, because a cabin morning is a fact about
+  that morning and not a mistake somebody made.
+- **The insights print counts and say so.** Origins, processes and roast levels,
+  ranked by summed `profile_learning_weight` rather than by raw count, so ten
+  measured cups outrank ten made with no scale. No score, no percentage, no
+  stars - this product has never measured how much anybody liked a cup, and one
+  line under the numbers says exactly that. Below `INSIGHT_MIN_BREWS` the list
+  is empty and the screen says what would change it: "najčastejšie Etiópia"
+  means one thing after forty cups and nothing at all after three.
+- **The one conclusion it draws is offered, never applied.** The suggestion is
+  built from behaviour - what somebody reached for - rather than from anything
+  they said, and an app that quietly rewrote a profile from behaviour would be
+  arguing with somebody about their own taste without telling them. Both buttons
+  are the same size, because refusing has to look reasonable: people buy what
+  the shop had, drink what they were given and finish a bag they did not much
+  like.
+- **The paragraph beside the numbers is the only part a model writes**, and the
+  card says when the phone wrote it instead. The reasons arrive machine-named
+  with their own counts, exactly as the conversion report does, so the sentence
+  is the same either way and only its author differs.
+
+### What the model calls cost
+
+`/ai-costs`, reached from the profile, and the one screen whose job is to make
+a limit legible rather than punitive.
+
+- **Both windows and both ceilings.** The day catches a screen retrying in a
+  loop before it has cost anything; the month is the actual budget. Showing one
+  of them would leave somebody refused with room on the bar they can see.
+- **A reset is a moment, not a shrug.** `resetsAt` arrives as an instant in UTC
+  and is printed in the reader's own timezone. "Skús to neskôr" is not something
+  anybody can act on; "o 40 minút" is.
+- **A refusal reads as a state.** `resolveAiLimitNotice` parses the error's
+  `details` against the shared schema and writes which allowance ran out, when
+  it comes back, and - the sentence that matters - that brewing from a stored
+  recipe, adding a bag by hand and the whole history keep working. Falling back
+  to the general "príliš veľa pokusov" would be an accusation with nothing to do
+  about it.
+- **The screen and the enforcement read the same rows.** The summary is computed
+  by the API from `ai_usage_logs`, not summed from a page the app happens to
+  hold, so the figure somebody is shown cannot disagree with the one that
+  refuses their next scan.
+
+### Taking the data away
+
+- **The export is a button, not a promise to send something.** `GET /me/export`
+  returns every user-owned table whole; the app writes it to the cache
+  directory and hands it to the system share sheet. Cache rather than documents
+  on purpose: this is a copy on its way somewhere else, and leaving a second
+  copy of somebody's entire account in app storage would be keeping more of
+  their data than they asked for, not less.
+- **It sits next to the deletion and says so.** The two answer the same question
+  about what this account _is_, and somebody deciding whether to leave is
+  entitled to see what leaving takes with it.
+- **Nothing about it is cached.** A mutation rather than a query, because
+  reading every row an account owns should never happen because a screen was
+  opened - and a copy of it in the query cache is a copy nobody asked us to
+  keep.
+
+### What the app reports about itself
+
+- **Two ports, both absent by default.** `lib/errorTracking` and `lib/analytics`
+  are written against the wire format rather than pulled in as SDKs. What this
+  app needs from an error reporter is one POST of newline-delimited JSON; an SDK
+  would also install global handlers, patch the fetch it does not own and
+  collect breadcrumbs from a UI whose error handling, offline behaviour and
+  Slovak copy are already decided.
+- **Almost no failure is worth reporting.** A 404 for a coffee that is not
+  there, a 422 for a malformed form, a 429 for a spent allowance and a request
+  that never left a phone in a cellar are all the app working. Only what nobody
+  planned for goes out, decided once in the query client rather than per screen.
+- **What travels is the error, the platform, the release and a screen name.** No
+  request bodies, no email, nothing anybody typed about their coffee. A crash
+  reporter is not a reason to make an exception to that.
+- **A flow step is declared on the mutation, not called at the screen.** The
+  moment worth counting is the server having said yes; a funnel built from taps
+  counts intentions, and half the interesting question is how often an intention
+  fails. The properties are short machine values only - the shared schema
+  refuses anything long enough to be a sentence, because a field that could hold
+  free text eventually would.
+- **The queue is on disk and bounded.** These are recorded exactly where signal
+  is worst - in a shop, in a cabin kitchen - so they survive the app closing;
+  and past the ceiling the oldest go first, because what somebody did this
+  morning is what anybody would want to know.
+
 ### The cupboard
 
 - **A bag is a card, not a list row.** The two things wanted at a glance - how
@@ -1002,8 +1125,9 @@ server/src/
 ├── ai/               Model + image ports, the Anthropic and HTTP implementations, pricing
 ├── auth/             Token verifier + identity deleter, Firebase implementations, auth plugin
 ├── modules/          one domain each: repository -> service -> routes + mapper
-│   ├── ai/           the seven routes that cost money, plus the shared brew
-│   │                 context reader, the versioned prompts and completeJson
+│   ├── ai/           the seven routes that cost money, the auxiliary
+│   │                 profileTuning call, the shared brew context reader, the
+│   │                 versioned prompts, the model routing table and completeJson
 │   ├── health/       healthService + healthRoutes
 │   ├── users/        the account behind a Firebase identity
 │   ├── tasteProfiles/ profile, its audit trail and the fold that rebuilds it
@@ -1016,7 +1140,11 @@ server/src/
 │   ├── recipes/      one way of brewing one coffee
 │   ├── recipeChat/   the conversation about a recipe
 │   ├── brewLogs/     cups that were actually brewed
-│   └── aiUsage/      model calls, recorded for cost
+│   ├── history/      one recipe line, with its cups and its notes
+│   ├── insights/     what a stretch of brewing adds up to
+│   ├── analytics/    the named flow steps a phone reports
+│   └── aiUsage/      model calls, recorded for cost - and the allowance
+├── telemetry/        error tracker port + a Sentry-envelope implementation
 └── types/            Fastify module augmentation
 ```
 
@@ -1071,6 +1199,83 @@ authenticated call re-provisions an empty row, deletes it again and retries the
 identity. The reverse order could strand personal data behind an identity nobody
 can sign in as. Deleting an account that is already partly gone is a success.
 
+### Which model answers which question
+
+`AI_MODEL_ROUTES` maps every function name onto a model, and the record is
+total over `AiFunctionName` - adding a function is a type error here rather
+than a call that quietly defaults to the expensive model.
+
+- **The split is by what the answer has to be, not by how long it is.** Reading
+  a label, writing a verdict, writing a recipe, answering what somebody said
+  about a cup, reading and converting somebody else's recipe and dialling an
+  espresso in are all cases where being wrong costs a bag of coffee or a
+  morning. Those go to Sonnet.
+- **`tune-profile` is the one auxiliary call, and the only one on Haiku.** Every
+  number in that answer was computed in code from the brew logs before the model
+  was asked anything, and its schema has nowhere to put a different one. That is
+  typing rather than reasoning, and paying reasoning rates for typing is how a
+  per-user allowance gets spent on nothing.
+- **The function name is declared once, on `completeJson`**, which resolves the
+  model from it and carries both back on the completion. The row that bills a
+  call and the model that answered it therefore cannot describe different
+  features.
+- **Cost is priced against the model that was asked for**, not the dated variant
+  named in the answer. Looking a price up by the provider's string would need a
+  table of every dated name, or a prefix match that silently prices an unknown
+  model at zero. All four token tiers are priced separately per model, because
+  caching is what makes these prompts affordable at all.
+
+### The allowance
+
+Daily and monthly, in calls and in money, enforced by one `preHandler` in front
+of `/ai/*` and in front of nothing else.
+
+- **A hook rather than a line in each handler.** The rule is "the routes that
+  cost money", and a handler that forgot the line would be a hole nobody notices
+  until an invoice.
+- **Both measures, because they guard different failures.** Calls are what runs
+  away; money is what hurts. A recipe and a one-line chat answer cost very
+  different amounts, so counting either alone leaves one failure unguarded.
+- **Nothing else is behind it.** An account at its ceiling can still brew from a
+  stored recipe, add a bag by hand, read its whole history and open the
+  insights. A limit that took those away would be punishing somebody for having
+  used the app.
+- **The refusal carries which ceiling, which window and when it lifts**, in
+  `details` on the error envelope, so the app can write a sentence somebody can
+  act on rather than parse one written for a log. The month is reported before
+  the day: somebody out of both needs the one that lasts longer.
+- **Both windows roll over in UTC**, stated once in `resolveUsageWindows` and
+  carried to the app as an instant. A limit anchored to the phone's timezone is
+  one that resets twice for somebody flying west, and the server has no honest
+  way to know which zone a request came from.
+- **`GET /insights` is not behind the allowance**, and checks it itself before
+  spending. The report is arithmetic and has to keep working; only the paragraph
+  costs anything, it is cached per fingerprint, and when it cannot be had the
+  card is plainer rather than broken.
+
+### Where failures go
+
+`ErrorTracker` is an interface for the same reason `TokenVerifier` is one: the
+real implementation talks to a third party over the network, and neither the
+tests nor a deployment without a DSN should have to.
+
+- **Only unhandled failures are reported.** A 404, a 422 and a 429 are the API
+  working exactly as designed; sending those to an alerting tool is how a team
+  learns to ignore it. What goes out is what the log also calls an unhandled
+  error.
+- **A report carries the route pattern, two ids and nothing else.** The pattern
+  rather than the URL, so an id in a path never leaves the building; the
+  internal account id rather than an email; nothing from the body or the query
+  string. `redactPaths` already decides what may be logged, and a reporter that
+  quietly sent more would make that decision meaningless.
+- **Capturing cannot fail a request.** The failure it describes has already been
+  turned into a response, and making somebody's request wait on a third party's
+  availability would turn a reporting outage into a latency problem for every
+  500 the API returns.
+- **A malformed DSN is a warning, not a start-up failure.** Error reporting is a
+  thing added on top of the log, and a typo in it must not be able to take the
+  API down.
+
 ### Error shape
 
 Every non-2xx response, without exception:
@@ -1093,30 +1298,37 @@ ID token and is scoped to the caller _in the WHERE clause_ - a row belonging to
 somebody else answers with the same 404 as a row that does not exist, so the API
 is not an oracle for other people's ids.
 
-| Method           | Path                         | Purpose                                          |
-| ---------------- | ---------------------------- | ------------------------------------------------ |
-| GET              | `/health`                    | liveness + database check (503 when degraded)    |
-| GET/PATCH/DELETE | `/me`                        | the account; PATCH edits name, water, onboarding |
-| GET              | `/taste-profile`             | the profile, neutral until something teaches it  |
-| GET/POST         | `/taste-profile/events`      | the audit trail; POST is safe to retry           |
-| POST             | `/taste-profile/recompute`   | rebuild the profile from its events              |
-| GET              | `/brew-methods`              | the method catalogue                             |
-| GET/POST         | `/grinders`, `/grinders/:id` | the grinder catalogue, searchable and extensible |
-| CRUD             | `/equipment`                 | what the user owns                               |
-| CRUD             | `/equipment-sets`            | saved combinations of it                         |
-| CRUD             | `/coffee-bags`               | the cupboard; DELETE archives, it does not erase |
-| GET/POST/PATCH   | `/bag-evaluations`           | verdicts on bags seen in a shop                  |
-| CRUD             | `/recipes`                   | recipes; DELETE is refused once one was brewed   |
-| GET/POST         | `/recipes/:id/messages`      | the conversation about a recipe                  |
-| CRUD             | `/brew-logs`                 | cups actually brewed                             |
-| GET              | `/ai-usage`                  | this account's model usage; read-only by design  |
-| POST             | `/ai/parse-coffee-bag`       | reads a photographed label into the bag's fields |
-| POST             | `/ai/evaluate-coffee`        | writes the shop verdict and stores it            |
-| POST             | `/ai/generate-recipe`        | writes and stores the recipe for one brew        |
-| POST             | `/ai/recipe-chat`            | answers what somebody said about a cup           |
-| POST             | `/ai/parse-recipe`           | reads a found recipe into fields, holes and all  |
-| POST             | `/ai/convert-recipe`         | converts it onto this person's own equipment     |
-| POST             | `/ai/espresso-dial-in`       | records one shot and proposes one change         |
+| Method           | Path                           | Purpose                                          |
+| ---------------- | ------------------------------ | ------------------------------------------------ |
+| GET              | `/health`                      | liveness + database check (503 when degraded)    |
+| GET/PATCH/DELETE | `/me`                          | the account; PATCH edits name, water, onboarding |
+| GET              | `/me/export`                   | every user-owned row, in one document            |
+| GET              | `/taste-profile`               | the profile, neutral until something teaches it  |
+| GET/POST         | `/taste-profile/events`        | the audit trail; POST is safe to retry           |
+| POST             | `/taste-profile/recompute`     | rebuild the profile from its events              |
+| GET              | `/brew-methods`                | the method catalogue                             |
+| GET/POST         | `/grinders`, `/grinders/:id`   | the grinder catalogue, searchable and extensible |
+| CRUD             | `/equipment`                   | what the user owns                               |
+| CRUD             | `/equipment-sets`              | saved combinations of it                         |
+| CRUD             | `/coffee-bags`                 | the cupboard; DELETE archives, it does not erase |
+| GET/POST/PATCH   | `/bag-evaluations`             | verdicts on bags seen in a shop                  |
+| CRUD             | `/recipes`                     | recipes; DELETE is refused once one was brewed   |
+| GET/POST         | `/recipes/:id/messages`        | the conversation about a recipe                  |
+| CRUD             | `/brew-logs`                   | cups actually brewed                             |
+| GET              | `/ai-usage`                    | this account's model usage; read-only by design  |
+| GET              | `/ai-usage/summary`            | both windows, their ceilings, and where it went  |
+| GET              | `/history/timeline`            | one recipe line: versions, cups and notes        |
+| GET              | `/insights`                    | what the history counts, and what it proposes    |
+| POST             | `/insights/suggestion/accept`  | writes the proposal into the taste profile       |
+| POST             | `/insights/suggestion/dismiss` | remembers a refusal against that evidence        |
+| POST             | `/analytics/events`            | a flushed batch of named flow steps              |
+| POST             | `/ai/parse-coffee-bag`         | reads a photographed label into the bag's fields |
+| POST             | `/ai/evaluate-coffee`          | writes the shop verdict and stores it            |
+| POST             | `/ai/generate-recipe`          | writes and stores the recipe for one brew        |
+| POST             | `/ai/recipe-chat`              | answers what somebody said about a cup           |
+| POST             | `/ai/parse-recipe`             | reads a found recipe into fields, holes and all  |
+| POST             | `/ai/convert-recipe`           | converts it onto this person's own equipment     |
+| POST             | `/ai/espresso-dial-in`         | records one shot and proposes one change         |
 
 Every list endpoint takes `limit` and `offset` and answers
 `{ items, limit, offset, hasMore }`. `hasMore` comes from reading one row beyond
@@ -1135,7 +1347,7 @@ do not add one.
 
 ### The schema, and why it looks like this
 
-Fourteen tables. Everything a user owns carries
+Sixteen tables. Everything a user owns carries
 `user_id references users(id) on delete cascade`, which is what makes
 `DELETE /me` erase an account rather than merely disown it. The decisions worth
 knowing before changing anything:
@@ -1202,6 +1414,26 @@ knowing before changing anything:
   "nothing known" rather than thrown away or asserted into shape: the column is
   open by design, so meeting something the schema does not describe is a normal
   event, not a failure.
+- **`insight_suggestions` is keyed by the evidence, not by the proposal.**
+  `suggestion_ref` fingerprints the counts a suggestion was drawn from, and that
+  one decision does three jobs. It makes the sentence beside the numbers free
+  after the first time - the arithmetic costs nothing, but putting it into
+  Slovak is a model call, and a screen that rewrote the same paragraph on every
+  open would pay for it all month. It makes refusing meaningful but not
+  permanent: brew another dozen coffees and the fingerprint changes, so somebody
+  who said no after six brews is asked again after thirty. And it makes
+  accepting count once, because the taste event carries the same ref as its
+  `source_ref` and the partial unique index on the audit trail refuses a second.
+- **`analytics_events` carries a `user_id` and cascades like everything else.**
+  That is the only honest way to hold it: an event tied to a person is personal
+  data whatever it is called, so it is deleted with the account and included in
+  the export. A separate "anonymous" store keyed by a device id would be the
+  same data wearing a different name, and neither deletable nor exportable. It
+  keeps two clocks - `occurred_at` from the phone and `created_at` from the
+  server - because these are queued offline and flushed later, and only one of
+  the two makes a wrong device clock visible. `name` is `text` rather than an
+  enum: the list of interesting flows changes faster than a schema should,
+  retiring one must not orphan its history, and nothing branches on the value.
 - **`ai_usage_logs.cost_estimate` is `numeric`** and travels as a decimal
   string. Everything else here is a measurement where `real` is right; these
   rows get summed over months, and a float sum of fractions of a cent is wrong
@@ -1315,6 +1547,22 @@ chat's taste event carries the brew's own learning weight, and that a model
 which will not answer still leaves the conversation holding what the person
 said.
 
+The history, the allowance and the export are tested for the rules that would
+otherwise be quietly broken: that a report says nothing at all until there are
+enough cups to say something, that the counts are counts and the suggestion
+names its evidence, that accepting writes one event from its own source and
+counts once however often it is tapped, that a refusal survives until the
+evidence itself changes, that a ref the history no longer supports is refused,
+that a timeline reads oldest-first and marks the version whose cup was brewed
+with something missing, that a bagless line and a bag's line stay separate,
+that the fold reproduces itself exactly on a second replay and lets a cup
+brewed with nothing to hand teach the profile less, that a spent allowance
+refuses `/ai/*` with which ceiling and when it lifts while leaving every other
+route working, that the dashboard reports the same spending the limiter is
+enforcing, that a recipe goes to the larger model and the auxiliary paragraph
+to the smaller one, and that the export carries every user-owned table and
+describes exactly what deleting the account erases.
+
 Tests are skipped in CI when `TEST_DATABASE_URL` is not configured, and fail
 loudly when it is set but unreachable.
 
@@ -1326,12 +1574,26 @@ loudly when it is set but unreachable.
 filled-in `.env`, a service account JSON or a connection string with a password.
 
 - `server/.env` - database URLs, Firebase Admin credentials, `ANTHROPIC_API_KEY`
+  and `SENTRY_DSN`. The DSN is optional: without it unexpected failures are
+  logged and reported nowhere else, which is a deployment choice rather than a
+  misconfiguration.
 - `frontend/.env` - `EXPO_PUBLIC_*` only (see Rule 6): the API base URL, the
   public Firebase _client_ configuration, the storage bucket and the Google
   OAuth client IDs. None of those are secrets; all of them identify rather than
   authorise. The model provider's key is not among them and never will be:
   every model call goes through the API, which is the whole reason
   `/ai/parse-coffee-bag` and `/ai/evaluate-coffee` exist.
+
+  `EXPO_PUBLIC_SENTRY_DSN` and `EXPO_PUBLIC_RELEASE` join them, and belong
+  there for the same reason the Firebase client configuration does: a DSN
+  identifies a project to receive reports and authorises nothing, and a release
+  name is a build number. Both are optional - a build without the DSN reports
+  nothing anywhere and works exactly as well.
+
+  `EAS_PROJECT_ID` and `EAS_OWNER` are read by `app.config.ts` at build time and
+  are deliberately not in the repository: a project id belongs to whoever owns
+  the app, and a placeholder would fail a build with a message about somebody
+  else's account.
 
 ---
 
@@ -1356,3 +1618,77 @@ Before any change is considered finished:
 3. No new lint exemption was added without updating section 4 of this document.
 4. New values live in a constants/tokens/i18n file, not at their use site.
 5. New shapes crossing the API boundary live in `shared`.
+6. Anything that changes what data is collected, stored or sent anywhere
+   updates `docs/app-store/privacy-nutrition-labels.md` in the same change. A
+   label that describes an intention rather than the build is one Apple treats
+   as a misrepresentation rather than as a mistake.
+
+---
+
+## 12. Shipping
+
+The build and store material lives in `docs/`, and each file is written to be
+checked rather than admired.
+
+```
+docs/
+├── app-store/
+│   ├── listing-sk.md                Name, subtitle, description, keywords, URLs
+│   ├── privacy-nutrition-labels.md  The App Store and Play answers, each traced
+│   │                                to the table or request that makes it true
+│   └── screenshots.md               The six shots, in the order they argue
+└── release/
+    ├── eas.md                       Build profiles, channels, what an update may carry
+    └── ios-submission-checklist.md  The things that fail a first submission
+```
+
+### EAS
+
+`frontend/eas.json` holds three build profiles - `development`, `preview`,
+`production` - each on its own update channel, with `appVersionSource: remote`
+so EAS owns the build number rather than whoever remembered to bump it.
+
+`frontend/app.config.ts` layers the environment-dependent parts on top of
+`app.json`, which still holds everything static: the icons, the permission
+strings and the privacy manifest. Three things are layered on, and all three
+are absent by default:
+
+- **`runtimeVersion` follows `appVersion`.** That is the honest reading of what
+  a JavaScript bundle is compatible with, and it is what stops an update
+  reaching a build whose native modules it does not match - the one real
+  failure mode of over-the-air updating. Anything that adds or upgrades a
+  native module needs a version bump and a store build.
+- **The EAS project id and owner come from the environment.** A project id
+  belongs to whoever owns the app rather than to the source, and a placeholder
+  would fail a build with a message about somebody else's account. Without it
+  updates are simply not configured and `expo start` runs exactly as before,
+  which is the right behaviour for a checkout never connected to EAS.
+- **The release name is stamped into every crash report.** Without it every
+  report from every version is one undifferentiated pile, and "did the fix
+  work?" is unanswerable.
+
+### The four things iOS review actually fails on
+
+All four are verifiable in this repository, and the checklist says where to
+look for each:
+
+1. **Sign in with Apple** is offered beside Google - an app that offers one
+   third-party login without Apple's does not pass review. `usesAppleSignIn` is
+   set, the button hides itself where the platform has none, and the name Apple
+   gives exactly once is handled as such.
+2. **Deleting the account is in the app**, on the profile tab, and erases the
+   stored data before the Firebase identity so a half-finished deletion cannot
+   strand personal data behind an identity nobody can sign in as.
+3. **Every permission string names the coffee bag** and what is read off it. A
+   generic string is a rejection, and the strings in `infoPlist` and in the
+   `expo-image-picker` plugin options are deliberately the same sentences so
+   the two cannot drift.
+4. **The privacy manifest is filled in** with six collected data types and four
+   required-reason API categories, and it agrees with the nutrition labels -
+   which in turn name the table or the request behind every row.
+
+Two of them are only half-answerable from a repository, and the checklist says
+so rather than ticking them: a privacy policy URL that actually resolves, and a
+demo account in the review notes that has been through onboarding and has a few
+brews in it. Brewmate is useless signed out, and a reviewer who cannot get past
+the sign-in screen rejects on _Guideline 2.1_.

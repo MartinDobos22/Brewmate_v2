@@ -16,4 +16,7 @@ export const LOG_MESSAGES = {
   userProvisioned: 'provisioned new user from firebase identity',
   requestFailed: 'request failed',
   unhandledError: 'unhandled error',
+  errorReportingConfigured: 'error reporting configured',
+  errorReportingDsnInvalid: 'SENTRY_DSN is not a valid DSN - errors will only be logged',
+  errorReportFailed: 'could not deliver an error report',
 } as const;

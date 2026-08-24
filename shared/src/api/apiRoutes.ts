@@ -8,6 +8,8 @@
 export const API_ROUTES = {
   health: '/health',
   me: '/me',
+  /** Everything this account has stored, in one document. */
+  meExport: '/me/export',
 
   brewMethods: '/brew-methods',
 
@@ -38,6 +40,15 @@ export const API_ROUTES = {
   tasteProfileRecompute: '/taste-profile/recompute',
 
   aiUsage: '/ai-usage',
+  aiUsageSummary: '/ai-usage/summary',
+
+  historyTimeline: '/history/timeline',
+
+  insights: '/insights',
+  insightSuggestionAccept: '/insights/suggestion/accept',
+  insightSuggestionDismiss: '/insights/suggestion/dismiss',
+
+  analyticsEvents: '/analytics/events',
 
   aiParseCoffeeBag: '/ai/parse-coffee-bag',
   aiEvaluateCoffee: '/ai/evaluate-coffee',

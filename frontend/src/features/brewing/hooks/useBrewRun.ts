@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useKeepAwake } from 'expo-keep-awake';
-import type { BrewParams } from '@brewmate/shared';
+import { ANALYTICS_EVENT_NAMES, type BrewParams } from '@brewmate/shared';
 
+import { trackEvent } from '../../../lib/analytics';
 import { BREW_CUE_LEAD_SECONDS, BREW_RUN_STATES, type BrewRunState } from '../constants/brewMode';
 import {
   resolveBrewTimeline,
@@ -129,7 +130,18 @@ export const useBrewRun = (params: BrewParams): BrewRun => {
     elapsedSeconds: clock.elapsedSeconds,
     finish,
 
-    start: clock.start,
+    /**
+     * The one moment in this flow worth counting.
+     *
+     * Somebody who reached the recipe and never pressed start is a different
+     * person from somebody who brewed it, and the gap between the two is the
+     * only thing a funnel over brewing can usefully say.
+     */
+    start: (): void => {
+      trackEvent(ANALYTICS_EVENT_NAMES.brewStarted);
+      clock.start();
+    },
+
     pause: clock.pause,
     resume: clock.resume,
 

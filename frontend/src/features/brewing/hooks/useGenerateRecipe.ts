@@ -1,5 +1,9 @@
 import type { UseMutationResult } from '@tanstack/react-query';
-import type { GenerateRecipeRequest, GenerateRecipeResponse } from '@brewmate/shared';
+import {
+  ANALYTICS_EVENT_NAMES,
+  type GenerateRecipeRequest,
+  type GenerateRecipeResponse,
+} from '@brewmate/shared';
 
 import { QUERY_ROOTS } from '../../../constants/queryKeys';
 import { useInvalidatingMutation } from '../../../hooks/useEntityMutation';
@@ -22,4 +26,5 @@ export const useGenerateRecipe = (): UseMutationResult<
   useInvalidatingMutation({
     mutationFn: generateRecipe,
     invalidates: [QUERY_ROOTS.recipes, QUERY_ROOTS.aiUsage],
+    tracks: ANALYTICS_EVENT_NAMES.recipeGenerated,
   });

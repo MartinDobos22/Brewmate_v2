@@ -25,5 +25,6 @@ export const parseErrorResponse = async (response: Response): Promise<ApiClientE
     parsed.data.error.message,
     response.status,
     parsed.data.requestId,
+    parsed.data.error.details,
   );
 };

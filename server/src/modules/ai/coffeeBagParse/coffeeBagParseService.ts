@@ -73,6 +73,7 @@ export const createCoffeeBagParseService = ({
     const completion = await completeJson({
       client: completionClient,
       schema: parsedBagFieldsSchema,
+      functionName: AI_FUNCTION_NAMES.parseCoffeeBag,
       system: BAG_LABEL_SYSTEM_PROMPT,
       prompt: BAG_LABEL_PROMPT,
       image,
@@ -84,11 +85,7 @@ export const createCoffeeBagParseService = ({
         : serviceUnavailableError(ERROR_MESSAGES.aiUnavailable, cause);
     });
 
-    await recordJsonUsage(aiUsageService, {
-      userId,
-      functionName: AI_FUNCTION_NAMES.parseCoffeeBag,
-      completion,
-    });
+    await recordJsonUsage(aiUsageService, { userId, completion });
 
     return { fields: completion.value, model: completion.model };
   };

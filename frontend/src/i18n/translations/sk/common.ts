@@ -21,6 +21,7 @@ export const SK_COMMON = {
   stateErrorTitle: 'Niečo sa pokazilo',
   stateErrorBody: 'Skús to prosím znova o chvíľu.',
   unitGrams: 'g',
+  unitCurrency: 'USD',
   unitSeconds: 's',
   unitCelsius: '°C',
   unitDays: 'dní',

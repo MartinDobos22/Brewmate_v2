@@ -9,6 +9,7 @@ import {
   createFakeCompletionClient,
   type RecordingCompletionClient,
 } from './fakeCompletionClient.js';
+import { createFakeErrorTracker, type RecordingErrorTracker } from './fakeErrorTracker.js';
 import { createFakeIdentityDeleter, type RecordingIdentityDeleter } from './fakeIdentityDeleter.js';
 import { createFakeImageFetcher } from './fakeImageFetcher.js';
 import { createFakeTokenVerifier } from './fakeTokenVerifier.js';
@@ -21,6 +22,8 @@ export interface TestContext {
   readonly identityDeleter: RecordingIdentityDeleter;
   /** The stub model, so what it was asked and how often can be asserted on. */
   readonly completionClient: RecordingCompletionClient;
+  /** The stub reporter, so it can be asserted which failures were reported. */
+  readonly errorTracker: RecordingErrorTracker;
   readonly reset: () => Promise<void>;
   readonly close: () => Promise<void>;
 }
@@ -34,11 +37,13 @@ export const createTestContext = async (): Promise<TestContext> => {
   const connection = createDatabase(config.database.url, config.database.maxConnections);
   const identityDeleter = createFakeIdentityDeleter();
   const completionClient = createFakeCompletionClient();
+  const errorTracker = createFakeErrorTracker();
   const app = await buildApp({
     config,
     db: connection.db,
     tokenVerifier: createFakeTokenVerifier(),
     identityDeleter,
+    errorTracker,
     ai: { completionClient, imageFetcher: createFakeImageFetcher() },
   });
 
@@ -49,9 +54,11 @@ export const createTestContext = async (): Promise<TestContext> => {
     db: connection.db,
     identityDeleter,
     completionClient,
+    errorTracker,
     reset: async (): Promise<void> => {
       identityDeleter.reset();
       completionClient.reset();
+      errorTracker.reset();
       await truncateTables(connection.db);
     },
     close: async (): Promise<void> => {

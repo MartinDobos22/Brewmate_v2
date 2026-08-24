@@ -161,6 +161,7 @@ export const createRecipeGenerationService = ({
       const completion = await completeJson<GeneratedRecipe>({
         client: completionClient,
         schema: resolveGeneratedRecipeSchema(method.category),
+        functionName: AI_FUNCTION_NAMES.generateRecipe,
         system: RECIPE_SYSTEM_PROMPT,
         prompt: sections.join(PROMPT_SECTION_SEPARATOR),
         maxTokens: AI_RECIPE_MAX_TOKENS,
@@ -169,11 +170,7 @@ export const createRecipeGenerationService = ({
         throw serviceUnavailableError(ERROR_MESSAGES.recipeUnavailable, cause);
       });
 
-      await recordJsonUsage(aiUsageService, {
-        userId,
-        functionName: AI_FUNCTION_NAMES.generateRecipe,
-        completion,
-      });
+      await recordJsonUsage(aiUsageService, { userId, completion });
 
       return {
         recipe: await recipeService.create(userId, {

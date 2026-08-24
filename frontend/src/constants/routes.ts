@@ -20,6 +20,9 @@ export const ROUTES = {
   profile: '/profile',
   onboarding: '/onboarding',
   chat: '/chat',
+  insights: '/insights',
+  timeline: '/timeline',
+  aiCosts: '/ai-costs',
   designSystem: '/design-system',
 } as const;
 
@@ -84,6 +87,24 @@ export const buildRecipeChatRoute = (recipeId: string, brewLogId?: string): stri
  */
 export const buildDialInRoute = (recipeId: string): string =>
   [ROUTES.dialIn, RECIPE_PARAM, encodeURIComponent(recipeId)].join('');
+
+const METHOD_PARAM = '?methodId=';
+const BAG_PARAM = '&bagId=';
+
+/**
+ * One recipe line's own screen, addressed by the pair it belongs to.
+ *
+ * The bag is optional in the path for the same reason it is optional in the
+ * query: a recipe written for beans nobody wrote down still has a history, and
+ * leaving the parameter off is what asks for it.
+ */
+export const buildTimelineRoute = (methodId: string, bagId?: string | null): string =>
+  [
+    ROUTES.timeline,
+    METHOD_PARAM,
+    encodeURIComponent(methodId),
+    ...(bagId === undefined || bagId === null ? [] : [BAG_PARAM, encodeURIComponent(bagId)]),
+  ].join('');
 
 const MODE_PARAM = '?mode=';
 

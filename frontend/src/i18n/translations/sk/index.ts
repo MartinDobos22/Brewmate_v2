@@ -1,3 +1,4 @@
+import { SK_AI_COSTS } from './aiCosts';
 import { SK_AUTH } from './auth';
 import { SK_BREWING } from './brewing';
 import { SK_BREW_MODE } from './brewMode';
@@ -8,6 +9,7 @@ import { SK_DIAL_IN } from './dialIn';
 import { SK_EQUIPMENT_SETUP } from './equipmentSetup';
 import { SK_ERRORS } from './errors';
 import { SK_GRINDERS } from './grinders';
+import { SK_HISTORY } from './history';
 import { SK_HOME } from './home';
 import { SK_INVENTORY } from './inventory';
 import { SK_NAVIGATION } from './navigation';
@@ -48,6 +50,8 @@ export const SK_TRANSLATIONS = {
   ...SK_HOME,
   ...SK_INVENTORY,
   ...SK_TASTE_PROFILE,
+  ...SK_HISTORY,
+  ...SK_AI_COSTS,
   ...SK_ERRORS,
   ...SK_DESIGN_SYSTEM,
 } as const;

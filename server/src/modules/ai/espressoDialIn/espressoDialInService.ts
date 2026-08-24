@@ -242,6 +242,7 @@ export const createEspressoDialInService = ({
       const completion = await completeJson<DialInAnswer>({
         client: completionClient,
         schema: resolveDialInAnswerSchema(constraints),
+        functionName: AI_FUNCTION_NAMES.espressoDialIn,
         system: DIAL_IN_SYSTEM_PROMPT,
         prompt: sections.join(PROMPT_SECTION_SEPARATOR),
         maxTokens: AI_CHAT_MAX_TOKENS,
@@ -250,11 +251,7 @@ export const createEspressoDialInService = ({
         throw serviceUnavailableError(ERROR_MESSAGES.espressoDialInUnavailable, cause);
       });
 
-      await recordJsonUsage(aiUsageService, {
-        userId,
-        functionName: AI_FUNCTION_NAMES.espressoDialIn,
-        completion,
-      });
+      await recordJsonUsage(aiUsageService, { userId, completion });
 
       const patch: RecipePatch | null = toDialInPatch(completion.value, recipe.params);
       const assistantMessage = await recipeChatService.append(userId, recipe.id, {

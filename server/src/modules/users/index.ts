@@ -5,3 +5,8 @@ export { userRoutes } from './userRoutes.js';
 export type { UserRoutesOptions } from './userRoutes.js';
 export { createUserService } from './userService.js';
 export type { UserService } from './userService.js';
+export { createAccountExportRepository } from './accountExportRepository.js';
+export type { AccountExportRepository, AccountExportRows } from './accountExportRepository.js';
+export { createAccountExportService } from './accountExportService.js';
+export type { AccountExportService, AccountExportDependencies } from './accountExportService.js';
+export { toStoredTasteSuggestion } from './toStoredTasteSuggestion.js';

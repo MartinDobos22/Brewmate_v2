@@ -28,6 +28,31 @@ export const ProfileScreen = (): JSX.Element => {
       <EquipmentSection />
       <WaterSection />
       <SetsSection />
+      {/*
+        Two screens that are about the account rather than about a coffee: what
+        its history adds up to, and what its model calls have cost. They live
+        behind the profile because both are read occasionally and deliberately,
+        not on the way to making a cup.
+      */}
+      <Card>
+        <Text variant="titleMedium">{t(TRANSLATION_KEYS.insightsTitle)}</Text>
+        <Button
+          label={t(TRANSLATION_KEYS.insightsOpenAction)}
+          variant="secondary"
+          fullWidth
+          onPress={(): void => {
+            router.push(ROUTES.insights);
+          }}
+        />
+        <Button
+          label={t(TRANSLATION_KEYS.aiCostsOpenAction)}
+          variant="tertiary"
+          fullWidth
+          onPress={(): void => {
+            router.push(ROUTES.aiCosts);
+          }}
+        />
+      </Card>
       <Card>
         <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileAppearanceTitle)}</Text>
         <AppearancePicker />

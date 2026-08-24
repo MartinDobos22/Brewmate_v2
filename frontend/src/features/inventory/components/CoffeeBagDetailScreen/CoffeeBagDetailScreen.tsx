@@ -39,7 +39,7 @@ export const CoffeeBagDetailScreen = ({ bagId }: CoffeeBagDetailScreenProps): JS
       {bag.data === undefined ? null : (
         <>
           <CoffeeBagInfoCard bag={bag.data} />
-          <BagRecipeHistory recipes={recipes.data?.items ?? NO_RECIPES} />
+          <BagRecipeHistory recipes={recipes.data?.items ?? NO_RECIPES} bagId={bag.data.id} />
         </>
       )}
     </Screen>

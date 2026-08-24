@@ -49,4 +49,12 @@ export const ERROR_MESSAGES = {
     'The recipe could not be converted right now. Try again in a moment.',
   espressoDialInUnavailable: 'That shot could not be answered right now. Try again in a moment.',
   espressoDialInMethodMismatch: 'Dialling in is only for a recipe brewed on an espresso machine.',
+
+  aiDailyLimitReached:
+    'This account has used up what it may ask a model for today. Everything that does not need one keeps working.',
+  aiMonthlyLimitReached:
+    'This account has used up what it may ask a model for this month. Everything that does not need one keeps working.',
+
+  tasteSuggestionNotFound:
+    'That suggestion is no longer the one this history supports. Read the insights again.',
 } as const;

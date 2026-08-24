@@ -1,11 +1,15 @@
 import { TRANSLATION_KEYS, type TranslationKey } from '../../i18n';
 import { ApiClientError } from '../apiClient';
+import type { InterpolationValues } from '../text';
 
 import { REQUEST_ERROR_KEYS } from './requestErrorKeys';
+import { resolveAiLimitNotice } from './resolveAiLimitNotice';
 
 export interface RequestErrorKeys {
   readonly titleKey: TranslationKey;
   readonly bodyKey: TranslationKey;
+  /** Fills the holes in the sentence, where it has any. */
+  readonly bodyValues?: InterpolationValues;
 }
 
 /**
@@ -23,6 +27,18 @@ export const resolveRequestErrorKeys = (error: unknown, isOnline: boolean): Requ
       titleKey: TRANSLATION_KEYS.errorOfflineTitle,
       bodyKey: TRANSLATION_KEYS.errorOfflineBody,
     };
+  }
+
+  /**
+   * The model allowance is the one failure with something specific to say:
+   * which ceiling, when it lifts, and what still works. It is checked before
+   * the general mapping because that one would answer with "príliš veľa
+   * pokusov", which reads as an accusation and leaves nothing to do.
+   */
+  const limit = resolveAiLimitNotice(error);
+
+  if (limit !== null) {
+    return limit;
   }
 
   return {

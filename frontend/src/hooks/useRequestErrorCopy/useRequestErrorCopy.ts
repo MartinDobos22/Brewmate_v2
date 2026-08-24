@@ -17,7 +17,7 @@ export interface RequestErrorCopy {
 export const useRequestErrorCopy = (error: unknown): RequestErrorCopy => {
   const { t } = useTranslation();
   const isOnline = useIsOnline();
-  const { titleKey, bodyKey } = resolveRequestErrorKeys(error, isOnline);
+  const { titleKey, bodyKey, bodyValues } = resolveRequestErrorKeys(error, isOnline);
 
-  return { title: t(titleKey), description: t(bodyKey) };
+  return { title: t(titleKey), description: t(bodyKey, bodyValues) };
 };

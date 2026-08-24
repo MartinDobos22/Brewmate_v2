@@ -3,9 +3,15 @@ import { z, type ZodType } from 'zod';
 import type { AiImage } from '../../ai/aiImage.js';
 import { AI_ERROR_MESSAGES } from '../../ai/aiErrorMessages.js';
 import { EMPTY_AI_TOKEN_USAGE, addAiTokenUsage, type AiTokenUsage } from '../../ai/aiTokenUsage.js';
-import { AI_VALIDATION_ATTEMPTS, type AiEffort } from '../../ai/constants/aiModels.js';
+import {
+  AI_VALIDATION_ATTEMPTS,
+  type AiEffort,
+  type AiModelId,
+} from '../../ai/constants/aiModels.js';
 import type { TextCompletionClient } from '../../ai/textCompletionClient.js';
 
+import { AI_MODEL_ROUTES } from './constants/aiModelRoutes.js';
+import type { AiFunctionName } from './constants/aiFunctionNames.js';
 import { readJsonPayload } from './readJsonPayload.js';
 
 const FIRST_ATTEMPT = 0;
@@ -24,6 +30,14 @@ const CORRECTION_PREFIX =
 export interface JsonCompletionRequest<TValue> {
   readonly client: TextCompletionClient;
   readonly schema: ZodType<TValue>;
+  /**
+   * What this call is for, which is also what picks the model.
+   *
+   * Named here rather than at the two places downstream that need it, so the
+   * model a question was sent to and the row that bills it cannot disagree
+   * about which feature spent the money.
+   */
+  readonly functionName: AiFunctionName;
   readonly system: string;
   readonly prompt: string;
   readonly image?: AiImage;
@@ -40,7 +54,11 @@ export interface JsonCompletionRequest<TValue> {
  */
 export interface JsonCompletion<TValue> {
   readonly value: TValue;
+  readonly functionName: AiFunctionName;
+  /** What the provider says answered, which is a dated variant of the id below. */
   readonly model: string;
+  /** What was asked for, and therefore what the cost is priced against. */
+  readonly modelId: AiModelId;
   readonly usage: AiTokenUsage;
 }
 
@@ -55,18 +73,22 @@ export interface JsonCompletion<TValue> {
 export const completeJson = async <TValue>({
   client,
   schema,
+  functionName,
   system,
   prompt,
   image,
   maxTokens,
   effort,
 }: JsonCompletionRequest<TValue>): Promise<JsonCompletion<TValue>> => {
+  const modelId = AI_MODEL_ROUTES[functionName];
+
   let usage = EMPTY_AI_TOKEN_USAGE;
   let model = '';
   let correction = '';
 
   for (let attempt = FIRST_ATTEMPT; attempt < AI_VALIDATION_ATTEMPTS; attempt += 1) {
     const completion = await client.complete({
+      model: modelId,
       system,
       prompt: correction === '' ? prompt : [prompt, correction].join(LINE_BREAK),
       image,
@@ -80,7 +102,7 @@ export const completeJson = async <TValue>({
     const parsed = schema.safeParse(readJsonPayload(completion.text));
 
     if (parsed.success) {
-      return { value: parsed.data, model, usage };
+      return { value: parsed.data, functionName, model, modelId, usage };
     }
 
     correction = [CORRECTION_PREFIX, z.prettifyError(parsed.error)].join(LINE_BREAK);

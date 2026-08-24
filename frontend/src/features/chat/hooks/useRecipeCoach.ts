@@ -1,5 +1,9 @@
 import type { UseMutationResult } from '@tanstack/react-query';
-import type { RecipeChatRequest, RecipeChatResponse } from '@brewmate/shared';
+import {
+  ANALYTICS_EVENT_NAMES,
+  type RecipeChatRequest,
+  type RecipeChatResponse,
+} from '@brewmate/shared';
 
 import { QUERY_ROOTS } from '../../../constants/queryKeys';
 import { useInvalidatingMutation } from '../../../hooks/useEntityMutation';
@@ -26,4 +30,5 @@ export const useRecipeCoach = (): UseMutationResult<RecipeChatResponse, Error, R
       QUERY_ROOTS.tasteProfileEvents,
       QUERY_ROOTS.aiUsage,
     ],
+    tracks: ANALYTICS_EVENT_NAMES.brewChatMessageSent,
   });
