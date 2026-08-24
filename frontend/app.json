@@ -23,6 +23,9 @@
         }
       ],
       "expo-web-browser",
+      "expo-audio",
+      "expo-keep-awake",
+      "expo-haptics",
       [
         "expo-splash-screen",
         {

@@ -41,6 +41,8 @@ export const API_ROUTES = {
 
   aiParseCoffeeBag: '/ai/parse-coffee-bag',
   aiEvaluateCoffee: '/ai/evaluate-coffee',
+  aiGenerateRecipe: '/ai/generate-recipe',
+  aiRecipeChat: '/ai/recipe-chat',
 } as const;
 
 export type ApiRoute = (typeof API_ROUTES)[keyof typeof API_ROUTES];

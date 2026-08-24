@@ -10,6 +10,7 @@ export {
   createFakeCompletionClient,
   FAKE_MODEL,
   FAKE_TOKENS_IN,
+  FAKE_CACHE_READ_TOKENS,
   FAKE_TOKENS_OUT,
 } from './fakeCompletionClient.js';
 export type { RecordingCompletionClient } from './fakeCompletionClient.js';

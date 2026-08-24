@@ -7,7 +7,6 @@ import {
 import { AI_ERROR_MESSAGES } from '../../../ai/aiErrorMessages.js';
 import type { AiImage } from '../../../ai/aiImage.js';
 import { AI_EFFORT_LEVELS, AI_PARSE_MAX_TOKENS } from '../../../ai/constants/aiModels.js';
-import { estimateAiCost } from '../../../ai/estimateAiCost.js';
 import type { ImageFetcher } from '../../../ai/imageFetcher.js';
 import type { TextCompletionClient } from '../../../ai/textCompletionClient.js';
 import { badRequestError } from '../../../errors/badRequestError.js';
@@ -15,6 +14,7 @@ import { ERROR_MESSAGES } from '../../../errors/errorMessages.js';
 import { serviceUnavailableError } from '../../../errors/serviceUnavailableError.js';
 import type { AiUsageService } from '../../aiUsage/aiUsageService.js';
 import { completeJson } from '../completeJson.js';
+import { recordJsonUsage } from '../recordJsonUsage.js';
 import { AI_FUNCTION_NAMES } from '../constants/aiFunctionNames.js';
 
 import { BAG_LABEL_PROMPT, BAG_LABEL_SYSTEM_PROMPT } from './bagLabelPrompt.js';
@@ -84,13 +84,10 @@ export const createCoffeeBagParseService = ({
         : serviceUnavailableError(ERROR_MESSAGES.aiUnavailable, cause);
     });
 
-    await aiUsageService.record({
+    await recordJsonUsage(aiUsageService, {
       userId,
       functionName: AI_FUNCTION_NAMES.parseCoffeeBag,
-      model: completion.model,
-      tokensIn: completion.tokensIn,
-      tokensOut: completion.tokensOut,
-      costEstimate: estimateAiCost(completion.tokensIn, completion.tokensOut),
+      completion,
     });
 
     return { fields: completion.value, model: completion.model };

@@ -1,4 +1,9 @@
-import { EQUIPMENT_TYPES, type BrewMethod, type Equipment } from '@brewmate/shared';
+import {
+  EQUIPMENT_TYPES,
+  type BrewMethod,
+  type Equipment,
+  type EquipmentSet,
+} from '@brewmate/shared';
 
 import { filterBrewableMethods } from '../services/readOwnedBrewers';
 
@@ -24,11 +29,20 @@ export interface AvailableBrewMethods {
  * The whole point of writing down the cupboard: a recommendation for gear
  * somebody does not own is not advice, it is a shopping list they did not ask
  * for.
+ *
+ * Narrowed to one set where a set is given, because that is what switching to
+ * "Chata" means: the dripper is at home, so the methods it makes possible are
+ * at home too. Without a set the answer is everything still owned - somebody
+ * who has never made a set has not thereby lost their kettle.
  */
-export const useAvailableBrewMethods = (): AvailableBrewMethods => {
+export const useAvailableBrewMethods = (equipmentSet?: EquipmentSet): AvailableBrewMethods => {
   const catalog = useBrewMethodCatalog();
   const equipment = useEquipmentList({ type: EQUIPMENT_TYPES.brewer, activeOnly: ACTIVE_ONLY });
-  const brewers = equipment.data?.items ?? NONE;
+  const owned = equipment.data?.items ?? NONE;
+  const brewers =
+    equipmentSet === undefined
+      ? owned
+      : owned.filter((brewer: Equipment): boolean => equipmentSet.equipmentIds.includes(brewer.id));
 
   return {
     brewers,

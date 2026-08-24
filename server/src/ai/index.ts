@@ -1,4 +1,6 @@
 export type { AiCompletion, AiCompletionRequest } from './aiCompletion.js';
+export { EMPTY_AI_TOKEN_USAGE, addAiTokenUsage, totalInputTokens } from './aiTokenUsage.js';
+export type { AiTokenUsage } from './aiTokenUsage.js';
 export { AI_ERROR_MESSAGES } from './aiErrorMessages.js';
 export type { AiImage } from './aiImage.js';
 export type { ImageFetcher } from './imageFetcher.js';

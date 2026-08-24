@@ -2,6 +2,8 @@ import type { AiCompletion, AiCompletionRequest } from '../../src/ai/aiCompletio
 import type { TextCompletionClient } from '../../src/ai/textCompletionClient.js';
 
 const TOKENS_IN = 1200;
+const CACHE_READ_TOKENS = 800;
+const NO_TOKENS = 0;
 const TOKENS_OUT = 300;
 const MODEL = 'fake-model';
 const FIRST = 0;
@@ -47,11 +49,21 @@ export const createFakeCompletionClient = (): RecordingCompletionClient => {
       return Promise.resolve({
         text: answer,
         model: MODEL,
-        tokensIn: TOKENS_IN,
-        tokensOut: TOKENS_OUT,
+        usage: {
+          tokensIn: TOKENS_IN,
+          cacheWriteTokens: NO_TOKENS,
+          /** A stand-in for the cached system prompt the real client marks. */
+          cacheReadTokens: CACHE_READ_TOKENS,
+          tokensOut: TOKENS_OUT,
+        },
       });
     },
   };
 };
 
-export { TOKENS_IN as FAKE_TOKENS_IN, TOKENS_OUT as FAKE_TOKENS_OUT, MODEL as FAKE_MODEL };
+export {
+  TOKENS_IN as FAKE_TOKENS_IN,
+  CACHE_READ_TOKENS as FAKE_CACHE_READ_TOKENS,
+  TOKENS_OUT as FAKE_TOKENS_OUT,
+  MODEL as FAKE_MODEL,
+};

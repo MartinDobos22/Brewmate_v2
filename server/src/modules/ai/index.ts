@@ -1,8 +1,13 @@
 export * from './constants/index.js';
 export { readJsonPayload } from './readJsonPayload.js';
 export { completeJson } from './completeJson.js';
+export { recordJsonUsage } from './recordJsonUsage.js';
+export type { JsonUsageRecord } from './recordJsonUsage.js';
 export type { JsonCompletion, JsonCompletionRequest } from './completeJson.js';
 export * from './coffeeBagParse/index.js';
 export * from './coffeeEvaluation/index.js';
+export * from './brewContext/index.js';
+export * from './recipeEngine/index.js';
+export * from './recipeCoach/index.js';
 export { aiRoutes } from './aiRoutes.js';
 export type { AiRoutesOptions } from './aiRoutes.js';

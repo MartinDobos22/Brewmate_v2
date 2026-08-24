@@ -1,4 +1,5 @@
 import type { AiImage } from './aiImage.js';
+import type { AiTokenUsage } from './aiTokenUsage.js';
 import type { AiEffort } from './constants/aiModels.js';
 
 /** One question put to a model, with an optional photograph attached. */
@@ -20,6 +21,5 @@ export interface AiCompletionRequest {
 export interface AiCompletion {
   readonly text: string;
   readonly model: string;
-  readonly tokensIn: number;
-  readonly tokensOut: number;
+  readonly usage: AiTokenUsage;
 }

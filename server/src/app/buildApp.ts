@@ -65,6 +65,8 @@ export const buildApp = async (dependencies: AppDependencies): Promise<FastifyIn
   await app.register(aiRoutes, {
     coffeeBagParseService: services.coffeeBagParseService,
     coffeeEvaluationService: services.coffeeEvaluationService,
+    recipeGenerationService: services.recipeGenerationService,
+    recipeCoachService: services.recipeCoachService,
   });
 
   return app;

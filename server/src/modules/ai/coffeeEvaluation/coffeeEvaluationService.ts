@@ -7,7 +7,6 @@ import type {
 } from '@brewmate/shared';
 
 import { AI_EFFORT_LEVELS, AI_VERDICT_MAX_TOKENS } from '../../../ai/constants/aiModels.js';
-import { estimateAiCost } from '../../../ai/estimateAiCost.js';
 import type { TextCompletionClient } from '../../../ai/textCompletionClient.js';
 import { ERROR_MESSAGES } from '../../../errors/errorMessages.js';
 import { serviceUnavailableError } from '../../../errors/serviceUnavailableError.js';
@@ -17,6 +16,7 @@ import type { BagEvaluationService } from '../../bagEvaluations/bagEvaluationSer
 import type { AiUsageService } from '../../aiUsage/aiUsageService.js';
 import type { TasteProfileService } from '../../tasteProfiles/tasteProfileService.js';
 import { completeJson } from '../completeJson.js';
+import { recordJsonUsage } from '../recordJsonUsage.js';
 import { AI_FUNCTION_NAMES } from '../constants/aiFunctionNames.js';
 import { PROMPT_HISTORY_LIMIT, PROMPT_SECTION_SEPARATOR } from '../constants/promptFormatting.js';
 import { normalizeLabelKey } from '../coffeeBagParse/normalizeLabelKey.js';
@@ -104,13 +104,10 @@ export const createCoffeeEvaluationService = ({
       throw serviceUnavailableError(ERROR_MESSAGES.coffeeVerdictUnavailable, cause);
     });
 
-    await aiUsageService.record({
+    await recordJsonUsage(aiUsageService, {
       userId,
       functionName: AI_FUNCTION_NAMES.evaluateCoffee,
-      model: completion.model,
-      tokensIn: completion.tokensIn,
-      tokensOut: completion.tokensOut,
-      costEstimate: estimateAiCost(completion.tokensIn, completion.tokensOut),
+      completion,
     });
 
     return completion.value;

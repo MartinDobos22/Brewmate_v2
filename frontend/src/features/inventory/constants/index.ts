@@ -12,8 +12,6 @@ export {
   WATER_TYPE_OPTIONS,
 } from './equipmentLabels';
 export type { WaterTypeOption } from './equipmentLabels';
-export { BREW_CONSTRAINT_OPTIONS } from './brewConstraintOptions';
-export type { BrewConstraintFlag, BrewConstraintOption } from './brewConstraintOptions';
 export {
   EMPTY_EQUIPMENT_SET_FORM,
   EQUIPMENT_SET_NAME_SUGGESTION_KEYS,

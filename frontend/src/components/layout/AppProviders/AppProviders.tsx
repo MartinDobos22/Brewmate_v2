@@ -6,6 +6,8 @@ import { LIMITS } from '../../../constants/limits';
 import { createAppPersister, createAppQueryClient } from '../../../lib/queryClient';
 import { ThemeProvider } from '../../../theme';
 
+import { PendingBrewLogSync } from './PendingBrewLogSync';
+
 export interface AppProvidersProps {
   readonly children: ReactNode;
 }
@@ -25,7 +27,9 @@ export const AppProviders = ({ children }: AppProvidersProps): JSX.Element => {
         client={queryClient}
         persistOptions={{ persister, maxAge: LIMITS.persistMaxAgeMs }}
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <PendingBrewLogSync>{children}</PendingBrewLogSync>
+        </ThemeProvider>
       </PersistQueryClientProvider>
     </SafeAreaProvider>
   );

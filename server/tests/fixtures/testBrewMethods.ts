@@ -11,14 +11,18 @@ const AEROPRESS_RATIO_MIN = 12;
 const AEROPRESS_RATIO_MAX = 16;
 const RETIRED_RATIO_MIN = 10;
 const RETIRED_RATIO_MAX = 20;
+const ESPRESSO_RATIO_MIN = 2;
+const ESPRESSO_RATIO_MAX = 3;
 
 const V60_RATIO = { min: V60_RATIO_MIN, max: V60_RATIO_MAX } as const;
 const AEROPRESS_RATIO = { min: AEROPRESS_RATIO_MIN, max: AEROPRESS_RATIO_MAX } as const;
 const RETIRED_RATIO = { min: RETIRED_RATIO_MIN, max: RETIRED_RATIO_MAX } as const;
+const ESPRESSO_RATIO = { min: ESPRESSO_RATIO_MIN, max: ESPRESSO_RATIO_MAX } as const;
 
 export const V60_KEY = 'v60';
 export const AEROPRESS_KEY = 'aeropress';
 export const RETIRED_KEY = 'chemex-classic';
+export const ESPRESSO_KEY = 'espresso';
 
 /**
  * The catalogue a test needs.
@@ -32,6 +36,8 @@ export const insertTestBrewMethods = async (
   readonly v60: BrewMethodRow;
   readonly aeropress: BrewMethodRow;
   readonly retired: BrewMethodRow;
+  /** The one method whose recipes are a different shape. */
+  readonly espresso: BrewMethodRow;
 }> => ({
   v60: requireRow(
     await db
@@ -65,6 +71,18 @@ export const insertTestBrewMethods = async (
         category: BREW_METHOD_CATEGORIES.pourOver,
         defaultRatioRange: RETIRED_RATIO,
         isActive: false,
+      })
+      .returning(),
+  ),
+  espresso: requireRow(
+    await db
+      .insert(brewMethodsTable)
+      .values({
+        key: ESPRESSO_KEY,
+        nameSk: 'Espresso',
+        category: BREW_METHOD_CATEGORIES.espresso,
+        defaultRatioRange: ESPRESSO_RATIO,
+        requiresEquipmentType: EQUIPMENT_TYPES.brewer,
       })
       .returning(),
   ),

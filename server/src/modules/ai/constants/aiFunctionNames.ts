@@ -8,6 +8,8 @@
 export const AI_FUNCTION_NAMES = {
   parseCoffeeBag: 'parse-coffee-bag',
   evaluateCoffee: 'evaluate-coffee',
+  generateRecipe: 'generate-recipe',
+  recipeChat: 'recipe-chat',
 } as const;
 
 export type AiFunctionName = (typeof AI_FUNCTION_NAMES)[keyof typeof AI_FUNCTION_NAMES];

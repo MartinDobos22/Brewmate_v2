@@ -11,6 +11,7 @@ export const ROUTES = {
   inventory: '/inventory',
   grinders: '/grinders',
   brew: '/brew',
+  brewMode: '/brew-mode',
   quickBrew: '/quick-brew',
   scan: '/scan',
   coffeeBags: '/coffee-bags',
@@ -33,6 +34,43 @@ const ROUTE_SEPARATOR = '/';
  */
 export const buildBagRoute = (bagId: string): string =>
   [ROUTES.coffeeBags, encodeURIComponent(bagId)].join(ROUTE_SEPARATOR);
+
+const RECIPE_PARAM = '?recipeId=';
+const BREW_LOG_PARAM = '&brewLogId=';
+const EQUIPMENT_SET_PARAM = '&equipmentSetId=';
+
+/**
+ * A recipe's own brew mode, and the conversation about it afterwards.
+ *
+ * Built here for the same reason every other path is: a screen is reached
+ * through one definition, so renaming a route is one edit rather than a search
+ * for string concatenation.
+ */
+export const buildBrewModeRoute = (recipeId: string, equipmentSetId?: string | null): string =>
+  [
+    ROUTES.brewMode,
+    RECIPE_PARAM,
+    encodeURIComponent(recipeId),
+    ...(equipmentSetId === undefined || equipmentSetId === null
+      ? []
+      : [EQUIPMENT_SET_PARAM, encodeURIComponent(equipmentSetId)]),
+  ].join('');
+
+/**
+ * The chat about one recipe, and optionally about one cup of it.
+ *
+ * The brew log travels in the path because it is what makes the answer about a
+ * cup rather than about a recipe: it carries the constraints that brew was
+ * made under, which decide both what may be suggested and how much what gets
+ * said afterwards is allowed to teach the profile.
+ */
+export const buildRecipeChatRoute = (recipeId: string, brewLogId?: string): string =>
+  [
+    ROUTES.chat,
+    RECIPE_PARAM,
+    encodeURIComponent(recipeId),
+    ...(brewLogId === undefined ? [] : [BREW_LOG_PARAM, encodeURIComponent(brewLogId)]),
+  ].join('');
 
 const MODE_PARAM = '?mode=';
 

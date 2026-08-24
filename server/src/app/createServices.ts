@@ -5,10 +5,19 @@ import {
   createCoffeeBagParseService,
   type CoffeeBagParseService,
 } from '../modules/ai/coffeeBagParse/coffeeBagParseService.js';
+import { createBrewContextResolver } from '../modules/ai/brewContext/brewContextResolver.js';
 import {
   createCoffeeEvaluationService,
   type CoffeeEvaluationService,
 } from '../modules/ai/coffeeEvaluation/coffeeEvaluationService.js';
+import {
+  createRecipeCoachService,
+  type RecipeCoachService,
+} from '../modules/ai/recipeCoach/recipeCoachService.js';
+import {
+  createRecipeGenerationService,
+  type RecipeGenerationService,
+} from '../modules/ai/recipeEngine/recipeGenerationService.js';
 import { createAiUsageRepository } from '../modules/aiUsage/aiUsageRepository.js';
 import { createAiUsageService, type AiUsageService } from '../modules/aiUsage/aiUsageService.js';
 import { createBagEvaluationRepository } from '../modules/bagEvaluations/bagEvaluationRepository.js';
@@ -75,6 +84,8 @@ export interface AppServices {
   /** Null wherever no model provider is configured; the AI routes then 503. */
   readonly coffeeBagParseService: CoffeeBagParseService | null;
   readonly coffeeEvaluationService: CoffeeEvaluationService | null;
+  readonly recipeGenerationService: RecipeGenerationService | null;
+  readonly recipeCoachService: RecipeCoachService | null;
 }
 
 export interface ServiceDependencies {
@@ -98,6 +109,7 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
   const brewLogRepository = createBrewLogRepository(db);
 
   const bagEvaluationRepository = createBagEvaluationRepository(db);
+  const grinderRepository = createGrinderRepository(db);
   const aiUsageService = createAiUsageService(createAiUsageRepository(db));
 
   const userService = createUserService(createUserRepository(db), identityDeleter);
@@ -121,6 +133,22 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
     tasteProfileService,
   );
 
+  const recipeChatService = createRecipeChatService(createRecipeChatRepository(db), recipeService);
+
+  /**
+   * One reader of the kitchen, shared by both features that write about a
+   * brew. Two copies of "which brewer, which kettle, which grinder" would be
+   * two answers to the same question, and the recipe and the advice about it
+   * would eventually disagree about what is on the counter.
+   */
+  const brewContextResolver = createBrewContextResolver({
+    coffeeBagRepository,
+    equipmentRepository,
+    equipmentSetRepository,
+    grinderRepository,
+    tasteProfileService,
+  });
+
   return {
     userService,
     tasteProfileService,
@@ -128,11 +156,11 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
     bagEvaluationService,
     brewMethodService,
     recipeService,
-    grinderService: createGrinderService(createGrinderRepository(db)),
+    recipeChatService,
+    grinderService: createGrinderService(grinderRepository),
     equipmentService: createEquipmentService(equipmentRepository, equipmentSetRepository),
     equipmentSetService: createEquipmentSetService(equipmentSetRepository, equipmentRepository),
     coffeeBagService: createCoffeeBagService(coffeeBagRepository),
-    recipeChatService: createRecipeChatService(createRecipeChatRepository(db), recipeService),
     brewLogService: createBrewLogService({
       repository: brewLogRepository,
       recipeService,
@@ -155,6 +183,32 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
             completionClient: ai.completionClient,
             repository: bagEvaluationRepository,
             bagEvaluationService,
+            tasteProfileService,
+            aiUsageService,
+          }),
+    recipeGenerationService:
+      ai === null
+        ? null
+        : createRecipeGenerationService({
+            completionClient: ai.completionClient,
+            brewMethodService,
+            brewContextResolver,
+            recipeRepository,
+            brewLogRepository,
+            recipeService,
+            aiUsageService,
+          }),
+    recipeCoachService:
+      ai === null
+        ? null
+        : createRecipeCoachService({
+            completionClient: ai.completionClient,
+            recipeService,
+            recipeRepository,
+            recipeChatService,
+            brewLogRepository,
+            brewMethodService,
+            brewContextResolver,
             tasteProfileService,
             aiUsageService,
           }),

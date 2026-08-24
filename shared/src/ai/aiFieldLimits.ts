@@ -24,3 +24,15 @@ export const PARSED_CONFIDENCE_NONE = 0;
 /** Bounds for what the shop verdict is allowed to say. */
 export const AI_VERDICT_SENTENCES_MIN = 2;
 export const AI_VERDICT_SENTENCES_MAX = 4;
+
+/** How much somebody may say about beans that are not in the cupboard. */
+export const COFFEE_DESCRIPTION_MAX_LENGTH = 500;
+
+/**
+ * How many earlier versions of a recipe travel with a chat message.
+ *
+ * Three, because that is what the conversation is actually about: this cup,
+ * the one before it and what changed between them. A longer tail turns a
+ * question about this morning into an argument with a month of history.
+ */
+export const RECIPE_CHAT_HISTORY_VERSIONS = 3;

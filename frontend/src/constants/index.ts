@@ -1,5 +1,6 @@
 export { APP_CONFIG } from './config';
 export { FINGERPRINT, FINGERPRINT_SEPARATORS } from './fingerprint';
+export { INTERPOLATION } from './interpolation';
 export type { AppConfig } from './config';
 export {
   HTTP_METHODS,
@@ -20,6 +21,8 @@ export {
   AUTH_GROUP_SEGMENT,
   buildBagRoute,
   buildScanRoute,
+  buildBrewModeRoute,
+  buildRecipeChatRoute,
 } from './routes';
 export type { Route, TabSegment } from './routes';
 export { STORAGE_KEYS } from './storageKeys';

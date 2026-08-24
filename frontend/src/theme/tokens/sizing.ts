@@ -30,6 +30,17 @@ export const SIZE = {
   motionTravel: 220,
   /** Minimum touch target, per the platform accessibility guidelines. */
   minTouchTarget: 44,
+  /**
+   * Brew mode is operated with one wet finger while looking at a phone
+   * propped up half a metre away, so nothing there is sized by the ordinary
+   * rules. A control is a third bigger than the smallest a guideline allows,
+   * and the countdown is set at a size that carries across a kitchen.
+   */
+  brewControlSize: 64,
+  brewPrimaryControlSize: 88,
+  /** The dot that says which step of the brew is running. */
+  brewStepDotSize: 10,
+  brewProgressHeight: 12,
 } as const;
 
 /** Dimensions expressed as a share of the parent. */

@@ -6,6 +6,19 @@ import type { TypographyStyle } from './typographyStyle';
  * counting timer does not shift its own layout on every frame.
  */
 export const NUMERIC_SCALE = {
+  /**
+   * The brew mode countdown, and nothing else.
+   *
+   * Sized to be read from half a metre away by somebody whose hands are wet
+   * and whose glasses are in the other room. Larger than any heading in the
+   * app on purpose: for the length of a brew this one number is the screen.
+   */
+  numericDisplay: {
+    fontFamily: FONT_FAMILIES.numericMedium,
+    fontSize: 88,
+    lineHeight: 96,
+    letterSpacing: -2,
+  },
   numericHero: {
     fontFamily: FONT_FAMILIES.numericMedium,
     fontSize: 56,
