@@ -1,5 +1,9 @@
 import type { UseMutationResult } from '@tanstack/react-query';
-import type { ConvertRecipeRequest, ConvertRecipeResponse } from '@brewmate/shared';
+import {
+  ANALYTICS_EVENT_NAMES,
+  type ConvertRecipeRequest,
+  type ConvertRecipeResponse,
+} from '@brewmate/shared';
 
 import { QUERY_ROOTS } from '../../../constants/queryKeys';
 import { useInvalidatingMutation } from '../../../hooks/useEntityMutation';
@@ -20,4 +24,5 @@ export const useConvertRecipe = (): UseMutationResult<
   useInvalidatingMutation({
     mutationFn: convertRecipe,
     invalidates: [QUERY_ROOTS.recipes, QUERY_ROOTS.aiUsage],
+    tracks: ANALYTICS_EVENT_NAMES.recipeImported,
   });

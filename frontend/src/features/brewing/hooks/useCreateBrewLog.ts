@@ -1,5 +1,5 @@
 import type { UseMutationResult } from '@tanstack/react-query';
-import type { BrewLog, CreateBrewLogRequest } from '@brewmate/shared';
+import { ANALYTICS_EVENT_NAMES, type BrewLog, type CreateBrewLogRequest } from '@brewmate/shared';
 
 import { QUERY_ROOTS } from '../../../constants/queryKeys';
 import { useInvalidatingMutation } from '../../../hooks/useEntityMutation';
@@ -17,4 +17,5 @@ export const useCreateBrewLog = (): UseMutationResult<BrewLog, Error, CreateBrew
   useInvalidatingMutation({
     mutationFn: createBrewLog,
     invalidates: [QUERY_ROOTS.brewLogs],
+    tracks: ANALYTICS_EVENT_NAMES.brewCompleted,
   });

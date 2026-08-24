@@ -25,4 +25,20 @@ export const SK_ERRORS = {
   errorOfflineBody:
     'Skontroluj pripojenie. Čo už mám stiahnuté, funguje aj bez siete - zvyšok načítam, keď sa vrátiš.',
   errorOfflineNotice: 'Si offline. Zmeny sa uložia, až keď budeš mať signál.',
+
+  /**
+   * The limit, said as a state rather than as a failure.
+   *
+   * Nothing broke and the user did nothing wrong: they used the thing up, it
+   * comes back at a stated moment, and everything that does not need a model
+   * keeps working in the meantime. A sentence that only said "too many
+   * requests" would read as an accusation and leave somebody with nothing to
+   * do about it.
+   */
+  errorAiLimitTitle: 'Dnes už sa modelu pýtať nebudem',
+  errorAiLimitMonthTitle: 'Tento mesiac už sa modelu pýtať nebudem',
+  errorAiLimitCallsBody:
+    'Vyčerpal si počet otázok na model. Obnoví sa {time}. Varenie z uloženého receptu, ručné pridanie kávy aj celá história fungujú ďalej.',
+  errorAiLimitCostBody:
+    'Vyčerpal si sumu vyhradenú na model. Obnoví sa {time}. Varenie z uloženého receptu, ručné pridanie kávy aj celá história fungujú ďalej.',
 } as const;

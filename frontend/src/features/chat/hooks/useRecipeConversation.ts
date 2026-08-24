@@ -1,6 +1,12 @@
 import { useState } from 'react';
-import type { Recipe, RecipeChatMessage, RecipePatch } from '@brewmate/shared';
+import {
+  ANALYTICS_EVENT_NAMES,
+  type Recipe,
+  type RecipeChatMessage,
+  type RecipePatch,
+} from '@brewmate/shared';
 
+import { trackEvent } from '../../../lib/analytics';
 import { useCreateRecipe } from '../../brewing/hooks';
 import { buildAdjustedRecipe } from '../services/buildAdjustedRecipe';
 
@@ -82,6 +88,12 @@ export const useRecipeConversation = (
 
       createRecipe.mutate(buildAdjustedRecipe(recipe, patch), {
         onSuccess: (created: Recipe): void => {
+          /**
+           * Counted here rather than on the tap, because the interesting
+           * number is how often somebody takes a suggestion - and a child
+           * recipe that failed to be created is one nobody took.
+           */
+          trackEvent(ANALYTICS_EVENT_NAMES.recipePatchApplied);
           setAdjusted(created);
           setAppliedMessageId(messageId);
         },

@@ -1,4 +1,8 @@
-import type { EvaluateCoffeeRequest, EvaluateCoffeeResponse } from '@brewmate/shared';
+import {
+  ANALYTICS_EVENT_NAMES,
+  type EvaluateCoffeeRequest,
+  type EvaluateCoffeeResponse,
+} from '@brewmate/shared';
 import type { UseMutationResult } from '@tanstack/react-query';
 
 import { QUERY_ROOTS } from '../../../constants/queryKeys';
@@ -20,4 +24,5 @@ export const useEvaluateCoffee = (): UseMutationResult<
   useInvalidatingMutation({
     mutationFn: evaluateCoffee,
     invalidates: [QUERY_ROOTS.bagEvaluations, QUERY_ROOTS.aiUsage],
+    tracks: ANALYTICS_EVENT_NAMES.shopVerdictViewed,
   });

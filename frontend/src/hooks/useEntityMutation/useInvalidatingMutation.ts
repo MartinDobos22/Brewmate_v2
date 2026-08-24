@@ -1,11 +1,22 @@
 import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query';
+import type { AnalyticsEventName } from '@brewmate/shared';
 
 import type { AppQueryKey } from '../../constants/queryKeys';
+import { trackEvent } from '../../lib/analytics';
 
 export interface InvalidatingMutationOptions<TVariables, TResult> {
   readonly mutationFn: (variables: TVariables) => Promise<TResult>;
   /** Domain roots to refetch once the server has answered. */
   readonly invalidates: readonly AppQueryKey[];
+  /**
+   * The flow step this write completes, recorded once it has.
+   *
+   * Declared here rather than called at each screen, because the moment worth
+   * counting is the server having said yes - not the tap. A funnel built from
+   * taps counts intentions, and half the interesting question is how often an
+   * intention fails.
+   */
+  readonly tracks?: AnalyticsEventName;
 }
 
 /**
@@ -20,6 +31,7 @@ export interface InvalidatingMutationOptions<TVariables, TResult> {
 export const useInvalidatingMutation = <TVariables, TResult>({
   mutationFn,
   invalidates,
+  tracks,
 }: InvalidatingMutationOptions<TVariables, TResult>): UseMutationResult<
   TResult,
   Error,
@@ -30,6 +42,10 @@ export const useInvalidatingMutation = <TVariables, TResult>({
   return useMutation({
     mutationFn,
     onSuccess: async (): Promise<void> => {
+      if (tracks !== undefined) {
+        trackEvent(tracks);
+      }
+
       await Promise.all(
         invalidates.map(async (queryKey: AppQueryKey): Promise<void> =>
           queryClient.invalidateQueries({ queryKey }),

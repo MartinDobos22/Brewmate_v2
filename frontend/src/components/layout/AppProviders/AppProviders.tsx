@@ -6,6 +6,7 @@ import { LIMITS } from '../../../constants/limits';
 import { createAppPersister, createAppQueryClient } from '../../../lib/queryClient';
 import { ThemeProvider } from '../../../theme';
 
+import { AnalyticsSync } from './AnalyticsSync';
 import { PendingBrewLogSync } from './PendingBrewLogSync';
 
 export interface AppProvidersProps {
@@ -28,7 +29,9 @@ export const AppProviders = ({ children }: AppProvidersProps): JSX.Element => {
         persistOptions={{ persister, maxAge: LIMITS.persistMaxAgeMs }}
       >
         <ThemeProvider>
-          <PendingBrewLogSync>{children}</PendingBrewLogSync>
+          <PendingBrewLogSync>
+            <AnalyticsSync>{children}</AnalyticsSync>
+          </PendingBrewLogSync>
         </ThemeProvider>
       </PersistQueryClientProvider>
     </SafeAreaProvider>

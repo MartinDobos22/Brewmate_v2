@@ -1,5 +1,9 @@
 import type { UseMutationResult } from '@tanstack/react-query';
-import type { CoffeeBag, CreateCoffeeBagRequest } from '@brewmate/shared';
+import {
+  ANALYTICS_EVENT_NAMES,
+  type CoffeeBag,
+  type CreateCoffeeBagRequest,
+} from '@brewmate/shared';
 
 import { QUERY_ROOTS } from '../../../constants/queryKeys';
 import { useInvalidatingMutation } from '../../../hooks/useEntityMutation';
@@ -15,4 +19,5 @@ export const useCreateCoffeeBag = (): UseMutationResult<CoffeeBag, Error, Create
   useInvalidatingMutation({
     mutationFn: createCoffeeBag,
     invalidates: [QUERY_ROOTS.coffeeBags],
+    tracks: ANALYTICS_EVENT_NAMES.coffeeBagAdded,
   });

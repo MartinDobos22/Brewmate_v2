@@ -1,8 +1,9 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import type { OnboardingState } from '@brewmate/shared';
+import { useEffect, useRef, useState } from 'react';
+import { ANALYTICS_EVENT_NAMES, type OnboardingState } from '@brewmate/shared';
 
 import { ROUTES } from '../../../constants';
+import { trackEvent } from '../../../lib/analytics';
 import {
   ONBOARDING_STEPS,
   ONBOARDING_STEP_PARAM,
@@ -66,6 +67,7 @@ export const useOnboardingFlow = (): OnboardingFlow => {
   const requested = readRequestedStep(parameters[ONBOARDING_STEP_PARAM]);
   const store = useOnboardingState();
   const [step, setStep] = useState<OnboardingStep | null>(requested);
+  const hasCounted = useRef(false);
 
   useEffect((): void => {
     if (step === null && store.isReady) {
@@ -74,6 +76,20 @@ export const useOnboardingFlow = (): OnboardingFlow => {
   }, [step, store.isReady, store.state]);
 
   const isSingleStep = requested !== null;
+
+  /**
+   * Counted once per mount, and only for the whole flow.
+   *
+   * Reopening one step from the profile screen is not somebody starting
+   * onboarding, and a funnel that counted it would report a completion rate
+   * falling every time an existing user changed their grinder.
+   */
+  useEffect((): void => {
+    if (step !== null && !isSingleStep && !hasCounted.current) {
+      hasCounted.current = true;
+      trackEvent(ANALYTICS_EVENT_NAMES.onboardingStarted, { step });
+    }
+  }, [step, isSingleStep]);
 
   const move = (next: OnboardingStep | null, updated: OnboardingState): void => {
     store.save(updated);
@@ -122,6 +138,7 @@ export const useOnboardingFlow = (): OnboardingFlow => {
       }
 
       if (step === ONBOARDING_STEPS.done) {
+        trackEvent(ANALYTICS_EVENT_NAMES.onboardingCompleted);
         move(null, asCompleted(store.state));
 
         return;
@@ -134,6 +151,13 @@ export const useOnboardingFlow = (): OnboardingFlow => {
 
     leave: (): void => {
       if (step !== null && !isSingleStep) {
+        /**
+         * Recorded with the step somebody left at, which is the only part of
+         * this funnel worth having: knowing that a fifth of people stop at the
+         * water question is a thing somebody can act on, and knowing that they
+         * "left onboarding" is not.
+         */
+        trackEvent(ANALYTICS_EVENT_NAMES.onboardingLeft, { step });
         store.save(asLeftEarly(store.state, step));
       }
 

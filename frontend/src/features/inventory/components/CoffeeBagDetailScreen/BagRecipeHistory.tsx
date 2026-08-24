@@ -1,8 +1,10 @@
 import type { BrewMethod, Recipe } from '@brewmate/shared';
+import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { EmptyState, Text } from '../../../../components/ui';
+import { Button, EmptyState, Text } from '../../../../components/ui';
+import { buildTimelineRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { useBrewMethodCatalog } from '../../hooks';
@@ -15,6 +17,8 @@ const NOTHING = 0;
 
 export interface BagRecipeHistoryProps {
   readonly recipes: readonly Recipe[];
+  /** Needed to open one method's line; a bag's own screen always knows it. */
+  readonly bagId: string;
 }
 
 /**
@@ -25,9 +29,10 @@ export interface BagRecipeHistoryProps {
  * and one long list would invite somebody to read one method's numbers as an
  * improvement on another's.
  */
-export const BagRecipeHistory = ({ recipes }: BagRecipeHistoryProps): JSX.Element => {
+export const BagRecipeHistory = ({ recipes, bagId }: BagRecipeHistoryProps): JSX.Element => {
   const styles = useThemedStyles(createCoffeeBagDetailStyles);
   const { t } = useTranslation();
+  const router = useRouter();
   const { methods } = useBrewMethodCatalog();
 
   if (recipes.length === NOTHING) {
@@ -55,6 +60,19 @@ export const BagRecipeHistory = ({ recipes }: BagRecipeHistoryProps): JSX.Elemen
             {group.recipes.map((recipe: Recipe): JSX.Element => (
               <RecipeHistoryRow key={recipe.id} recipe={recipe} />
             ))}
+            {/*
+              The way into this pair's own story. It sits under the versions
+              rather than replacing them, because the list answers "what have I
+              got" and the timeline answers "how did it get here" - two
+              questions somebody asks on different days.
+            */}
+            <Button
+              label={t(TRANSLATION_KEYS.historyTimelineOpenAction)}
+              variant="tertiary"
+              onPress={(): void => {
+                router.push(buildTimelineRoute(group.methodId, bagId));
+              }}
+            />
           </View>
         </View>
       ))}

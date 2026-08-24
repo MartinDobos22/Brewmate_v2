@@ -17,6 +17,8 @@ export const ENVIRONMENT_KEYS = {
   googleWebClientId: 'EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID',
   googleIosClientId: 'EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID',
   googleAndroidClientId: 'EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID',
+  errorReportingDsn: 'EXPO_PUBLIC_SENTRY_DSN',
+  releaseChannel: 'EXPO_PUBLIC_RELEASE',
 } as const;
 
 export type EnvironmentKey = (typeof ENVIRONMENT_KEYS)[keyof typeof ENVIRONMENT_KEYS];

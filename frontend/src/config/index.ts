@@ -9,3 +9,4 @@ export type { FirebaseConfig } from './firebaseConfig';
 export { readStorageBucket, isPhotoScanningConfigured } from './storageConfig';
 export { readGoogleAuthConfig, isGoogleAuthConfigured } from './googleAuthConfig';
 export type { GoogleAuthConfig } from './googleAuthConfig';
+export { readErrorReportingDsn, readRelease, isErrorReportingConfigured } from './telemetryConfig';

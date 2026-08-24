@@ -1,5 +1,9 @@
 import type { UseMutationResult } from '@tanstack/react-query';
-import type { EspressoDialInRequest, EspressoDialInResponse } from '@brewmate/shared';
+import {
+  ANALYTICS_EVENT_NAMES,
+  type EspressoDialInRequest,
+  type EspressoDialInResponse,
+} from '@brewmate/shared';
 
 import { QUERY_ROOTS } from '../../../constants/queryKeys';
 import { useInvalidatingMutation } from '../../../hooks/useEntityMutation';
@@ -27,4 +31,5 @@ export const useSendShot = (): UseMutationResult<
       QUERY_ROOTS.tasteProfileEvents,
       QUERY_ROOTS.aiUsage,
     ],
+    tracks: ANALYTICS_EVENT_NAMES.dialInShotLogged,
   });
