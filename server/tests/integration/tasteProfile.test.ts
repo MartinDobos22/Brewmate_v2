@@ -16,6 +16,8 @@ import { createTestApi, type TestApi } from '../setup/testApi.js';
 
 const HIGH_ACIDITY = 9;
 const LOW_BITTERNESS = 2;
+const FULL_WEIGHT = 1;
+const CONSTRAINED_WEIGHT = 0.3;
 const NO_CONFIDENCE = 0;
 const SINGLE_EVENT = 1;
 const QUESTIONNAIRE_REF = 'onboarding-questionnaire-v1';
@@ -152,6 +154,66 @@ describe('taste profile', () => {
     expect(recomputed.flavorAffinities).toEqual(before.flavorAffinities);
     expect(recomputed.confidenceLevel).toBe(before.confidenceLevel);
     expect(recomputed.brewCount).toBe(before.brewCount);
+  });
+
+  /**
+   * Running the fold again must change nothing. It is the invariant the whole
+   * append-only trail exists for: the profile is always exactly what its
+   * events say, so a second replay cannot drift from the first.
+   */
+  it('changes nothing when the fold is run a second time', async () => {
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
+      source: TASTE_PROFILE_SOURCES.questionnaire,
+      payload: { axes: { acidity: HIGH_ACIDITY, bitterness: LOW_BITTERNESS } },
+    });
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
+      source: TASTE_PROFILE_SOURCES.brewChat,
+      payload: { axes: { body: HIGH_ACIDITY }, weight: CONSTRAINED_WEIGHT },
+      sourceRef: 'chat-weighted',
+    });
+
+    const once = tasteProfileSchema.parse(
+      (await api.post(API_ROUTES.tasteProfileRecompute, RETURNING_IDENTITY, {})).json(),
+    );
+    const twice = tasteProfileSchema.parse(
+      (await api.post(API_ROUTES.tasteProfileRecompute, RETURNING_IDENTITY, {})).json(),
+    );
+
+    expect(twice.acidity).toBe(once.acidity);
+    expect(twice.bitterness).toBe(once.bitterness);
+    expect(twice.body).toBe(once.body);
+    expect(twice.confidenceLevel).toBe(once.confidenceLevel);
+    expect(twice.brewCount).toBe(once.brewCount);
+    expect(twice.sourceWeights).toEqual(once.sourceWeights);
+  });
+
+  /**
+   * The weight a brew log was priced at travels on the event and the fold
+   * respects it. Somebody complaining that a cup was flat when they had no way
+   * to weigh anything is describing their kitchen, not their taste - and this
+   * is the arithmetic that makes that true rather than merely intended.
+   */
+  it('lets a cup brewed with nothing to hand teach the profile less', async () => {
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
+      source: TASTE_PROFILE_SOURCES.brewChat,
+      payload: { axes: { acidity: HIGH_ACIDITY }, weight: CONSTRAINED_WEIGHT },
+      sourceRef: 'constrained-brew',
+    });
+
+    const constrained = await readProfile();
+
+    await context.reset();
+
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
+      source: TASTE_PROFILE_SOURCES.brewChat,
+      payload: { axes: { acidity: HIGH_ACIDITY }, weight: FULL_WEIGHT },
+      sourceRef: 'measured-brew',
+    });
+
+    const measured = await readProfile();
+
+    expect(constrained.acidity).toBeLessThan(measured.acidity);
+    expect(constrained.confidenceLevel).toBeLessThan(measured.confidenceLevel);
   });
 
   it('counts brews, not questionnaires, as brews', async () => {

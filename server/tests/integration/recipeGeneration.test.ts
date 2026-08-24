@@ -12,6 +12,7 @@ import {
 } from '@brewmate/shared';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
+import { AI_MODELS } from '../../src/ai/constants/aiModels.js';
 import { HTTP_STATUS } from '../../src/constants/httpStatus.js';
 import {
   MALFORMED_ANSWER,
@@ -73,6 +74,20 @@ describe('recipe generation', () => {
 
   afterAll(async () => {
     await context.close();
+  });
+
+  /**
+   * A recipe is an argument about somebody's coffee, so it goes to the larger
+   * model. The routing table is total over the function names, which is what
+   * keeps a new feature from quietly defaulting to the expensive one - or, as
+   * here, to the cheap one.
+   */
+  it('asks the larger model for a recipe', async () => {
+    context.completionClient.answerWith(TEST_RECIPE_ANSWER);
+
+    await generate(request({}));
+
+    expect(context.completionClient.calls[FIRST]?.model).toBe(AI_MODELS.sonnet);
   });
 
   it('stores the recipe the model wrote, unsaved and unpinned', async () => {
