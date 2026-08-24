@@ -41,19 +41,6 @@ export const SK_WATER_AND_SETS = {
   setupSetsSuggestionWork: 'Práca',
   setupSetsSuggestionFriend: 'U kamaráta',
 
-  constraintNoTemperatureControl: 'Bez regulácie teploty',
-  constraintNoScale: 'Bez váhy',
-  constraintNoGrinder: 'Bez mlynčeka',
-  constraintFixedGrindSetting: 'Mletie sa nedá meniť',
-  constraintBorrowedEquipment: 'Cudzie vybavenie',
-  constraintUnknownWater: 'Neznáma voda',
-  constraintLimitedTime: 'Málo času',
-
   brewSetSwitcherTitle: 'Kde dnes varíš?',
   brewSetSwitcherEmpty: 'Zostavy si vytvoríš v profile.',
-
-  brewAvailableTitle: 'Čo vieš uvariť',
-  brewAvailableBody: 'Ponúkam len metódy, na ktoré máš zapísané vybavenie.',
-  brewAvailableEmpty: 'Zatiaľ nemám zapísané žiadne vybavenie, tak ti nemám čo ponúknuť.',
-  brewAvailableAction: 'Zapísať vybavenie',
 } as const;

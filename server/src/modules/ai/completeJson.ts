@@ -2,12 +2,12 @@ import { z, type ZodType } from 'zod';
 
 import type { AiImage } from '../../ai/aiImage.js';
 import { AI_ERROR_MESSAGES } from '../../ai/aiErrorMessages.js';
+import { EMPTY_AI_TOKEN_USAGE, addAiTokenUsage, type AiTokenUsage } from '../../ai/aiTokenUsage.js';
 import { AI_VALIDATION_ATTEMPTS, type AiEffort } from '../../ai/constants/aiModels.js';
 import type { TextCompletionClient } from '../../ai/textCompletionClient.js';
 
 import { readJsonPayload } from './readJsonPayload.js';
 
-const NO_TOKENS = 0;
 const FIRST_ATTEMPT = 0;
 const LINE_BREAK = '\n\n';
 
@@ -41,8 +41,7 @@ export interface JsonCompletionRequest<TValue> {
 export interface JsonCompletion<TValue> {
   readonly value: TValue;
   readonly model: string;
-  readonly tokensIn: number;
-  readonly tokensOut: number;
+  readonly usage: AiTokenUsage;
 }
 
 /**
@@ -62,8 +61,7 @@ export const completeJson = async <TValue>({
   maxTokens,
   effort,
 }: JsonCompletionRequest<TValue>): Promise<JsonCompletion<TValue>> => {
-  let tokensIn = NO_TOKENS;
-  let tokensOut = NO_TOKENS;
+  let usage = EMPTY_AI_TOKEN_USAGE;
   let model = '';
   let correction = '';
 
@@ -76,14 +74,13 @@ export const completeJson = async <TValue>({
       effort,
     });
 
-    tokensIn += completion.tokensIn;
-    tokensOut += completion.tokensOut;
+    usage = addAiTokenUsage(usage, completion.usage);
     model = completion.model;
 
     const parsed = schema.safeParse(readJsonPayload(completion.text));
 
     if (parsed.success) {
-      return { value: parsed.data, model, tokensIn, tokensOut };
+      return { value: parsed.data, model, usage };
     }
 
     correction = [CORRECTION_PREFIX, z.prettifyError(parsed.error)].join(LINE_BREAK);

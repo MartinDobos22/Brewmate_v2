@@ -7,6 +7,7 @@ import { RADIUS } from './radius';
  */
 export const SHAPE = {
   icon: RADIUS.xs,
+  checkbox: RADIUS.xs,
   badge: RADIUS.xs,
   chip: RADIUS.sm,
   input: RADIUS.sm,

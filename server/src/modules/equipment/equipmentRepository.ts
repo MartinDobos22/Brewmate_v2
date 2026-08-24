@@ -25,6 +25,8 @@ export interface EquipmentRepository {
   findById(id: string, userId: string): Promise<EquipmentRow | null>;
   /** Which of these ids the user actually owns - the check a foreign key would do. */
   findOwnedIds(ids: readonly string[], userId: string): Promise<readonly string[]>;
+  /** The same rows, whole: what an equipment set actually resolves to. */
+  findOwnedByIds(ids: readonly string[], userId: string): Promise<readonly EquipmentRow[]>;
   create(input: NewEquipmentRow): Promise<EquipmentRow>;
   updateById(
     id: string,
@@ -76,6 +78,17 @@ export const createEquipmentRepository = (db: Database): EquipmentRepository => 
       .where(and(eq(equipmentTable.userId, userId), inArray(equipmentTable.id, [...ids])));
 
     return rows.map((row: { id: string }): string => row.id);
+  },
+
+  findOwnedByIds: async (ids, userId): Promise<readonly EquipmentRow[]> => {
+    if (ids.length === NO_ROWS) {
+      return [];
+    }
+
+    return db
+      .select()
+      .from(equipmentTable)
+      .where(and(eq(equipmentTable.userId, userId), inArray(equipmentTable.id, [...ids])));
   },
 
   create: async (input) => requireRow(await db.insert(equipmentTable).values(input).returning()),

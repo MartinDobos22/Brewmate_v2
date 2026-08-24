@@ -1,16 +1,12 @@
-import type { Equipment } from '@brewmate/shared';
+import type { BrewConstraintName, Equipment } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { Chip, Input, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
-import {
-  BREW_CONSTRAINT_OPTIONS,
-  EQUIPMENT_SET_NAME_SUGGESTION_KEYS,
-  type BrewConstraintFlag,
-  type BrewConstraintOption,
-} from '../../constants';
+import { BREW_CONSTRAINT_OPTIONS, type BrewConstraintOption } from '../../../brewing/constants';
+import { EQUIPMENT_SET_NAME_SUGGESTION_KEYS } from '../../constants';
 import { equipmentDisplayName, type EquipmentSetFormValues } from '../../services';
 
 import { createEquipmentSetFormStyles } from './EquipmentSetForm.styles';
@@ -21,7 +17,7 @@ export interface EquipmentSetFormFieldsProps {
   readonly disabled: boolean;
   readonly onChange: (patch: Partial<EquipmentSetFormValues>) => void;
   readonly onToggleItem: (equipmentId: string) => void;
-  readonly onToggleConstraint: (flag: BrewConstraintFlag) => void;
+  readonly onToggleConstraint: (flag: BrewConstraintName) => void;
 }
 
 /** Name it, say what is in it, and say what that place is usually missing. */
@@ -87,12 +83,12 @@ export const EquipmentSetFormFields = ({
         <View style={styles.row}>
           {BREW_CONSTRAINT_OPTIONS.map((option: BrewConstraintOption): JSX.Element => (
             <Chip
-              key={option.flag}
+              key={option.name}
               label={t(option.labelKey)}
-              selected={values.constraints[option.flag] === true}
+              selected={values.constraints[option.name] === true}
               disabled={disabled}
               onPress={(): void => {
-                onToggleConstraint(option.flag);
+                onToggleConstraint(option.name);
               }}
             />
           ))}

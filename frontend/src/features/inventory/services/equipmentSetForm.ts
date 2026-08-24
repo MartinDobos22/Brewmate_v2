@@ -1,7 +1,10 @@
-import type { BrewConstraints, CreateEquipmentSetRequest } from '@brewmate/shared';
+import type {
+  BrewConstraintName,
+  BrewConstraints,
+  CreateEquipmentSetRequest,
+} from '@brewmate/shared';
 
 import { TRANSLATION_KEYS, type TranslationKey } from '../../../i18n';
-import type { BrewConstraintFlag } from '../constants/brewConstraintOptions';
 
 const EMPTY = '';
 const NOTHING = 0;
@@ -26,7 +29,7 @@ export const toggleEquipmentId = (
 /** Raises a flag, or lowers it. A lowered flag is removed rather than set false. */
 export const toggleConstraint = (
   constraints: BrewConstraints,
-  flag: BrewConstraintFlag,
+  flag: BrewConstraintName,
 ): BrewConstraints => {
   const { [flag]: current, ...rest } = constraints;
 

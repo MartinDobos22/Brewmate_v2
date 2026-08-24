@@ -15,6 +15,8 @@ const DESIGN_SYSTEM_SEGMENT = 'design-system';
 const GRINDERS_SEGMENT = 'grinders';
 const ONBOARDING_SEGMENT = 'onboarding';
 const QUICK_BREW_SEGMENT = 'quick-brew';
+const BREW_MODE_SEGMENT = 'brew-mode';
+const CHAT_SEGMENT = 'chat';
 const SCAN_SEGMENT = 'scan';
 
 /**
@@ -42,6 +44,13 @@ export const RootStack = (): JSX.Element => {
         <Stack.Screen name={GRINDERS_SEGMENT} />
         <Stack.Screen name={ONBOARDING_SEGMENT} />
         <Stack.Screen name={QUICK_BREW_SEGMENT} />
+        {/*
+          Brew mode does not swipe away. It is the one screen somebody uses
+          with wet hands at arm's length, and a stray edge swipe halfway
+          through a pour would lose the timer the whole feature is built on.
+        */}
+        <Stack.Screen name={BREW_MODE_SEGMENT} options={{ gestureEnabled: false }} />
+        <Stack.Screen name={CHAT_SEGMENT} />
         <Stack.Screen name={SCAN_SEGMENT} />
         <Stack.Screen
           name={DESIGN_SYSTEM_SEGMENT}

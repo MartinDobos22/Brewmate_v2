@@ -13,6 +13,19 @@ const IMAGE_BLOCK_TYPE = 'image';
 const BASE64_SOURCE_TYPE = 'base64';
 const REFUSAL_STOP_REASON = 'refusal';
 const NO_TEXT = '';
+const NO_TOKENS = 0;
+
+/**
+ * The system prompt is marked as cacheable on every call.
+ *
+ * Brewmate's system prompts are long, unchanging documents - the extraction
+ * knowledge behind a recipe runs to hundreds of lines - and they are sent
+ * again on every brew, every chat message and every scan. That is exactly the
+ * shape a cached prefix exists for. The marker costs nothing where a prompt is
+ * too short to be worth caching: the provider ignores it and bills the call as
+ * fresh input, which `estimateAiCost` then prices as fresh input.
+ */
+const CACHE_CONTROL = { type: 'ephemeral' } as const;
 
 const isTextBlock = (block: Anthropic.ContentBlock): block is Anthropic.TextBlock =>
   block.type === TEXT_BLOCK_TYPE;
@@ -58,7 +71,7 @@ export const createAnthropicTextCompletionClient = (config: AiConfig): TextCompl
       const response = await client.messages.create({
         model: AI_MODEL_ID,
         max_tokens: request.maxTokens,
-        system: request.system,
+        system: [{ type: TEXT_BLOCK_TYPE, text: request.system, cache_control: CACHE_CONTROL }],
         output_config: { effort: request.effort },
         messages: [{ role: USER_ROLE, content: toContent(request) }],
       });
@@ -70,8 +83,12 @@ export const createAnthropicTextCompletionClient = (config: AiConfig): TextCompl
       return {
         text: readText(response.content),
         model: response.model,
-        tokensIn: response.usage.input_tokens,
-        tokensOut: response.usage.output_tokens,
+        usage: {
+          tokensIn: response.usage.input_tokens,
+          cacheWriteTokens: response.usage.cache_creation_input_tokens ?? NO_TOKENS,
+          cacheReadTokens: response.usage.cache_read_input_tokens ?? NO_TOKENS,
+          tokensOut: response.usage.output_tokens,
+        },
       };
     },
   };

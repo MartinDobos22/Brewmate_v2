@@ -5,7 +5,9 @@ import { View } from 'react-native';
 import { Button, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
-import { EMPTY_EQUIPMENT_SET_FORM, type BrewConstraintFlag } from '../../constants';
+import type { BrewConstraintName } from '@brewmate/shared';
+
+import { EMPTY_EQUIPMENT_SET_FORM } from '../../constants';
 import { useCreateEquipmentSet } from '../../hooks';
 import {
   toCreateEquipmentSetRequest,
@@ -68,7 +70,7 @@ export const EquipmentSetForm = ({ equipment }: EquipmentSetFormProps): JSX.Elem
         onToggleItem={(equipmentId: string): void => {
           patch({ equipmentIds: toggleEquipmentId(values.equipmentIds, equipmentId) });
         }}
-        onToggleConstraint={(flag: BrewConstraintFlag): void => {
+        onToggleConstraint={(flag: BrewConstraintName): void => {
           patch({ constraints: toggleConstraint(values.constraints, flag) });
         }}
       />

@@ -35,4 +35,8 @@ export const ERROR_MESSAGES = {
   bagLabelUnreadable:
     'Nothing could be read off that photograph. The label can still be typed in by hand.',
   coffeeVerdictUnavailable: 'The verdict could not be written right now. Try again in a moment.',
+  recipeUnavailable:
+    'A recipe could not be written right now. The numbers already chosen still stand.',
+  recipeChatUnavailable: 'That could not be answered right now. Try again in a moment.',
+  recipeChatBrewMismatch: 'That brew log belongs to a different recipe.',
 } as const;

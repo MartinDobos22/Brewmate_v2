@@ -18,6 +18,13 @@ written as an argument rather than picked from three sentences. The calibration
 brew is still read by a Slovak lexicon, and the three arithmetic rules survive
 as the scanner's offline fallback.
 
+And at the centre of it, the loop the whole product exists for: the screen
+before the brew, the recipe engine that answers it, hands-free brew mode, and
+the conversation afterwards that is the main way Brewmate learns anything. None
+of it is wired to one method - everything works for every row in
+`brew_methods`, and an espresso differs from a V60 only in what the model is
+asked for and what the screen prints.
+
 ---
 
 ## 1. Repository layout
@@ -188,7 +195,8 @@ frontend/
 └── src/
     ├── app/            expo-router routes - thin files that delegate to a feature
     ├── theme/          Tokens, composed theme, ThemeProvider, useTheme
-    ├── constants/      config, routes, navigation, queryKeys, storageKeys, limits, brewing, http, time
+    ├── constants/      config, routes, navigation, queryKeys, storageKeys, limits,
+    │                   brewing, http, time, interpolation
     ├── i18n/           Slovak copy, split by domain under translations/sk/
     ├── components/
     │   ├── ui/         Button, Card, Text, Input, Chip, OptionCard, Sheet, ListItem,
@@ -199,7 +207,9 @@ frontend/
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
     │                   chat, tasteProfile, bagEvaluations, onboarding, profile,
     │                   designSystem); each has services/ for the API calls and
-    │                   hooks/ for the queries and mutations over them
+    │                   hooks/ for the queries and mutations over them. `brewing`
+    │                   owns the pre-brew screen, the recipe engine client and
+    │                   brew mode; `chat` owns the conversation after the cup
     ├── hooks/          only genuinely global hooks, incl. useEntityMutation and
     │                   useDebouncedValue
     ├── lib/            apiClient, firebase, queryClient, queryCache, formatters,
@@ -220,11 +230,17 @@ frontend/
 - **Slovak copy is split by domain** under `src/i18n/translations/sk/`
   (`common`, `auth`, `navigation`, `screens`, `home`, `inventory`, `grinders`,
   `onboarding`, `tasteQuestionsDirect`, `tasteQuestionsIndirect`,
-  `equipmentSetup`, `waterAndSets`, `calibration`, `brewing`, `scanner`,
-  `tasteProfile`, `errors`, `designSystem`) and
-  merged in `sk/index.ts`. One file would break the 150-line limit.
+  `equipmentSetup`, `waterAndSets`, `calibration`, `brewing`, `preBrew`,
+  `brewMode`, `recipeChat`, `scanner`, `tasteProfile`, `errors`,
+  `designSystem`) and merged in `sk/index.ts`. One file would break the 150-line limit.
   `SK_TRANSLATIONS` is the source of truth for the key list: every future locale
   is typed against it, so a missing translation is a type error.
+- **A sentence with a hole in it stays one string.** `t(key, values)` fills
+  `{name}` placeholders through `lib/text/interpolate`, because Slovak puts a
+  number in a different place from English and a different place again from its
+  own plural - a sentence assembled from fragments at a call site is one no
+  translator ever saw. A name with no value is left visible rather than closed
+  up silently: a stray `{count}` is a bug somebody reports.
 
 ### Theming
 
@@ -427,6 +443,185 @@ The first thing in Brewmate that asks a model anything, and the reason
   buy a coffee should not then be asked to type its label a second time, and
   everything needed is already on the screen. The bag opens full: its remaining
   amount starts at the printed weight.
+
+### The brewing loop
+
+The core of the product, and the only part of it that has to be true of every
+row in `brew_methods`. Nothing anywhere in this loop branches on "filter" or
+"espresso" as a special case: a method carries its own ratio window and its own
+category, and those two facts are the whole of what makes a shot different from
+a pour-over.
+
+**The screen before the recipe** (`/brew`, the brewing tab). Deciding what is
+being brewed _is_ brewing, so this is the tab itself rather than a menu leading
+to one.
+
+- **The set is answered in one tap, and it narrows everything below it.**
+  Switching to "Chata" is not a label change: the dripper is at home, so the
+  methods it makes possible are not offered, and what that place is usually
+  missing is pre-ticked. `useAvailableBrewMethods` takes the set for exactly
+  this reason. Without a set the answer is everything still owned - somebody
+  who has never made one has not thereby lost their kettle.
+- **"Dnes nemám všetko" is folded away, and counts what is behind it.** Most
+  mornings nothing is missing and nine unticked boxes above the thing somebody
+  came for is a section they scroll past. Collapsed, the header says how many
+  are set: a folded control hiding state nobody can see is worse than no
+  control.
+- **Every constraint in the contract has a checkbox.** `BREW_CONSTRAINT_OPTIONS`
+  is built from `BREW_CONSTRAINT_NAMES` rather than written out, because a set
+  can carry any of them as its default and a flag with no box would be a state
+  somebody cannot see and cannot turn off. The same list is what the set form
+  offers, so the two cannot drift apart.
+- **The calculator runs in three directions, and which one moves matters.**
+  A dose moves the water. A water weight moves the ratio, because the two
+  weights are what somebody actually has. A ratio moves whichever weight was
+  _not_ touched last - somebody who has just weighed seventeen grams into the
+  brewer and then reaches for a tighter ratio means "more water", not "go and
+  weigh the coffee again". The arithmetic lives in `@brewmate/shared`, so the
+  number on the screen and the number in the database are rounded by one piece
+  of code.
+- **Validation describes, it does not block.** The person holding the brewer
+  knows things the app does not - that this V60 takes more than the box claims,
+  that there is a second bag of the same coffee in the cupboard. Every warning
+  names the figure it is complaining about, because "too much" with no number
+  is a warning nobody can act on.
+- **A bag nobody weighed cannot run out.** `remainingGrams` of null means
+  unmeasured, not empty, and warning about it would teach people to ignore the
+  line.
+
+**The recipe engine** - `POST /ai/generate-recipe`.
+
+- **The dose and the water cannot be overwritten, and the enforcement is the
+  schema.** There is no field for either anywhere in the answer the model is
+  allowed to give. A rule in a prompt is a request; a field that does not exist
+  is a guarantee. A model that disagrees has to say so in the rationale, once,
+  which is the honest version of the same disagreement.
+- **The ratio is recomputed from the two weights** rather than copied out of
+  the request. Grams are the physical fact and a ratio is arithmetic over them;
+  a recipe card whose own numbers do not divide is one somebody catches with a
+  scale.
+- **The domain knowledge is a versioned document, not a string in a service.**
+  `extractionKnowledge.ts` is the largest single input to every recipe the
+  product gives and is sent unchanged on every brew, so it is written to be
+  diffed and blamed. It is knowledge rather than rules: a model told _why_
+  grind moves extraction can reason about a cup nobody anticipated, one told
+  "if sour then two clicks finer" can only answer the cases somebody wrote down.
+- **Every system prompt is cached.** The prompts here are long, unchanging and
+  re-sent constantly, which is the shape caching exists for -
+  `anthropicTextCompletionClient` marks the system block on every call. The
+  three tiers of input token are then priced separately in `estimateAiCost`,
+  because charging a cache read at the fresh rate would report roughly ten
+  times what a call cost, and a cost estimate that disagrees with the invoice
+  in either direction is worse than none.
+- **The method's category picks the answer schema, not the model.**
+  `resolveGeneratedRecipeSchema` hands over the one shape an answer may take,
+  so an espresso answered with a bloom in it is a validation failure the single
+  retry is told about, rather than a recipe reaching somebody standing at a
+  machine that has no bloom to give.
+- **Both shapes land in one `BrewParams`.** An espresso's yield is
+  `waterGrams`, because that is literally what ends up on the scale; its target
+  time is `totalTimeSeconds`; only pre-infusion has no counterpart and gets a
+  field. A parallel set of espresso columns would mean every screen that reads
+  a recipe had to ask which kind it was holding first.
+- **Constraints change the shape of the recipe, and the hints are stored with
+  it.** Without temperature control the recipe says how long to let the water
+  stand rather than naming a number; without a scale it converts to spoons and
+  says why that is less accurate; without a clock every time becomes something
+  to watch for. Each hint is attached to its constraint _by name_, so the
+  interface can print it beside the checkbox that caused it - and a hint is
+  advice, never an apology. The prompt also says to name the advantages: a
+  plastic dripper holds heat better than an unpreheated ceramic one, and
+  somebody who is missing something should also be told what they are not
+  missing.
+- **The recipe is stored before the response leaves**, unsaved and unpinned.
+  Everything downstream needs an id - brew mode logs against it, the
+  conversation hangs off it, an adjustment becomes its child - and a proposal
+  is not yet a favourite.
+
+**Brew mode** (`/brew-mode`) - fullscreen, one finger, wet hands.
+
+- **The countdown is computed from a timestamp, never accumulated by a tick.**
+  This is the one thing on this screen that had to be got right. iOS suspends
+  JavaScript timers the moment the app backgrounds or the display sleeps -
+  which is exactly what happens when somebody puts the phone down to pour - and
+  a counter adding a second per tick would come back having lost the pour. The
+  interval only asks for a redraw; if it never fires, the next one still
+  reports the true time, and an `AppState` listener redraws the instant the
+  phone is picked back up.
+- **Which step is current is derived, not counted.** `resolveStepIndex` catches
+  up over however many steps passed while the app was away, in one move rather
+  than one per tick. Skipping moves the clock's origin instead of a separate
+  index, so there is only ever one answer to "where is this brew".
+- **A step with no time is not missing data.** It is the instruction "wait
+  until you see it" - the shape a brew declared without a clock takes - and the
+  screen shows a button instead of a countdown to nothing. Nothing auto-advances
+  past one.
+- **Both cue channels fire, always.** A phone propped against a kettle
+  transmits nothing to the hand holding it, and an extractor fan swallows a
+  sound. The warning two seconds out is a lighter tap than the transition:
+  something is about to happen and something is happening are different
+  messages, and a phone that makes one noise for both gets ignored for both.
+- **Methods with no pour schedule get the simplified variant** - a stopwatch
+  against a target time, which is all an espresso, a French press or a cold
+  brew needs. Past the target the countdown becomes a plain elapsed count: a
+  press that stood a minute longer has not failed, and a negative number would
+  say it had.
+- **A brew that was made is never lost.** The log is written when the brew
+  ends, not when somebody gets to the chat, and a request that fails goes to
+  disk instead - the places brew mode is most used are the places with the
+  least signal. `PendingBrewLogSync` sits at the root of the app, because the
+  moment the queue can be emptied is the moment the connection returns and has
+  nothing to do with which screen is open. A flush puts back everything it
+  could not send, in order.
+- **The screen stays awake and does not swipe away.** A stray edge swipe
+  halfway through a pour would lose the timer the whole feature is built on.
+
+**The conversation afterwards** - `POST /ai/recipe-chat`, and the main
+mechanism by which this product learns anything.
+
+- **It opens with a question, not a form.** Five sliders would be easier to
+  build and nobody would fill them in twice; "aké to bolo?" gets answered
+  because it is a question somebody can answer while holding a mug.
+- **The suggestion has to be one this person can carry out, and the schema is
+  what enforces it.** `resolveCoachAnswerSchema` builds the answer's shape from
+  that brew's constraints: without a thermometer there is no temperature field
+  to fill in, without an adjustable grinder no grind field, without a clock no
+  times. An impossible suggestion is therefore a validation failure the single
+  retry is told about, rather than a message telling somebody the app was not
+  listening. When the missing thing really is the cause, the prompt says to
+  admit it - and then still give the best available substitute, because an
+  explanation with no suggestion after it is an excuse.
+- **A patch is stored, never applied.** It rides on the message that argued for
+  it, so a suggestion nobody took is still part of the record, and the recipe
+  somebody brewed stays the recipe they brewed. Taking it creates a child with
+  `parentRecipeId`, which is what lets the next answer read how the numbers got
+  here rather than only where they ended up.
+- **The diff shows only what moves.** Everything on the card is a change and
+  anything absent did not move, which is the whole reason it is readable at a
+  glance. A rewritten pour schedule is reported as rewritten rather than as two
+  tables nobody compares.
+- **A patch's ratio follows its grams.** Moving the water moves the ratio;
+  moving the ratio alone moves the water, never the dose - the dose is what
+  somebody weighed and probably already tipped in, and the water is still in
+  the kettle. `applyRecipePatch` lives in `@brewmate/shared` so the numbers
+  somebody agreed to and the numbers they got are produced by one function.
+- **What the chat teaches the profile is weighed by what the brew was worth.**
+  The event carries the brew log's own `profileLearningWeight` - priced from
+  its constraints on the way in and never recomputed - so somebody complaining
+  that a cup was flat when they had no way to weigh anything is recorded as
+  describing their kitchen, not their taste. The prompt draws the same line:
+  "bola príliš kyslá" is a preference, "bola slabá, lebo som nemal váhu" is
+  not. An observation naming no axis at all is dropped rather than stored as an
+  event the fold cannot use.
+- **The event points at the message it came from**, so what Brewmate concluded
+  can always be traced back to the sentence somebody actually wrote.
+- **The quick chips are shortcuts to writing, not a menu of answers.** Each
+  sends an ordinary first-person Slovak sentence and fills the box rather than
+  firing on tap, so "menej kyslé" plus "a bola aj slabá" is still possible -
+  and the conversation reads the same whether somebody tapped or typed.
+- **The chat is reachable from any recipe, not only after a brew.** Somebody
+  who worked out an hour later what was wrong with a cup should be able to say
+  so.
 
 ### The cupboard
 
@@ -678,12 +873,18 @@ Google Sign-In is optional: a build without `EXPO_PUBLIC_GOOGLE_*_CLIENT_ID`
 hides the button rather than failing when it is pressed. Apple's button hides
 itself wherever the platform does not support it.
 
-### One typing augmentation
+### Two typing augmentations
 
 `src/types/firebaseAuth.d.ts` declares `getReactNativePersistence`, which the
 React Native bundle of `firebase/auth` exports at runtime but leaves out of the
-package's published typings. It declares what is already there rather than
-asserting a type, so Rule 3 is untouched.
+package's published typings.
+
+`src/types/audioAssets.d.ts` declares that a bundled `.wav` resolves to an
+asset handle, which is what Metro has always done with it and what
+`expo-audio` takes as a source.
+
+Both declare what is already there rather than asserting a type over it, so
+Rule 3 is untouched.
 
 ### One inline lint exemption
 
@@ -708,6 +909,8 @@ server/src/
 ├── ai/               Model + image ports, the Anthropic and HTTP implementations, pricing
 ├── auth/             Token verifier + identity deleter, Firebase implementations, auth plugin
 ├── modules/          one domain each: repository -> service -> routes + mapper
+│   ├── ai/           the four routes that cost money, plus the shared brew
+│   │                 context reader, the versioned prompts and completeJson
 │   ├── health/       healthService + healthRoutes
 │   ├── users/        the account behind a Firebase identity
 │   ├── tasteProfiles/ profile, its audit trail and the fold that rebuilds it
@@ -745,7 +948,12 @@ than two, because a model with no way to fetch the photograph and a photograph
 with nothing to read it are both half a feature, and two fields that must agree
 are two fields that eventually will not. Null is a working state: a deployment
 without `ANTHROPIC_API_KEY` serves every screen that asks no model anything, and
-the two AI routes answer 503, which the app shows as "zadaj to ručne".
+the four AI routes answer 503, which the app shows as "zadaj to ručne".
+
+`createBrewContextResolver` is built once and shared by the recipe engine and
+the chat. Two readers of "which brewer, which kettle, which grinder" would be
+two answers to the same question, and the recipe and the advice about it would
+eventually disagree about what is on the counter.
 
 ### Auth flow
 
@@ -811,6 +1019,8 @@ is not an oracle for other people's ids.
 | GET              | `/ai-usage`                  | this account's model usage; read-only by design  |
 | POST             | `/ai/parse-coffee-bag`       | reads a photographed label into the bag's fields |
 | POST             | `/ai/evaluate-coffee`        | writes the shop verdict and stores it            |
+| POST             | `/ai/generate-recipe`        | writes and stores the recipe for one brew        |
+| POST             | `/ai/recipe-chat`            | answers what somebody said about a cup           |
 
 Every list endpoint takes `limit` and `offset` and answers
 `{ items, limit, offset, hasMore }`. `hasMore` comes from reading one row beyond
@@ -876,7 +1086,17 @@ knowing before changing anything:
   user's sets. This is the one place where code stands in for the database.
 - **`jsonb` only where the shape is genuinely open** - brew parameters,
   constraints, calibration curves, onboarding state. Every one of them is still
-  typed by a Zod schema in `shared` and validated at the edge.
+  typed by a Zod schema in `shared` and validated at the edge. This is what
+  lets `brew_params` grow a total time, a pre-infusion, a grind described in
+  words and a hint per missing piece of gear without a migration each - and why
+  every one of those additions is optional, so a recipe stored last month still
+  reads.
+- **A recipe records the constraints it was written around**, as well as the
+  brew log recording what was true of one cup. The two answer different
+  questions: the log is history, the recipe is what its numbers assume. It is
+  what lets brew mode fill the log in without asking again, and lets a
+  conversation about a recipe nobody has brewed yet still know what it may
+  suggest.
 - **`equipment.params` stays open, but has typed corners.** A kettle and a
   scale have nothing in common, so the column accepts anything; the handful of
   properties Brewmate actually reasons about - a brewer's method, capacity, dose
@@ -961,6 +1181,17 @@ exactly once and both attempts are billed, that a photograph read before is not
 read again, that the same coffee shot by somebody else answers from the stored
 reading, that a coffee already judged is not judged twice, and that a verdict
 that will not validate is refused rather than stored broken.
+
+The brewing loop is tested for the rules that would be quietly broken rather
+than loudly: that the dose and the water come back exactly as they were chosen,
+that the ratio is recomputed from the grams rather than trusted, that the
+declared constraints reach the prompt by machine name and their hints reach the
+recipe, that a pour-over answer for an espresso method is refused rather than
+stored, that a change the constraints make impossible is refused and the
+corrected one taken, that a patch's ratio follows the water it moved, that the
+chat's taste event carries the brew's own learning weight, and that a model
+which will not answer still leaves the conversation holding what the person
+said.
 
 Tests are skipped in CI when `TEST_DATABASE_URL` is not configured, and fail
 loudly when it is set but unreachable.
