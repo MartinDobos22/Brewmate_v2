@@ -10,6 +10,9 @@ export const AI_FUNCTION_NAMES = {
   evaluateCoffee: 'evaluate-coffee',
   generateRecipe: 'generate-recipe',
   recipeChat: 'recipe-chat',
+  parseRecipe: 'parse-recipe',
+  convertRecipe: 'convert-recipe',
+  espressoDialIn: 'espresso-dial-in',
 } as const;
 
 export type AiFunctionName = (typeof AI_FUNCTION_NAMES)[keyof typeof AI_FUNCTION_NAMES];

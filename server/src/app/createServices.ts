@@ -18,6 +18,18 @@ import {
   createRecipeGenerationService,
   type RecipeGenerationService,
 } from '../modules/ai/recipeEngine/recipeGenerationService.js';
+import {
+  createEspressoDialInService,
+  type EspressoDialInService,
+} from '../modules/ai/espressoDialIn/espressoDialInService.js';
+import {
+  createRecipeConversionService,
+  type RecipeConversionService,
+} from '../modules/ai/recipeImport/recipeConversionService.js';
+import {
+  createRecipeParseService,
+  type RecipeParseService,
+} from '../modules/ai/recipeImport/recipeParseService.js';
 import { createAiUsageRepository } from '../modules/aiUsage/aiUsageRepository.js';
 import { createAiUsageService, type AiUsageService } from '../modules/aiUsage/aiUsageService.js';
 import { createBagEvaluationRepository } from '../modules/bagEvaluations/bagEvaluationRepository.js';
@@ -86,6 +98,9 @@ export interface AppServices {
   readonly coffeeEvaluationService: CoffeeEvaluationService | null;
   readonly recipeGenerationService: RecipeGenerationService | null;
   readonly recipeCoachService: RecipeCoachService | null;
+  readonly recipeParseService: RecipeParseService | null;
+  readonly recipeConversionService: RecipeConversionService | null;
+  readonly espressoDialInService: EspressoDialInService | null;
 }
 
 export interface ServiceDependencies {
@@ -149,6 +164,19 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
     tasteProfileService,
   });
 
+  /**
+   * Hoisted rather than built inline, because the dial-in writes through it.
+   * A shot is an ordinary brew log and has to be priced by the same rules as
+   * one - a second path into that table would be a second answer to how much
+   * a cup teaches the profile.
+   */
+  const brewLogService = createBrewLogService({
+    repository: brewLogRepository,
+    recipeService,
+    equipmentSetRepository,
+    userService,
+  });
+
   return {
     userService,
     tasteProfileService,
@@ -161,12 +189,7 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
     equipmentService: createEquipmentService(equipmentRepository, equipmentSetRepository),
     equipmentSetService: createEquipmentSetService(equipmentSetRepository, equipmentRepository),
     coffeeBagService: createCoffeeBagService(coffeeBagRepository),
-    brewLogService: createBrewLogService({
-      repository: brewLogRepository,
-      recipeService,
-      equipmentSetRepository,
-      userService,
-    }),
+    brewLogService,
     coffeeBagParseService:
       ai === null
         ? null
@@ -198,6 +221,26 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
             recipeService,
             aiUsageService,
           }),
+    recipeParseService:
+      ai === null
+        ? null
+        : createRecipeParseService({
+            completionClient: ai.completionClient,
+            imageFetcher: ai.imageFetcher,
+            grinderRepository,
+            aiUsageService,
+          }),
+    recipeConversionService:
+      ai === null
+        ? null
+        : createRecipeConversionService({
+            completionClient: ai.completionClient,
+            brewMethodService,
+            brewContextResolver,
+            grinderRepository,
+            recipeService,
+            aiUsageService,
+          }),
     recipeCoachService:
       ai === null
         ? null
@@ -206,6 +249,21 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
             recipeService,
             recipeRepository,
             recipeChatService,
+            brewLogRepository,
+            brewMethodService,
+            brewContextResolver,
+            tasteProfileService,
+            aiUsageService,
+          }),
+    espressoDialInService:
+      ai === null
+        ? null
+        : createEspressoDialInService({
+            completionClient: ai.completionClient,
+            recipeService,
+            recipeRepository,
+            recipeChatService,
+            brewLogService,
             brewLogRepository,
             brewMethodService,
             brewContextResolver,

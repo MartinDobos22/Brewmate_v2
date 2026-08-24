@@ -25,6 +25,12 @@ of it is wired to one method - everything works for every row in
 `brew_methods`, and an espresso differs from a V60 only in what the model is
 asked for and what the screen prints.
 
+Two things now hang off that loop. A recipe somebody found elsewhere can be
+converted onto their own equipment - deterministically, in an isolated module
+with its own unit tests, with a model used only to read the source and to
+explain the result. And a new bag on an espresso machine gets its own mode: one
+change per shot, a timeline of the run, and a pinned recipe at the end.
+
 ---
 
 ## 1. Repository layout
@@ -45,23 +51,30 @@ response shape is defined there once, and both sides import it. If the app and
 the API disagree about a field, the fix belongs in `shared`, never in a local
 copy of the type.
 
+It also holds the two pieces of arithmetic both ends have to agree on exactly:
+`shared/src/brewing/ratioCalculator.ts`, and `shared/src/conversion/` - the
+recipe conversion, which is a self-contained module with its own unit tests
+(`shared/tests/`) so that a better algorithm can replace it without touching
+anything else.
+
 ---
 
 ## 2. Commands
 
 Run from the repository root.
 
-| Command                             | What it does                                    |
-| ----------------------------------- | ----------------------------------------------- |
-| `pnpm install`                      | Install the whole workspace                     |
-| `pnpm typecheck`                    | `tsc --noEmit` in every package                 |
-| `pnpm lint`                         | ESLint across the workspace (the project rules) |
-| `pnpm format` / `pnpm format:check` | Prettier                                        |
-| `pnpm verify`                       | typecheck + lint + format check                 |
-| `pnpm test`                         | Tests in every package                          |
-| `pnpm build`                        | Build every package                             |
-| `pnpm dev:server`                   | API in watch mode                               |
-| `pnpm dev:frontend`                 | Expo dev server                                 |
+| Command                               | What it does                                    |
+| ------------------------------------- | ----------------------------------------------- |
+| `pnpm install`                        | Install the whole workspace                     |
+| `pnpm typecheck`                      | `tsc --noEmit` in every package                 |
+| `pnpm lint`                           | ESLint across the workspace (the project rules) |
+| `pnpm format` / `pnpm format:check`   | Prettier                                        |
+| `pnpm verify`                         | typecheck + lint + format check                 |
+| `pnpm test`                           | Tests in every package                          |
+| `pnpm --filter @brewmate/shared test` | Conversion unit tests (no database needed)      |
+| `pnpm build`                          | Build every package                             |
+| `pnpm dev:server`                     | API in watch mode                               |
+| `pnpm dev:frontend`                   | Expo dev server                                 |
 
 Server-only:
 
@@ -205,11 +218,14 @@ frontend/
     │   │               its own folder
     │   └── layout/     Screen, AppProviders, RootStack, TabsNavigator, TabBarIcon
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
-    │                   chat, tasteProfile, bagEvaluations, onboarding, profile,
-    │                   designSystem); each has services/ for the API calls and
-    │                   hooks/ for the queries and mutations over them. `brewing`
-    │                   owns the pre-brew screen, the recipe engine client and
-    │                   brew mode; `chat` owns the conversation after the cup
+    │                   chat, tasteProfile, bagEvaluations, recipeImport,
+    │                   espresso, onboarding, profile, designSystem); each has
+    │                   services/ for the API calls and hooks/ for the queries
+    │                   and mutations over them. `brewing` owns the pre-brew
+    │                   screen, the recipe engine client and brew mode; `chat`
+    │                   owns the conversation after the cup; `recipeImport`
+    │                   converts a recipe found elsewhere; `espresso` owns the
+    │                   dial-in mode
     ├── hooks/          only genuinely global hooks, incl. useEntityMutation and
     │                   useDebouncedValue
     ├── lib/            apiClient, firebase, queryClient, queryCache, formatters,
@@ -231,8 +247,8 @@ frontend/
   (`common`, `auth`, `navigation`, `screens`, `home`, `inventory`, `grinders`,
   `onboarding`, `tasteQuestionsDirect`, `tasteQuestionsIndirect`,
   `equipmentSetup`, `waterAndSets`, `calibration`, `brewing`, `preBrew`,
-  `brewMode`, `recipeChat`, `scanner`, `tasteProfile`, `errors`,
-  `designSystem`) and merged in `sk/index.ts`. One file would break the 150-line limit.
+  `brewMode`, `recipeChat`, `recipeImport`, `dialIn`, `scanner`,
+  `tasteProfile`, `errors`, `designSystem`) and merged in `sk/index.ts`. One file would break the 150-line limit.
   `SK_TRANSLATIONS` is the source of truth for the key list: every future locale
   is typed against it, so a missing translation is a type error.
 - **A sentence with a hole in it stays one string.** `t(key, values)` fills
@@ -623,6 +639,83 @@ mechanism by which this product learns anything.
   who worked out an hour later what was wrong with a cup should be able to say
   so.
 
+### Somebody else's recipe
+
+`/import-recipe`, and the one feature in this app where a model is deliberately
+kept away from the numbers.
+
+- **The conversion is arithmetic, in code, in its own module.**
+  `shared/src/conversion/` converts a grind through both grinders' micron
+  curves, scales the amounts to the target brewer at the source's own ratio,
+  decides the temperature by whether one can be set at all, and scales the pour
+  schedule with the water it pours. It has its own unit tests and depends on
+  nothing but plain values, so the day a real particle-size model replaces it,
+  the replacement is one folder and one test file.
+- **A model reads the source and explains the result, and touches nothing
+  between.** `POST /ai/parse-recipe` turns a pasted video description or a
+  photographed screen into fields; `POST /ai/convert-recipe` runs the
+  arithmetic and then asks for the grind in Slovak words and an explanation.
+  The answer schema has no field for a dose, a water weight, a ratio, a grind
+  setting or a temperature - the same guarantee the recipe engine gets, applied
+  to a longer list. A model asked to convert 22 clicks on a Comandante into a
+  setting on a JX-Pro will produce a confident number, and nobody - including
+  the model - can say where it came from.
+- **Every number says how much it is worth.** The report is `{field, precision,
+reason}` in machine names: `exact` came across untouched or is arithmetic
+  that cannot be wrong, `estimated` is a real calculation over approximate
+  inputs, `unknown` means the original never said. The conversion writes no
+  Slovak at all - the app translates the machine names - so the arithmetic and
+  the sentences beside it cannot drift apart, and adding a step to the
+  algorithm is a type error at the place that has to explain it.
+- **A converted grind is never `exact`.** Burr alignment, bean density and how
+  the last person left the collar move a real grind further than the difference
+  between two published curves. It is a starting point, the card says so every
+  time, and an estimated calibration or an unverified catalogue entry is named
+  out loud rather than folded into a general hedge.
+- **What was read is shown back before anything is computed.** "Rozumiem tomu
+  takto", the same offer the calibration brew makes. A conversion multiplies its
+  inputs into each other, so a dose misread at the top comes out as a grind
+  setting at the bottom with nothing pointing at where it went wrong - and the
+  one person who could catch it is holding the original.
+- **A hole stays a hole.** Anything the source did not state is null through the
+  reading and through the correction, and the fallback it triggers is reported
+  as a fallback. The report keeps the source recipe whole, because "but what did
+  the original actually say?" is the first question a disappointing cup raises.
+- **The result is stored as `imported`**, with the report inside
+  `params.conversion` rather than beside it in the response. A card reopened next
+  month that has lost the sentence about the grind has turned an estimate into a
+  measurement by doing nothing at all.
+
+### Dialling in an espresso
+
+`/dial-in` - the recipe chat, narrowed until it can only do one thing per turn.
+
+- **One change per shot, and the schema is what enforces it.** The answer is a
+  discriminated union over grind, dose or nothing, so an answer that moves both
+  is a validation failure the single retry is told about rather than something
+  the service refuses afterwards in a message that reads as the app not
+  listening. Two variables moved together produce a shot that carries no
+  information: it came out different, and nobody can say which change did it.
+- **"Change nothing" is a real answer.** The shot was good, or the last change
+  has not had a fair try. A dial-in that never ends is one somebody abandons
+  halfway through a bag.
+- **The shot is recorded before the model is asked anything.** It is an ordinary
+  brew log, written through the same service and priced by the same rules, so a
+  model call that fails leaves the run intact - and the run is the only thing
+  the next answer reasons about.
+- **The advice reads the run, not the last shot.** `resolveShotTimeline` derives
+  what changed between each pair and whether the shot came closer to the target
+  window, and the same derivation feeds both the chart and the prompt. A grind
+  that has already gone finer twice without moving the time is exactly the case
+  where the answer has to stop grinding, and a model shown one shot cannot see
+  it.
+- **The timeline is read back from the rows**, not accumulated on screen: the
+  gaps between shots are spent grinding and tamping with the phone in a pocket.
+- **A patch is stored, never applied**, as everywhere else in this app. Taking
+  one creates a child recipe, so every shot still points at the numbers it was
+  actually pulled with. The version that finally works is saved and pinned for
+  the pair (bag, method), which is what the whole exercise was for.
+
 ### The cupboard
 
 - **A bag is a card, not a list row.** The two things wanted at a glance - how
@@ -909,7 +1002,7 @@ server/src/
 ├── ai/               Model + image ports, the Anthropic and HTTP implementations, pricing
 ├── auth/             Token verifier + identity deleter, Firebase implementations, auth plugin
 ├── modules/          one domain each: repository -> service -> routes + mapper
-│   ├── ai/           the four routes that cost money, plus the shared brew
+│   ├── ai/           the seven routes that cost money, plus the shared brew
 │   │                 context reader, the versioned prompts and completeJson
 │   ├── health/       healthService + healthRoutes
 │   ├── users/        the account behind a Firebase identity
@@ -948,7 +1041,7 @@ than two, because a model with no way to fetch the photograph and a photograph
 with nothing to read it are both half a feature, and two fields that must agree
 are two fields that eventually will not. Null is a working state: a deployment
 without `ANTHROPIC_API_KEY` serves every screen that asks no model anything, and
-the four AI routes answer 503, which the app shows as "zadaj to ručne".
+the AI routes answer 503, which the app shows as "zadaj to ručne".
 
 `createBrewContextResolver` is built once and shared by the recipe engine and
 the chat. Two readers of "which brewer, which kettle, which grinder" would be
@@ -1021,6 +1114,9 @@ is not an oracle for other people's ids.
 | POST             | `/ai/evaluate-coffee`        | writes the shop verdict and stores it            |
 | POST             | `/ai/generate-recipe`        | writes and stores the recipe for one brew        |
 | POST             | `/ai/recipe-chat`            | answers what somebody said about a cup           |
+| POST             | `/ai/parse-recipe`           | reads a found recipe into fields, holes and all  |
+| POST             | `/ai/convert-recipe`         | converts it onto this person's own equipment     |
+| POST             | `/ai/espresso-dial-in`       | records one shot and proposes one change         |
 
 Every list endpoint takes `limit` and `offset` and answers
 `{ items, limit, offset, hasMore }`. `hasMore` comes from reading one row beyond
@@ -1155,8 +1251,23 @@ generated migration that has already been applied.
 
 ## 8. Testing
 
-Integration tests only, running against the real Neon test branch through
-`app.inject()` - no mocked database, no testcontainers (everything is hosted).
+Two kinds, and the split is deliberate.
+
+`shared` has unit tests, and only for the conversion module and the shot
+timeline: pure functions over plain values, testable with no database, no model
+and no server. That is the whole reason the conversion lives there rather than
+in the API - arithmetic this consequential should be checkable in a second. The
+tests are written against the decisions rather than the implementation: that a
+curve reads back the point it was measured at, that an extrapolation says it is
+one and a reading far outside the measured span is refused, that the two
+directions round-trip, that a converted grind is never reported as exact, that
+an estimated calibration and an unverified entry are both named, that scaling to
+a brewer keeps the source's own ratio, and that a ratio only moves when the
+recipe crosses into another family of brewer.
+
+Everything else is integration tests, running against the real Neon test branch
+through `app.inject()` - no mocked database, no testcontainers (everything is
+hosted).
 
 - `tests/setup/globalSetup.ts` migrates the test branch once per run
 - `tests/setup/createTestContext.ts` boots the real app with a stub verifier
@@ -1181,6 +1292,17 @@ exactly once and both attempts are billed, that a photograph read before is not
 read again, that the same coffee shot by somebody else answers from the stored
 reading, that a coffee already judged is not judged twice, and that a verdict
 that will not validate is refused rather than stored broken.
+
+The import and the dial-in are tested the same way, for the rules that a model
+would break silently: that a recipe read out of pasted text keeps its holes as
+nulls, that the converted dose and water are the arithmetic's whatever the
+answer tries to add, that the grind is translated through both curves, that an
+estimated calibration and an unverified entry reach the stored report, that a
+schedule which carried over intact is refused a rewrite while one written for
+another family of brewer gets one, that a dial-in answer moving both the grind
+and the dose is refused and the corrected one taken, that the shot is recorded
+before the model is asked anything, and that the taste event carries the shot's
+own learning weight.
 
 The brewing loop is tested for the rules that would be quietly broken rather
 than loudly: that the dose and the water come back exactly as they were chosen,

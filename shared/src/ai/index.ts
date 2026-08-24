@@ -30,5 +30,9 @@ export {
   generateRecipeResponseSchema,
 } from './generateRecipeSchema.js';
 export type { GenerateRecipeRequest, GenerateRecipeResponse } from './generateRecipeSchema.js';
+export { parseRecipeRequestSchema, parseRecipeResponseSchema } from './parseRecipeSchema.js';
+export type { ParseRecipeRequest, ParseRecipeResponse } from './parseRecipeSchema.js';
+export { convertRecipeRequestSchema, convertRecipeResponseSchema } from './convertRecipeSchema.js';
+export type { ConvertRecipeRequest, ConvertRecipeResponse } from './convertRecipeSchema.js';
 export { recipeChatRequestSchema, recipeChatResponseSchema } from './recipeChatSchema.js';
 export type { RecipeChatRequest, RecipeChatResponse } from './recipeChatSchema.js';
