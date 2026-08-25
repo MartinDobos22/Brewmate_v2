@@ -36,6 +36,15 @@ frontend/android/
 *.orig.*
 web-build/
 
+# The Firebase client configuration files, generated per app in the Firebase
+# console. Not secrets - the same values ship inside every APK and IPA - but on
+# a public repository they hand a scraper the project id, the Android API key
+# and the OAuth client ids without it having to unpack anything. A build gets
+# them from EAS (GOOGLE_SERVICES_JSON as a file secret), so nothing here needs
+# them checked in.
+google-services.json
+GoogleService-Info.plist
+
 # Metro
 .metro-health-check*
 
