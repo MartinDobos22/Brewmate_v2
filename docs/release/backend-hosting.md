@@ -97,12 +97,17 @@ wants Frankfurt.
    certificate, because `frontend/eas.json` points production builds at that
    hostname - or change the value there before building.
 
-Two Render-specific things worth knowing. The build command overrides the
-package manager's linker (`--config.node-linker=isolated`), because `.npmrc`
-hoists for Metro's sake and hoisting ignores the `--filter` - without it Render
-installs React Native in order to compile a Fastify server. And `CI=true` is
-set as a variable because pnpm will not purge a modules directory without a TTY
-unless it is told the run is unattended.
+Three Render-specific things worth knowing, all three of them things that fail
+loudly the first time. The build command overrides the package manager's linker
+(`--config.node-linker=isolated`), because `.npmrc` hoists for Metro's sake and
+hoisting ignores the `--filter` - without it Render installs React Native in
+order to compile a Fastify server. `CI=true` is set as a variable because pnpm
+will not purge a modules directory without a TTY unless it is told the run is
+unattended. And there is no `corepack enable` in the build command: Render's
+build image already has pnpm at `/usr/bin/pnpm` on a read-only filesystem, so
+corepack fails with `EROFS: read-only file system, unlink '/usr/bin/pnpm'` -
+`PNPM_VERSION` picks the version instead, and it has to be a 10, because the
+lockfile is one and `engine-strict` refuses anything older.
 
 ## Railway, if Render's pricing stops fitting
 
@@ -110,14 +115,15 @@ No blueprint file; the same three commands go into the service settings, and
 Railway detects Node and pnpm on its own:
 
 ```
-Build:   corepack enable && pnpm install --frozen-lockfile --config.node-linker=isolated --filter @brewmate/server... && pnpm --filter @brewmate/shared build && pnpm --filter @brewmate/server build
+Build:   pnpm install --frozen-lockfile --config.node-linker=isolated --filter @brewmate/server... && pnpm --filter @brewmate/shared build && pnpm --filter @brewmate/server build
 Start:   node server/dist/index.js
 ```
 
 Migrations have no pre-deploy hook there: run
 `node server/dist/db/migrate/migrateCli.js` as a one-off command after a deploy
 that carries a schema change, and set `CI=true` and `NIXPACKS_NODE_VERSION=22`
-among the variables.
+among the variables. Nixpacks reads the `packageManager` field for the pnpm
+version, so there is nothing to pin by hand there.
 
 ## Environment
 

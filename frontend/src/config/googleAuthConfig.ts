@@ -25,4 +25,4 @@ export const readGoogleAuthConfig = (): GoogleAuthConfig => ({
  * one value the flow cannot start without.
  */
 export const isGoogleAuthConfigured = (config: GoogleAuthConfig): boolean =>
-  config.webClientId !== undefined && config.webClientId !== '';
+  config.webClientId !== undefined;

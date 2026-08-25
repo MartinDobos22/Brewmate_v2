@@ -26,8 +26,11 @@ services:
     # on and leaves the app out. The linker is overridden because .npmrc hoists
     # for Metro's sake and hoisting ignores the filter - without it Render
     # installs React Native in order to compile a Fastify server.
+    #
+    # No `corepack enable` in front of it: Render's build image ships pnpm at
+    # /usr/bin/pnpm on a read-only filesystem, and corepack fails trying to
+    # replace it. The version comes from PNPM_VERSION below instead.
     buildCommand: >-
-      corepack enable &&
       pnpm install --frozen-lockfile --config.node-linker=isolated --filter @brewmate/server... &&
       pnpm --filter @brewmate/shared build &&
       pnpm --filter @brewmate/server build
@@ -42,6 +45,9 @@ services:
     envVars:
       - key: NODE_VERSION
         value: '22.19.0'
+      # The lockfile is pnpm 10's, and `engine-strict` refuses anything older.
+      - key: PNPM_VERSION
+        value: '10.33.0'
       - key: NODE_ENV
         value: production
       # pnpm refuses to purge a modules directory without a TTY unless it is
