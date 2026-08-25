@@ -140,6 +140,12 @@ nothing else. In production:
 `TEST_DATABASE_URL` has no place in a deployment. It is read only when
 `NODE_ENV=test`, and the tests truncate every table.
 
+**A variable left blank counts as absent.** Render creates every variable the
+blueprint names, whether or not a value was typed into it, so an empty
+`ANTHROPIC_API_KEY` has to mean "no model key" rather than "a key zero
+characters long" - otherwise the two variables that are meant to be leavable
+empty would be the two that stop the server from starting.
+
 **The private key is the one that goes wrong.** It is a PEM with newlines in
 it, environment variables cannot hold newlines, so it is stored with them
 escaped (`\n`) and expanded by `normalizePrivateKey` on the way in. Paste it
