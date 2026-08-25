@@ -1571,7 +1571,7 @@ loudly when it is set but unreachable.
 
 ## 9. Environment and secrets
 
-`.env` files are git-ignored; only `.env.example` is tracked. Never commit a
+`.env` files are git-ignored; only `.env` is tracked. Never commit a
 filled-in `.env`, a service account JSON or a connection string with a password.
 
 - `server/.env` - database URLs, Firebase Admin credentials, `ANTHROPIC_API_KEY`

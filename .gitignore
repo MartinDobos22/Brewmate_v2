@@ -7,7 +7,7 @@ dist/
 build/
 *.tsbuildinfo
 
-# Environment (never commit real secrets - only .env.example is tracked)
+# Environment (never commit real secrets - only .env is tracked)
 .env
 .env.*
 !.env.example

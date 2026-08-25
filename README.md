@@ -18,8 +18,8 @@ API and the Zod contract they share.
 
 ```bash
 pnpm install
-cp server/.env.example server/.env
-cp frontend/.env.example frontend/.env
+cp server/.env server/.env
+cp frontend/.env frontend/.env
 ```
 
 Fill in `server/.env`:
@@ -106,7 +106,7 @@ the account - the last one required by Apple of any app that can create one.
 Failures are Slovak sentences, never a raw `auth/...` code, and being offline is
 shown before an attempt is made rather than after it fails.
 
-Fill in `frontend/.env` from `frontend/.env.example`:
+Fill in `frontend/.env` from `frontend/.env`:
 
 | Variable                                                          | Where it comes from                                                                                      |
 | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |

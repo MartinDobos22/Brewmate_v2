@@ -123,6 +123,7 @@
     },
     "android": {
       "package": "app.brewmate.mobile",
+      "googleServicesFile": "./google-service.json",
       "versionCode": 1,
       "edgeToEdgeEnabled": true,
       "adaptiveIcon": {
