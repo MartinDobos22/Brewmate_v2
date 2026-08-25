@@ -1638,9 +1638,45 @@ docs/
 │   │                                to the table or request that makes it true
 │   └── screenshots.md               The six shots, in the order they argue
 └── release/
+    ├── backend-hosting.md           Where the API runs, what it needs, how it gets
+    │                                there, and what is deliberately not there
     ├── eas.md                       Build profiles, channels, what an update may carry
+    ├── go-live.md                   The order the accounts, the database, the API, the
+    │                                builds and the store material have to happen in
     └── ios-submission-checklist.md  The things that fail a first submission
 ```
+
+### Hosting the API
+
+`server/Dockerfile` builds the API as one container image, from the repository
+root because it has to compile `@brewmate/shared` on the way. Everything with
+state in it is hosted elsewhere - the database on Neon, the identities in
+Firebase, the photographs in Cloud Storage, the model behind an API key - so the
+process keeps nothing, writes nothing to disk and can be replaced mid-request.
+Four decisions in that file and in `docs/release/backend-hosting.md` are
+deliberate:
+
+- **The install is filtered, and the linker is overridden.**
+  `--filter @brewmate/server...` takes the API and the contract and leaves the
+  app out; `--config.node-linker=isolated` is needed because `.npmrc` hoists for
+  Metro's sake and hoisting ignores the filter - without it React Native ends up
+  in an image that never runs it. The runtime stage installs again rather than
+  copying the builder's tree, because TypeScript, drizzle-kit and vitest have no
+  business facing the internet.
+- **Migrations are a release step, never something the server does on boot.**
+  Two instances starting together would run the same migration twice, and a
+  failed one during a rolling deploy would take down the instances that were
+  serving perfectly well. `tsx` is a dev dependency, so in an image the entry
+  point is the compiled `node dist/db/migrate/migrateCli.js`.
+- **`/health` is the probe, and it answers 503 when the database is down.**
+  That is the right answer for a load balancer and the wrong one for an
+  aggressive restart policy: a Neon branch waking from autosuspend is not a
+  broken process.
+- **There is no CORS plugin and no HTTP-level rate limiter.** The client is a
+  phone app, so a browser preflight never happens; and what protects the invoice
+  is the per-account model allowance in front of `/ai/*`, which is the only
+  place a request costs anything beyond a query. Adding either is a decision
+  with a reason behind it, not a default.
 
 ### EAS
 
