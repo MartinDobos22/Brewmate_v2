@@ -1,0 +1,75 @@
+# ---------------------------------------------------------------------------
+# Render blueprint for the Brewmate API.
+#
+# One web service on Render's own Node runtime: no container to build, nothing
+# running on anybody's own machine, and no step that needs Docker installed
+# anywhere. Create it with Render -> New -> Blueprint pointed at this
+# repository; everything below is read from here, and the secrets marked
+# `sync: false` are the only things filled in by hand.
+#
+# Why this shape, and what it costs, is in docs/release/backend-hosting.md.
+# ---------------------------------------------------------------------------
+
+services:
+  - type: web
+    name: brewmate-api
+    runtime: node
+    # The database is on Neon. Put the two in the same part of the world or
+    # every request pays for the distance, twice for anything that asks a model.
+    region: frankfurt
+    # Not `free`: a free service sleeps after fifteen idle minutes, and the
+    # first brew of the morning would wait out a cold start.
+    plan: starter
+    healthCheckPath: /health
+
+    # `--filter @brewmate/server...` builds the API and the contract it depends
+    # on and leaves the app out. The linker is overridden because .npmrc hoists
+    # for Metro's sake and hoisting ignores the filter - without it Render
+    # installs React Native in order to compile a Fastify server.
+    buildCommand: >-
+      corepack enable &&
+      pnpm install --frozen-lockfile --config.node-linker=isolated --filter @brewmate/server... &&
+      pnpm --filter @brewmate/shared build &&
+      pnpm --filter @brewmate/server build
+
+    # After the build, before any traffic moves. Migrations belong here rather
+    # than in the server's own start-up, where two instances would race each
+    # other through them. Render runs pre-deploy commands on paid plans only.
+    preDeployCommand: node server/dist/db/migrate/migrateCli.js
+
+    startCommand: node server/dist/index.js
+
+    envVars:
+      - key: NODE_VERSION
+        value: '22.19.0'
+      - key: NODE_ENV
+        value: production
+      # pnpm refuses to purge a modules directory without a TTY unless it is
+      # told it is running unattended, which a deploy is.
+      - key: CI
+        value: 'true'
+      - key: LOG_LEVEL
+        value: info
+
+      # Neon, pooled endpoint - the hostname contains `-pooler`.
+      - key: DATABASE_URL
+        sync: false
+      # The same branch, direct endpoint. Migrations need a plain session.
+      - key: DATABASE_URL_UNPOOLED
+        sync: false
+
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      # The PEM from the service account JSON, with its newlines escaped as \n.
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
+
+      # Optional. Without it every screen that asks no model anything keeps
+      # working and /ai/* answers 503, which the app shows as "zadaj to ručne".
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      # Optional. Without it unexpected failures are logged and nothing else.
+      - key: SENTRY_DSN
+        sync: false

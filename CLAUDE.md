@@ -52,6 +52,7 @@ brewmate_v2/
 ├── server/            Fastify + Drizzle + Firebase Admin API
 ├── shared/            @brewmate/shared - Zod schemas + inferred types
 ├── docs/              Release and store material (see section 12)
+├── render.yaml        The API as one hosted Node service (see section 12)
 ├── eslint.config.mjs  One flat config for the whole workspace
 ├── tsconfig.base.json Strict compiler options + cross-package path aliases
 ├── pnpm-workspace.yaml
@@ -1648,30 +1649,38 @@ docs/
 
 ### Hosting the API
 
-`server/Dockerfile` builds the API as one container image, from the repository
-root because it has to compile `@brewmate/shared` on the way. Everything with
-state in it is hosted elsewhere - the database on Neon, the identities in
-Firebase, the photographs in Cloud Storage, the model behind an API key - so the
-process keeps nothing, writes nothing to disk and can be replaced mid-request.
-Four decisions in that file and in `docs/release/backend-hosting.md` are
+The API is a stateless Node process and everything with state in it is hosted
+elsewhere - the database on Neon, the identities in Firebase, the photographs in
+Cloud Storage, the model behind an API key. It keeps nothing, writes nothing to
+disk and can be replaced mid-request, which is what makes hosting it a service
+somebody else runs rather than a machine somebody has to own.
+
+**`render.yaml` is that service, written down.** One web service on Render's own
+Node runtime, so there is no container in the normal path and nothing to build
+locally: the blueprint carries the build command, the migration step, the health
+check, the region and every variable the server reads. `server/Dockerfile`
+builds the same process as an image for the hosts that speak only containers -
+it is not at the repository root, so nothing picks it up by accident.
+
+Four decisions in those two files and in `docs/release/backend-hosting.md` are
 deliberate:
 
 - **The install is filtered, and the linker is overridden.**
   `--filter @brewmate/server...` takes the API and the contract and leaves the
   app out; `--config.node-linker=isolated` is needed because `.npmrc` hoists for
-  Metro's sake and hoisting ignores the filter - without it React Native ends up
-  in an image that never runs it. The runtime stage installs again rather than
-  copying the builder's tree, because TypeScript, drizzle-kit and vitest have no
-  business facing the internet.
+  Metro's sake and hoisting ignores the filter - without it a host installs
+  React Native in order to compile a Fastify server. In the image, the runtime
+  stage installs again rather than copying the builder's tree, because
+  TypeScript, drizzle-kit and vitest have no business facing the internet.
 - **Migrations are a release step, never something the server does on boot.**
   Two instances starting together would run the same migration twice, and a
   failed one during a rolling deploy would take down the instances that were
-  serving perfectly well. `tsx` is a dev dependency, so in an image the entry
-  point is the compiled `node dist/db/migrate/migrateCli.js`.
+  serving perfectly well. `tsx` is a dev dependency, so a deployment runs the
+  compiled `node server/dist/db/migrate/migrateCli.js`.
 - **`/health` is the probe, and it answers 503 when the database is down.**
-  That is the right answer for a load balancer and the wrong one for an
-  aggressive restart policy: a Neon branch waking from autosuspend is not a
-  broken process.
+  That is the right answer for a load balancer and an awkward one for a platform
+  that restarts on a failed check: a Neon branch waking from autosuspend is not
+  a broken process.
 - **There is no CORS plugin and no HTTP-level rate limiter.** The client is a
   phone app, so a browser preflight never happens; and what protects the invoice
   is the per-account model allowance in front of `/ai/*`, which is the only

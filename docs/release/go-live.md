@@ -17,16 +17,16 @@ Nothing below can start until these exist, and two of them take days rather
 than minutes - Apple's enrolment is verified by a human, and a Play developer
 account has been known to sit in review for a week.
 
-| Account                 | Cost                    | Needed for                                   |
-| ----------------------- | ----------------------- | -------------------------------------------- |
-| Apple Developer Program | 99 USD / year           | TestFlight and the App Store                 |
-| Google Play Console     | 25 USD once             | Play, including internal testing             |
-| Expo (EAS)              | free tier, then monthly | Builds and over-the-air updates              |
-| Neon                    | free tier is real       | The production database branch               |
-| Firebase                | free tier is real       | Authentication and the Cloud Storage bucket  |
-| Anthropic               | usage                   | Everything the app asks a model              |
-| A host for the API      | ~5-10 USD / month       | See `backend-hosting.md`                     |
-| A domain                | ~10 USD / year          | `api.brewmate.app`, and a privacy policy URL |
+| Account                 | Cost                    | Needed for                                     |
+| ----------------------- | ----------------------- | ---------------------------------------------- |
+| Apple Developer Program | 99 USD / year           | TestFlight and the App Store                   |
+| Google Play Console     | 25 USD once             | Play, including internal testing               |
+| Expo (EAS)              | free tier, then monthly | Builds and over-the-air updates                |
+| Neon                    | free tier is real       | The production database branch                 |
+| Firebase                | free tier is real       | Authentication and the Cloud Storage bucket    |
+| Anthropic               | usage                   | Everything the app asks a model                |
+| A host for the API      | ~7 USD / month          | Render, from GitHub - see `backend-hosting.md` |
+| A domain                | ~10 USD / year          | `api.brewmate.app`, and a privacy policy URL   |
 
 Sentry is optional and has a free tier; without a DSN the app and the API
 report nothing anywhere and work exactly as well.
@@ -60,8 +60,9 @@ projects, so this is the last comfortable moment to decide.
 
 ## 3. The API
 
-Follow `backend-hosting.md`, then verify from outside rather than from the
-platform's dashboard:
+Connect Render to this repository - `render.yaml` is the whole service - fill in
+the secrets, deploy, then verify from outside rather than from the platform's
+dashboard:
 
 - [ ] `curl https://api.brewmate.app/health` answers `{"status":"ok"}` with the
       database `up`.

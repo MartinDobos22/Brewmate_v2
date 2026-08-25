@@ -50,17 +50,18 @@ pnpm dev:frontend  # Expo dev server
 
 ## Deployment
 
-The API is one stateless process: `server/Dockerfile` builds it, and everything
-with state in it - the database, the identities, the photographs, the model - is
-hosted elsewhere.
+The API is one stateless process - the database, the identities, the photographs
+and the model are all hosted elsewhere - so it goes on a managed host as it is,
+with no container to build and nothing running locally. `render.yaml` describes
+that service: build command, migration step, health check, region and every
+variable it reads. Point Render at this repository, fill in the secrets, deploy.
 
-```bash
-docker build -f server/Dockerfile -t brewmate-api .   # from the repository root
-```
+`server/Dockerfile` builds the same process as an image, for the day a host that
+speaks only containers is the better deal.
 
 | Document                                                                               | Answers                                                                 |
 | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| [docs/release/backend-hosting.md](./docs/release/backend-hosting.md)                   | Where the API runs, what it needs, migrations, health checks, logs      |
+| [docs/release/backend-hosting.md](./docs/release/backend-hosting.md)                   | Whether the API is ready, where to run it, migrations, health, logs     |
 | [docs/release/go-live.md](./docs/release/go-live.md)                                   | The order the accounts, the database, the API, the builds and the store |
 | [docs/release/eas.md](./docs/release/eas.md)                                           | Build profiles, channels, what an over-the-air update may carry         |
 | [docs/release/ios-submission-checklist.md](./docs/release/ios-submission-checklist.md) | The things that fail a first submission                                 |
