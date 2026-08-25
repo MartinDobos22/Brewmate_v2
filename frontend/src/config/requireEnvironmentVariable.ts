@@ -13,7 +13,7 @@ const missingVariableMessage = (key: EnvironmentKey): string =>
 export const requireEnvironmentVariable = (key: EnvironmentKey): string => {
   const value = readEnvironmentVariable(key);
 
-  if (value === undefined || value === '') {
+  if (value === undefined) {
     throw new Error(missingVariableMessage(key));
   }
 
