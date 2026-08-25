@@ -48,6 +48,24 @@ pnpm dev:server    # API in watch mode
 pnpm dev:frontend  # Expo dev server
 ```
 
+## Deployment
+
+The API is one stateless process - the database, the identities, the photographs
+and the model are all hosted elsewhere - so it goes on a managed host as it is,
+with no container to build and nothing running locally. `render.yaml` describes
+that service: build command, migration step, health check, region and every
+variable it reads. Point Render at this repository, fill in the secrets, deploy.
+
+`server/Dockerfile` builds the same process as an image, for the day a host that
+speaks only containers is the better deal.
+
+| Document                                                                               | Answers                                                                 |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [docs/release/backend-hosting.md](./docs/release/backend-hosting.md)                   | Whether the API is ready, where to run it, migrations, health, logs     |
+| [docs/release/go-live.md](./docs/release/go-live.md)                                   | The order the accounts, the database, the API, the builds and the store |
+| [docs/release/eas.md](./docs/release/eas.md)                                           | Build profiles, channels, what an over-the-air update may carry         |
+| [docs/release/ios-submission-checklist.md](./docs/release/ios-submission-checklist.md) | The things that fail a first submission                                 |
+
 ## API
 
 | Method | Path      | Auth              | Purpose                                     |

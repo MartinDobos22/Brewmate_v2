@@ -1,0 +1,25 @@
+# The image is built from the repository root, so the context is the whole
+# workspace. Everything below is either rebuilt inside the image, belongs to
+# the app rather than to the API, or must never enter an image at all.
+node_modules
+**/node_modules
+dist
+**/dist
+*.tsbuildinfo
+
+.git
+.github
+.idea
+.vscode
+
+frontend
+docs
+
+.env
+.env.*
+!.env.example
+
+coverage
+**/coverage
+.expo
+**/*.log
