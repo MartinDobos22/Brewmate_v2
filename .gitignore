@@ -43,6 +43,7 @@ web-build/
 # them from EAS (GOOGLE_SERVICES_JSON as a file secret), so nothing here needs
 # them checked in.
 google-services.json
+google-service.json
 GoogleService-Info.plist
 
 # Metro
