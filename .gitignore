@@ -2,6 +2,14 @@
 node_modules/
 .pnpm-store/
 
+# This workspace is pnpm's, and pnpm-lock.yaml is the only lockfile it has.
+# A stray package-lock.json or yarn.lock - one npm command in the wrong
+# directory - is enough to make EAS Build announce "we detected that 'frontend'
+# is a npm workspace", run `npm ci` at the root, install the root's dev
+# dependencies and nothing else, and then fail because the app has no `expo`.
+package-lock.json
+yarn.lock
+
 # Build output
 dist/
 build/
