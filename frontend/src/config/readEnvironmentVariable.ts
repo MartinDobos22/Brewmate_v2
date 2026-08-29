@@ -7,7 +7,7 @@ declare const process: { readonly env: Readonly<Record<string, string | undefine
 /**
  * Reads one variable, treating an empty one as absent.
  *
- * `.env.example` lists every optional variable with nothing after the `=`, so
+ * `.env` lists every optional variable with nothing after the `=`, so
  * that somebody can see what a build could carry - and Expo inlines that as an
  * empty string rather than leaving it out. Without this, a checkout that has
  * not been given a storage bucket would report photo scanning as configured,
