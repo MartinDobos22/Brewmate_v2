@@ -106,6 +106,19 @@ export const buildTimelineRoute = (methodId: string, bagId?: string | null): str
     ...(bagId === undefined || bagId === null ? [] : [BAG_PARAM, encodeURIComponent(bagId)]),
   ].join('');
 
+const BREW_BAG_PARAM = '?bagId=';
+
+/**
+ * The brewing screen, opened for one coffee.
+ *
+ * The bag travels in the path rather than being remembered, for the same
+ * reason every other screen's subject does: the tab can be reached from the
+ * bar at any moment, and a preselection held in memory would reappear days
+ * later on a screen nobody opened from a bag.
+ */
+export const buildBrewRoute = (bagId: string): string =>
+  `${ROUTES.brew}${BREW_BAG_PARAM}${encodeURIComponent(bagId)}`;
+
 const MODE_PARAM = '?mode=';
 
 /**

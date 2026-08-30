@@ -38,6 +38,17 @@ export const SK_CUPBOARD_AND_BREW = {
 
   inventoryBagRemainingLabel: 'Koľko z balíčka ostáva',
 
+  bagDetailBrewTitle: 'Uvariť z nej',
+  bagDetailBrewCaption: 'Otvorím varenie s touto kávou.',
+  bagDetailLabelSection: 'Čo je na balíčku',
+  bagDetailLabelCaption: 'Len to, čo je naozaj zapísané - nič nedopĺňam.',
+  bagDetailLabelEmpty: 'Z balíčka nemám zapísané nič ďalšie. Kávu to nepokazí.',
+  bagDetailRecipesCaption:
+    'Zvlášť pre každú metódu - rovnaké zrná chcú v inom prekvapkávači iné čísla.',
+  bagRecipesEmptyAction: 'Uvariť z nej prvú kávu',
+  bagRecipeDose: 'Dávka',
+  bagRecipeRatio: 'Pomer',
+
   preBrewCoffeeReady: 'Pripravená',
   preBrewMethodCategoryPourOver: 'Prelievaná',
   preBrewMethodCategoryImmersion: 'Lúhovaná',

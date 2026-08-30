@@ -27,10 +27,15 @@ import { PreBrewSections } from './PreBrewSections';
  * with nothing between them and it; now the whole thing is legible in four
  * lines directly above the commitment.
  */
-export const PreBrewScreen = (): JSX.Element => {
+export interface PreBrewScreenProps {
+  /** Set when somebody arrived from a coffee's own screen wanting to brew it. */
+  readonly initialBagId?: string;
+}
+
+export const PreBrewScreen = ({ initialBagId }: PreBrewScreenProps): JSX.Element => {
   const { t } = useTranslation();
   const router = useRouter();
-  const setup = useBrewSetup();
+  const setup = useBrewSetup(initialBagId);
 
   return (
     <Screen scrollable>

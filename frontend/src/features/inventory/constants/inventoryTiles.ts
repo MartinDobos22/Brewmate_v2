@@ -8,6 +8,7 @@ export const INVENTORY_TILE_ICONS = {
   scan: 'barcode-scan',
   manual: 'pencil-outline',
   grinders: 'cog-outline',
+  brew: 'coffee-outline',
 } as const satisfies Record<string, TileGlyph>;
 
 /**

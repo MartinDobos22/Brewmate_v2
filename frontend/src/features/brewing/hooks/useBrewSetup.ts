@@ -10,13 +10,18 @@ import {
 } from '@brewmate/shared';
 
 import { useCurrentUser } from '../../auth';
-import { useAvailableBrewMethods, useEquipmentSetSwitcher } from '../../inventory/hooks';
+import {
+  useAvailableBrewMethods,
+  useCoffeeBags,
+  useEquipmentSetSwitcher,
+} from '../../inventory/hooks';
 import { findBrewerForMethod } from '../../inventory/services';
 import { checkBrewAmounts, type BrewAmountWarning } from '../services/checkBrewAmounts';
 import { useBrewAmounts, type BrewAmountsControl } from './useBrewAmounts';
 import { useGenerateRecipe } from './useGenerateRecipe';
 
 const NO_CONSTRAINTS: BrewConstraints = {};
+const NO_BAGS: readonly CoffeeBag[] = [];
 
 export interface BrewSetup extends BrewAmountsControl {
   readonly sets: readonly EquipmentSet[];
@@ -48,7 +53,7 @@ export interface BrewSetup extends BrewAmountsControl {
  * brewing, what is missing today, and how much of each. Nothing is asked twice
  * and nothing is asked that the app could read for itself.
  */
-export const useBrewSetup = (): BrewSetup => {
+export const useBrewSetup = (initialBagId?: string): BrewSetup => {
   const { data: user } = useCurrentUser();
   const switcher = useEquipmentSetSwitcher();
   const [chosenSetId, setChosenSetId] = useState<string | null>(null);
@@ -58,6 +63,8 @@ export const useBrewSetup = (): BrewSetup => {
   const available = useAvailableBrewMethods(activeSet);
   const [method, setMethod] = useState<BrewMethod | undefined>(undefined);
   const [bag, setBag] = useState<CoffeeBag | null>(null);
+  const [hasOpenedBag, setHasOpenedBag] = useState(false);
+  const bags = useCoffeeBags().data?.items ?? NO_BAGS;
   const [coffeeDescription, setCoffeeDescription] = useState('');
   const [constraints, setConstraints] = useState<BrewConstraints>(NO_CONSTRAINTS);
   const [waterType, setWaterType] = useState<WaterType | null>(null);
@@ -65,6 +72,29 @@ export const useBrewSetup = (): BrewSetup => {
   const brewer =
     method === undefined ? undefined : findBrewerForMethod(available.brewers, method.id);
   const amounts = useBrewAmounts(method, brewer);
+
+  /**
+   * A bag opened from its own screen arrives already chosen.
+   *
+   * Once, and only while nothing has been chosen yet: this fills the first
+   * answer in for somebody who has just tapped "uvariť z nej", and must never
+   * argue with the choice they make afterwards. The cupboard is fetched
+   * anyway by the question below, so this costs no request.
+   */
+  useEffect((): void => {
+    if (hasOpenedBag || initialBagId === undefined) {
+      return;
+    }
+
+    const opened = bags.find((candidate: CoffeeBag): boolean => candidate.id === initialBagId);
+
+    if (opened === undefined) {
+      return;
+    }
+
+    setBag(opened);
+    setHasOpenedBag(true);
+  }, [bags, hasOpenedBag, initialBagId]);
 
   /**
    * The constraints follow the set, because that is what a set is for: the
@@ -102,6 +132,7 @@ export const useBrewSetup = (): BrewSetup => {
     chooseMethod: setMethod,
     chooseBag: (next: CoffeeBag | null): void => {
       setBag(next);
+      setHasOpenedBag(true);
     },
     describeCoffee: setCoffeeDescription,
     toggleConstraint: (name: keyof BrewConstraints, isSet: boolean): void => {
