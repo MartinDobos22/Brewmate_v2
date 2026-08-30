@@ -49,6 +49,12 @@ export const OPACITY = {
   pressed: 0.72,
   disabled: 0.38,
   scrim: 0.45,
+  /**
+   * A decoration behind content has to survive both schemes without ever
+   * competing with the text on top of it. Low enough that a dark tile does not
+   * turn into a diagram, high enough that a light one is not blank.
+   */
+  watermark: 0.16,
 } as const;
 
 export type OpacityToken = keyof typeof OPACITY;

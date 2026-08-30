@@ -1,5 +1,12 @@
 export { HomeScreen } from './HomeScreen';
+export { HomeGreeting } from './HomeGreeting';
 export { GettingStartedCard } from './GettingStartedCard';
-export { ScanPromptCard } from './ScanPromptCard';
-export { QuickBrewPromptCard } from './QuickBrewPromptCard';
+export { HomeHintTile } from './HomeHintTile';
+export { ScanTile } from './ScanTile';
+export { QuickBrewTile } from './QuickBrewTile';
+export { BrewTile } from './BrewTile';
+export { TasteProfileTile } from './TasteProfileTile';
+export { InventoryTile } from './InventoryTile';
+export { StatsTile } from './StatsTile';
+export { HomeDataRow } from './HomeDataRow';
 export { BrewHistoryCard } from './BrewHistoryCard';

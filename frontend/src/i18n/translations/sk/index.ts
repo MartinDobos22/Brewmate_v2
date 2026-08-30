@@ -11,6 +11,7 @@ import { SK_ERRORS } from './errors';
 import { SK_GRINDERS } from './grinders';
 import { SK_HISTORY } from './history';
 import { SK_HOME } from './home';
+import { SK_HOME_TILES } from './homeTiles';
 import { SK_INVENTORY } from './inventory';
 import { SK_NAVIGATION } from './navigation';
 import { SK_ONBOARDING } from './onboarding';
@@ -48,6 +49,7 @@ export const SK_TRANSLATIONS = {
   ...SK_DIAL_IN,
   ...SK_SCANNER,
   ...SK_HOME,
+  ...SK_HOME_TILES,
   ...SK_INVENTORY,
   ...SK_TASTE_PROFILE,
   ...SK_HISTORY,

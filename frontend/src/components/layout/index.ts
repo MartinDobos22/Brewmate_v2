@@ -4,5 +4,7 @@ export { AppProviders } from './AppProviders';
 export type { AppProvidersProps } from './AppProviders';
 export { RootStack } from './RootStack';
 export { TabsNavigator } from './TabsNavigator';
+export { TileRow } from './TileRow';
+export type { TileRowProps } from './TileRow';
 export { TabBarIcon } from './TabBarIcon';
 export type { TabBarIconProps } from './TabBarIcon';

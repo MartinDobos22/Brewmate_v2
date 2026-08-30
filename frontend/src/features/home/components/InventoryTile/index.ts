@@ -1,0 +1,1 @@
+export { InventoryTile } from './InventoryTile';

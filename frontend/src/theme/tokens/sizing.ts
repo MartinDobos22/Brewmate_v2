@@ -41,6 +41,40 @@ export const SIZE = {
   /** The dot that says which step of the brew is running. */
   brewStepDotSize: 10,
   brewProgressHeight: 12,
+
+  /**
+   * The home screen is a grid of tiles rather than a column of cards, so a
+   * tile has a floor: two of them side by side have to stay square-ish on a
+   * small phone, and a tile that collapsed onto its title would read as a list
+   * row with a picture on it.
+   */
+  tileMinHeight: 132,
+  /** The badge a tile's glyph sits in, top left of every tile. */
+  tileBadgeSize: 36,
+  /**
+   * The two rings bleeding out of a tile's top right corner.
+   *
+   * Drawn rather than illustrated: this app ships no artwork, and a geometric
+   * mark built from the same radius scale as everything else stays correct in
+   * both schemes and at any density. The offset is negative on purpose - the
+   * rings are clipped by the tile, which is what makes them read as a
+   * decoration rather than as a diagram.
+   */
+  tileRingOuter: 148,
+  tileRingInner: 96,
+  tileRingOffset: -46,
+  /** The miniature brewing chart on the home screen. */
+  tileChartHeight: 52,
+  /**
+   * One axis of the miniature taste profile. Thinner than the labelled chart's
+   * own bar, because five of these are read as a shape rather than as five
+   * measurements.
+   */
+  tileTrackHeight: 6,
+  /** The smallest a bar in a miniature chart may be drawn at. */
+  tileBarMinHeight: 3,
+  /** One bag in the cupboard tile's freshness strip. */
+  tilePipSize: 10,
 } as const;
 
 /** Dimensions expressed as a share of the parent. */

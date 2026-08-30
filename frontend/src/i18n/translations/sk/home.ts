@@ -21,13 +21,6 @@ export const SK_HOME = {
   homeStartStepDone: 'Hotovo',
   homeStartHide: 'Skryť tieto kroky',
 
-  homeScanTitle: 'Stojíš v obchode?',
   homeScanBody:
     'Poviem ti, či ti tá káva sadne. Netreba na to nič, čo by si už nemal - stačí dotazník.',
-  homeScanAction: 'Poradiť s balíčkom',
-
-  homeQuickBrewTitle: 'Chceš si len uvariť?',
-  homeQuickBrewBody:
-    'Vyber, v čom variš, povedz mi, čo o káve vieš - pokojne nič - a dostaneš recept.',
-  homeQuickBrewAction: 'Rýchle varenie',
 } as const;

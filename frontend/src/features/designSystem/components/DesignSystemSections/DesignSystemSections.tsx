@@ -12,6 +12,7 @@ import { ShapeSection } from '../ShapeSection';
 import { SheetSection } from '../SheetSection';
 import { SpacingSection } from '../SpacingSection';
 import { SurfacesSection } from '../SurfacesSection';
+import { TilesSection } from '../TilesSection';
 import { TypographySection } from '../TypographySection';
 import { ValuesSection } from '../ValuesSection';
 
@@ -33,6 +34,7 @@ export const DesignSystemSections = (): JSX.Element => {
       <ButtonsSection />
       <FormSection />
       <SurfacesSection />
+      <TilesSection />
       <ValuesSection />
       <FeedbackSection />
       <SheetSection />

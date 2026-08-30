@@ -1,63 +1,36 @@
-import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 
-import { Button, Card, QueryState, Text } from '../../../../components/ui';
-import { ROUTES } from '../../../../constants/routes';
+import { Card, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { useBrewLogs } from '../../../brewing/hooks';
+import { useBrewStats } from '../../hooks';
 
 import { BrewHistoryPreview } from './BrewHistoryPreview';
 
-const NOTHING = 0;
-const FIRST_PAGE = { limit: 1 } as const;
-
 /**
- * The brewing history, or what it will be.
+ * What the brewing history will be, for an account that has none.
  *
- * Until there is a cup behind it this card describes itself instead of drawing
- * an empty chart - and it says once why the trouble is worth taking, because
- * "opíš mi kávu" is a favour the user does the app, and a favour deserves a
- * reason.
+ * The one card left on a screen otherwise made of tiles, and deliberately so:
+ * it is the only thing here that has to be read rather than tapped. Three
+ * lines of what will appear after the first brew, and one sentence about why
+ * the trouble is worth taking - because "opíš mi kávu" is a favour the user
+ * does the app, and a favour deserves a reason.
+ *
+ * Once there is a cup behind it the card leaves for good. The tiles above
+ * report the history from then on, and a second card repeating them would be
+ * the empty-frame dashboard this screen exists to avoid.
  */
-export const BrewHistoryCard = (): JSX.Element => {
+export const BrewHistoryCard = (): JSX.Element | null => {
   const { t } = useTranslation();
-  const router = useRouter();
-  const brews = useBrewLogs(FIRST_PAGE);
-  const total = brews.data?.items.length ?? NOTHING;
+  const brews = useBrewStats();
+
+  if (!brews.isReady || brews.hasBrewed) {
+    return null;
+  }
 
   return (
     <Card>
-      <Text variant="titleMedium">
-        {t(
-          total === NOTHING
-            ? TRANSLATION_KEYS.brewHistoryEmptyTitle
-            : TRANSLATION_KEYS.brewHistoryTitle,
-        )}
-      </Text>
-      <QueryState
-        isPending={brews.isPending}
-        isError={brews.isError}
-        error={brews.error}
-        onRetry={(): void => {
-          void brews.refetch();
-        }}
-      />
-      {brews.isSuccess && total === NOTHING ? <BrewHistoryPreview /> : null}
-      {brews.isSuccess && total > NOTHING ? (
-        <>
-          <Text variant="bodySmall" tone="muted">
-            {t(TRANSLATION_KEYS.brewHistoryHasBrewsBody)}
-          </Text>
-          <Button
-            label={t(TRANSLATION_KEYS.brewHistoryOpenAction)}
-            variant="secondary"
-            fullWidth
-            onPress={(): void => {
-              router.push(ROUTES.quickBrew);
-            }}
-          />
-        </>
-      ) : null}
+      <Text variant="titleMedium">{t(TRANSLATION_KEYS.brewHistoryEmptyTitle)}</Text>
+      <BrewHistoryPreview />
     </Card>
   );
 };
