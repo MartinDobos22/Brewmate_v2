@@ -8,6 +8,7 @@
  */
 export const SK_SCANNER = {
   scanTitle: 'Poradím ti v obchode',
+  scanStepCount: 'Krok {current} z {total}',
   scanIntro:
     'Nepotrebujem na to inventár ani históriu varení. Stačí to, čo je napísané na balíčku.',
 
@@ -20,8 +21,10 @@ export const SK_SCANNER = {
   scanPhotoBody:
     'Prečítam z etikety, čo sa dá. Čo neprečítam, nechám prázdne - nikdy si nič nevymyslím.',
   scanPhotoTake: 'Odfotiť',
+  scanPhotoTakeCaption: 'Etiketu prepíšem za teba.',
   scanPhotoChoose: 'Vybrať z galérie',
-  scanPhotoSkip: 'Zadám to radšej ručne',
+  scanPhotoSkip: 'Zadám to ručne',
+  scanPhotoSkipCaption: 'Keď je etiketa nečitateľná alebo nechceš fotiť.',
   scanPhotoReading: 'Čítam etiketu...',
   scanPhotoFailed:
     'Fotku sa mi nepodarilo poslať alebo prečítať. Nevadí - prepíš mi z balíčka, čo vidíš.',
@@ -68,6 +71,7 @@ export const SK_SCANNER = {
     'Z toho, čo som sa dozvedel, sa nedá seriózne povedať, či ti sadne. Radšej to priznám, než aby som hádal.',
   scanVerdictWaiting: 'Rozmýšľam nad ňou...',
   scanVerdictFromHistory: 'Túto kávu som ti už raz hodnotil - hovorím ti to isté, čo vtedy.',
+  scanVerdictFromHistoryOn: 'Túto kávu som ti hodnotil {date} - hovorím ti to isté, čo vtedy.',
   scanVerdictOffline:
     'Nedostal som sa teraz k tomu, aby som to premyslel poriadne. Toto je to, čo viem povedať sám, offline.',
   scanVerdictLocalNotice:

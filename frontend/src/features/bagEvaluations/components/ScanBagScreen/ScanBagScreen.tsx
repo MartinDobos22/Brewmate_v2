@@ -6,6 +6,7 @@ import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { BAG_SCAN_STAGES, type BagScanMode } from '../../constants/bagScan';
 import { useBagScan } from '../../hooks/useBagScan';
 import { ScanHistoryList } from '../ScanHistoryList';
+import { ScanProgress } from '../ScanProgress';
 
 import { ScanStageContent } from './ScanStageContent';
 
@@ -22,6 +23,11 @@ export interface ScanBagScreenProps {
  * it needs no cupboard and no brewing history, only the questionnaire - and
  * when even that is missing it says so instead of guessing. That is why it
  * sits on the home screen rather than three taps inside the inventory.
+ *
+ * The step strip is there because this is the one flow in the app somebody
+ * works through standing in a shop, one-handed, with a bag in the other. The
+ * screen changed under them four times and nothing said whether they were
+ * nearly finished or had just started.
  */
 export const ScanBagScreen = ({ initialMode }: ScanBagScreenProps): JSX.Element => {
   const { t } = useTranslation();
@@ -30,6 +36,7 @@ export const ScanBagScreen = ({ initialMode }: ScanBagScreenProps): JSX.Element 
   return (
     <Screen scrollable>
       <Text variant="headlineSmall">{t(TRANSLATION_KEYS.scanTitle)}</Text>
+      <ScanProgress stage={scan.stage} mode={scan.mode} hasModeStep={initialMode === undefined} />
       <ScanStageContent scan={scan} />
       {scan.stage === BAG_SCAN_STAGES.mode ? <ScanHistoryList /> : null}
     </Screen>

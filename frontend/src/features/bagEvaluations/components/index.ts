@@ -11,3 +11,5 @@ export { BagPhotoStep } from './BagPhotoStep';
 export type { BagPhotoStepProps } from './BagPhotoStep';
 export { ScanOutcomeStep } from './ScanOutcomeStep';
 export type { ScanOutcomeStepProps } from './ScanOutcomeStep';
+export { ScanProgress } from './ScanProgress';
+export type { ScanProgressProps } from './ScanProgress';

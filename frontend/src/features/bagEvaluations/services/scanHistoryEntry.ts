@@ -1,5 +1,7 @@
 import type { BagEvaluation } from '@brewmate/shared';
 
+import { SCAN_OUTCOMES, type ScanOutcome } from '../constants/scanOutcomes';
+
 const NAME_SEPARATOR = ' · ';
 const EMPTY = '';
 const VERDICT_PREVIEW_START = 0;
@@ -17,37 +19,27 @@ export const scanHistoryTitle = (evaluation: BagEvaluation, fallback: string): s
   return name === EMPTY ? fallback : name;
 };
 
-export interface ScanOutcomeLabels {
-  readonly bought: string;
-  readonly left: string;
-  readonly undecided: string;
-}
-
-const outcomeLabel = (wasPurchased: boolean | null, labels: ScanOutcomeLabels): string => {
-  if (wasPurchased === null) {
-    return labels.undecided;
-  }
-
-  return wasPurchased ? labels.bought : labels.left;
-};
+/**
+ * What the app said, cut short.
+ *
+ * The point of the list is recognising a bag, not re-reading the argument -
+ * which is why this is a preview rather than the whole verdict wrapped over
+ * four lines.
+ */
+export const scanVerdictPreview = (evaluation: BagEvaluation): string =>
+  (evaluation.verdictText ?? EMPTY).slice(VERDICT_PREVIEW_START, VERDICT_PREVIEW_LENGTH);
 
 /**
- * The line under a past verdict: what the app said, and what happened next.
+ * What happened after the advice, as a value the screen can colour and label
+ * rather than a sentence already joined into the subtitle.
  *
- * The verdict is cut short rather than wrapped over four lines - the point of
- * the list is recognising a bag, and the full argument is one tap away on the
- * screen that produced it.
+ * This is the only thing the app ever learns about whether it was any good at
+ * this, so it is worth being able to see at a glance down a list.
  */
-export const scanHistorySubtitle = (
-  evaluation: BagEvaluation,
-  labels: ScanOutcomeLabels,
-): string => {
-  const preview = (evaluation.verdictText ?? EMPTY).slice(
-    VERDICT_PREVIEW_START,
-    VERDICT_PREVIEW_LENGTH,
-  );
+export const resolveScanOutcome = (evaluation: BagEvaluation): ScanOutcome => {
+  if (evaluation.wasPurchased === null) {
+    return SCAN_OUTCOMES.undecided;
+  }
 
-  return [outcomeLabel(evaluation.wasPurchased, labels), preview]
-    .filter((part: string): boolean => part !== EMPTY)
-    .join(NAME_SEPARATOR);
+  return evaluation.wasPurchased ? SCAN_OUTCOMES.bought : SCAN_OUTCOMES.left;
 };

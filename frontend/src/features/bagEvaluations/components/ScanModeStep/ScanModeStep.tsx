@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { OptionCard, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
+import { SCAN_ICONS } from '../../constants';
 import { BAG_SCAN_MODES, type BagScanMode } from '../../constants/bagScan';
 
 import { createScanModeStepStyles } from './ScanModeStep.styles';
@@ -35,6 +36,7 @@ export const ScanModeStep = ({ onChoose }: ScanModeStepProps): JSX.Element => {
       <OptionCard
         label={t(TRANSLATION_KEYS.scanModeVerdictTitle)}
         note={t(TRANSLATION_KEYS.scanModeVerdictBody)}
+        icon={SCAN_ICONS.shop}
         onPress={(): void => {
           onChoose(BAG_SCAN_MODES.verdict);
         }}
@@ -42,6 +44,7 @@ export const ScanModeStep = ({ onChoose }: ScanModeStepProps): JSX.Element => {
       <OptionCard
         label={t(TRANSLATION_KEYS.scanModeInventoryTitle)}
         note={t(TRANSLATION_KEYS.scanModeInventoryBody)}
+        icon={SCAN_ICONS.cupboard}
         onPress={(): void => {
           onChoose(BAG_SCAN_MODES.inventory);
         }}
