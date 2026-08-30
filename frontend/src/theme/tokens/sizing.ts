@@ -75,6 +75,17 @@ export const SIZE = {
   tileBarMinHeight: 3,
   /** One bag in the cupboard tile's freshness strip. */
   tilePipSize: 10,
+
+  /**
+   * The mark on the signed-out screens.
+   *
+   * Drawn from the same rings the tiles are decorated with rather than shipped
+   * as artwork: this is the first thing anybody sees, in whichever colour
+   * scheme their phone is set to, and a raster icon would be right in one of
+   * the two and wrong in the other from the day it was added.
+   */
+  brandMarkSize: 64,
+  brandMarkInner: 34,
 } as const;
 
 /** Dimensions expressed as a share of the parent. */
