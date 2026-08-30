@@ -1,1 +1,0 @@
-export { ScanPromptCard } from './ScanPromptCard';

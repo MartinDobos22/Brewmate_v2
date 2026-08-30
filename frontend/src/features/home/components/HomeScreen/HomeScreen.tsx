@@ -1,28 +1,48 @@
 import type { JSX } from 'react';
 
-import { Screen } from '../../../../components/layout';
+import { Screen, TileRow } from '../../../../components/layout';
 import { BrewHistoryCard } from '../BrewHistoryCard';
+import { BrewTile } from '../BrewTile';
 import { GettingStartedCard } from '../GettingStartedCard';
-import { QuickBrewPromptCard } from '../QuickBrewPromptCard';
-import { ScanPromptCard } from '../ScanPromptCard';
+import { HomeDataRow } from '../HomeDataRow';
+import { HomeGreeting } from '../HomeGreeting';
+import { HomeHintTile } from '../HomeHintTile';
+import { QuickBrewTile } from '../QuickBrewTile';
+import { ScanTile } from '../ScanTile';
+import { TasteProfileTile } from '../TasteProfileTile';
 
 /**
- * The first screen of an account with nothing in it.
+ * The home screen, as a grid rather than a column.
  *
- * Deliberately not a dashboard: a dashboard with no data is a set of empty
- * frames, and that is the first impression the whole product would be judged
- * on. Instead it is three things to do, in the order they repay the effort -
- * the shop scanner first, because it is the one that works before Brewmate
- * knows anything at all.
+ * The order is the order things repay attention, and it does not change as the
+ * account fills up: what to do about the coffee right now, then the two ways
+ * to start brewing, then what Brewmate believes and what it has been told.
+ * Tiles rather than cards because these are destinations - a card invites
+ * reading, and nothing on this screen is worth reading for its own sake.
  *
- * Every card here is honest about an account that is still empty, so the same
- * screen carries on working as it fills up.
+ * Three of the rows are allowed to be absent. The getting-started card leaves
+ * once its three steps are done, the hint waits until it knows enough to be
+ * right, and the reporting row does not appear until there is something to
+ * report. What is left on a brand-new account is still four things to do - not
+ * a dashboard with nothing in its frames, which is the state a product gets
+ * judged on.
  */
 export const HomeScreen = (): JSX.Element => (
   <Screen scrollable>
+    <HomeGreeting />
     <GettingStartedCard />
-    <ScanPromptCard />
-    <QuickBrewPromptCard />
+    <HomeHintTile />
+    <TileRow>
+      <ScanTile />
+    </TileRow>
+    <TileRow>
+      <QuickBrewTile />
+      <BrewTile />
+    </TileRow>
+    <TileRow>
+      <TasteProfileTile />
+    </TileRow>
+    <HomeDataRow />
     <BrewHistoryCard />
   </Screen>
 );

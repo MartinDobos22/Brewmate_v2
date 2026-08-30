@@ -1,0 +1,1 @@
+export { TasteProfileTile } from './TasteProfileTile';

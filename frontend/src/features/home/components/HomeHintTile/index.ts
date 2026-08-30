@@ -1,0 +1,1 @@
+export { HomeHintTile } from './HomeHintTile';

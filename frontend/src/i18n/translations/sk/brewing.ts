@@ -51,7 +51,6 @@ export const SK_BREWING = {
   quickBrewError: 'Recept sa nepodarilo pripraviť. Skús to prosím znova.',
   quickBrewSaveError: 'Kávu sa nepodarilo pridať. Skús to prosím znova.',
 
-  brewHistoryTitle: 'Tvoje varenia',
   brewHistoryEmptyTitle: 'Prvé varenie ešte len príde',
   brewHistoryEmptyBody: 'Po prvom uvarení sa tu objaví:',
   brewHistoryEmptyPointRecipe: 'recept, podľa ktorého si varil, aj s dávkou a pomerom,',
@@ -60,7 +59,4 @@ export const SK_BREWING = {
   brewHistoryEmptyWhy:
     'Oplatí sa to: už po pár vareniach viem, či ti mám radiť jemnejšie mletie alebo kratší čas - namiesto toho, aby som hádal.',
   brewHistoryEmptyAction: 'Uvariť prvú kávu',
-  brewHistoryHasBrewsBody:
-    'Prvé varenie máš za sebou. Podrobný prehľad varení pribudne sem, ako ich bude viac.',
-  brewHistoryOpenAction: 'Uvariť ďalšiu',
 } as const;

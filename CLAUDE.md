@@ -225,11 +225,12 @@ frontend/
     │                   brewing, http, time, interpolation
     ├── i18n/           Slovak copy, split by domain under translations/sk/
     ├── components/
-    │   ├── ui/         Button, Card, Text, Input, Chip, OptionCard, Sheet, ListItem,
-    │   │               ChatBubble, Slider, NumberStepper, ProgressBar, EmptyState,
-    │   │               LoadingState, ErrorState, QueryState, ValueDisplay - each
-    │   │               its own folder
-    │   └── layout/     Screen, AppProviders, RootStack, TabsNavigator, TabBarIcon
+    │   ├── ui/         Button, Card, Tile, Text, Input, Chip, OptionCard, Sheet,
+    │   │               ListItem, ChatBubble, Slider, NumberStepper, ProgressBar,
+    │   │               EmptyState, LoadingState, ErrorState, QueryState,
+    │   │               ValueDisplay - each its own folder
+    │   └── layout/     Screen, TileRow, AppProviders, RootStack, TabsNavigator,
+    │                   TabBarIcon
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
     │                   chat, tasteProfile, bagEvaluations, recipeImport,
     │                   espresso, history, onboarding, profile, designSystem);
@@ -260,7 +261,8 @@ frontend/
   made of stays under `src/`. A route file renders one screen component and
   nothing else - no logic, no layout.
 - **Slovak copy is split by domain** under `src/i18n/translations/sk/`
-  (`common`, `auth`, `navigation`, `screens`, `home`, `inventory`, `grinders`,
+  (`common`, `auth`, `navigation`, `screens`, `home`, `homeTiles`, `inventory`,
+  `grinders`,
   `onboarding`, `tasteQuestionsDirect`, `tasteQuestionsIndirect`,
   `equipmentSetup`, `waterAndSets`, `calibration`, `brewing`, `preBrew`,
   `brewMode`, `recipeChat`, `recipeImport`, `dialIn`, `scanner`,
@@ -336,10 +338,50 @@ numbers in question are exactly the ones this product exists to get right.
 The state most users see first, and the one a product is judged on. Nothing
 here is allowed to be a blank screen with the words "žiadne dáta".
 
-- **The home screen is not a dashboard.** A dashboard with no data is a set of
-  empty frames. A new account gets three things to do instead - "Začni tu" -
-  each a tap into the flow it names: the questionnaire, adding or scanning a
-  coffee, and brewing the first cup.
+- **The home screen is a grid of tiles, and a tile is only drawn once it has
+  something to say.** A dashboard with no data is a set of empty frames, and
+  that is the state this product would be judged on. So the reporting row -
+  the cupboard and the week of brewing - is simply absent until there is a bag
+  or a cup behind it, and what a brand-new account gets instead is four things
+  to do: the three "Začni tu" steps, the scanner, quick brewing and the
+  brewing screen. Tiles rather than cards because these are destinations; a
+  card invites reading, and nothing on this screen is worth reading for its own
+  sake.
+- **`Tile` is a card that has been given a shape.** Same radius, same padding,
+  a floor under its height and a share of the row it sits in - both as flex
+  weights, so a tile is correct on its first frame without waiting to be told
+  how wide the phone is. Three tones and no more: `primary` for the one thing
+  the screen most wants pressed, `accent` for the second, `neutral` for
+  everything that reports rather than invites. A screen where every tile is
+  coloured is a screen with no hierarchy at all.
+- **The decoration is drawn, never illustrated.** Two rings clipped by the
+  corner they are pushed out of, built from the same radius and border tokens
+  as everything else. An illustration has a fixed palette and a fixed density
+  and would be wrong in one of the two colour schemes the day it was added; a
+  shape made of tokens is right in both, at any size, forever.
+- **One hint, chosen from the account.** Not a list: five pieces of advice at
+  once is five nobody reads. `resolveHomeHint` walks an order that is the whole
+  point - a profile nobody has filled in, then an empty cupboard, then a bag
+  going off on somebody's shelf, then a fortnight without a cup - and only when
+  there is genuinely nothing to report does it teach one thing instead, picked
+  by the calendar day so it is the same all day and different tomorrow. A card
+  that went blank on a well-kept account would punish exactly the people using
+  the app properly.
+- **A tile reports what it can prove.** The cupboard sums the same page the
+  cupboard screen itself reads, so the two cannot disagree; an unweighed
+  cupboard says "nezvážené" rather than printing a confident nought; and the
+  brewing tile counts a week rather than a lifetime, because one page of logs
+  cannot say how many cups an account has ever made and the profile's own brew
+  count means something else again - it counts the cups that were described.
+  A number on a tile that needs a paragraph beside it is a number that will be
+  misread.
+- **The taste tile draws nothing until there is something behind it.** A
+  profile built from no evidence is a row of neutral bars, and neutral bars
+  drawn neatly stop looking like an absence of evidence and start looking like
+  a considered opinion. Until then the tile says so and leads to the
+  questionnaire. Afterwards it is the same five axes, in the same order,
+  against the same scale as the labelled chart - one picture, not a second
+  opinion drawn differently.
 - **The ticks are read from the account, not from a checklist beside it.**
   `useGettingStarted` asks the profile, the cupboard, the shop verdicts and the
   brew logs, one row each. Somebody who answered the questionnaire from the
@@ -350,11 +392,11 @@ here is allowed to be a blank screen with the words "žiadne dáta".
   hand at any point. The dismissal is the one piece of this that lives in
   `uiStore` rather than on the account, because it is a preference about this
   screen on this phone, like the theme beside it - not progress.
-- **The shop scanner sits above everything else on that screen.** It is the
-  only feature a brand-new account can use in the first minute and get
-  something real back from: it needs no cupboard and no history, only the
-  questionnaire. Burying it three taps inside the inventory would be hiding the
-  one door that is already open.
+- **The shop scanner is the one tile painted in the primary tone**, and it
+  spans the grid rather than sharing a row. It is the only feature a brand-new
+  account can use in the first minute and get something real back from: it
+  needs no cupboard and no history, only the questionnaire. Burying it three
+  taps inside the inventory would be hiding the one door that is already open.
 - **Quick brewing does not need an inventory.** `/quick-brew` asks for the
   method, then for whatever the drinker happens to know about the beans - a
   roast level, a name, or nothing at all - and answers with a recipe whose
@@ -364,10 +406,13 @@ here is allowed to be a blank screen with the words "žiadne dáta".
 - **The empty cupboard offers three ways out**, in the order they suit the
   person reading them: scan a bag, type one in, or - quieter, for somebody with
   nothing at home - go and be advised in a shop.
-- **The empty brewing history describes itself.** Three lines of what will
-  appear after the first brew, and one sentence about why the trouble is worth
-  taking. "Opíš mi kávu" is a favour the user does the app, and a favour
-  deserves a reason.
+- **The empty brewing history describes itself**, and is the one card left on a
+  screen otherwise made of tiles - deliberately, because it is the only thing
+  there to be read rather than tapped. Three lines of what will appear after
+  the first brew, and one sentence about why the trouble is worth taking.
+  "Opíš mi kávu" is a favour the user does the app, and a favour deserves a
+  reason. Once there is a cup behind it the card leaves for good: the tiles
+  above report the history from then on.
 
 ### Reading a coffee bag
 
