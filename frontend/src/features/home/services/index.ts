@@ -2,8 +2,6 @@ export { readGettingStartedSteps, countCompleted } from './readGettingStartedSte
 export type { GettingStartedStep, GettingStartedEvidence } from './readGettingStartedSteps';
 export { formatStepCount } from './formatStepCount';
 export { resolveGreetingKey } from './resolveGreetingKey';
-export { summariseInventory } from './summariseInventory';
-export type { InventorySummary, InventoryHighlight } from './summariseInventory';
 export { summariseBrewWeek } from './summariseBrewWeek';
 export type { BrewWeek } from './summariseBrewWeek';
 export { resolveHomeHint } from './resolveHomeHint';

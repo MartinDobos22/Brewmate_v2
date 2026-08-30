@@ -50,7 +50,8 @@ export type {
   CoffeeBagInfoCardProps,
   BagRecipeHistoryProps,
 } from './CoffeeBagDetailScreen';
-export { CoffeeBagList } from './CoffeeBagList';
-export type { CoffeeBagListProps } from './CoffeeBagList';
 export { AddCoffeeBagSheet, AddCoffeeBagForm } from './AddCoffeeBagSheet';
 export type { AddCoffeeBagSheetProps, AddCoffeeBagFormProps } from './AddCoffeeBagSheet';
+export { InventorySummaryStrip } from './InventorySummaryStrip';
+export { InventoryActionTiles } from './InventoryActionTiles';
+export { CoffeeBagGroups } from './CoffeeBagGroups';

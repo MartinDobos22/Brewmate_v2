@@ -1,6 +1,7 @@
 import { SK_AI_COSTS } from './aiCosts';
 import { SK_AUTH } from './auth';
 import { SK_BREWING } from './brewing';
+import { SK_CUPBOARD_AND_BREW } from './cupboardAndBrew';
 import { SK_BREW_MODE } from './brewMode';
 import { SK_CALIBRATION } from './calibration';
 import { SK_COMMON } from './common';
@@ -44,6 +45,7 @@ export const SK_TRANSLATIONS = {
   ...SK_CALIBRATION,
   ...SK_BREWING,
   ...SK_PRE_BREW,
+  ...SK_CUPBOARD_AND_BREW,
   ...SK_BREW_MODE,
   ...SK_RECIPE_CHAT,
   ...SK_RECIPE_IMPORT,

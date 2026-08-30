@@ -266,8 +266,8 @@ frontend/
   `onboarding`, `tasteQuestionsDirect`, `tasteQuestionsIndirect`,
   `equipmentSetup`, `waterAndSets`, `calibration`, `brewing`, `preBrew`,
   `brewMode`, `recipeChat`, `recipeImport`, `dialIn`, `scanner`,
-  `tasteProfile`, `profileSections`, `history`, `aiCosts`, `errors`,
-  `designSystem`) and merged in
+  `tasteProfile`, `profileSections`, `history`, `aiCosts`, `cupboardAndBrew`,
+  `errors`, `designSystem`) and merged in
   `sk/index.ts`. One file would break the 150-line limit.
   `SK_TRANSLATIONS` is the source of truth for the key list: every future locale
   is typed against it, so a missing translation is a type error.
@@ -535,6 +535,23 @@ a pour-over.
 being brewed _is_ brewing, so this is the tab itself rather than a menu leading
 to one.
 
+- **The questions are cards with a glyph, not rows of chips.** Choosing a
+  coffee turns on two facts a chip has no room for - how much is left and
+  whether the bag is ready - so a row of names alone made the bag that had been
+  resting three days look exactly like the one at its peak. Choosing a brewer
+  is the most visual decision in the app: a V60 and a moka pot are different
+  objects, not different words, and the family printed under each name is what
+  tells somebody who has never met "Origami" what kind of coffee it makes.
+- **The glyph comes from the method's category, never from its key.** Nothing
+  in this application branches on `key` - adding V60 Switch is an insert, not a
+  release - and an icon table keyed by `key` would quietly break that by giving
+  the next seeded method a blank square where every other one has a picture.
+- **The plan card is what turns five answers back into one decision.**
+  Everything on it was chosen further up the screen, in cards somebody has
+  already scrolled past; by the time they reached the button the dose was four
+  screens away and the only way to check what they were about to spend a model
+  call on was to scroll back through all of it. It reports and never edits -
+  two places to set a dose would eventually disagree about what the dose is.
 - **The set is answered in one tap, and it narrows everything below it.**
   Switching to "Chata" is not a label change: the dripper is at home, so the
   methods it makes possible are not offered, and what that place is usually
@@ -890,9 +907,38 @@ a limit legible rather than punitive.
 
 ### The cupboard
 
+- **It is sorted by what to drink this morning, not by what was added last.**
+  `groupBagsByFreshness` puts the shelf in the order somebody standing in front
+  of it reads it: ready now, then what will be lost if it keeps waiting, then
+  what is still fine, then what is not ready yet, then what carries no roast
+  date to judge by at all. Newest-first - what the API returns, and what this
+  screen printed - answers a question nobody asks at a shelf, and it buried the
+  one bag worth opening under two that were still resting. An empty band is
+  left out rather than given a heading with nothing under it.
+- **A group heading is not a bag's badge.** A badge names one bag's state
+  ("Ideálne teraz"); a heading names a shelf and says what to do with it
+  ("Pripravené na varenie"). Reusing one for the other produces headings that
+  read as if the whole group were a single bag.
+- **The ways to fill it are at the top, and they are tiles.** They used to be
+  two full-width grey buttons under the list, which meant the more coffee
+  somebody owned the further they had to scroll to add more. The grinder
+  catalogue is last and quiet: it is a reference book about equipment on a
+  screen about coffee, and at the same weight as the two actions it was
+  competing with them for no reason.
+- **The strip across the top and the home screen's tile are one function.**
+  `summariseInventory` lives in `inventory` for that reason - the two are one
+  tap apart, and a person who can see both within a second is a person who will
+  notice them disagreeing.
 - **A bag is a card, not a list row.** The two things wanted at a glance - how
   much is left and whether it is ready to drink - are facts about the bag, not a
-  subtitle under its name.
+  subtitle under its name. How much is left is drawn as well as written, but
+  only when the bag's own weight is known too: "180 g" means nothing until you
+  know whether the bag held two hundred or a kilo, and a bar drawn against a
+  guessed capacity would be a picture of a measurement nobody took.
+- **The card carries one button, not two.** Opening the coffee is the whole
+  card, so the "Otvoriť" beside "Dopil som ju" was a second copy of a tap the
+  reader had already made - and two buttons of identical weight made the
+  destructive one look like the ordinary choice.
 - **The resting indicator has four bands, not three.** Under five days it is
   still resting, five to twenty-one is the window, and past thirty it is aging.
   The band between them is the honest consequence of the other three: a

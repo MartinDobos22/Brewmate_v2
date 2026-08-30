@@ -8,10 +8,10 @@ import { buildBrewModeRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { EquipmentSetSwitcher } from '../../../inventory/components';
 import { useBrewSetup } from '../../hooks/useBrewSetup';
+import { PreBrewPlanCard } from '../PreBrewPlanCard';
 
 import { PreBrewExtras } from './PreBrewExtras';
 import { PreBrewSections } from './PreBrewSections';
-import { PreBrewSubmit } from './PreBrewSubmit';
 
 /**
  * Everything that gets decided before a single token is spent.
@@ -21,6 +21,11 @@ import { PreBrewSubmit } from './PreBrewSubmit';
  * what water, and how much of each. Only then is a recipe asked for - because
  * a recipe written before those answers is a recipe written for a kitchen
  * nobody is standing in.
+ *
+ * The plan card at the end is what turns that list of questions back into one
+ * decision. Five cards of answers, each scrolled past, used to end at a button
+ * with nothing between them and it; now the whole thing is legible in four
+ * lines directly above the commitment.
  */
 export const PreBrewScreen = (): JSX.Element => {
   const { t } = useTranslation();
@@ -35,7 +40,7 @@ export const PreBrewScreen = (): JSX.Element => {
       </Text>
       <EquipmentSetSwitcher />
       <PreBrewSections setup={setup} />
-      <PreBrewSubmit
+      <PreBrewPlanCard
         setup={setup}
         onWritten={(recipe: Recipe): void => {
           router.replace(buildBrewModeRoute(recipe.id, setup.activeSet?.id));

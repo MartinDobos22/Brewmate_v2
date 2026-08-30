@@ -64,3 +64,7 @@ export { BAG_FRESHNESS, resolveBagFreshness } from './resolveBagFreshness';
 export type { BagFreshness, BagAge } from './resolveBagFreshness';
 export { groupRecipesByMethod } from './groupRecipesByMethod';
 export type { RecipeMethodGroup } from './groupRecipesByMethod';
+export { summariseInventory } from './summariseInventory';
+export type { InventorySummary, InventoryHighlight } from './summariseInventory';
+export { groupBagsByFreshness } from './groupBagsByFreshness';
+export type { BagGroup } from './groupBagsByFreshness';

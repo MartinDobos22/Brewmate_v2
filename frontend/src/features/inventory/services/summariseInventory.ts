@@ -1,15 +1,23 @@
 import type { CoffeeBag } from '@brewmate/shared';
 
-import { BAG_FRESHNESS, resolveBagFreshness, type BagFreshness } from '../../inventory/services';
+import { BAG_FRESHNESS, resolveBagFreshness, type BagFreshness } from './resolveBagFreshness';
 
 const NOTHING = 0;
 
-/** One bag worth naming on the home screen, and how old it is. */
+/** One bag worth naming on a screen that can only name one, and how old it is. */
 export interface InventoryHighlight {
   readonly name: string;
   readonly days: number;
 }
 
+/**
+ * What the cupboard adds up to.
+ *
+ * Lives in `inventory` rather than beside either screen that draws it: the
+ * home tile and the cupboard's own header report the same numbers, and two
+ * copies of this arithmetic would eventually disagree in front of somebody who
+ * can see both within one tap.
+ */
 export interface InventorySummary {
   readonly bagCount: number;
   readonly readyCount: number;

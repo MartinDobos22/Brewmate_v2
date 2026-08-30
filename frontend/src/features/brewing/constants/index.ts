@@ -7,3 +7,8 @@ export { AMOUNT_FIELDS, AMOUNT_STEPS } from './preBrew';
 export type { AmountField } from './preBrew';
 export { BREW_RUN_STATES, BREW_TICK_MS, BREW_CUE_LEAD_SECONDS } from './brewMode';
 export type { BrewRunState } from './brewMode';
+export {
+  BREW_METHOD_CATEGORY_ICONS,
+  BREW_METHOD_CATEGORY_LABEL_KEYS,
+  PRE_BREW_COFFEE_ICONS,
+} from './brewMethodIcons';

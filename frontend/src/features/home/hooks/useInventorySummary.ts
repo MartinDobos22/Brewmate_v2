@@ -1,7 +1,7 @@
 import type { CoffeeBag } from '@brewmate/shared';
 
 import { useCoffeeBags } from '../../inventory/hooks';
-import { summariseInventory, type InventorySummary } from '../services/summariseInventory';
+import { summariseInventory, type InventorySummary } from '../../inventory/services';
 
 const NO_BAGS: readonly CoffeeBag[] = [];
 
