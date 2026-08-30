@@ -61,7 +61,6 @@ export const SK_TASTE_PROFILE = {
   profileMilkAlways: 'Vždy',
   profileMilkNone: 'Nepovedal si',
 
-  profileRetakeTitle: 'Doladiť chuť',
   profileRetakeAction: 'Vyplniť dotazník znova',
   profileTuneAction: 'Nastaviť hodnoty ručne',
   profileTuneTitle: 'Ručné doladenie',
@@ -71,7 +70,6 @@ export const SK_TASTE_PROFILE = {
 
   profileEquipmentTitle: 'Vybavenie',
   profileEquipmentEmpty: 'Zatiaľ nemáš zapísané žiadne vybavenie.',
-  profileEquipmentManage: 'Upraviť vybavenie',
   profileWaterTitle: 'Voda',
   profileSetsTitle: 'Zostavy',
   profileTypeGrinder: 'Mlynček',

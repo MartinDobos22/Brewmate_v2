@@ -34,6 +34,8 @@ export const SK_DESIGN_SYSTEM = {
   dsChipDisabled: 'Neaktívny',
   dsListItemTitle: 'Etiópia Guji',
   dsListItemSubtitle: 'Washed · Filter',
+  dsSectionHeadingTitle: 'Nadpis skupiny',
+  dsSectionHeadingCaption: 'Nemá vlastný povrch - inak by súťažil s kartami pod sebou.',
   dsCardTitle: 'Karta',
   dsCardBody: 'Karta nemá tieň. Má vlastný povrch a jemný outline.',
   dsTilePrimaryTitle: 'Hlavná dlaždica',

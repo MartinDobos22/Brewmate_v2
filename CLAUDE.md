@@ -225,10 +225,10 @@ frontend/
     │                   brewing, http, time, interpolation
     ├── i18n/           Slovak copy, split by domain under translations/sk/
     ├── components/
-    │   ├── ui/         Button, Card, Tile, Text, Input, Chip, OptionCard, Sheet,
-    │   │               ListItem, ChatBubble, Slider, NumberStepper, ProgressBar,
-    │   │               EmptyState, LoadingState, ErrorState, QueryState,
-    │   │               ValueDisplay - each its own folder
+    │   ├── ui/         Button, Card, Tile, SectionHeading, Text, Input, Chip,
+    │   │               OptionCard, Sheet, ListItem, ChatBubble, Slider,
+    │   │               NumberStepper, ProgressBar, EmptyState, LoadingState,
+    │   │               ErrorState, QueryState, ValueDisplay - each its own folder
     │   └── layout/     Screen, TileRow, AppProviders, RootStack, TabsNavigator,
     │                   TabBarIcon
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
@@ -266,7 +266,8 @@ frontend/
   `onboarding`, `tasteQuestionsDirect`, `tasteQuestionsIndirect`,
   `equipmentSetup`, `waterAndSets`, `calibration`, `brewing`, `preBrew`,
   `brewMode`, `recipeChat`, `recipeImport`, `dialIn`, `scanner`,
-  `tasteProfile`, `history`, `aiCosts`, `errors`, `designSystem`) and merged in
+  `tasteProfile`, `profileSections`, `history`, `aiCosts`, `errors`,
+  `designSystem`) and merged in
   `sk/index.ts`. One file would break the 150-line limit.
   `SK_TRANSLATIONS` is the source of truth for the key list: every future locale
   is typed against it, so a missing translation is a type error.
@@ -851,9 +852,11 @@ a limit legible rather than punitive.
   on purpose: this is a copy on its way somewhere else, and leaving a second
   copy of somebody's entire account in app storage would be keeping more of
   their data than they asked for, not less.
-- **It sits next to the deletion and says so.** The two answer the same question
-  about what this account _is_, and somebody deciding whether to leave is
-  entitled to see what leaving takes with it.
+- **It sits directly above the deletion**, in the account group at the bottom
+  of the profile screen, and says so. The two answer the same question about
+  what this account _is_, and somebody deciding whether to leave is entitled to
+  see what leaving takes with it - which is only true if they are on the same
+  screen.
 - **Nothing about it is cached.** A mutation rather than a query, because
   reading every row an account owns should never happen because a screen was
   opened - and a copy of it in the query cache is a copy nobody asked us to
@@ -1051,6 +1054,24 @@ five axes as a bar chart, the flavour tags it has an opinion about, the
 confidence indicator, the cupboard, the water, the sets, and the two ways out
 of the product.
 
+- **It is four groups, not a column of cards.** The screen answers four
+  different questions - what the app believes about you, what you brew with,
+  what the app itself is doing, and what your account is - and read as eight
+  cards of identical weight, finding any one of them meant reading every card
+  title. `SectionHeading` labels each group and has no surface of its own: a
+  label that looks like the content it labels is not a label.
+- **Who is signed in is at the top, and only that.** An address is identity,
+  and identity belongs above what the screen says about that person rather than
+  buried seven scrolls down beside the way out. What can be _done_ to the
+  account stays in the account group at the bottom, where somebody goes
+  deliberately.
+- **A card that ends in a second heading is a card asking to be two.** Reading
+  the profile and correcting it are different acts, so they are different
+  cards; signing out and deleting the account likewise.
+- **The two destinations are tiles**, the same ones the home screen is built
+  from. Both are places to go rather than things to read, and a button inside a
+  card whose heading had been borrowed from the screen it led to was the least
+  legible thing on this page.
 - **The confidence line matters more than the chart.** A profile built from one
   questionnaire is a guess, and a guess drawn as a neat bar chart stops looking
   like one. `confidenceLevel` is shown as one of four words rather than a

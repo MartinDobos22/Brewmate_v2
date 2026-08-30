@@ -48,7 +48,6 @@ export const SK_AUTH = {
   authVerifiedNotice: 'E-mail je overený.',
   authVerifyContinueAction: 'Pokračovať do aplikácie',
 
-  authAccountTitle: 'Účet',
   authAccountEmailUnknown: 'Účet bez e-mailu',
   authSignOutAction: 'Odhlásiť sa',
   authDeleteAccountTitle: 'Zmazanie účtu',

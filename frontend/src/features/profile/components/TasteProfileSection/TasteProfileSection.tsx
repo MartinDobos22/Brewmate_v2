@@ -1,9 +1,7 @@
-import { useState, type JSX } from 'react';
+import type { JSX } from 'react';
 
-import { Button, Card, QueryState, Text } from '../../../../components/ui';
+import { Card, QueryState, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { ONBOARDING_STEPS } from '../../../onboarding/constants';
-import { useOnboardingStepLink } from '../../../onboarding/hooks';
 import {
   ConfidenceBoost,
   ConfidenceIndicator,
@@ -11,7 +9,6 @@ import {
   TasteProfileChart,
 } from '../../../tasteProfile/components';
 import { useTasteProfile } from '../../../tasteProfile/hooks';
-import { TasteTuningSheet } from '../TasteTuningSheet';
 
 import { TastePreferenceRows } from './TastePreferenceRows';
 
@@ -19,15 +16,15 @@ import { TastePreferenceRows } from './TastePreferenceRows';
  * What Brewmate believes about this person's taste, and how much of it it has
  * actually earned.
  *
- * Both ways of changing it are offered side by side: answering the
- * questionnaire again, which is evidence, and moving the sliders, which is an
- * instruction. The second overrules the first, and should.
+ * Reporting only. The two ways of correcting it are the card underneath,
+ * because this one already carries four things - the chart, the two answers
+ * that are a choice rather than a position, the flavours and the confidence -
+ * and a card that ended in two buttons under a second heading of its own was a
+ * card asking to be two cards.
  */
 export const TasteProfileSection = (): JSX.Element => {
   const { t } = useTranslation();
   const { data: profile, isPending, isError, error, refetch } = useTasteProfile();
-  const openStep = useOnboardingStepLink();
-  const [tuning, setTuning] = useState(false);
 
   if (isPending || isError) {
     return (
@@ -50,30 +47,6 @@ export const TasteProfileSection = (): JSX.Element => {
       <FlavorAffinityChips affinities={profile.flavorAffinities} />
       <ConfidenceIndicator profile={profile} />
       <ConfidenceBoost profile={profile} />
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileRetakeTitle)}</Text>
-      <Button
-        label={t(TRANSLATION_KEYS.profileRetakeAction)}
-        variant="secondary"
-        fullWidth
-        onPress={(): void => {
-          openStep(ONBOARDING_STEPS.taste);
-        }}
-      />
-      <Button
-        label={t(TRANSLATION_KEYS.profileTuneAction)}
-        variant="tertiary"
-        fullWidth
-        onPress={(): void => {
-          setTuning(true);
-        }}
-      />
-      <TasteTuningSheet
-        visible={tuning}
-        profile={profile}
-        onClose={(): void => {
-          setTuning(false);
-        }}
-      />
     </Card>
   );
 };

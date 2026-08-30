@@ -16,6 +16,7 @@ import { SK_INVENTORY } from './inventory';
 import { SK_NAVIGATION } from './navigation';
 import { SK_ONBOARDING } from './onboarding';
 import { SK_PRE_BREW } from './preBrew';
+import { SK_PROFILE_SECTIONS } from './profileSections';
 import { SK_RECIPE_CHAT } from './recipeChat';
 import { SK_RECIPE_IMPORT } from './recipeImport';
 import { SK_SCANNER } from './scanner';
@@ -52,6 +53,7 @@ export const SK_TRANSLATIONS = {
   ...SK_HOME_TILES,
   ...SK_INVENTORY,
   ...SK_TASTE_PROFILE,
+  ...SK_PROFILE_SECTIONS,
   ...SK_HISTORY,
   ...SK_AI_COSTS,
   ...SK_ERRORS,

@@ -12,3 +12,8 @@ export type { AiUsageWindowCardProps } from './AiUsageWindowCard';
 export { AiCostScreen, AiCostBreakdown } from './AiCostScreen';
 export type { AiCostBreakdownProps } from './AiCostScreen';
 export { AccountDataCard } from './AccountDataCard';
+export { ProfileHeader } from './ProfileHeader';
+export { TasteCorrectionCard } from './TasteCorrectionCard';
+export { ProfileToolTiles } from './ProfileToolTiles';
+export { AppearanceCard } from './AppearanceCard';
+export { DeveloperTile } from './DeveloperTile';
