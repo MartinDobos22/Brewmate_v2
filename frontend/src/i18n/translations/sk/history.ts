@@ -14,6 +14,7 @@ export const SK_HISTORY = {
   historyTimelineEmptyBody:
     'Keď na túto kávu uvaríš prvý recept, nájdeš tu jeho verzie aj to, čo si o nich napísal.',
   historyTimelineOpenAction: 'Ako sa to vyvíjalo',
+  historyTimelineEmptyAction: 'Uvariť a začať príbeh',
 
   historyVersionLabel: 'Verzia {number}',
   historyVersionLatest: 'Najnovšia',

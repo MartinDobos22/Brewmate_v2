@@ -1,10 +1,11 @@
 import type { RecipeTimelineEntry } from '@brewmate/shared';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { Screen } from '../../../../components/layout';
 import { EmptyState, QueryState, Text } from '../../../../components/ui';
+import { buildBrewRoute, ROUTES } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { useRecipeTimeline } from '../../hooks';
@@ -22,10 +23,16 @@ const NOTHING = 0;
  * this is what was said about the cup, this is what changed because of it. A
  * flat list of recipes with dates carries the same rows and none of the
  * argument, which is why this screen exists separately from the cupboard.
+ *
+ * A line with nothing on it yet leads to the thing that would start it,
+ * carrying the bag it was opened for. An empty screen with nothing to press is
+ * a dead end, and this one is reached from a coffee somebody was already
+ * looking at.
  */
 export const RecipeTimelineScreen = (): JSX.Element => {
   const styles = useThemedStyles(createTimelineScreenStyles);
   const { t } = useTranslation();
+  const router = useRouter();
   const params = readTimelineParams(useLocalSearchParams());
   const timeline = useRecipeTimeline(params);
 
@@ -53,6 +60,17 @@ export const RecipeTimelineScreen = (): JSX.Element => {
         <EmptyState
           title={t(TRANSLATION_KEYS.historyTimelineEmptyTitle)}
           description={t(TRANSLATION_KEYS.historyTimelineEmptyBody)}
+          actions={[
+            {
+              label: t(TRANSLATION_KEYS.historyTimelineEmptyAction),
+              variant: 'primary',
+              onPress: (): void => {
+                router.push(
+                  params.bagId === undefined ? ROUTES.brew : buildBrewRoute(params.bagId),
+                );
+              },
+            },
+          ]}
         />
       ) : null}
 
