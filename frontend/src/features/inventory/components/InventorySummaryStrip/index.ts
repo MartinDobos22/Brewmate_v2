@@ -1,0 +1,1 @@
+export { InventorySummaryStrip } from './InventorySummaryStrip';

@@ -3,7 +3,16 @@ import { StyleSheet } from 'react-native';
 import type { Theme, ViewStyles } from '../../../theme';
 
 type OptionCardStyleMap = ViewStyles<
-  'base' | 'unselected' | 'selected' | 'pressed' | 'disabled' | 'content'
+  | 'base'
+  | 'unselected'
+  | 'selected'
+  | 'pressed'
+  | 'disabled'
+  | 'row'
+  | 'badge'
+  | 'badgeSelected'
+  | 'content'
+  | 'trailing'
 >;
 
 /**
@@ -28,5 +37,20 @@ export const createOptionCardStyles = (theme: Theme): OptionCardStyleMap =>
     },
     pressed: { opacity: theme.opacity.pressed },
     disabled: { opacity: theme.opacity.disabled },
-    content: { gap: theme.spacing.xxs },
+    row: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md },
+    /**
+     * The glyph's disc, which is what makes a column of these scannable at
+     * arm's length: the eye finds a shape before it reads a word.
+     */
+    badge: {
+      width: theme.size.tileBadgeSize,
+      height: theme.size.tileBadgeSize,
+      borderRadius: theme.shape.avatar,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.surfaceContainer,
+    },
+    badgeSelected: { backgroundColor: theme.colors.surface },
+    content: { flexShrink: 1, flexGrow: 1, flexBasis: 0, gap: theme.spacing.xxs },
+    trailing: { alignItems: 'flex-end' },
   });

@@ -2,13 +2,14 @@ import type { CoffeeBag } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Card, Chip, Input, Text } from '../../../../components/ui';
+import { Card, Input, OptionCard, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { formatGrams } from '../../../../lib/formatters';
 import { useThemedStyles } from '../../../../theme';
 import { useCoffeeBags } from '../../../inventory/hooks';
+import { PRE_BREW_COFFEE_ICONS } from '../../constants';
 
 import { createPreBrewCoffeeSectionStyles } from './PreBrewCoffeeSection.styles';
+import { PreBrewBagOption } from './PreBrewBagOption';
 
 export interface PreBrewCoffeeSectionProps {
   readonly bag: CoffeeBag | null;
@@ -20,11 +21,13 @@ export interface PreBrewCoffeeSectionProps {
 const NOTHING = 0;
 const NONE: readonly CoffeeBag[] = [];
 
-const bagLabel = (bag: CoffeeBag, remaining: string): string =>
-  bag.remainingGrams === null ? bag.name : `${bag.name} · ${remaining}`;
-
 /**
  * Which coffee, or the honest answer that it is not written down.
+ *
+ * Cards rather than chips, because choosing what to brew is a decision made on
+ * two facts a chip has no room for: how much is left, and whether the bag is
+ * ready. A row of names alone made the bag that had been resting three days
+ * look exactly like the one at its peak.
  *
  * "Nemám ju zapísanú" sits beside the bags at the same weight, because the
  * whole promise of this app is that nobody has to fill in a database before
@@ -50,22 +53,18 @@ export const PreBrewCoffeeSection = ({
           {t(TRANSLATION_KEYS.preBrewCoffeeEmpty)}
         </Text>
       ) : (
-        <View style={styles.chips}>
+        <View style={styles.options}>
           {bags.map((item: CoffeeBag): JSX.Element => (
-            <Chip
+            <PreBrewBagOption
               key={item.id}
-              label={bagLabel(
-                item,
-                `${t(TRANSLATION_KEYS.preBrewCoffeeRemaining)} ${formatGrams(item.remainingGrams ?? NOTHING)}`,
-              )}
+              bag={item}
               selected={bag?.id === item.id}
-              onPress={(): void => {
-                onChooseBag(item);
-              }}
+              onChoose={onChooseBag}
             />
           ))}
-          <Chip
+          <OptionCard
             label={t(TRANSLATION_KEYS.preBrewCoffeeNone)}
+            icon={PRE_BREW_COFFEE_ICONS.unknown}
             selected={bag === null}
             onPress={(): void => {
               onChooseBag(null);

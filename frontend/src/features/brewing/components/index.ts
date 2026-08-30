@@ -14,3 +14,5 @@ export { QuickBrewScreen } from './QuickBrewScreen';
 export { QuickBrewMethodStep } from './QuickBrewMethodStep';
 export { QuickBrewCoffeeStep } from './QuickBrewCoffeeStep';
 export { QuickBrewRecipeStep } from './QuickBrewRecipeStep';
+export { PreBrewPlanCard } from './PreBrewPlanCard';
+export type { PreBrewPlanCardProps } from './PreBrewPlanCard';

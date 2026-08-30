@@ -2,7 +2,7 @@ import type { InterpolationValues } from '../../../lib/text';
 import { HOME_HINT_IDS, HOME_HINT_TIPS, type HomeHintId } from '../constants/homeHints';
 import { HOME_STATS } from '../constants/homeTiles';
 
-import type { InventoryHighlight } from './summariseInventory';
+import type { InventoryHighlight } from '../../inventory/services';
 
 const NOTHING = 0;
 
