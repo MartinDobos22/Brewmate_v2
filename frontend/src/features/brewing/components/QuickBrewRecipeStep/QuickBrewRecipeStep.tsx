@@ -3,7 +3,7 @@ import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { Button, Card, Text } from '../../../../components/ui';
-import { ROUTES } from '../../../../constants/routes';
+import { buildBrewModeRoute, ROUTES } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { ConfidenceNotice } from '../../../tasteProfile/components';
@@ -18,7 +18,13 @@ export interface QuickBrewRecipeStepProps {
 }
 
 /**
- * The recipe, and the offer that comes after it rather than before it.
+ * The recipe, the way to brew it, and the offer that comes after both.
+ *
+ * Brewing it is the primary action, and until now it was missing entirely:
+ * the flow wrote a recipe to the database, threw away the only handle on it
+ * and offered a choice between filing the coffee and going home. Somebody who
+ * asked for a recipe wants to make coffee, and everything this product learns
+ * comes from the cup and the sentence after it.
  *
  * The cupboard is proposed once the coffee has been brewed, when the person
  * knows whether the bag is worth writing down - not as a gate in front of the
@@ -32,6 +38,9 @@ export const QuickBrewRecipeStep = ({ brew }: QuickBrewRecipeStepProps): JSX.Ele
   if (brew.method === undefined || brew.params === undefined) {
     return null;
   }
+
+  // Bound to a local so the check below narrows inside the press handler.
+  const { recipe } = brew;
 
   return (
     <View style={styles.wrapper}>
@@ -48,6 +57,20 @@ export const QuickBrewRecipeStep = ({ brew }: QuickBrewRecipeStepProps): JSX.Ele
       <Text variant="bodySmall" tone="muted">
         {t(TRANSLATION_KEYS.quickBrewRecipeNoBagNote)}
       </Text>
+      {recipe === undefined ? null : (
+        <View style={styles.offer}>
+          <Button
+            label={t(TRANSLATION_KEYS.quickBrewBrewAction)}
+            fullWidth
+            onPress={(): void => {
+              router.replace(buildBrewModeRoute(recipe.id));
+            }}
+          />
+          <Text variant="labelSmall" tone="muted">
+            {t(TRANSLATION_KEYS.quickBrewBrewHint)}
+          </Text>
+        </View>
+      )}
       <Card>
         <View style={styles.offer}>
           <Text variant="titleMedium">{t(TRANSLATION_KEYS.quickBrewAddToInventoryTitle)}</Text>
@@ -61,6 +84,7 @@ export const QuickBrewRecipeStep = ({ brew }: QuickBrewRecipeStepProps): JSX.Ele
           ) : null}
           <Button
             label={t(TRANSLATION_KEYS.quickBrewAddToInventoryAction)}
+            variant="secondary"
             fullWidth
             loading={brew.isPending}
             onPress={(): void => {

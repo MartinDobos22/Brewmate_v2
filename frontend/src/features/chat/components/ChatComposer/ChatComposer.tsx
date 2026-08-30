@@ -52,7 +52,7 @@ export const ChatComposer = ({
     <View style={styles.wrapper}>
       <ChatQuickChips disabled={isAnswering} onPick={setDraft} />
       <Input
-        label={t(TRANSLATION_KEYS.recipeChatTitle)}
+        label={t(TRANSLATION_KEYS.recipeChatInputLabel)}
         placeholder={t(TRANSLATION_KEYS.recipeChatPlaceholder)}
         value={draft}
         onChangeText={setDraft}

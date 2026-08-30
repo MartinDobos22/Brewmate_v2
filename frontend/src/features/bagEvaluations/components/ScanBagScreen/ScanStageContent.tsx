@@ -39,7 +39,11 @@ export const ScanStageContent = ({ scan }: { readonly scan: BagScan }): JSX.Elem
       <LoadingState label={t(TRANSLATION_KEYS.scanVerdictWaiting)} />
     ) : (
       <>
-        <BagVerdictCard verdict={scan.verdict.view} />
+        <BagVerdictCard
+          verdict={scan.verdict.view}
+          coffeeName={scan.label.name}
+          roaster={scan.label.roaster}
+        />
         <ScanOutcomeStep scan={scan} />
       </>
     );

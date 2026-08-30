@@ -6,6 +6,7 @@ import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { formatGrams } from '../../../../lib/formatters';
 import { useThemedStyles } from '../../../../theme';
 import type { BrewTimelineStep } from '../../services/resolveBrewTimeline';
+import { BrewStepProgress } from '../BrewStepProgress';
 
 import { createBrewStepPanelStyles } from './BrewStepPanel.styles';
 
@@ -35,6 +36,7 @@ export const BrewStepPanel = ({
 
   return (
     <View style={styles.wrapper}>
+      <BrewStepProgress stepNumber={stepNumber} total={total} />
       <Text variant="labelMedium" tone="muted" align="center">
         {t(TRANSLATION_KEYS.brewModeStepOf, { current: stepNumber, total })}
       </Text>

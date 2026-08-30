@@ -487,7 +487,25 @@ The first thing in Brewmate that asks a model anything, and the reason
 - **A coffee already judged is answered from that verdict.** A shelf is exactly
   where somebody picks up the same bag a second time, and advice that comes out
   differently every time it is asked for is advice nobody can rely on. The card
-  says which afternoon it was given, and `/scan` lists everything ever judged.
+  prints the afternoon it was given - `writtenAt`, formatted in the reader's own
+  timezone, because "hovorím ti to isté, čo vtedy" is unverifiable by the one
+  person who could check it unless it says when "vtedy" was. `/scan` lists
+  everything ever judged, each entry carrying what happened afterwards as its
+  own labelled line: whether the bag was bought is the only thing this app ever
+  learns about whether it was any good at this.
+- **The card names the coffee it is an opinion about.** Obvious in the second
+  after a scan and useless the moment somebody has put that bag down and picked
+  up another, or come back to the screen a minute later. An opinion whose
+  subject is not written on it is one that gets attached to the wrong coffee.
+- **The sentence is set at the size of an answer**, not as body text under a
+  label - this is the screen the whole feature exists for. What is emphasised
+  is the sentence and never a verdict level: the card carries no colour that
+  would grade the coffee, because a grade in front of a shelf reads as a
+  measurement of somebody's taste and nobody has measured that.
+- **A reason is marked with a bullet, never a tick.** Half of them argue
+  against the coffee - "praženie je iné, než aké ti zvykne sadnúť" is a reason,
+  and as welcome as one for it - and a green check beside that sentence would
+  turn the argument into an endorsement of itself.
 - **The three offline rules survive as the fallback.** No signal, no provider,
   a model that will not answer - the roast against what this person reaches for,
   the printed notes against what they like, and the roast date against the
@@ -509,11 +527,23 @@ The first thing in Brewmate that asks a model anything, and the reason
   carrier bag is a row in the cupboard. Guessing wrong would put a verdict in
   front of somebody who already owns the coffee. The cupboard's own buttons
   skip the question with `?mode=inventory`, because it already knows.
-- **The photograph is an offer, not a gate.** "Zadám to radšej ručne" sits
-  beside the camera at the same weight, and every failure along the way - a
-  refused permission, an upload that will not go, a label nothing could be read
-  from - lands on the same form with whatever was read so far. A build with no
-  storage bucket hides the camera rather than failing when it is pressed.
+- **The photograph is an offer, not a gate.** "Zadám to ručne" is a tile the
+  same size as the camera, beside it rather than under it, and every failure
+  along the way - a refused permission, an upload that will not go, a label
+  nothing could be read from - lands on the same form with whatever was read so
+  far. Stacked as the third of three buttons it read as the thing you fall back
+  to once the two above have failed you, which is the opposite of what it is.
+  The library sits underneath and quieter: it is neither path, it is the same
+  photograph taken earlier. A build with no storage bucket hides the camera
+  rather than failing when it is pressed.
+- **The flow says how far through it you are.** This is the one thing in the
+  app somebody works through standing in a shop, one-handed, with a bag in the
+  other, and "how much more of this is there" is a fair question there. The
+  count cannot be a constant: a scan opened from the cupboard skips the first
+  question and a bag being written down never reaches a verdict, so
+  `resolveScanSteps` builds the list for the scan actually happening. The final
+  screen is outside the count - it is what happened, not a step to get
+  through.
 - **The upload is retried with a widening wait.** The failure this is built for
   is a signal that comes and goes: inside a shop an upload fails, and a few
   seconds later it does not. Three attempts with doubling waits span several

@@ -22,6 +22,7 @@ export {
   AUTH_GROUP_SEGMENT,
   buildBagRoute,
   buildScanRoute,
+  buildBrewRoute,
   buildBrewModeRoute,
   buildRecipeChatRoute,
   buildDialInRoute,

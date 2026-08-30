@@ -12,6 +12,7 @@ import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import type { RecipeConversation } from '../../hooks';
 import { ChatComposer } from '../ChatComposer';
+import { RecipeChatHeader } from '../RecipeChatHeader';
 import { RecipePatchCard } from '../RecipePatchCard';
 
 import { createRecipeChatScreenStyles } from './RecipeChatScreen.styles';
@@ -41,8 +42,11 @@ export const RecipeChatBody = ({ recipe, conversation }: RecipeChatBodyProps): J
   const { t } = useTranslation();
   const wasConstrained = hasAnyConstraint(recipe.params.constraints ?? NO_CONSTRAINTS);
 
+  const current = conversation.adjusted ?? recipe;
+
   return (
     <View style={styles.wrapper}>
+      <RecipeChatHeader recipe={current} />
       {conversation.messages.length === NOTHING ? (
         <ChatBubble
           message={t(TRANSLATION_KEYS.recipeChatOpening)}
@@ -83,7 +87,7 @@ export const RecipeChatBody = ({ recipe, conversation }: RecipeChatBodyProps): J
         hasFailed={conversation.hasFailed}
         onSend={conversation.say}
       />
-      <RecipeChatSaveRow recipe={conversation.adjusted ?? recipe} />
+      <RecipeChatSaveRow recipe={current} />
     </View>
   );
 };

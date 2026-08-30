@@ -16,3 +16,5 @@ export { QuickBrewCoffeeStep } from './QuickBrewCoffeeStep';
 export { QuickBrewRecipeStep } from './QuickBrewRecipeStep';
 export { PreBrewPlanCard } from './PreBrewPlanCard';
 export type { PreBrewPlanCardProps } from './PreBrewPlanCard';
+export { BrewStepProgress } from './BrewStepProgress';
+export type { BrewStepProgressProps } from './BrewStepProgress';

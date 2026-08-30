@@ -6,8 +6,7 @@ import { QueryState } from '../../../../components/ui';
 import { useRecipes } from '../../../brewing/hooks';
 import { useCoffeeBag } from '../../hooks';
 
-import { BagRecipeHistory } from './BagRecipeHistory';
-import { CoffeeBagInfoCard } from './CoffeeBagInfoCard';
+import { CoffeeBagDetailBody } from './CoffeeBagDetailBody';
 
 const NO_RECIPES: readonly Recipe[] = [];
 
@@ -37,10 +36,7 @@ export const CoffeeBagDetailScreen = ({ bagId }: CoffeeBagDetailScreenProps): JS
         }}
       />
       {bag.data === undefined ? null : (
-        <>
-          <CoffeeBagInfoCard bag={bag.data} />
-          <BagRecipeHistory recipes={recipes.data?.items ?? NO_RECIPES} bagId={bag.data.id} />
-        </>
+        <CoffeeBagDetailBody bag={bag.data} recipes={recipes.data?.items ?? NO_RECIPES} />
       )}
     </Screen>
   );

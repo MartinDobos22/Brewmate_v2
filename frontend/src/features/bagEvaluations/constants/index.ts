@@ -21,3 +21,6 @@ export {
   BAG_PHOTO_PATH_SEPARATOR,
   BAG_CAPTURE_RESULTS,
 } from './bagPhoto';
+export { SCAN_ICONS } from './scanIcons';
+export { SCAN_OUTCOMES, SCAN_OUTCOME_LABEL_KEYS, SCAN_OUTCOME_TONES } from './scanOutcomes';
+export type { ScanOutcome } from './scanOutcomes';

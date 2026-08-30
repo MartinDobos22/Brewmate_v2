@@ -24,6 +24,10 @@ export interface InsightsCardProps {
  * ranking three cups: "najčastejšie Etiópia" means one thing after forty cups
  * and nothing at all after three, and a report that did not know the
  * difference would be the first thing on this screen nobody believes.
+ *
+ * The screen carries the heading and the denominator now, so this card does
+ * not repeat them. A card that introduced the page it sits on pushed the
+ * page's own title below whatever was above it.
  */
 export const InsightsCard = ({ insights }: InsightsCardProps): JSX.Element => {
   const styles = useThemedStyles(createInsightsCardStyles);
@@ -33,13 +37,6 @@ export const InsightsCard = ({ insights }: InsightsCardProps): JSX.Element => {
 
   return (
     <Card>
-      <View style={styles.header}>
-        <Text variant="titleMedium">{t(TRANSLATION_KEYS.insightsTitle)}</Text>
-        <Text variant="bodySmall" tone="muted">
-          {t(TRANSLATION_KEYS.insightsSubtitle, { count: insights.brewCount })}
-        </Text>
-      </View>
-
       {groups.length === NOTHING ? (
         <>
           <Text variant="titleSmall">{t(TRANSLATION_KEYS.insightsTooFewTitle)}</Text>

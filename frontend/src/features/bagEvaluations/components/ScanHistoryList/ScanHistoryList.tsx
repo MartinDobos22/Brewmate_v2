@@ -2,13 +2,13 @@ import type { BagEvaluation } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { ListItem, Text } from '../../../../components/ui';
+import { Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { useBagEvaluations } from '../../hooks';
-import { scanHistoryTitle, scanHistorySubtitle } from '../../services/scanHistoryEntry';
 
 import { createScanHistoryListStyles } from './ScanHistoryList.styles';
+import { ScanHistoryEntry } from './ScanHistoryEntry';
 
 const NOTHING = 0;
 
@@ -40,16 +40,7 @@ export const ScanHistoryList = (): JSX.Element | null => {
         {t(TRANSLATION_KEYS.scanHistoryBody)}
       </Text>
       {items.map((evaluation: BagEvaluation): JSX.Element => (
-        <ListItem
-          key={evaluation.id}
-          title={scanHistoryTitle(evaluation, t(TRANSLATION_KEYS.inventoryUnnamedCoffee))}
-          subtitle={scanHistorySubtitle(evaluation, {
-            bought: t(TRANSLATION_KEYS.scanHistoryBought),
-            left: t(TRANSLATION_KEYS.scanHistoryLeft),
-            undecided: t(TRANSLATION_KEYS.scanHistoryUndecided),
-          })}
-          showDivider
-        />
+        <ScanHistoryEntry key={evaluation.id} evaluation={evaluation} />
       ))}
     </View>
   );

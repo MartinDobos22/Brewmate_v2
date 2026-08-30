@@ -1,16 +1,18 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { Text, type TileGlyph } from '../../../../components/ui';
 import { useThemedStyles } from '../../../../theme';
 
 import { createBagVerdictCardStyles } from './BagVerdictCard.styles';
+import { VerdictPoint } from './VerdictPoint';
 
 const NOTHING = 0;
 
 export interface VerdictReasonListProps {
   readonly title: string;
   readonly lines: readonly string[];
+  readonly icon: TileGlyph;
   readonly muted?: boolean;
 }
 
@@ -23,6 +25,7 @@ export interface VerdictReasonListProps {
 export const VerdictReasonList = ({
   title,
   lines,
+  icon,
   muted = false,
 }: VerdictReasonListProps): JSX.Element | null => {
   const styles = useThemedStyles(createBagVerdictCardStyles);
@@ -36,9 +39,7 @@ export const VerdictReasonList = ({
       <Text variant="titleSmall">{title}</Text>
       <View style={styles.points}>
         {lines.map((line: string): JSX.Element => (
-          <Text key={line} variant="bodySmall" tone={muted ? 'muted' : 'default'}>
-            {line}
-          </Text>
+          <VerdictPoint key={line} icon={icon} text={line} muted={muted} />
         ))}
       </View>
     </View>

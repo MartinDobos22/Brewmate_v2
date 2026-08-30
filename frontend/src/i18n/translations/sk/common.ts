@@ -15,6 +15,7 @@ export const SK_COMMON = {
   unitMillilitres: 'ml',
   unitMillimetres: 'mm',
   listSeparator: ' · ',
+  stepCount: 'Krok {current} z {total}',
   stateLoading: 'Načítava sa…',
   stateEmptyTitle: 'Zatiaľ nič',
   stateEmptyBody: 'Keď sem niečo pribudne, uvidíš to tu.',

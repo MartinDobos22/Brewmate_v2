@@ -19,6 +19,7 @@ export const SK_BREW_MODE = {
   brewModeLeave: 'Ukončiť',
 
   brewModeStepOf: 'Krok {current} z {total}',
+  brewModeStepProgressLabel: 'Ako ďaleko si vo varení',
   brewModeTargetWeight: 'Na váhe {grams} g',
   brewModeElapsed: 'Celkovo {time}',
   brewModeNoTimeStep: 'Bez času - pokračuj, keď to uvidíš',

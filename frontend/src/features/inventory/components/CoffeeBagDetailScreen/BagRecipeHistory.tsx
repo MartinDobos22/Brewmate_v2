@@ -4,7 +4,7 @@ import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { Button, EmptyState, Text } from '../../../../components/ui';
-import { buildTimelineRoute } from '../../../../constants/routes';
+import { buildBrewRoute, buildTimelineRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { useBrewMethodCatalog } from '../../hooks';
@@ -40,6 +40,15 @@ export const BagRecipeHistory = ({ recipes, bagId }: BagRecipeHistoryProps): JSX
       <EmptyState
         title={t(TRANSLATION_KEYS.bagRecipesEmptyTitle)}
         description={t(TRANSLATION_KEYS.bagRecipesEmptyBody)}
+        actions={[
+          {
+            label: t(TRANSLATION_KEYS.bagRecipesEmptyAction),
+            variant: 'primary',
+            onPress: (): void => {
+              router.push(buildBrewRoute(bagId));
+            },
+          },
+        ]}
       />
     );
   }
@@ -50,7 +59,6 @@ export const BagRecipeHistory = ({ recipes, bagId }: BagRecipeHistoryProps): JSX
 
   return (
     <View>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.bagRecipesTitle)}</Text>
       {groupRecipesByMethod(recipes).map((group: RecipeMethodGroup): JSX.Element => (
         <View key={group.methodId} style={styles.group}>
           <Text variant="labelMedium" tone="muted">
