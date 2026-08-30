@@ -5,3 +5,5 @@ export { ChatComposer } from './ChatComposer';
 export type { ChatComposerProps } from './ChatComposer';
 export { ChatQuickChips } from './ChatQuickChips';
 export type { ChatQuickChipsProps } from './ChatQuickChips';
+export { RecipeChatHeader } from './RecipeChatHeader';
+export type { RecipeChatHeaderProps } from './RecipeChatHeader';

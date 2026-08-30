@@ -7,6 +7,10 @@
  */
 export const SK_RECIPE_CHAT = {
   recipeChatTitle: 'Ako to dopadlo?',
+  recipeChatAboutTitle: 'O čom sa bavíme',
+  recipeChatAboutHint: 'Toto sú čísla, ktoré práve platia. Keď prijmeš zmenu, prepíšu sa tu.',
+  recipeChatInputLabel: 'Povedz mi to vlastnými slovami',
+  recipeChatUnknownMethod: 'Neznáma metóda',
   recipeChatOpening:
     'Tak čo, aké to bolo? Napíš to pokojne vlastnými slovami - "kyslé", "prázdne", "chcem to sladšie". Aj jedna veta mi stačí.',
   recipeChatPlaceholder: 'Napíš, ako ti chutila...',
