@@ -8,7 +8,6 @@
  */
 export const SK_AI_COSTS = {
   aiCostsTitle: 'Náklady a limity',
-  aiCostsOpenAction: 'Náklady a limity',
   aiCostsSubtitle: 'Koľko z toho, na čo sa dá pýtať modelu, si už minul.',
 
   aiCostsDayTitle: 'Dnes',

@@ -24,6 +24,8 @@ export { ProgressBar } from './ProgressBar';
 export type { ProgressBarProps } from './ProgressBar';
 export { QueryState } from './QueryState';
 export type { QueryStateProps } from './QueryState';
+export { SectionHeading } from './SectionHeading';
+export type { SectionHeadingProps } from './SectionHeading';
 export { Sheet } from './Sheet';
 export type { SheetProps } from './Sheet';
 export { Slider, clampToStep, toRatio, fromRatio } from './Slider';

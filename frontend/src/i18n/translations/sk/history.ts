@@ -35,7 +35,6 @@ export const SK_HISTORY = {
   insightsTooFewTitle: 'Zatiaľ je toho málo',
   insightsTooFewBody:
     'Uvar aspoň {count} káv zo zapísaných balíčkov a poviem ti, čo sa v nich opakuje.',
-  insightsOpenAction: 'História a prehľad',
 
   insightsAttributeOrigin: 'Pôvod',
   insightsAttributeProcess: 'Spracovanie',

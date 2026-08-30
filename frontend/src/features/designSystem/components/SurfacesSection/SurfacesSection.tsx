@@ -1,6 +1,13 @@
 import type { JSX } from 'react';
 
-import { Card, ChatBubble, ListItem, Text, CHAT_AUTHORS } from '../../../../components/ui';
+import {
+  Card,
+  ChatBubble,
+  ListItem,
+  SectionHeading,
+  Text,
+  CHAT_AUTHORS,
+} from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { SectionBlock } from '../SectionBlock';
 
@@ -9,6 +16,10 @@ export const SurfacesSection = (): JSX.Element => {
 
   return (
     <SectionBlock title={t(TRANSLATION_KEYS.dsSectionCards)}>
+      <SectionHeading
+        title={t(TRANSLATION_KEYS.dsSectionHeadingTitle)}
+        caption={t(TRANSLATION_KEYS.dsSectionHeadingCaption)}
+      />
       <Card>
         <Text variant="titleMedium">{t(TRANSLATION_KEYS.dsCardTitle)}</Text>
         <Text variant="bodyMedium" tone="muted">

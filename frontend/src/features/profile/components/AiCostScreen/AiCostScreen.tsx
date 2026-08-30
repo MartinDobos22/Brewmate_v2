@@ -6,7 +6,6 @@ import { Card, QueryState, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { useAiUsageSummary } from '../../hooks';
-import { AccountDataCard } from '../AccountDataCard';
 import { AiUsageWindowCard } from '../AiUsageWindowCard';
 
 import { AiCostBreakdown } from './AiCostBreakdown';
@@ -21,10 +20,6 @@ import { createAiCostScreenStyles } from './AiCostScreen.styles';
  * history keep working. Saying so is the difference between a limit and a
  * punishment - and between somebody waiting for midnight and somebody
  * uninstalling.
- *
- * The export sits on the same screen because it answers the neighbouring
- * question: this is what the app knows about you, and this is how you take it
- * away with you.
  */
 export const AiCostScreen = (): JSX.Element => {
   const styles = useThemedStyles(createAiCostScreenStyles);
@@ -66,7 +61,6 @@ export const AiCostScreen = (): JSX.Element => {
               {t(TRANSLATION_KEYS.aiCostsWhatCountsBody)}
             </Text>
           </Card>
-          <AccountDataCard />
         </View>
       )}
     </Screen>

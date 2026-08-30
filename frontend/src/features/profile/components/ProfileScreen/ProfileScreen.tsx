@@ -1,75 +1,75 @@
-import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 
 import { Screen } from '../../../../components/layout';
-import { Button, Card, Text } from '../../../../components/ui';
-import { APP_CONFIG } from '../../../../constants/config';
-import { ROUTES } from '../../../../constants/routes';
+import { SectionHeading } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { AccountCard } from '../../../auth';
-import { AppearancePicker } from '../AppearancePicker';
+import { AccountCard, DeleteAccountCard } from '../../../auth';
+import { AccountDataCard } from '../AccountDataCard';
+import { AppearanceCard } from '../AppearanceCard';
+import { DeveloperTile } from '../DeveloperTile';
 import { EquipmentSection } from '../EquipmentSection';
+import { ProfileHeader } from '../ProfileHeader';
+import { ProfileToolTiles } from '../ProfileToolTiles';
 import { SetsSection } from '../SetsSection';
+import { TasteCorrectionCard } from '../TasteCorrectionCard';
 import { TasteProfileSection } from '../TasteProfileSection';
 import { WaterSection } from '../WaterSection';
 
 /**
- * Everything the app believes about this person, and every way to change it:
- * the taste profile and its two correction routes, the cupboard, the water,
- * the saved sets - and, at the bottom, the two ways out of the product.
+ * Everything the app believes about this person, and every way to change it.
+ *
+ * Four questions, in the order somebody comes here to ask them: what do you
+ * know about me, what have you got written down about my kit, what is the app
+ * itself doing, and what is my account. Before they were labelled this was
+ * eight cards of identical weight in one column, and finding any one of them
+ * meant reading all eight titles.
+ *
+ * Each group is a heading and the cards under it - the heading has no surface
+ * of its own, because a label that looks like the content it labels is not a
+ * label. The two navigational destinations are tiles, the same ones the home
+ * screen is built from: both are places to go rather than things to read.
+ *
+ * The export sits directly above the deletion. The two answer the same
+ * question about what this account is, and somebody deciding whether to leave
+ * is entitled to see what leaving takes with it.
  */
 export const ProfileScreen = (): JSX.Element => {
   const { t } = useTranslation();
-  const router = useRouter();
 
   return (
     <Screen scrollable>
+      <ProfileHeader />
+
+      <SectionHeading
+        title={t(TRANSLATION_KEYS.profileSectionTasteTitle)}
+        caption={t(TRANSLATION_KEYS.profileSectionTasteCaption)}
+      />
       <TasteProfileSection />
+      <TasteCorrectionCard />
+
+      <SectionHeading
+        title={t(TRANSLATION_KEYS.profileSectionGearTitle)}
+        caption={t(TRANSLATION_KEYS.profileSectionGearCaption)}
+      />
       <EquipmentSection />
       <WaterSection />
       <SetsSection />
-      {/*
-        Two screens that are about the account rather than about a coffee: what
-        its history adds up to, and what its model calls have cost. They live
-        behind the profile because both are read occasionally and deliberately,
-        not on the way to making a cup.
-      */}
-      <Card>
-        <Text variant="titleMedium">{t(TRANSLATION_KEYS.insightsTitle)}</Text>
-        <Button
-          label={t(TRANSLATION_KEYS.insightsOpenAction)}
-          variant="secondary"
-          fullWidth
-          onPress={(): void => {
-            router.push(ROUTES.insights);
-          }}
-        />
-        <Button
-          label={t(TRANSLATION_KEYS.aiCostsOpenAction)}
-          variant="tertiary"
-          fullWidth
-          onPress={(): void => {
-            router.push(ROUTES.aiCosts);
-          }}
-        />
-      </Card>
-      <Card>
-        <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileAppearanceTitle)}</Text>
-        <AppearancePicker />
-      </Card>
+
+      <SectionHeading
+        title={t(TRANSLATION_KEYS.profileSectionAppTitle)}
+        caption={t(TRANSLATION_KEYS.profileSectionAppCaption)}
+      />
+      <ProfileToolTiles />
+      <AppearanceCard />
+      <DeveloperTile />
+
+      <SectionHeading
+        title={t(TRANSLATION_KEYS.profileSectionAccountTitle)}
+        caption={t(TRANSLATION_KEYS.profileSectionAccountCaption)}
+      />
       <AccountCard />
-      {APP_CONFIG.designSystemScreenEnabled ? (
-        <Card>
-          <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileDeveloperTitle)}</Text>
-          <Button
-            label={t(TRANSLATION_KEYS.profileOpenDesignSystem)}
-            variant="tertiary"
-            onPress={(): void => {
-              router.push(ROUTES.designSystem);
-            }}
-          />
-        </Card>
-      ) : null}
+      <AccountDataCard />
+      <DeleteAccountCard />
     </Screen>
   );
 };

@@ -9,6 +9,7 @@ export type { AuthNavigationLinkProps } from './AuthNavigationLink';
 export { AuthScreenLayout } from './AuthScreenLayout';
 export type { AuthScreenLayoutProps } from './AuthScreenLayout';
 export { DeleteAccountButton } from './DeleteAccountButton';
+export { DeleteAccountCard } from './DeleteAccountCard';
 export { EmailPasswordForm } from './EmailPasswordForm';
 export type { EmailPasswordFormProps } from './EmailPasswordForm';
 export { ForgotPasswordScreen } from './ForgotPasswordScreen';
