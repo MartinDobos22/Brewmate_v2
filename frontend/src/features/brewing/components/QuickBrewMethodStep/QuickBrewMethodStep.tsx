@@ -9,6 +9,7 @@ import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { ONBOARDING_STEPS } from '../../../onboarding/constants';
 import { useOnboardingStepLink } from '../../../onboarding/hooks';
+import { BREW_METHOD_CATEGORY_ICONS, BREW_METHOD_CATEGORY_LABEL_KEYS } from '../../constants';
 import type { QuickBrew } from '../../hooks/useQuickBrew';
 
 import { createQuickBrewMethodStepStyles } from './QuickBrewMethodStep.styles';
@@ -19,7 +20,13 @@ export interface QuickBrewMethodStepProps {
   readonly brew: QuickBrew;
 }
 
-/** The one thing Brewmate genuinely needs to know before it can say anything. */
+/**
+ * The one thing Brewmate genuinely needs to know before it can say anything.
+ *
+ * The same cards as the brewing tab, with the same glyph per family - this is
+ * the same decision asked in a shorter flow, and asking it twice in two visual
+ * languages would make them look like two different questions.
+ */
 export const QuickBrewMethodStep = ({ brew }: QuickBrewMethodStepProps): JSX.Element => {
   const styles = useThemedStyles(createQuickBrewMethodStepStyles);
   const { t } = useTranslation();
@@ -68,6 +75,8 @@ export const QuickBrewMethodStep = ({ brew }: QuickBrewMethodStepProps): JSX.Ele
         <OptionCard
           key={method.id}
           label={method.nameSk}
+          note={t(BREW_METHOD_CATEGORY_LABEL_KEYS[method.category])}
+          icon={BREW_METHOD_CATEGORY_ICONS[method.category]}
           onPress={(): void => {
             brew.selectMethod(method);
           }}

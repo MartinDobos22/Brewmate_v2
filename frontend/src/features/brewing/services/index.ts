@@ -34,3 +34,5 @@ export {
   takePendingBrewLogs,
   restorePendingBrewLogs,
 } from './pendingBrewLogs';
+export { resolveQuickBrewSteps } from './resolveQuickBrewSteps';
+export type { QuickBrewSteps } from './resolveQuickBrewSteps';

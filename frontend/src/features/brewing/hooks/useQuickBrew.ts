@@ -4,6 +4,7 @@ import {
   readKettleParams,
   type BrewMethod,
   type BrewParams,
+  type Recipe,
 } from '@brewmate/shared';
 import { useState } from 'react';
 
@@ -30,6 +31,15 @@ export interface QuickBrew {
   readonly method: BrewMethod | undefined;
   readonly coffee: CoffeeBagFormValues;
   readonly params: BrewParams | undefined;
+  /**
+   * The stored recipe, once there is one.
+   *
+   * Kept because everything downstream needs an id: brew mode logs against it
+   * and the conversation afterwards hangs off it. The flow was writing a
+   * recipe to the database and then throwing away the only handle on it, which
+   * left the screen able to show a recipe but not to brew it.
+   */
+  readonly recipe: Recipe | undefined;
   readonly hasTemperatureControl: boolean;
   readonly hasScale: boolean;
   readonly isLoading: boolean;
@@ -66,6 +76,7 @@ export const useQuickBrew = (): QuickBrew => {
   const createBag = useCreateCoffeeBag();
   const [stage, setStage] = useState<QuickBrewStage>(QUICK_BREW_STAGES.method);
   const [method, setMethod] = useState<BrewMethod | undefined>(undefined);
+  const [recipe, setRecipe] = useState<Recipe | undefined>(undefined);
   const [coffee, setCoffee] = useState<CoffeeBagFormValues>(EMPTY_COFFEE_BAG_FORM);
 
   const hasTemperatureControl =
@@ -91,6 +102,7 @@ export const useQuickBrew = (): QuickBrew => {
     hasTemperatureControl,
     hasScale: scale.item !== undefined,
     params: input === undefined ? undefined : buildReferenceParams(input),
+    recipe,
     isLoading: available.isLoading || kettle.isLoading || scale.isLoading,
     isError: available.isError,
     error: available.error,
@@ -113,7 +125,8 @@ export const useQuickBrew = (): QuickBrew => {
       }
 
       createRecipe.mutate(buildQuickBrewRecipe(input, rationale), {
-        onSuccess: (): void => {
+        onSuccess: (written: Recipe): void => {
+          setRecipe(written);
           setStage(QUICK_BREW_STAGES.recipe);
         },
       });

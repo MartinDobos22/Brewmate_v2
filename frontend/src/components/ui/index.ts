@@ -30,6 +30,8 @@ export { Sheet } from './Sheet';
 export type { SheetProps } from './Sheet';
 export { Slider, clampToStep, toRatio, fromRatio } from './Slider';
 export type { SliderProps, StepRange } from './Slider';
+export { StepProgress } from './StepProgress';
+export type { StepProgressProps } from './StepProgress';
 export { Text } from './Text';
 export type { TextProps, TextVariant, TextTone, TextAlign } from './Text';
 export { Tile, DEFAULT_TILE_TONE } from './Tile';

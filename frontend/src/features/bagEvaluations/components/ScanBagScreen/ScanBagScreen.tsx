@@ -1,12 +1,12 @@
 import type { JSX } from 'react';
 
 import { Screen } from '../../../../components/layout';
-import { Text } from '../../../../components/ui';
+import { StepProgress, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { BAG_SCAN_STAGES, type BagScanMode } from '../../constants/bagScan';
 import { useBagScan } from '../../hooks/useBagScan';
+import { resolveScanSteps } from '../../services';
 import { ScanHistoryList } from '../ScanHistoryList';
-import { ScanProgress } from '../ScanProgress';
 
 import { ScanStageContent } from './ScanStageContent';
 
@@ -32,11 +32,12 @@ export interface ScanBagScreenProps {
 export const ScanBagScreen = ({ initialMode }: ScanBagScreenProps): JSX.Element => {
   const { t } = useTranslation();
   const scan = useBagScan(initialMode);
+  const steps = resolveScanSteps(scan.stage, scan.mode, initialMode === undefined);
 
   return (
     <Screen scrollable>
       <Text variant="headlineSmall">{t(TRANSLATION_KEYS.scanTitle)}</Text>
-      <ScanProgress stage={scan.stage} mode={scan.mode} hasModeStep={initialMode === undefined} />
+      <StepProgress current={steps.current} total={steps.total} />
       <ScanStageContent scan={scan} />
       {scan.stage === BAG_SCAN_STAGES.mode ? <ScanHistoryList /> : null}
     </Screen>

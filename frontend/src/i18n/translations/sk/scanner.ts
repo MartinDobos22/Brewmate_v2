@@ -8,7 +8,6 @@
  */
 export const SK_SCANNER = {
   scanTitle: 'Poradím ti v obchode',
-  scanStepCount: 'Krok {current} z {total}',
   scanIntro:
     'Nepotrebujem na to inventár ani históriu varení. Stačí to, čo je napísané na balíčku.',
 

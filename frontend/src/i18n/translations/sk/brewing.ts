@@ -47,6 +47,8 @@ export const SK_BREWING = {
   quickBrewUnnamedCoffee: 'Káva bez názvu',
   quickBrewSavedTitle: 'Zapísané',
   quickBrewSavedBody: 'Kávu nájdeš v inventári. Zvyšné údaje si k nej môžeš doplniť kedykoľvek.',
+  quickBrewBrewAction: 'Uvariť podľa neho',
+  quickBrewBrewHint: 'Spustím časovač a prevediem ťa krokmi.',
   quickBrewSavedAction: 'Hotovo',
   quickBrewError: 'Recept sa nepodarilo pripraviť. Skús to prosím znova.',
   quickBrewSaveError: 'Kávu sa nepodarilo pridať. Skús to prosím znova.',
