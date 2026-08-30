@@ -46,7 +46,21 @@ const UPDATE_FALLBACK_TIMEOUT_MS = 1000;
  */
 const RUNTIME_VERSION_POLICY = 'appVersion';
 
-const readEnvironmentVariable = (key: string): string | undefined => process.env[key];
+/**
+ * Reads one variable, treating an empty one as absent - the same rule the app's
+ * own configuration reader applies.
+ *
+ * `.env.example` lists every optional variable with nothing after the `=`, and
+ * an empty `EXPO_PUBLIC_RELEASE` used to become the app's `version`. With
+ * `runtimeVersion` following `appVersion`, that leaves the version empty and a
+ * development build refuses to open the bundle at all: "Unable to determine
+ * runtime version for platform 'android'".
+ */
+const readEnvironmentVariable = (key: string): string | undefined => {
+  const value = process.env[key];
+
+  return value === undefined || value === '' ? undefined : value;
+};
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   const projectId = readEnvironmentVariable(EAS_PROJECT_ID);
