@@ -15,6 +15,7 @@ import { createTestContext, type TestContext } from '../setup/createTestContext.
 import { createTestApi, type TestApi } from '../setup/testApi.js';
 
 const HIGH_ACIDITY = 9;
+const LOW_ACIDITY = 2;
 const LOW_BITTERNESS = 2;
 const FULL_WEIGHT = 1;
 const CONSTRAINED_WEIGHT = 0.3;
@@ -76,8 +77,22 @@ describe('taste profile', () => {
     expect(event.appliedDelta?.axes.acidity).toBeGreaterThan(NO_CONFIDENCE);
   });
 
-  /** A manual correction is the user overruling us, and it lands in full. */
+  /**
+   * A manual correction is the user overruling us, and it lands in full.
+   *
+   * Both runs start from an established position rather than from silence,
+   * because how far a source is trusted is a statement about weighing two
+   * observations against each other - and until there is a first one to weigh
+   * against, every source is simply believed.
+   */
   it('trusts a manual correction more than a remark in chat', async () => {
+    const establish = {
+      source: TASTE_PROFILE_SOURCES.questionnaire,
+      payload: { axes: { acidity: LOW_ACIDITY } },
+      sourceRef: 'baseline',
+    };
+
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, establish);
     await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
       source: TASTE_PROFILE_SOURCES.brewChat,
       payload: { axes: { acidity: HIGH_ACIDITY } },
@@ -88,6 +103,7 @@ describe('taste profile', () => {
 
     await context.reset();
 
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, establish);
     await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
       source: TASTE_PROFILE_SOURCES.manual,
       payload: { axes: { acidity: HIGH_ACIDITY } },
@@ -97,6 +113,71 @@ describe('taste profile', () => {
     const afterManual = await readProfile();
 
     expect(afterManual.acidity).toBeGreaterThan(afterChat.acidity);
+  });
+
+  /**
+   * The single most consequential rule in the reducer.
+   *
+   * Neutral is where a profile sits when nobody has said anything - a
+   * placeholder for silence, not a belief that this person likes their coffee
+   * exactly medium. Blending the first observation towards it averages a real
+   * statement with a stand-in for one, and every account came out a little bit
+   * beige: somebody who says plainly that they cannot stand a sour cup was
+   * recorded a third of the way back towards neutral and told they like a
+   * mildly acidic coffee. What the first observation costs instead is
+   * confidence, which is a separate number and is shown as one.
+   */
+  it('takes the first thing it hears about an axis at its word', async () => {
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
+      source: TASTE_PROFILE_SOURCES.questionnaire,
+      payload: { axes: { acidity: LOW_ACIDITY } },
+    });
+
+    const profile = await readProfile();
+
+    expect(profile.acidity).toBe(LOW_ACIDITY);
+    expect(profile.confidenceLevel).toBeLessThan(FULL_WEIGHT);
+  });
+
+  /**
+   * An axis nobody has mentioned is not an opinion, and the profile has to be
+   * able to say so. Otherwise the chart draws a neat five-sided shape through
+   * five middles and reads as a considered view of somebody nobody has asked
+   * anything.
+   */
+  it('earns confidence per axis, not for the profile as a whole', async () => {
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
+      source: TASTE_PROFILE_SOURCES.questionnaire,
+      payload: { axes: { acidity: HIGH_ACIDITY } },
+    });
+
+    const profile = await readProfile();
+
+    expect(profile.axisConfidence.acidity).toBeGreaterThan(NO_CONFIDENCE);
+    expect(profile.axisConfidence.body).toBe(NO_CONFIDENCE);
+    expect(profile.body).toBe(TASTE_AXIS_NEUTRAL);
+  });
+
+  /**
+   * What `axisWeights` is for. An observation that names two axes is rarely
+   * equally sure of both - a questionnaire whose answers about acidity
+   * contradicted each other knows that axis less well than the one it only
+   * asked about once and got a straight answer to - and the difference has to
+   * survive into the profile rather than being averaged into a single figure.
+   */
+  it('lets an observation say which of its axes it is less sure of', async () => {
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
+      source: TASTE_PROFILE_SOURCES.questionnaire,
+      payload: {
+        axes: { acidity: HIGH_ACIDITY, body: HIGH_ACIDITY },
+        axisWeights: { acidity: FULL_WEIGHT, body: CONSTRAINED_WEIGHT },
+      },
+    });
+
+    const profile = await readProfile();
+
+    expect(profile.axisConfidence.body).toBeLessThan(profile.axisConfidence.acidity);
+    expect(profile.acidity).toBe(HIGH_ACIDITY);
   });
 
   /**
@@ -153,6 +234,7 @@ describe('taste profile', () => {
     expect(recomputed.body).toBe(before.body);
     expect(recomputed.flavorAffinities).toEqual(before.flavorAffinities);
     expect(recomputed.confidenceLevel).toBe(before.confidenceLevel);
+    expect(recomputed.axisConfidence).toEqual(before.axisConfidence);
     expect(recomputed.brewCount).toBe(before.brewCount);
   });
 
@@ -183,6 +265,7 @@ describe('taste profile', () => {
     expect(twice.bitterness).toBe(once.bitterness);
     expect(twice.body).toBe(once.body);
     expect(twice.confidenceLevel).toBe(once.confidenceLevel);
+    expect(twice.axisConfidence).toEqual(once.axisConfidence);
     expect(twice.brewCount).toBe(once.brewCount);
     expect(twice.sourceWeights).toEqual(once.sourceWeights);
   });
@@ -194,6 +277,13 @@ describe('taste profile', () => {
    * is the arithmetic that makes that true rather than merely intended.
    */
   it('lets a cup brewed with nothing to hand teach the profile less', async () => {
+    const establish = {
+      source: TASTE_PROFILE_SOURCES.questionnaire,
+      payload: { axes: { acidity: LOW_ACIDITY } },
+      sourceRef: 'baseline',
+    };
+
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, establish);
     await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
       source: TASTE_PROFILE_SOURCES.brewChat,
       payload: { axes: { acidity: HIGH_ACIDITY }, weight: CONSTRAINED_WEIGHT },
@@ -204,6 +294,7 @@ describe('taste profile', () => {
 
     await context.reset();
 
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, establish);
     await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
       source: TASTE_PROFILE_SOURCES.brewChat,
       payload: { axes: { acidity: HIGH_ACIDITY }, weight: FULL_WEIGHT },
@@ -214,6 +305,7 @@ describe('taste profile', () => {
 
     expect(constrained.acidity).toBeLessThan(measured.acidity);
     expect(constrained.confidenceLevel).toBeLessThan(measured.confidenceLevel);
+    expect(constrained.axisConfidence.acidity).toBeLessThan(measured.axisConfidence.acidity);
   });
 
   it('counts brews, not questionnaires, as brews', async () => {

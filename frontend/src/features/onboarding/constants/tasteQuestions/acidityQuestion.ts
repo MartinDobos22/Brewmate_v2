@@ -1,6 +1,7 @@
 import { TRANSLATION_KEYS } from '../../../../i18n';
 import type { TasteQuestion } from '../../services/tasteQuestionTypes';
 
+import { QUESTION_LEVELS } from './questionLevels';
 import { QUESTION_WEIGHTS } from './questionWeights';
 
 /** Direct: the axis people have the strongest opinion about and the clearest word for. */
@@ -9,6 +10,7 @@ export const ACIDITY_QUESTION: TasteQuestion = {
   promptKey: TRANSLATION_KEYS.tqAcidityPrompt,
   helpKey: TRANSLATION_KEYS.tqAcidityHelp,
   weight: QUESTION_WEIGHTS.direct,
+  levels: QUESTION_LEVELS.informed,
   options: [
     {
       id: 'high',

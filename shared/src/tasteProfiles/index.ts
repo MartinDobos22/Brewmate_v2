@@ -11,12 +11,30 @@ export {
   SOURCE_REF_MAX_LENGTH,
   EVENT_NOTE_MAX_LENGTH,
 } from './tasteProfileFieldLimits.js';
-export { tasteAxesSchema, partialTasteAxesSchema } from './tasteAxesSchema.js';
-export type { TasteAxes, PartialTasteAxes } from './tasteAxesSchema.js';
+export { tasteAxesSchema, partialTasteAxesSchema, TASTE_AXIS_NAMES } from './tasteAxesSchema.js';
+export type { TasteAxes, PartialTasteAxes, TasteAxisName } from './tasteAxesSchema.js';
 export { flavorAffinitiesSchema } from './flavorAffinitiesSchema.js';
 export type { FlavorAffinities } from './flavorAffinitiesSchema.js';
 export { sourceWeightsSchema } from './sourceWeightsSchema.js';
 export type { SourceWeights } from './sourceWeightsSchema.js';
+export {
+  tasteAxisConfidenceSchema,
+  partialTasteAxesConfidenceSchema,
+  AXIS_KNOWN_THRESHOLD,
+  isAxisKnown,
+} from './tasteAxisConfidenceSchema.js';
+export type {
+  TasteAxisConfidence,
+  PartialTasteAxisConfidence,
+} from './tasteAxisConfidenceSchema.js';
+export { foldAxisObservations } from './foldAxisObservations.js';
+export type { AxisObservation, FoldedAxis } from './foldAxisObservations.js';
+export {
+  TASTE_AXIS_BANDS,
+  TASTE_AXIS_BAND_BOUNDS,
+  resolveTasteAxisBand,
+} from './tasteAxisBands.js';
+export type { TasteAxisBand } from './tasteAxisBands.js';
 export {
   CONFIDENCE_LEVELS,
   CONFIDENCE_THRESHOLDS,

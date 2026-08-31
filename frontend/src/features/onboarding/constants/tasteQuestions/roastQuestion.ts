@@ -3,6 +3,7 @@ import { ROAST_LEVELS } from '@brewmate/shared';
 import { TRANSLATION_KEYS } from '../../../../i18n';
 import type { TasteQuestion } from '../../services/tasteQuestionTypes';
 
+import { QUESTION_LEVELS } from './questionLevels';
 import { QUESTION_WEIGHTS } from './questionWeights';
 
 /**
@@ -17,6 +18,7 @@ export const ROAST_QUESTION: TasteQuestion = {
   promptKey: TRANSLATION_KEYS.tqRoastPrompt,
   helpKey: TRANSLATION_KEYS.tqRoastHelp,
   weight: QUESTION_WEIGHTS.direct,
+  levels: QUESTION_LEVELS.informed,
   options: [
     {
       id: 'light',

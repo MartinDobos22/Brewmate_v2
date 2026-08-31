@@ -20,6 +20,23 @@ export const SIZE = {
   swatchSize: 56,
   /** A bar in the taste profile chart: readable, but not a block of colour. */
   profileBarHeight: 10,
+  /**
+   * The taste profile as a five-sided web, on the profile screen.
+   *
+   * A fixed square rather than a measured one, for the same reason the bars
+   * were built from flex weights: the chart is correct on its first frame
+   * instead of waiting to be told how wide the phone is, and a radar that
+   * reflowed after a layout pass would visibly snap into shape every time the
+   * screen opened. Sized to sit comfortably inside a card on the narrowest
+   * phone the app supports, labels included.
+   */
+  radarChartSize: 260,
+  /** How much of that square is given to the labels around the web. */
+  radarChartLabelInset: 46,
+  /** The same web on a home tile, where it is read as a shape and has no labels. */
+  radarChartCompactSize: 96,
+  /** The box one axis label is centred in, so five of them cannot overlap. */
+  radarLabelWidth: 76,
   /** The onboarding progress bar, thinner than a slider track is tall. */
   progressBarHeight: 6,
   /** A questionnaire answer card. Big enough to tap without aiming. */

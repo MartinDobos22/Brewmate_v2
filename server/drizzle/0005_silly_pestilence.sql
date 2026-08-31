@@ -1,0 +1,1 @@
+ALTER TABLE "taste_profiles" ADD COLUMN "axis_confidence" jsonb DEFAULT '{"acidity":0,"sweetness":0,"body":0,"bitterness":0,"intensity":0}'::jsonb NOT NULL;

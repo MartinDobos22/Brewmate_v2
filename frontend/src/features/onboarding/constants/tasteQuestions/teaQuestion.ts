@@ -2,6 +2,7 @@ import { TRANSLATION_KEYS } from '../../../../i18n';
 import { FLAVOR_TAGS } from '../../../tasteProfile/constants';
 import type { TasteQuestion } from '../../services/tasteQuestionTypes';
 
+import { QUESTION_LEVELS } from './questionLevels';
 import { QUESTION_WEIGHTS } from './questionWeights';
 
 /**
@@ -14,6 +15,7 @@ export const TEA_QUESTION: TasteQuestion = {
   promptKey: TRANSLATION_KEYS.tqTeaPrompt,
   helpKey: TRANSLATION_KEYS.tqTeaHelp,
   weight: QUESTION_WEIGHTS.indirect,
+  levels: QUESTION_LEVELS.plainLanguage,
   options: [
     {
       id: 'fruit',

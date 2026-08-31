@@ -12,4 +12,11 @@ export const QUESTION_WEIGHTS = {
   direct: 1,
   indirect: 0.7,
   habit: 0.9,
+  /**
+   * What somebody reaches for rather than what they say they want. Strong
+   * evidence - it is a record of many decisions rather than one answer - but
+   * never quite a preference, for the reason the insights screen already
+   * states out loud: people buy what the shop had.
+   */
+  behaviour: 0.8,
 } as const;

@@ -22,9 +22,13 @@ import { SK_RECIPE_CHAT } from './recipeChat';
 import { SK_RECIPE_IMPORT } from './recipeImport';
 import { SK_SCANNER } from './scanner';
 import { SK_SCREENS } from './screens';
+import { SK_TASTE_AXIS_BANDS } from './tasteAxisBands';
 import { SK_TASTE_PROFILE } from './tasteProfile';
+import { SK_TASTE_QUESTIONS_BEGINNER } from './tasteQuestionsBeginner';
 import { SK_TASTE_QUESTIONS_DIRECT } from './tasteQuestionsDirect';
+import { SK_TASTE_QUESTIONS_EXPERT } from './tasteQuestionsExpert';
 import { SK_TASTE_QUESTIONS_INDIRECT } from './tasteQuestionsIndirect';
+import { SK_TASTE_QUESTIONS_LEVELS } from './tasteQuestionsLevels';
 import { SK_WATER_AND_SETS } from './waterAndSets';
 
 /**
@@ -38,8 +42,11 @@ export const SK_TRANSLATIONS = {
   ...SK_SCREENS,
   ...SK_GRINDERS,
   ...SK_ONBOARDING,
+  ...SK_TASTE_QUESTIONS_LEVELS,
   ...SK_TASTE_QUESTIONS_DIRECT,
   ...SK_TASTE_QUESTIONS_INDIRECT,
+  ...SK_TASTE_QUESTIONS_BEGINNER,
+  ...SK_TASTE_QUESTIONS_EXPERT,
   ...SK_EQUIPMENT_SETUP,
   ...SK_WATER_AND_SETS,
   ...SK_CALIBRATION,
@@ -55,6 +62,7 @@ export const SK_TRANSLATIONS = {
   ...SK_HOME_TILES,
   ...SK_INVENTORY,
   ...SK_TASTE_PROFILE,
+  ...SK_TASTE_AXIS_BANDS,
   ...SK_PROFILE_SECTIONS,
   ...SK_HISTORY,
   ...SK_AI_COSTS,

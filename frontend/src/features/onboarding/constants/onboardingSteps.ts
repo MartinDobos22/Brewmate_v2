@@ -67,7 +67,7 @@ export const ONBOARDING_STEP_LABEL_KEYS: Record<OnboardingProgressStep, Translat
  * A stored state from an older version is started over rather than resumed:
  * "you were on step five" means nothing once step five is a different screen.
  */
-export const ONBOARDING_FLOW_VERSION = 1;
+export const ONBOARDING_FLOW_VERSION = 2;
 
 /** The route parameter that opens one step on its own, from the profile screen. */
 export const ONBOARDING_STEP_PARAM = 'step';

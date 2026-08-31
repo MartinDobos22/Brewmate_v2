@@ -2,6 +2,7 @@ import { TRANSLATION_KEYS } from '../../../../i18n';
 import { FLAVOR_TAGS } from '../../../tasteProfile/constants';
 import type { TasteQuestion } from '../../services/tasteQuestionTypes';
 
+import { QUESTION_LEVELS } from './questionLevels';
 import { QUESTION_WEIGHTS } from './questionWeights';
 
 /** Last, and deliberately open: what the person is actually chasing in a cup. */
@@ -10,6 +11,7 @@ export const GOAL_QUESTION: TasteQuestion = {
   promptKey: TRANSLATION_KEYS.tqGoalPrompt,
   helpKey: TRANSLATION_KEYS.tqGoalHelp,
   weight: QUESTION_WEIGHTS.indirect,
+  levels: QUESTION_LEVELS.everyone,
   options: [
     {
       id: 'sweet',

@@ -10,6 +10,17 @@ export {
 export type { OnboardingStep, OnboardingProgressStep } from './onboardingSteps';
 export { TASTE_QUESTIONS } from './tasteQuestions';
 export { QUESTION_WEIGHTS } from './tasteQuestions/questionWeights';
+export { QUESTION_LEVELS } from './tasteQuestions/questionLevels';
+export {
+  TASTE_EXPERIENCE_LEVELS,
+  TASTE_EXPERIENCE_LEVEL_ORDER,
+  TASTE_EXPERIENCE_LABEL_KEYS,
+  TASTE_EXPERIENCE_NOTE_KEYS,
+  TASTE_EXPERIENCE_TRUST,
+  isTasteExperienceLevel,
+} from './tasteExperienceLevels';
+export type { TasteExperienceLevel } from './tasteExperienceLevels';
+export { MAX_AXIS_DISAGREEMENT, FULL_AXIS_COVERAGE } from './questionnaireEvidence';
 export { QUESTIONNAIRE_SOURCE_REF } from './fingerprint';
 export {
   CALIBRATION_METHOD_PREFERENCE,
