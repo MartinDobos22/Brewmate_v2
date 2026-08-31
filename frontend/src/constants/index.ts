@@ -19,6 +19,7 @@ export {
   ROUTES,
   TAB_SEGMENTS,
   TAB_ORDER,
+  TAB_ROUTES,
   AUTH_GROUP_SEGMENT,
   buildBagRoute,
   buildScanRoute,
@@ -55,4 +56,5 @@ export {
   TAB_ICONS,
   TAB_LABEL_KEYS,
   BAR_STYLES,
+  BOTTOM_BAR_HIDDEN_SEGMENTS,
 } from './navigation';

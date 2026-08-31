@@ -251,6 +251,7 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
         : createCoffeeBagParseService({
             repository: createCoffeeBagParseRepository(db),
             imageFetcher: ai.imageFetcher,
+            labelTextReader: ai.labelTextReader,
             completionClient: ai.completionClient,
             aiUsageService,
           }),

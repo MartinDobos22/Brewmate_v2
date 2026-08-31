@@ -8,6 +8,12 @@ export {
   COFFEE_DESCRIPTION_MAX_LENGTH,
   RECIPE_CHAT_HISTORY_VERSIONS,
 } from './aiFieldLimits.js';
+export {
+  LABEL_PHOTO_ISSUES,
+  LABEL_PHOTO_ISSUE_VALUES,
+  labelPhotoIssueSchema,
+} from './labelPhotoIssues.js';
+export type { LabelPhotoIssue } from './labelPhotoIssues.js';
 export { parsedFieldSchema } from './parsedFieldSchema.js';
 export type { ParsedField } from './parsedFieldSchema.js';
 export { parsedBagFieldsSchema, PARSED_BAG_FIELD_NAMES } from './parsedBagFieldsSchema.js';

@@ -24,6 +24,7 @@ export const ScanStageContent = ({ scan }: { readonly scan: BagScan }): JSX.Elem
     return (
       <BagPhotoStep
         isWorking={scan.photo.isWorking}
+        issues={scan.photo.issues}
         onCapture={scan.capture}
         onSkip={scan.skipPhoto}
       />

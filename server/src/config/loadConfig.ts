@@ -9,6 +9,7 @@ import { resolveAiConfig } from './resolveAiConfig.js';
 import { resolveDatabaseConfig } from './resolveDatabaseConfig.js';
 import { resolveFirebaseCredentials } from './resolveFirebaseCredentials.js';
 import { resolveTelemetryConfig } from './resolveTelemetryConfig.js';
+import { resolveVisionConfig } from './resolveVisionConfig.js';
 
 const MESSAGE_SEPARATOR = '\n';
 
@@ -39,6 +40,7 @@ export const loadConfig = (source: NodeJS.ProcessEnv = process.env): AppConfig =
     database: resolveDatabaseConfig(env),
     firebase: resolveFirebaseCredentials(env),
     ai: resolveAiConfig(env),
+    vision: resolveVisionConfig(env),
     telemetry: resolveTelemetryConfig(env),
     logging: { level: env.LOG_LEVEL },
   };

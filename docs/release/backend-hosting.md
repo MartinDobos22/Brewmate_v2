@@ -141,10 +141,28 @@ nothing else. In production:
 | `DATABASE_POOL_MAX`                                                      | no       | Default 10. See the arithmetic below before raising it                |
 | `FIREBASE_PROJECT_ID` / `FIREBASE_CLIENT_EMAIL` / `FIREBASE_PRIVATE_KEY` | yes      | Without them the process refuses to start                             |
 | `ANTHROPIC_API_KEY`                                                      | no       | Absent is a working state: `/ai/*` answers 503, everything else works |
+| `GOOGLE_VISION_API_KEY` / `GOOGLE_VISION_ENDPOINT`                       | no       | Both or neither. Absent means a label is read by the model alone      |
 | `SENTRY_DSN`                                                             | no       | Absent means unexpected failures are logged and reported nowhere else |
 
 `TEST_DATABASE_URL` has no place in a deployment. It is read only when
 `NODE_ENV=test`, and the tests truncate every table.
+
+**The optical reader is an aid, and it is allowed to be missing.** With
+`GOOGLE_VISION_API_KEY` and `GOOGLE_VISION_ENDPOINT` set,
+`POST /ai/parse-coffee-bag` transcribes the label before the model sees it -
+which is what makes a roast date stamped in grey on a seam readable - and
+refuses a photograph nothing legible came off before spending a model call on
+it. Without them the photograph goes to the model unaccompanied and unchecked,
+exactly as it did before. A reader that is configured but unreachable is the
+same outcome as no reader: the scan goes through. The endpoint is a variable
+rather than a constant because Google serves this API from several regional
+hosts, and a deployment that must keep photographs inside one region is the
+only party that can say which.
+
+Vision calls are **not** metered in `ai_usage_logs` and not counted against the
+per-account allowance: that ledger prices model tokens, and an annotation has
+none. They are bounded elsewhere instead - one per scan, only after the image
+hash misses the cache, and never for a photograph that has been read before.
 
 **A variable left blank counts as absent.** Render creates every variable the
 blueprint names, whether or not a value was typed into it, so an empty

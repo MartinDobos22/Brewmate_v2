@@ -92,12 +92,14 @@ export const useBagScan = (initialMode?: BagScanMode): BagScan => {
     },
 
     /**
-     * Backing out of the camera leaves somebody where they were; everything
-     * else moves on to the form, with whatever was read already in it.
+     * Backing out of the camera leaves somebody where they were, and so does a
+     * photograph that came back unreadable - that one with reasons printed
+     * above the button they are about to press again. Everything else moves on
+     * to the form, with whatever was read already in it.
      */
     capture: (source: BagPhotoSource): void => {
       void photo.capture(source).then(({ outcome, fields }: BagCapture): void => {
-        if (outcome === BAG_CAPTURE_RESULTS.cancelled) {
+        if (outcome === BAG_CAPTURE_RESULTS.cancelled || outcome === BAG_CAPTURE_RESULTS.refused) {
           return;
         }
 

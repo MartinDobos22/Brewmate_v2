@@ -1,3 +1,4 @@
+import type { LabelPhotoIssue } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
@@ -7,11 +8,17 @@ import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { SCAN_ICONS } from '../../constants';
 import { BAG_PHOTO_SOURCES, type BagPhotoSource } from '../../services/pickBagPhoto';
+import { BagPhotoIssueNotice } from '../BagPhotoIssueNotice';
 
 import { createBagPhotoStepStyles } from './BagPhotoStep.styles';
 
+const NOTHING = 0;
+const NO_ISSUES: readonly LabelPhotoIssue[] = [];
+
 export interface BagPhotoStepProps {
   readonly isWorking: boolean;
+  /** Why the last attempt came back with nothing, empty before there was one. */
+  readonly issues?: readonly LabelPhotoIssue[];
   readonly onCapture: (source: BagPhotoSource) => void;
   readonly onSkip: () => void;
 }
@@ -29,9 +36,15 @@ export interface BagPhotoStepProps {
  * The library sits underneath and quieter because it is neither of those two
  * paths - it is the same photograph, taken earlier.
  */
-export const BagPhotoStep = ({ isWorking, onCapture, onSkip }: BagPhotoStepProps): JSX.Element => {
+export const BagPhotoStep = ({
+  isWorking,
+  issues = NO_ISSUES,
+  onCapture,
+  onSkip,
+}: BagPhotoStepProps): JSX.Element => {
   const styles = useThemedStyles(createBagPhotoStepStyles);
   const { t } = useTranslation();
+  const wasRefused = issues.length > NOTHING;
 
   if (isWorking) {
     return <LoadingState label={t(TRANSLATION_KEYS.scanPhotoReading)} />;
@@ -43,11 +56,12 @@ export const BagPhotoStep = ({ isWorking, onCapture, onSkip }: BagPhotoStepProps
       <Text variant="bodySmall" tone="muted">
         {t(TRANSLATION_KEYS.scanPhotoBody)}
       </Text>
+      {wasRefused ? <BagPhotoIssueNotice issues={issues} /> : null}
       <TileRow>
         <Tile
           icon={SCAN_ICONS.camera}
           tone="primary"
-          title={t(TRANSLATION_KEYS.scanPhotoTake)}
+          title={t(wasRefused ? TRANSLATION_KEYS.scanPhotoRetake : TRANSLATION_KEYS.scanPhotoTake)}
           caption={t(TRANSLATION_KEYS.scanPhotoTakeCaption)}
           onPress={(): void => {
             onCapture(BAG_PHOTO_SOURCES.camera);

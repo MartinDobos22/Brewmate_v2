@@ -12,6 +12,7 @@ import {
 import { createFakeErrorTracker, type RecordingErrorTracker } from './fakeErrorTracker.js';
 import { createFakeIdentityDeleter, type RecordingIdentityDeleter } from './fakeIdentityDeleter.js';
 import { createFakeImageFetcher } from './fakeImageFetcher.js';
+import { createFakeLabelTextReader, type RecordingLabelTextReader } from './fakeLabelTextReader.js';
 import { createFakeTokenVerifier } from './fakeTokenVerifier.js';
 import { truncateTables } from './truncateTables.js';
 
@@ -24,6 +25,8 @@ export interface TestContext {
   readonly completionClient: RecordingCompletionClient;
   /** The stub reporter, so it can be asserted which failures were reported. */
   readonly errorTracker: RecordingErrorTracker;
+  /** The stub optical reader, so a refused photograph can be arranged. */
+  readonly labelTextReader: RecordingLabelTextReader;
   readonly reset: () => Promise<void>;
   readonly close: () => Promise<void>;
 }
@@ -38,13 +41,14 @@ export const createTestContext = async (): Promise<TestContext> => {
   const identityDeleter = createFakeIdentityDeleter();
   const completionClient = createFakeCompletionClient();
   const errorTracker = createFakeErrorTracker();
+  const labelTextReader = createFakeLabelTextReader();
   const app = await buildApp({
     config,
     db: connection.db,
     tokenVerifier: createFakeTokenVerifier(),
     identityDeleter,
     errorTracker,
-    ai: { completionClient, imageFetcher: createFakeImageFetcher() },
+    ai: { completionClient, imageFetcher: createFakeImageFetcher(), labelTextReader },
   });
 
   await app.ready();
@@ -55,10 +59,12 @@ export const createTestContext = async (): Promise<TestContext> => {
     identityDeleter,
     completionClient,
     errorTracker,
+    labelTextReader,
     reset: async (): Promise<void> => {
       identityDeleter.reset();
       completionClient.reset();
       errorTracker.reset();
+      labelTextReader.reset();
       await truncateTables(connection.db);
     },
     close: async (): Promise<void> => {

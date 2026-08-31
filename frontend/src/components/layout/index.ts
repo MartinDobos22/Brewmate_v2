@@ -6,5 +6,6 @@ export { RootStack } from './RootStack';
 export { TabsNavigator } from './TabsNavigator';
 export { TileRow } from './TileRow';
 export type { TileRowProps } from './TileRow';
+export { BottomNavBar, useShowsBottomNav } from './BottomNavBar';
 export { TabBarIcon } from './TabBarIcon';
 export type { TabBarIconProps } from './TabBarIcon';

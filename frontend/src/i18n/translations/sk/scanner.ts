@@ -28,6 +28,24 @@ export const SK_SCANNER = {
   scanPhotoFailed:
     'Fotku sa mi nepodarilo poslať alebo prečítať. Nevadí - prepíš mi z balíčka, čo vidíš.',
 
+  /*
+   * A refused photograph, and what to do about it.
+   *
+   * The heading says what happened and never why it is somebody's fault: a
+   * shop is badly lit, a bag is shiny, and a phone held one-handed over a
+   * shelf moves. Each reason below is an instruction rather than a diagnosis,
+   * because the only thing anybody can do with this screen is take another
+   * photograph - and "rozmazané" tells them nothing they did not already
+   * suspect, where "chyť telefón oboma rukami" does.
+   */
+  scanPhotoRefused: 'Z tejto fotky sa mi nepodarilo prečítať nič.',
+  scanPhotoRefusedHint: 'Skús to ešte raz - alebo mi to rovno prepíš z balíčka.',
+  scanPhotoIssueNoText: 'Nenašiel som na nej žiadny text. Namier na etiketu zblízka.',
+  scanPhotoIssueUnsharp: 'Písmo je rozmazané. Chyť telefón oboma rukami a počkaj, kým zaostrí.',
+  scanPhotoIssueTooDark: 'Je na to primálo svetla. Postav sa bližšie k svetlu.',
+  scanPhotoIssueTooBright: 'Presvetlilo to odlesk. Nakloň balíček, nech sa svetlo neodráža.',
+  scanPhotoRetake: 'Odfotiť znova',
+
   scanLabelCheckUncertain:
     'Toto som vyčítal z fotky. Zvýraznené polia som čítal na hranici čitateľnosti - mrkni na ne, prosím.',
   scanLabelTypeItIn: 'Stačí to, čo vidíš na balíčku. Prázdne polia ničomu nevadia.',

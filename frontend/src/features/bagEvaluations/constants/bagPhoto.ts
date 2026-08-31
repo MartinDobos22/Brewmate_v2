@@ -38,11 +38,19 @@ export const BAG_PHOTO_RETRY_FACTOR = 2;
  * app not listening. `unavailable` covers a refused permission and an upload
  * that would not go - both of which land on the form, because that is the way
  * forward rather than a dead end.
+ *
+ * `refused` is the fourth, and the only one that stays put. The photograph
+ * reached the API and came back with reasons nothing could be read off it, and
+ * every one of those reasons is something somebody can do differently in the
+ * next five seconds. Dropping them onto an empty form instead would throw away
+ * the one useful thing that was learned - and ask them to type in a label they
+ * are still holding a camera at.
  */
 export const BAG_CAPTURE_RESULTS = {
   read: 'read',
   cancelled: 'cancelled',
   unavailable: 'unavailable',
+  refused: 'refused',
 } as const;
 
 /** Where a photograph is filed in the bucket. */

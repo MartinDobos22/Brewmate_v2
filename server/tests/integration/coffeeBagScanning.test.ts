@@ -1,6 +1,7 @@
 import {
   aiUsageLogSchema,
   API_ROUTES,
+  LABEL_PHOTO_ISSUES,
   listResponseSchema,
   lowConfidenceFieldNames,
   parseCoffeeBagResponseSchema,
@@ -24,7 +25,12 @@ import { createTestApi, type TestApi } from '../setup/testApi.js';
 
 const ONE_CALL = 1;
 const TWO_CALLS = 2;
+const NO_CALLS = 0;
 const NOTHING = 0;
+const UNREADABLE_PHOTO = {
+  text: '',
+  issues: [LABEL_PHOTO_ISSUES.noText, LABEL_PHOTO_ISSUES.tooDark],
+} as const;
 
 describe('coffee bag scanning', () => {
   let context: TestContext;
@@ -124,6 +130,75 @@ describe('coffee bag scanning', () => {
 
     expect(refused.statusCode).toBe(HTTP_STATUS.badRequest);
     expect(context.completionClient.calls).toHaveLength(TWO_CALLS);
+  });
+
+  /**
+   * The whole point of looking at the photograph first. A picture nothing
+   * could be read off produces twelve nulls and an empty form whatever it
+   * costs, and somebody standing in a shop reads that as the app being broken
+   * rather than as the light being bad.
+   */
+  it('refuses a photograph nothing could be read off before asking a model', async () => {
+    context.completionClient.answerWith(TEST_LABEL_ANSWER);
+    context.labelTextReader.answerWith(UNREADABLE_PHOTO);
+
+    const refused = await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+
+    expect(refused.photoIssues).toEqual([LABEL_PHOTO_ISSUES.noText, LABEL_PHOTO_ISSUES.tooDark]);
+    expect(refused.fields.name.value).toBeNull();
+    expect(context.completionClient.calls).toHaveLength(NO_CALLS);
+  });
+
+  /**
+   * A refused photograph is not a reading, so it is not cached as one. The
+   * next attempt at the same bad picture has to be able to reach the model
+   * once the reader has been fixed or replaced.
+   */
+  it('does not remember a photograph it refused', async () => {
+    context.completionClient.answerWith(TEST_LABEL_ANSWER);
+    context.labelTextReader.answerWith(UNREADABLE_PHOTO);
+    await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+
+    context.labelTextReader.reset();
+    const read = await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+
+    expect(read.photoIssues).toEqual([]);
+    expect(read.fields.name.value).toBe('Kiamugumo AA');
+  });
+
+  /**
+   * The reader is an aid to reading a label, never the reading itself. Letting
+   * a third party's bad afternoon refuse somebody's scan would make the
+   * feature less reliable than it was before the aid existed.
+   */
+  it('reads the label anyway when the photograph could not be inspected', async () => {
+    context.completionClient.answerWith(TEST_LABEL_ANSWER);
+    context.labelTextReader.failWith(new Error('vision is down'));
+
+    const read = await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+
+    expect(read.photoIssues).toBeNull();
+    expect(read.fields.name.value).toBe('Kiamugumo AA');
+  });
+
+  /** The transcript is what the reader is for: the small print on the seam. */
+  it('hands the transcript to the model alongside the photograph', async () => {
+    context.completionClient.answerWith(TEST_LABEL_ANSWER);
+    context.labelTextReader.answerWith({ text: 'Praženo 2025-01-04', issues: [] });
+
+    await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+
+    expect(context.completionClient.calls[NOTHING]?.prompt).toContain('Praženo 2025-01-04');
+  });
+
+  /** Those bytes were read once and kept; inspecting them again buys nothing. */
+  it('does not inspect a photograph it has already read', async () => {
+    context.completionClient.answerWith(TEST_LABEL_ANSWER);
+
+    await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+    await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+
+    expect(context.labelTextReader.calls).toHaveLength(ONE_CALL);
   });
 
   it('records what the reading cost, retry included', async () => {

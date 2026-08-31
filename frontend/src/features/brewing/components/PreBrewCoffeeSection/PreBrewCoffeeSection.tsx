@@ -2,76 +2,66 @@ import type { CoffeeBag } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Card, Input, OptionCard, Text } from '../../../../components/ui';
+import { Button, Card, Input, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { formatGrams } from '../../../../lib/formatters';
+import { BAG_FRESHNESS_LABEL_KEYS } from '../../../inventory/constants';
+import { resolveBagFreshness } from '../../../inventory/services';
 import { useThemedStyles } from '../../../../theme';
-import { useCoffeeBags } from '../../../inventory/hooks';
-import { PRE_BREW_COFFEE_ICONS } from '../../constants';
 
 import { createPreBrewCoffeeSectionStyles } from './PreBrewCoffeeSection.styles';
-import { PreBrewBagOption } from './PreBrewBagOption';
 
 export interface PreBrewCoffeeSectionProps {
   readonly bag: CoffeeBag | null;
   readonly description: string;
-  readonly onChooseBag: (bag: CoffeeBag | null) => void;
   readonly onDescribe: (description: string) => void;
+  readonly onChange: () => void;
 }
 
-const NOTHING = 0;
-const NONE: readonly CoffeeBag[] = [];
-
 /**
- * Which coffee, or the honest answer that it is not written down.
+ * Which coffee was chosen, and the one way to choose a different one.
  *
- * Cards rather than chips, because choosing what to brew is a decision made on
- * two facts a chip has no room for: how much is left, and whether the bag is
- * ready. A row of names alone made the bag that had been resting three days
- * look exactly like the one at its peak.
+ * It reports rather than offers. The list of bags used to live here as well as
+ * on the screen before it, which meant two places set the same thing - and two
+ * places that set one value are two places that eventually disagree about what
+ * it is. So this card says what was answered and sends anybody who wants to
+ * change it back to the question, where the camera is also waiting.
  *
- * "Nemám ju zapísanú" sits beside the bags at the same weight, because the
- * whole promise of this app is that nobody has to fill in a database before
- * they are allowed to make coffee. Choosing it opens one free-text line rather
- * than a form: whatever somebody can say about the beans makes the recipe
- * better, and saying nothing is still an answer.
+ * "Nemám ju zapísanú" is still a first-class answer, and it opens one free-text
+ * line rather than a form: whatever somebody can say about the beans makes the
+ * recipe better, and saying nothing is still an answer.
  */
 export const PreBrewCoffeeSection = ({
   bag,
   description,
-  onChooseBag,
   onDescribe,
+  onChange,
 }: PreBrewCoffeeSectionProps): JSX.Element => {
   const styles = useThemedStyles(createPreBrewCoffeeSectionStyles);
   const { t } = useTranslation();
-  const bags = useCoffeeBags().data?.items ?? NONE;
+  const freshnessKey =
+    bag === null ? null : BAG_FRESHNESS_LABEL_KEYS[resolveBagFreshness(bag).freshness];
 
   return (
     <Card>
       <Text variant="titleMedium">{t(TRANSLATION_KEYS.preBrewCoffeeSection)}</Text>
-      {bags.length === NOTHING ? (
-        <Text variant="bodySmall" tone="muted">
-          {t(TRANSLATION_KEYS.preBrewCoffeeEmpty)}
+      <View style={styles.chosen}>
+        <Text variant="titleSmall">
+          {bag === null ? t(TRANSLATION_KEYS.preBrewCoffeeNone) : bag.name}
         </Text>
-      ) : (
-        <View style={styles.options}>
-          {bags.map((item: CoffeeBag): JSX.Element => (
-            <PreBrewBagOption
-              key={item.id}
-              bag={item}
-              selected={bag?.id === item.id}
-              onChoose={onChooseBag}
-            />
-          ))}
-          <OptionCard
-            label={t(TRANSLATION_KEYS.preBrewCoffeeNone)}
-            icon={PRE_BREW_COFFEE_ICONS.unknown}
-            selected={bag === null}
-            onPress={(): void => {
-              onChooseBag(null);
-            }}
-          />
-        </View>
-      )}
+        {bag === null || freshnessKey === null ? null : (
+          <Text variant="bodySmall" tone="muted">
+            {[
+              ...(bag.remainingGrams === null
+                ? []
+                : [
+                    `${t(TRANSLATION_KEYS.preBrewCoffeeRemaining)} ${formatGrams(bag.remainingGrams)} ${t(TRANSLATION_KEYS.unitGrams)}`,
+                  ]),
+              t(freshnessKey),
+            ].join(t(TRANSLATION_KEYS.listSeparator))}
+          </Text>
+        )}
+      </View>
       {bag === null ? (
         <View style={styles.freeText}>
           <Text variant="bodySmall" tone="muted">
@@ -85,6 +75,14 @@ export const PreBrewCoffeeSection = ({
           />
         </View>
       ) : null}
+      <View style={styles.freeText}>
+        <Button
+          label={t(TRANSLATION_KEYS.preBrewCoffeeChange)}
+          variant="tertiary"
+          fullWidth
+          onPress={onChange}
+        />
+      </View>
     </Card>
   );
 };
