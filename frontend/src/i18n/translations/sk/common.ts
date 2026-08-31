@@ -16,6 +16,7 @@ export const SK_COMMON = {
   unitMillimetres: 'mm',
   listSeparator: ' · ',
   stepCount: 'Krok {current} z {total}',
+  stepProgressLabel: 'Ako ďaleko si',
   stateLoading: 'Načítava sa…',
   stateEmptyTitle: 'Zatiaľ nič',
   stateEmptyBody: 'Keď sem niečo pribudne, uvidíš to tu.',

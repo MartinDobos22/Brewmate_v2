@@ -15,7 +15,6 @@ export const SK_ONBOARDING = {
   onboardingSkipAll: 'Preskočiť nastavenie',
   onboardingSkipStep: 'Preskočiť tento krok',
   onboardingContinue: 'Pokračovať',
-  onboardingProgressLabel: 'Priebeh nastavenia',
   onboardingResumeNotice: 'Pokračuješ tam, kde si minule prestal.',
   onboardingSaveError: 'Nastavenie sa nepodarilo uložiť. Skús to prosím znova.',
 

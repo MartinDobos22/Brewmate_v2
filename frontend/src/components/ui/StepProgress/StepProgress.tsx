@@ -43,6 +43,7 @@ export const StepProgress = ({ current, total }: StepProgressProps): JSX.Element
       <View
         style={styles.track}
         accessibilityRole="progressbar"
+        accessibilityLabel={t(TRANSLATION_KEYS.stepProgressLabel)}
         accessibilityValue={{ min: NONE, max: total, now: current }}
       >
         {Array.from({ length: total }, (_unused: unknown, index: number): JSX.Element => (

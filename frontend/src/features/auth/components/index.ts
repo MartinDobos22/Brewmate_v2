@@ -1,5 +1,6 @@
 export { AccountCard } from './AccountCard';
 export { AppleAuthButton } from './AppleAuthButton';
+export { AuthBrandMark } from './AuthBrandMark';
 export { AuthErrorMessage } from './AuthErrorMessage';
 export type { AuthErrorMessageProps } from './AuthErrorMessage';
 export { AuthGate } from './AuthGate';

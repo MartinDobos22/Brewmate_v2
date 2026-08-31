@@ -6,6 +6,6 @@ type AuthScreenLayoutStyleMap = ViewStyles<'header' | 'body'>;
 
 export const createAuthScreenLayoutStyles = (theme: Theme): AuthScreenLayoutStyleMap =>
   StyleSheet.create({
-    header: { gap: theme.spacing.xs, paddingTop: theme.spacing.xl },
+    header: { gap: theme.spacing.xs, paddingTop: theme.spacing.lg },
     body: { gap: theme.layout.cardGap },
   });

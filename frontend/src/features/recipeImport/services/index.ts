@@ -6,3 +6,5 @@ export {
   CONVERSION_PRECISION_KEYS,
   CONVERSION_REASON_KEYS,
 } from './conversionNoteKeys';
+export { resolveImportSteps } from './resolveImportSteps';
+export type { ImportSteps } from './resolveImportSteps';
