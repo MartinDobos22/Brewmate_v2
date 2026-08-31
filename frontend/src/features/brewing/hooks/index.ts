@@ -33,3 +33,5 @@ export { usePendingBrewLogs } from './usePendingBrewLogs';
 
 export { useQuickBrew } from './useQuickBrew';
 export type { QuickBrew } from './useQuickBrew';
+export { useCoffeeSource } from './useCoffeeSource';
+export type { CoffeeSource } from './useCoffeeSource';

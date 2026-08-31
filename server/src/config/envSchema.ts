@@ -48,6 +48,21 @@ export const envSchema = z
     ANTHROPIC_API_KEY: z.preprocess(emptyAsUndefined, z.string().min(1).optional()),
 
     /**
+     * The optical reader that looks at a photographed label before the model
+     * does: it transcribes what is printed and says whether the picture was
+     * worth reading at all.
+     *
+     * Optional, and optional as a pair - see `resolveVisionConfig`. Unset
+     * means the photograph goes to the model unaccompanied and unchecked,
+     * which is what this application did before there was a reader at all.
+     * The endpoint is a variable rather than a constant because Google serves
+     * this API from several regional hosts and only the deployment knows which
+     * one its photographs may travel to.
+     */
+    GOOGLE_VISION_API_KEY: z.preprocess(emptyAsUndefined, z.string().min(1).optional()),
+    GOOGLE_VISION_ENDPOINT: z.preprocess(emptyAsUndefined, z.url().optional()),
+
+    /**
      * Optional everywhere, and absent in every test run. Unset means errors
      * are logged and not reported anywhere else, which is a deployment choice
      * rather than a misconfiguration.

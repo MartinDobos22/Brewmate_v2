@@ -8,6 +8,7 @@ import { buildBrewModeRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { EquipmentSetSwitcher } from '../../../inventory/components';
 import { useBrewSetup } from '../../hooks/useBrewSetup';
+import { BrewCoffeeSourceScreen } from '../BrewCoffeeSourceScreen';
 import { PreBrewPlanCard } from '../PreBrewPlanCard';
 
 import { PreBrewExtras } from './PreBrewExtras';
@@ -36,6 +37,19 @@ export const PreBrewScreen = ({ initialBagId }: PreBrewScreenProps): JSX.Element
   const { t } = useTranslation();
   const router = useRouter();
   const setup = useBrewSetup(initialBagId);
+
+  /*
+   * The coffee comes first, and on its own screen.
+   *
+   * Everything below it on the form is written around the answer - the dose
+   * window, whether the bag is even ready, the roast the recipe assumes - and
+   * the answer can arrive from a camera as easily as from the cupboard. Asked
+   * as the first of six cards it was scrolled past; asked here it is the only
+   * thing on the screen.
+   */
+  if (!setup.hasChosenCoffee) {
+    return <BrewCoffeeSourceScreen onChoose={setup.chooseBag} />;
+  }
 
   return (
     <Screen scrollable>

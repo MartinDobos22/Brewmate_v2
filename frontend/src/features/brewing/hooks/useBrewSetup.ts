@@ -29,6 +29,15 @@ export interface BrewSetup extends BrewAmountsControl {
   readonly methods: readonly BrewMethod[];
   readonly method: BrewMethod | undefined;
   readonly bag: CoffeeBag | null;
+  /**
+   * Whether the coffee question has been answered at all.
+   *
+   * Distinct from `bag === null`, which is itself an answer - the coffee is
+   * not written down anywhere. Two different facts, and a screen that read one
+   * as the other would put somebody who deliberately chose "nemám ju zapísanú"
+   * back on the question they just answered.
+   */
+  readonly hasChosenCoffee: boolean;
   readonly coffeeDescription: string;
   readonly constraints: BrewConstraints;
   readonly waterType: WaterType;
@@ -39,6 +48,8 @@ export interface BrewSetup extends BrewAmountsControl {
   readonly chooseSet: (setId: string) => void;
   readonly chooseMethod: (method: BrewMethod) => void;
   readonly chooseBag: (bag: CoffeeBag | null) => void;
+  /** Back to the coffee question, keeping every other answer on this screen. */
+  readonly changeCoffee: () => void;
   readonly describeCoffee: (description: string) => void;
   readonly toggleConstraint: (name: keyof BrewConstraints, isSet: boolean) => void;
   readonly chooseWater: (waterType: WaterType) => void;
@@ -63,7 +74,17 @@ export const useBrewSetup = (initialBagId?: string): BrewSetup => {
   const available = useAvailableBrewMethods(activeSet);
   const [method, setMethod] = useState<BrewMethod | undefined>(undefined);
   const [bag, setBag] = useState<CoffeeBag | null>(null);
-  const [hasOpenedBag, setHasOpenedBag] = useState(false);
+  /**
+   * Two flags rather than one, because they answer different questions and
+   * they come apart the moment somebody changes their mind: the first is
+   * whether the bag in the path has been looked up yet - which happens once
+   * and must never happen again - and the second is whether the screen is
+   * past the coffee question. Reusing the first for both meant that going
+   * back to change the coffee re-applied the bag that had been opened from its
+   * own screen, so the question could not be answered differently.
+   */
+  const [hasResolvedInitialBag, setHasResolvedInitialBag] = useState(false);
+  const [hasChosenCoffee, setHasChosenCoffee] = useState(false);
   const bags = useCoffeeBags().data?.items ?? NO_BAGS;
   const [coffeeDescription, setCoffeeDescription] = useState('');
   const [constraints, setConstraints] = useState<BrewConstraints>(NO_CONSTRAINTS);
@@ -82,7 +103,7 @@ export const useBrewSetup = (initialBagId?: string): BrewSetup => {
    * anyway by the question below, so this costs no request.
    */
   useEffect((): void => {
-    if (hasOpenedBag || initialBagId === undefined) {
+    if (hasResolvedInitialBag || initialBagId === undefined) {
       return;
     }
 
@@ -93,8 +114,9 @@ export const useBrewSetup = (initialBagId?: string): BrewSetup => {
     }
 
     setBag(opened);
-    setHasOpenedBag(true);
-  }, [bags, hasOpenedBag, initialBagId]);
+    setHasResolvedInitialBag(true);
+    setHasChosenCoffee(true);
+  }, [bags, hasResolvedInitialBag, initialBagId]);
 
   /**
    * The constraints follow the set, because that is what a set is for: the
@@ -117,6 +139,7 @@ export const useBrewSetup = (initialBagId?: string): BrewSetup => {
     methods: available.methods,
     method,
     bag,
+    hasChosenCoffee,
     coffeeDescription,
     constraints,
     waterType: waterType ?? user?.waterType ?? WATER_TYPES.unknown,
@@ -132,7 +155,17 @@ export const useBrewSetup = (initialBagId?: string): BrewSetup => {
     chooseMethod: setMethod,
     chooseBag: (next: CoffeeBag | null): void => {
       setBag(next);
-      setHasOpenedBag(true);
+      setHasResolvedInitialBag(true);
+      setHasChosenCoffee(true);
+    },
+    /*
+     * Only the coffee is unanswered. The brewer, what is missing today and the
+     * amounts are all still true of this kitchen, and making somebody set them
+     * again because they picked up a different bag would be the screen
+     * punishing them for changing their mind.
+     */
+    changeCoffee: (): void => {
+      setHasChosenCoffee(false);
     },
     describeCoffee: setCoffeeDescription,
     toggleConstraint: (name: keyof BrewConstraints, isSet: boolean): void => {

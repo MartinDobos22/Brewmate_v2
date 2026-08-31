@@ -76,6 +76,17 @@ services:
       # working and /ai/* answers 503, which the app shows as "zadaj to ručne".
       - key: ANTHROPIC_API_KEY
         sync: false
+      # Optional, and optional as a pair. Without both, a photographed label
+      # goes to the model unaccompanied and nothing checks the picture first,
+      # which is what this API did before there was an optical reader at all.
+      # The endpoint is a variable because Google serves this API from several
+      # regional hosts, and only the deployment knows which one its
+      # photographs may travel to (https://vision.googleapis.com, or a
+      # regional host such as https://eu-vision.googleapis.com).
+      - key: GOOGLE_VISION_API_KEY
+        sync: false
+      - key: GOOGLE_VISION_ENDPOINT
+        sync: false
       # Optional. Without it unexpected failures are logged and nothing else.
       - key: SENTRY_DSN
         sync: false

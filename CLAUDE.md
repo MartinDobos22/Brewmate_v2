@@ -230,7 +230,7 @@ frontend/
     │   │               NumberStepper, ProgressBar, EmptyState, LoadingState,
     │   │               ErrorState, QueryState, ValueDisplay - each its own folder
     │   └── layout/     Screen, TileRow, AppProviders, RootStack, TabsNavigator,
-    │                   TabBarIcon
+    │                   TabBarIcon, BottomNavBar
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
     │                   chat, tasteProfile, bagEvaluations, recipeImport,
     │                   espresso, history, onboarding, profile, designSystem);
@@ -298,6 +298,34 @@ pill shape; Brewmate does not. `RADIUS` is the raw scale
 onto one of them (`SHAPE.button = md`, `SHAPE.card = lg`, `SHAPE.sheet = xl`,
 `SHAPE.avatar = full`). Components read `SHAPE`, never `RADIUS`, so the same
 kind of element has the same radius everywhere.
+
+### Getting out of a screen
+
+- **`Screen` draws the bottom bar, and nobody asks it to.** Half this
+  application is pushed on top of the tabs - the scanner, the conversation after
+  a cup, a coffee's own screen, the timeline, what the model calls have cost -
+  and on every one of them the bar simply vanished: the way back was a gesture
+  or a header arrow, and getting from a scan to the cupboard meant retracing the
+  path that led there. "Every screen except these" is a rule about the
+  application rather than a decision each screen makes, so it lives in
+  `useShowsBottomNav` and is read off the route. A prop would be forgotten on
+  the next screen somebody adds, and forgotten is the state this exists to fix.
+- **Five segments do not get it**, listed once in `BOTTOM_BAR_HIDDEN_SEGMENTS`.
+  `(tabs)` already has one, drawn by the navigator. `(auth)`, `onboarding` and
+  `verify-email` are linear: there is nowhere else to be yet, and four
+  destinations under a sign-in form are four ways to abandon it. `brew-mode` is
+  the deliberate one - it is used at arm's length with wet hands over a running
+  timer, and a row of destinations along the bottom edge is exactly where a
+  thumb lands when the phone is picked up mid-pour.
+- **Nothing on it is highlighted.** A screen pushed on top of the tabs belongs
+  to none of them, and lighting up "Skrinka" while somebody reads their brewing
+  history would be the bar saying where they are and being wrong. It is a way
+  out, not a claim: the same four places, in the same order, in the same spot.
+- **It is built from the tab bar's own tokens** - surface, hairline,
+  `TAB_ICONS`, `TAB_LABEL_KEYS`, `TAB_ORDER` - because a bar that differed by a
+  shade or a border would read as a different object appearing halfway through a
+  flow. Where it appears it takes the bottom safe-area inset for itself; a
+  screen that claimed it too would leave a strip of background under the bar.
 
 ### Data
 
@@ -454,6 +482,41 @@ The first thing in Brewmate that asks a model anything, and the reason
   URL that needs credentials is then this server's problem rather than a silent
   failure somewhere else. The URL comes from a client, so the size, the format
   and the time it may take are limits rather than expectations.
+- **An optical reader looks at the photograph first, and it is allowed to be
+  missing.** `LabelTextReader` is a port like every other third party here, with
+  a Google Vision implementation behind `GOOGLE_VISION_API_KEY` and
+  `GOOGLE_VISION_ENDPOINT`. It does two things and they are the same thing: it
+  transcribes the label, which is what makes a roast date stamped in grey on a
+  seam legible at all, and it says whether the picture was worth reading. A
+  reader that is absent, or configured and unreachable, is not a failure - the
+  photograph goes to the model unaccompanied, exactly as it did before there was
+  one. Making a scan in a shop depend on a second provider's afternoon would be
+  a feature that is less reliable for having been improved.
+- **The transcript is evidence about the small print, never the source.** The
+  prompt says so, and says the photograph wins on a disagreement: an OCR engine
+  misreads a `5` as an `S` with total confidence, and a model told to trust the
+  transcript would copy that into a field it can see perfectly well. A word that
+  appears only in the transcript was not printed on the bag.
+- **A photograph nothing came off is refused before a token is spent.** Two
+  reasons refuse it and only two: nothing legible was found, or what was found
+  the reader could barely make out - a transcript of guesses being worse than
+  none. Darkness and glare never refuse anything on their own; a dim picture
+  that read perfectly is a good picture. They ride along with a refusal as its
+  explanation, because the only thing anybody can do with one is take another
+  photograph, and "nič som neprečítal, bolo priveľmi tma" is an instruction
+  where "nič som neprečítal" is a dead end. `photoIssues` therefore has three
+  states - nobody looked, looked and had no complaint, refused and here is why -
+  and a refused photograph is not cached: those bytes were never read.
+- **The app stays on the camera when a photograph is refused.** `refused` is its
+  own capture outcome for exactly that reason. The reasons are printed above the
+  button that is about to be pressed again, the tile relabels itself "Odfotiť
+  znova", and typing the label in by hand is still there underneath - a refusal
+  with no way past it would be a dead end on the one screen that gets used
+  inside a building on one bar.
+- **Vision calls are not in `ai_usage_logs` and not behind the allowance.** That
+  ledger prices model tokens and an annotation has none. They are bounded by
+  shape instead: one per scan, only after the image hash misses, and never for a
+  photograph that has been read before.
 
 ### The shop verdict
 
@@ -561,9 +624,43 @@ row in `brew_methods`. Nothing anywhere in this loop branches on "filter" or
 category, and those two facts are the whole of what makes a shot different from
 a pour-over.
 
-**The screen before the recipe** (`/brew`, the brewing tab). Deciding what is
-being brewed _is_ brewing, so this is the tab itself rather than a menu leading
-to one.
+**The first screen of a brew** (`/brew`, before anything else). Which coffee,
+asked on its own screen, as two tiles: photograph the bag, or pick one out of
+the cupboard.
+
+- **It is a screen rather than the first card on the form.** Everything below it
+  is written around the answer - the dose window, whether the bag is even ready,
+  the roast the recipe assumes - and asked as the first of six cards it was
+  scrolled past. It is also the only question here that can be answered before
+  anything else is known.
+- **The two tiles are the same size, side by side.** Photographing a bag is not
+  the fallback for an empty cupboard and the cupboard is not the fallback for a
+  bad camera; they are two ordinary situations, and whichever one somebody is
+  in, the other being louder is the screen guessing wrong about them. As a list
+  with the cupboard on top, a coffee that had not been written down read as an
+  omission to fix before anybody was allowed to make coffee.
+- **A photographed bag lands in the cupboard on the way through.** Not
+  bookkeeping: the engine can be handed a bag or a sentence of free text, and
+  the free-text path loses exactly the two facts that move a recipe most - the
+  roast level and the roast date. Somebody photographing a bag at a counter owns
+  that coffee and is about to brew it, so the reading is kept rather than thrown
+  away and retyped as prose. The label is shown back first - "rozumiem tomu
+  takto", the same offer the calibration brew and the import both make.
+- **"Nemám ju zapísanú" is still a first-class answer**, quieter and underneath,
+  and it still gets a recipe. Nobody has to fill in a database before they are
+  allowed to make coffee.
+- **A build with no storage bucket hides the camera tile** rather than failing
+  when it is pressed, as everywhere else.
+- **The brewing form then reports the coffee rather than offering it again.**
+  The bag list used to live in both places, and two places that set one value
+  are two places that eventually disagree about it. The card says what was
+  answered and sends anybody who wants to change it back to the question - which
+  keeps every other answer on the screen, because picking up a different bag is
+  not a reason to set the brewer again.
+
+**The rest of the screen before the recipe** (`/brew`, the brewing tab). Deciding
+what is being brewed _is_ brewing, so this is the tab itself rather than a menu
+leading to one.
 
 - **The questions are cards with a glyph, not rows of chips.** Choosing a
   coffee turns on two facts a chip has no room for - how much is left and
@@ -1265,7 +1362,8 @@ server/src/
 ├── logging/          Pino options, redaction paths, log messages
 ├── db/               Drizzle client, schema, migrations
 ├── errors/           AppError, typed factories, error handler, not-found handler
-├── ai/               Model + image ports, the Anthropic and HTTP implementations, pricing
+├── ai/               Model, image and label-reader ports, the Anthropic, HTTP and
+│                   Google Vision implementations, photo assessment, pricing
 ├── auth/             Token verifier + identity deleter, Firebase implementations, auth plugin
 ├── modules/          one domain each: repository -> service -> routes + mapper
 │   ├── ai/           the seven routes that cost money, the auxiliary
@@ -1716,10 +1814,14 @@ loudly when it is set but unreachable.
 `.env` files are git-ignored; only `.env` is tracked. Never commit a
 filled-in `.env`, a service account JSON or a connection string with a password.
 
-- `server/.env` - database URLs, Firebase Admin credentials, `ANTHROPIC_API_KEY`
-  and `SENTRY_DSN`. The DSN is optional: without it unexpected failures are
-  logged and reported nowhere else, which is a deployment choice rather than a
-  misconfiguration.
+- `server/.env` - database URLs, Firebase Admin credentials, `ANTHROPIC_API_KEY`,
+  `GOOGLE_VISION_API_KEY` / `GOOGLE_VISION_ENDPOINT` and `SENTRY_DSN`. The DSN is
+  optional: without it unexpected failures are logged and reported nowhere else,
+  which is a deployment choice rather than a misconfiguration. The two Vision
+  variables are optional as a pair, and absent is a working state - a
+  photographed label is then read by the model alone. The endpoint is a variable
+  rather than a constant because Google serves that API from several regional
+  hosts, and only the deployment knows which one its photographs may travel to.
 - `frontend/.env` - `EXPO_PUBLIC_*` only (see Rule 6): the API base URL, the
   public Firebase _client_ configuration, the storage bucket and the Google
   OAuth client IDs. None of those are secrets; all of them identify rather than

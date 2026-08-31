@@ -25,8 +25,8 @@ export const PreBrewSections = ({ setup }: PreBrewSectionsProps): JSX.Element =>
     <PreBrewCoffeeSection
       bag={setup.bag}
       description={setup.coffeeDescription}
-      onChooseBag={setup.chooseBag}
       onDescribe={setup.describeCoffee}
+      onChange={setup.changeCoffee}
     />
     <PreBrewMethodSection
       methods={setup.methods}

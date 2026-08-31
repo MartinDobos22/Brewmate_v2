@@ -7,6 +7,8 @@ export { BagVerdictCard } from './BagVerdictCard';
 export type { BagVerdictCardProps } from './BagVerdictCard';
 export { ScanModeStep } from './ScanModeStep';
 export type { ScanModeStepProps } from './ScanModeStep';
+export { BagPhotoIssueNotice } from './BagPhotoIssueNotice';
+export type { BagPhotoIssueNoticeProps } from './BagPhotoIssueNotice';
 export { BagPhotoStep } from './BagPhotoStep';
 export type { BagPhotoStepProps } from './BagPhotoStep';
 export { ScanOutcomeStep } from './ScanOutcomeStep';

@@ -67,12 +67,23 @@ app like this to have and are worth pre-empting.
 | Google Firebase (Cloud Storage)     | Bag photographs                                                                                  | The photo the scanner reads                                                    |
 | Neon (PostgreSQL)                   | Everything the API stores                                                                        | It is the database                                                             |
 | Anthropic                           | The bag photograph, the coffee's fields, the brew's numbers, and what somebody wrote about a cup | Reading a label, writing a verdict, writing a recipe, answering a chat message |
+| Google Cloud Vision (optional)      | The bag photograph                                                                               | Transcribing the label, and judging whether the picture is worth reading       |
 | Error reporting provider (optional) | Crash type, message, stack, platform, release, screen                                            | Diagnosing crashes                                                             |
 
 Anthropic is the one worth spelling out in the privacy policy rather than
 listing: photographs of coffee bags and sentences somebody wrote about a cup
 both go to a model provider, and a policy that only said "third-party service
 providers" would not be describing that to anybody who could recognise it.
+
+Google Cloud Vision receives the same photograph Anthropic does and nothing
+else: no account id, no email, nothing about the person holding the bag. It is
+sent by the API rather than by the app, so a photograph never travels from a
+phone to anyone but Cloud Storage. Absent unless `GOOGLE_VISION_API_KEY` and
+`GOOGLE_VISION_ENDPOINT` are both set on the API, and this row comes off the
+list in a deployment without them. It is worth naming in the privacy policy
+for the same reason Anthropic is: a photograph reaching a second model
+provider is a fact somebody would want to recognise in a sentence, not one to
+be covered by "service providers".
 
 The error reporting provider is optional and absent unless `SENTRY_DSN` /
 `EXPO_PUBLIC_SENTRY_DSN` are set. A build without them reports nothing

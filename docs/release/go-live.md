@@ -69,6 +69,9 @@ dashboard:
 - [ ] A request with no token answers 401 in the shared error envelope, and one
       with a real Firebase ID token answers `/me` with a user row.
 - [ ] `ANTHROPIC_API_KEY` is set, and a scan of a real bag comes back read
+- [ ] `GOOGLE_VISION_API_KEY` and `GOOGLE_VISION_ENDPOINT` are both set or both
+      empty, and a photograph of a blank surface comes back refused rather than
+      read into an empty form
       rather than 503.
 - [ ] The domain in `frontend/eas.json` resolves to it.
 

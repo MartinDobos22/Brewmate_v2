@@ -6,6 +6,8 @@ export { BrewTimerDisplay } from './BrewTimerDisplay';
 export { BrewStepPanel } from './BrewStepPanel';
 export { BrewControls } from './BrewControls';
 export { BrewDonePanel } from './BrewDonePanel';
+export { BrewCoffeeSourceScreen } from './BrewCoffeeSourceScreen';
+export type { BrewCoffeeSourceScreenProps } from './BrewCoffeeSourceScreen';
 export { PreBrewCoffeeSection } from './PreBrewCoffeeSection';
 export { PreBrewMethodSection } from './PreBrewMethodSection';
 export { PreBrewAmountsSection } from './PreBrewAmountsSection';

@@ -12,3 +12,5 @@ export {
   BREW_METHOD_CATEGORY_LABEL_KEYS,
   PRE_BREW_COFFEE_ICONS,
 } from './brewMethodIcons';
+export { COFFEE_SOURCE_STAGES, COFFEE_SOURCE_ICONS } from './coffeeSource';
+export type { CoffeeSourceStage } from './coffeeSource';

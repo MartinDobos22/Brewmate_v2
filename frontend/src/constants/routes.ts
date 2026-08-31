@@ -140,6 +140,21 @@ export const TAB_SEGMENTS = {
 
 export type TabSegment = (typeof TAB_SEGMENTS)[keyof typeof TAB_SEGMENTS];
 
+/**
+ * Where each tab lives, for anything navigating to one from outside the tabs.
+ *
+ * The segments above address the files inside `(tabs)`, which is what the
+ * navigator needs; a screen pushed on top of the tabs needs the path instead,
+ * and deriving one from the other would mean writing `index` -> `/` down a
+ * second time somewhere less obvious.
+ */
+export const TAB_ROUTES: Record<TabSegment, Route> = {
+  [TAB_SEGMENTS.home]: ROUTES.home,
+  [TAB_SEGMENTS.inventory]: ROUTES.inventory,
+  [TAB_SEGMENTS.brew]: ROUTES.brew,
+  [TAB_SEGMENTS.profile]: ROUTES.profile,
+};
+
 /** Left-to-right order of the bottom tabs. */
 export const TAB_ORDER = [
   TAB_SEGMENTS.home,

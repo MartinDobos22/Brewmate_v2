@@ -1,4 +1,8 @@
-import { EMPTY_PARSED_BAG_FIELDS, type ParsedBagFields } from '@brewmate/shared';
+import {
+  EMPTY_PARSED_BAG_FIELDS,
+  type LabelPhotoIssue,
+  type ParsedBagFields,
+} from '@brewmate/shared';
 import { useState } from 'react';
 
 import { isPhotoScanningConfigured } from '../../../config';
@@ -22,6 +26,14 @@ export interface BagPhoto {
   readonly hasFailed: boolean;
   readonly imageUrl: string | null;
   /**
+   * Why the last photograph was refused, empty when it was not.
+   *
+   * Kept on the hook rather than returned once, because the screen that has to
+   * print it is the camera screen somebody stays on - the whole point of a
+   * refusal is that the next photograph is taken from the same place.
+   */
+  readonly issues: readonly LabelPhotoIssue[];
+  /**
    * Takes or chooses a photograph, uploads it and reads the label.
    *
    * Never throws. A refused permission, an upload that will not go and a label
@@ -34,6 +46,9 @@ export interface BagPhoto {
 
 const CANCELLED: BagCapture = { outcome: BAG_CAPTURE_RESULTS.cancelled, fields: null };
 const UNAVAILABLE: BagCapture = { outcome: BAG_CAPTURE_RESULTS.unavailable, fields: null };
+const REFUSED: BagCapture = { outcome: BAG_CAPTURE_RESULTS.refused, fields: null };
+const NOTHING = 0;
+const NO_ISSUES: readonly LabelPhotoIssue[] = [];
 
 /**
  * One photograph of a bag, from the camera to the fields it was read into.
@@ -51,11 +66,13 @@ export const useBagPhoto = (): BagPhoto => {
   const [isWorking, setWorking] = useState(false);
   const [hasFailed, setFailed] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [issues, setIssues] = useState<readonly LabelPhotoIssue[]>(NO_ISSUES);
 
   return {
     isWorking,
     hasFailed,
     imageUrl,
+    issues,
     isSupported: isPhotoScanningConfigured() && user !== null,
 
     capture: async (source: BagPhotoSource): Promise<BagCapture> => {
@@ -71,10 +88,24 @@ export const useBagPhoto = (): BagPhoto => {
 
       setWorking(true);
       setFailed(false);
+      setIssues(NO_ISSUES);
 
       try {
         const uploaded = await uploadBagPhoto(localUri, user.uid);
-        const { fields } = await parseCoffeeBag(uploaded);
+        const { fields, photoIssues } = await parseCoffeeBag(uploaded);
+
+        /*
+         * A photograph the API would not read is the one failure worth
+         * staying put for. It came back with reasons, every one of them a
+         * thing to do differently, and the camera is still in somebody's hand:
+         * moving them to an empty form here would throw that away and then ask
+         * them to type in the label they are pointing at.
+         */
+        if (photoIssues !== null && photoIssues.length > NOTHING) {
+          setIssues(photoIssues);
+
+          return REFUSED;
+        }
 
         setImageUrl(uploaded);
 
@@ -91,6 +122,7 @@ export const useBagPhoto = (): BagPhoto => {
     forget: (): void => {
       setImageUrl(null);
       setFailed(false);
+      setIssues(NO_ISSUES);
     },
   };
 };
