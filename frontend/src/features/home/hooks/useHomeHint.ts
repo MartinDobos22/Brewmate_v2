@@ -1,7 +1,4 @@
 import { MILLISECONDS_PER_DAY } from '../../../constants/time';
-import { CONFIDENCE_LEVELS } from '../../tasteProfile/constants';
-import { useTasteProfile } from '../../tasteProfile/hooks';
-import { resolveConfidenceLevel } from '../../tasteProfile/services';
 import { resolveHomeHint, type HomeHint } from '../services/resolveHomeHint';
 
 import { useBrewStats } from './useBrewStats';
@@ -24,14 +21,10 @@ const today = (): number => Math.floor(Date.now() / MILLISECONDS_PER_DAY);
 
 /** The single thing the home screen has to say, and whether it may be said yet. */
 export const useHomeHint = (): HomeHintState => {
-  const profile = useTasteProfile();
   const inventory = useInventorySummary();
   const brews = useBrewStats();
 
   const hint = resolveHomeHint({
-    knowsTaste:
-      profile.data !== undefined &&
-      resolveConfidenceLevel(profile.data.confidenceLevel) !== CONFIDENCE_LEVELS.none,
     bagCount: inventory.bagCount,
     aging: inventory.aging,
     resting: inventory.resting,
@@ -41,5 +34,5 @@ export const useHomeHint = (): HomeHintState => {
     dayIndex: today(),
   });
 
-  return { hint, isReady: profile.isSuccess && inventory.isReady && brews.isReady };
+  return { hint, isReady: inventory.isReady && brews.isReady };
 };

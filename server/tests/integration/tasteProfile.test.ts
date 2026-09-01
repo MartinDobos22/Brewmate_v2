@@ -65,6 +65,28 @@ describe('taste profile', () => {
     expect(profile.confidenceLevel).toBeGreaterThan(NO_CONFIDENCE);
   });
 
+  /**
+   * The response has to survive the answer it is describing.
+   *
+   * Half of what anybody says about coffee asks for less of something, so the
+   * delta the reducer writes is usually negative - and a contract that
+   * described a move with the bounds of a value refused every one of those,
+   * after the event had already been stored. The questionnaire then showed
+   * "skúsiť znova" over a profile that had in fact just been taught.
+   */
+  it('answers an observation that lowers an axis', async () => {
+    const response = await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
+      source: TASTE_PROFILE_SOURCES.questionnaire,
+      payload: { axes: { bitterness: LOW_BITTERNESS } },
+    });
+
+    expect(response.statusCode).toBe(HTTP_STATUS.created);
+
+    const event = tasteProfileEventSchema.parse(response.json());
+
+    expect(event.appliedDelta?.axes.bitterness).toBeLessThan(NO_CONFIDENCE);
+  });
+
   it('records what the reducer did with each event', async () => {
     const response = await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
       source: TASTE_PROFILE_SOURCES.questionnaire,

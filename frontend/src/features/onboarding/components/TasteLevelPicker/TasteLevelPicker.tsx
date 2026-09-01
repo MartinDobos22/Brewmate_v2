@@ -10,6 +10,8 @@ import {
 } from '../../constants/tasteExperienceLevels';
 
 export interface TasteLevelPickerProps {
+  /** What was answered last time, so coming back shows what it is changing. */
+  readonly selected: TasteExperienceLevel | null;
   readonly onChoose: (level: TasteExperienceLevel) => void;
 }
 
@@ -29,7 +31,7 @@ export interface TasteLevelPickerProps {
  * before they can get past this screen, and enough people will overclaim to
  * avoid it that the question would stop working.
  */
-export const TasteLevelPicker = ({ onChoose }: TasteLevelPickerProps): JSX.Element => {
+export const TasteLevelPicker = ({ selected, onChoose }: TasteLevelPickerProps): JSX.Element => {
   const { t } = useTranslation();
 
   return (
@@ -43,7 +45,7 @@ export const TasteLevelPicker = ({ onChoose }: TasteLevelPickerProps): JSX.Eleme
           key={level}
           label={t(TASTE_EXPERIENCE_LABEL_KEYS[level])}
           note={t(TASTE_EXPERIENCE_NOTE_KEYS[level])}
-          selected={false}
+          selected={level === selected}
           onPress={(): void => {
             onChoose(level);
           }}

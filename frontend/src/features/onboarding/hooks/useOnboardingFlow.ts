@@ -110,7 +110,16 @@ export const useOnboardingFlow = (): OnboardingFlow => {
     saveState: store.save,
     isSaving: store.isSaving,
     hasFailed: store.hasFailed,
-    progress: step === null ? null : readStepProgress(step),
+    /**
+     * The bar counts the flow, so a step reopened on its own has no bar.
+     *
+     * One step opened from the profile or the home screen is not the first of
+     * seven - nothing else is going to follow it - and "krok 1 z 7" printed
+     * over a questionnaire somebody came back to fill in on its own is the
+     * screen counting a journey that is not happening. Whatever that step
+     * wants to count about itself, it counts.
+     */
+    progress: step === null || isSingleStep ? null : readStepProgress(step),
     canGoBack: !isSingleStep && step !== null && previousOnboardingStep(step) !== null,
 
     goBack: (): void => {

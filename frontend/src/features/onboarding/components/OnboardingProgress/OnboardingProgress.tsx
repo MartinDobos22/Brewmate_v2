@@ -14,7 +14,17 @@ import { createOnboardingProgressStyles } from './OnboardingProgress.styles';
 
 export interface OnboardingProgressProps {
   readonly step: OnboardingStep;
-  readonly progress: StepProgressState;
+  /** Null on a step opened on its own: there is no flow to count through. */
+  readonly progress: StepProgressState | null;
+  /**
+   * What the step counts inside itself, where it counts anything.
+   *
+   * Written rather than drawn as a second bar. The questionnaire is one step
+   * of the flow and eight screens inside it, and two segmented strips above
+   * each other would be two answers to "how much more of this is there" - the
+   * one question this whole component exists to answer once.
+   */
+  readonly note?: string;
 }
 
 /**
@@ -31,7 +41,11 @@ export interface OnboardingProgressProps {
  * reason they share it: three flows answering one question three ways would be
  * three answers.
  */
-export const OnboardingProgress = ({ step, progress }: OnboardingProgressProps): JSX.Element => {
+export const OnboardingProgress = ({
+  step,
+  progress,
+  note,
+}: OnboardingProgressProps): JSX.Element => {
   const styles = useThemedStyles(createOnboardingProgressStyles);
   const { t } = useTranslation();
 
@@ -42,7 +56,14 @@ export const OnboardingProgress = ({ step, progress }: OnboardingProgressProps):
           {t(ONBOARDING_STEP_LABEL_KEYS[step])}
         </Text>
       ) : null}
-      <StepProgress current={progress.current} total={progress.total} />
+      {progress === null ? null : (
+        <StepProgress current={progress.current} total={progress.total} />
+      )}
+      {note === undefined ? null : (
+        <Text variant="labelSmall" tone="muted">
+          {note}
+        </Text>
+      )}
     </View>
   );
 };

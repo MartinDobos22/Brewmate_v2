@@ -4,9 +4,7 @@ import type { JSX } from 'react';
 import { TileRow } from '../../../../components/layout';
 import { Text, Tile } from '../../../../components/ui';
 import { useTranslation } from '../../../../i18n';
-import { ONBOARDING_STEPS } from '../../../onboarding/constants';
-import { useOnboardingStepLink } from '../../../onboarding/hooks';
-import { HOME_HINTS, HOME_HINT_IDS, type HomeHintPresentation } from '../../constants';
+import { HOME_HINTS, type HomeHintPresentation } from '../../constants';
 import { useHomeHint } from '../../hooks';
 
 /**
@@ -24,7 +22,6 @@ import { useHomeHint } from '../../hooks';
 export const HomeHintTile = (): JSX.Element | null => {
   const { t } = useTranslation();
   const router = useRouter();
-  const openStep = useOnboardingStepLink();
   const { hint, isReady } = useHomeHint();
 
   if (!isReady) {
@@ -34,12 +31,6 @@ export const HomeHintTile = (): JSX.Element | null => {
   const presentation: HomeHintPresentation = HOME_HINTS[hint.id];
 
   const open = (): void => {
-    if (hint.id === HOME_HINT_IDS.taste) {
-      openStep(ONBOARDING_STEPS.taste);
-
-      return;
-    }
-
     if (presentation.route !== null) {
       router.push(presentation.route);
     }

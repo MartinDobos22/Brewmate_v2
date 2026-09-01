@@ -19,6 +19,8 @@ export interface OnboardingStepLayoutProps {
   readonly canGoBack?: boolean;
   /** A step that scrolls its own content - a long list - turns this off. */
   readonly scrollable?: boolean;
+  /** What this step counts inside itself, printed under the flow's own bar. */
+  readonly note?: string;
 }
 
 /**
@@ -36,6 +38,7 @@ export const OnboardingStepLayout = ({
   onBack,
   canGoBack,
   scrollable = true,
+  note,
 }: OnboardingStepLayoutProps): JSX.Element => {
   const styles = useThemedStyles(createOnboardingStepLayoutStyles);
   const { t } = useTranslation();
@@ -63,7 +66,9 @@ export const OnboardingStepLayout = ({
           onPress={flow.leave}
         />
       </View>
-      {flow.progress === null ? null : <OnboardingProgress step={step} progress={flow.progress} />}
+      {flow.progress === null && note === undefined ? null : (
+        <OnboardingProgress step={step} progress={flow.progress} note={note} />
+      )}
       {scrollable ? (
         <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
           {children}
