@@ -24,6 +24,7 @@ const ROOT = {
   aiUsageSummary: 'aiUsageSummary',
   recipeTimeline: 'recipeTimeline',
   insights: 'insights',
+  coffeeTasteEstimate: 'coffeeTasteEstimate',
 } as const;
 
 export type AppQueryKey = readonly unknown[];
@@ -36,6 +37,15 @@ export const QUERY_KEYS = {
   currentUser: (): AppQueryKey => [ROOT.currentUser],
 
   tasteProfile: (): AppQueryKey => [ROOT.tasteProfile],
+  /**
+   * Keyed by the label rather than by a bag id, because the same coffee gets
+   * asked about from two places - a bag on a shelf and the same bag in the
+   * cupboard - and they must not be two cache entries with two answers.
+   */
+  coffeeTasteEstimate: (fingerprint: string): AppQueryKey => [
+    ROOT.coffeeTasteEstimate,
+    fingerprint,
+  ],
   tasteProfileEvents: (filter?: QueryFilter): AppQueryKey => [ROOT.tasteProfileEvents, filter],
 
   brewMethods: (filter?: QueryFilter): AppQueryKey => [ROOT.brewMethods, filter],

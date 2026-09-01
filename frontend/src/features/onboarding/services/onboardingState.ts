@@ -18,6 +18,7 @@ export const initialOnboardingState = (): OnboardingState => ({
   currentStep: ONBOARDING_STEPS.welcome,
   completedAt: null,
   questionnaireAnswers: {},
+  questionnaireLevel: null,
 });
 
 /**
@@ -58,6 +59,19 @@ export const withAnswers = (
   state: OnboardingState,
   questionnaireAnswers: Readonly<Record<string, string>>,
 ): OnboardingState => ({ ...state, questionnaireAnswers: { ...questionnaireAnswers } });
+
+/**
+ * Which set of questions the stored answers belong to.
+ *
+ * Saved before the first question is shown rather than with the submission,
+ * because it is what makes a run resumable: the answers on their own do not
+ * say which questionnaire they came from, and read against the wrong one they
+ * are evidence about questions nobody was asked.
+ */
+export const withQuestionnaireLevel = (
+  state: OnboardingState,
+  questionnaireLevel: string,
+): OnboardingState => ({ ...state, questionnaireLevel });
 
 /**
  * Leaving early.

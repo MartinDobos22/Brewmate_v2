@@ -25,6 +25,8 @@ export const SK_TASTE_PROFILE = {
   flavorTeaLike: 'Čajové',
 
   profileTasteTitle: 'Tvoja chuť',
+  profileTasteChartLabel: 'Graf tvojej chuti v piatich osiach',
+  profileAxisUnknown: 'Zatiaľ neviem',
   profileTasteEmpty: 'Zatiaľ o tvojej chuti nič neviem. Vyplň dotazník a začneme.',
   profileConfidenceTitle: 'Ako dobre ťa poznám',
   profileConfidenceNone: 'Zatiaľ vôbec',

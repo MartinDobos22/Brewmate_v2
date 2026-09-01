@@ -1,6 +1,7 @@
 import { TRANSLATION_KEYS } from '../../../../i18n';
 import type { TasteQuestion } from '../../services/tasteQuestionTypes';
 
+import { QUESTION_LEVELS } from './questionLevels';
 import { QUESTION_WEIGHTS } from './questionWeights';
 
 /**
@@ -12,6 +13,7 @@ export const STRENGTH_QUESTION: TasteQuestion = {
   promptKey: TRANSLATION_KEYS.tqStrengthPrompt,
   helpKey: TRANSLATION_KEYS.tqStrengthHelp,
   weight: QUESTION_WEIGHTS.direct,
+  levels: QUESTION_LEVELS.informed,
   options: [
     {
       id: 'high',

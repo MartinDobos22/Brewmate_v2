@@ -30,6 +30,14 @@ import {
  * `questionnaireAnswers` maps a question to the option that was tapped. It is
  * what makes an interrupted questionnaire resumable, and what lets the profile
  * screen reopen the questionnaire with the previous answers already in place.
+ *
+ * `questionnaireLevel` is which set of questions those answers belong to. It
+ * has to be stored beside them rather than inferred: the same option id can
+ * exist in two levels, and a questionnaire resumed against the wrong set would
+ * read somebody's answers as evidence for questions they were never asked.
+ * Held as a plain string here for the same reason the steps are - the levels
+ * belong to the flow, which is the app's business, and the API only ever
+ * stores this and hands it back.
  */
 export const onboardingStateSchema = z.object({
   version: z.number().int().min(ONBOARDING_VERSION_MIN),
@@ -42,6 +50,7 @@ export const onboardingStateSchema = z.object({
       z.string().max(ONBOARDING_ANSWER_MAX_LENGTH),
     )
     .default({}),
+  questionnaireLevel: z.string().max(ONBOARDING_STEP_MAX_LENGTH).nullable().default(null),
 });
 
 export type OnboardingState = z.infer<typeof onboardingStateSchema>;

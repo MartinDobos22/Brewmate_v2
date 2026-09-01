@@ -1,4 +1,5 @@
 export { buildQuestionnairePayload } from './buildQuestionnairePayload';
+export { resolveLevelQuestions } from './resolveLevelQuestions';
 export { buildQuestionnaireSourceRef } from './buildQuestionnaireSourceRef';
 export { findAnsweredOptions } from './findAnsweredOptions';
 export type { AnsweredOption } from './findAnsweredOptions';
@@ -10,6 +11,7 @@ export {
   isOnboardingFinished,
   withStepCompleted,
   withAnswers,
+  withQuestionnaireLevel,
   asLeftEarly,
   asCompleted,
 } from './onboardingState';

@@ -13,8 +13,12 @@ brew) and the profile screen it all ends up in. On top of that sits the empty
 app: the home screen a brand-new account sees, quick brewing without an
 inventory, the cupboard, the shop scanner and the states every screen falls
 back to. Coffee bag scanning is the first thing here that asks a model
-anything: a photographed label is read into fields, and the shop verdict is
-written as an argument rather than picked from three sentences. The calibration
+anything: a photographed label is read into fields, the shop verdict is
+written as an argument rather than picked from three sentences, and the coffee
+itself is estimated onto the same five axes the drinker is described on - by
+arithmetic on the phone first, and only then by a model reading what the tables
+cannot - and the two are finally held up against each other, axis by axis,
+weighted by what both sides actually know. The calibration
 brew is still read by a Slovak lexicon, and the three arithmetic rules survive
 as the scanner's offline fallback.
 
@@ -64,10 +68,15 @@ response shape is defined there once, and both sides import it. If the app and
 the API disagree about a field, the fix belongs in `shared`, never in a local
 copy of the type.
 
-It also holds the two pieces of arithmetic both ends have to agree on exactly:
-`shared/src/brewing/ratioCalculator.ts`, and `shared/src/conversion/` - the
-recipe conversion, which is a self-contained module with its own unit tests
-(`shared/tests/`) so that a better algorithm can replace it without touching
+It also holds the pieces of arithmetic both ends have to agree on exactly:
+`shared/src/brewing/ratioCalculator.ts`, `shared/src/conversion/` - the recipe
+conversion - `shared/src/tasteProfiles/foldAxisObservations.ts`, which is how a
+set of taps becomes a claim about somebody's taste, `shared/src/coffeeTaste/`,
+which is how a printed label becomes a claim about a coffee, and
+`shared/src/coffeeMatch/`, which is where those two claims are held up against
+each other. Each is
+self-contained, depends on nothing but plain values and has its own unit tests
+(`shared/tests/`), so a better algorithm can replace one without touching
 anything else.
 
 ---
@@ -232,8 +241,9 @@ frontend/
     │   └── layout/     Screen, TileRow, AppProviders, RootStack, TabsNavigator,
     │                   TabBarIcon, BottomNavBar
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
-    │                   chat, tasteProfile, bagEvaluations, recipeImport,
-    │                   espresso, history, onboarding, profile, designSystem);
+    │                   chat, tasteProfile, coffeeTaste, bagEvaluations,
+    │                   recipeImport, espresso, history, onboarding, profile,
+    │                   designSystem);
     │                   each has services/ for the API calls and hooks/ for the
     │                   queries and mutations over them. `brewing` owns the
     │                   pre-brew screen, the recipe engine client and brew mode;
@@ -263,11 +273,14 @@ frontend/
 - **Slovak copy is split by domain** under `src/i18n/translations/sk/`
   (`common`, `auth`, `navigation`, `screens`, `home`, `homeTiles`, `inventory`,
   `grinders`,
-  `onboarding`, `tasteQuestionsDirect`, `tasteQuestionsIndirect`,
+  `onboarding`, `tasteQuestionsLevels`, `tasteQuestionsDirect`,
+  `tasteQuestionsIndirect`, `tasteQuestionsBeginner`, `tasteQuestionsExpert`,
   `equipmentSetup`, `waterAndSets`, `calibration`, `brewing`, `preBrew`,
   `brewMode`, `recipeChat`, `recipeImport`, `dialIn`, `scanner`,
-  `tasteProfile`, `profileSections`, `history`, `aiCosts`, `cupboardAndBrew`,
-  `errors`, `designSystem`) and merged in
+  `tasteProfile`, `tasteAxisBands`, `coffeeTaste`, `coffeeMatch`,
+  `profileSections`,
+  `history`, `aiCosts`,
+  `cupboardAndBrew`, `errors`, `designSystem`) and merged in
   `sk/index.ts`. One file would break the 150-line limit.
   `SK_TRANSLATIONS` is the source of truth for the key list: every future locale
   is typed against it, so a missing translation is a type error.
@@ -405,12 +418,15 @@ here is allowed to be a blank screen with the words "žiadne dáta".
   A number on a tile that needs a paragraph beside it is a number that will be
   misread.
 - **The taste tile draws nothing until there is something behind it.** A
-  profile built from no evidence is a row of neutral bars, and neutral bars
-  drawn neatly stop looking like an absence of evidence and start looking like
-  a considered opinion. Until then the tile says so and leads to the
-  questionnaire. Afterwards it is the same five axes, in the same order,
-  against the same scale as the labelled chart - one picture, not a second
-  opinion drawn differently.
+  profile built from no evidence is five middles, and five middles drawn neatly
+  stop looking like an absence of evidence and start looking like a considered
+  opinion. Two conditions have to hold, because they can disagree: an account
+  can carry a real confidence built entirely from a roast preference and a milk
+  habit while having said nothing about any axis. Until then the tile says so
+  and leads to the questionnaire. Afterwards it is literally the same component
+  as the labelled chart, without its labels - one picture, not a second opinion
+  drawn differently, and not a miniature that will eventually differ from it by
+  a ring or a stroke.
 - **The ticks are read from the account, not from a checklist beside it.**
   `useGettingStarted` asks the profile, the cupboard, the shop verdicts and the
   brew logs, one row each. Somebody who answered the questionnaire from the
@@ -517,6 +533,139 @@ The first thing in Brewmate that asks a model anything, and the reason
   ledger prices model tokens and an annotation has none. They are bounded by
   shape instead: one per scan, only after the image hash misses, and never for a
   photograph that has been read before.
+
+### What is in the bag
+
+The counterpart to the taste profile, and the reason that profile is measured
+the way it is. `POST /ai/estimate-coffee-taste` answers what a coffee tastes
+like - on the same five axes, with the same per-axis confidence, folded by the
+same arithmetic - so that the coffee and the person can eventually be held up
+against each other without either being translated first.
+
+- **The estimate is arithmetic over signals, and the signals are the whole
+  argument.** `shared/src/coffeeTaste/` reads a label into weighted
+  observations: the roast level, the process, the origin, the altitude, the
+  variety and every printed note the lexicon recognises. Each one states where
+  a coffee like this sits, and `foldAxisObservations` - the same function the
+  questionnaire uses - weighs them against each other. The tables live in
+  `constants/` with the reason for each weight written next to it, because
+  those weights are the entire claim this feature makes.
+- **The roast outweighs the origin, and the process is close behind.** A dark
+  Ethiopian and a light Ethiopian are further apart than a light Ethiopian and
+  a light Kenyan, so an ordering that put the country first would get the
+  common case wrong. Printed notes sit just under the roast: the roaster tasted
+  this lot, which is more specific than any generalisation about a country -
+  and they are also marketing, which is why they are not first.
+- **It runs on the phone, before any request is made.** The estimate is on
+  screen instantly, offline, with no allowance spent, and it updates as
+  somebody types a coffee into the form by hand. That is the feature rather
+  than a fallback: this is used standing in a shop on one bar of signal, and a
+  screen that waited for a server to say that a dark roast is bitter would be
+  worse in every case.
+- **A bag that says almost nothing still gets an answer.** One country is
+  enough for a shape, and it comes back at about a quarter confidence. What it
+  must never do is answer with five middles stated firmly - an axis nothing
+  spoke about is left at neutral carrying no confidence at all, which is what
+  the chart then draws as an outline rather than as an opinion.
+- **The model contributes evidence, never an answer, and the schema is what
+  enforces it.** There is no field anywhere in `coffeeTasteReadingSchema` for a
+  finished estimate. What comes back is observations plus how much the label
+  supported them, and `toModelSignal` turns that into one more weighted signal
+  that has to survive the same fold. Asked outright what a coffee tastes like,
+  a model will describe a bag it has never met with total confidence, and
+  nobody - including the model - could then say which part came from the label
+  and which from a roaster's marketing copy it once read.
+- **Where the model and the label disagree, the confidence falls.** It cannot
+  turn a dark roast into a bright coffee; it can only make the app less sure,
+  which is the correct outcome, because a label and a model that contradict
+  each other genuinely do not know what is in the bag. What the model is
+  actually for is the part no table can do: a note nobody wrote a rule for,
+  what Yirgacheffe or Nyeri implies, a label in a language the lexicon does not
+  cover.
+- **A reading is cached per coffee, not per person**, in `coffee_taste_readings`
+  - user-less like `coffee_bag_parses`, and for the same reason: the same bag
+    tastes the same for everybody, so the second person to scan a popular one
+    gets the reading free. Only the model's reading is stored, never the finished
+    estimate, so correcting a roast level on the form changes the answer
+    immediately instead of leaving a stale row behind.
+- **The summary is the one part a model writes.** Five numbers are a shape;
+  "bude to plná, čokoládová káva s nízkou kyslosťou" is what somebody standing
+  in a shop actually wanted to know. It is absent rather than faked wherever no
+  model was reached, and the card simply prints one fewer line.
+- **The card says what the estimate rests on.** An estimate from a country
+  alone and one from a full label are five numbers either way, and the
+  difference between them is the difference between a guess and a reading.
+  Naming the evidence is what lets somebody disagree with the answer rather
+  than only believe or disbelieve it.
+- **It is drawn as the same web as the taste profile**, deliberately the same
+  component rather than a chart of its own. The entire point of describing a
+  coffee on these axes is that it can be compared with a person, and two
+  pictures drawn differently would leave that comparison to the reader.
+
+### Holding the coffee up against the drinker
+
+The third thing this app is built on, and the one the other two exist to make
+possible. A person is folded onto five axes with a confidence each; a coffee is
+folded onto the same five with a confidence each; `shared/src/coffeeMatch/` is
+where the two meet.
+
+- **An axis is compared only where both sides know it.** The weight of a
+  comparison is what the person knows about that axis multiplied by what the
+  label knows about it - a product, not an average, and that is the single most
+  important line in the module. An average lets one confident side carry a
+  blank one, so a fully-read label against an axis nobody has ever mentioned
+  would come out as a half-strength reason and the app would argue about
+  somebody's bitterness on the strength of having read a bag.
+- **Two axes, or it is not a comparison.** One axis on its own is an anecdote:
+  a coffee whose acidity happens to suit somebody says nothing about whether
+  they will enjoy drinking it. Below that the match reports `unknown` and the
+  verdict falls back to what is true of the coffee for anybody, which is the
+  same thing it does for a person nobody has measured.
+- **The coffee is adjusted for how this person takes their milk first.** A
+  label can only ever describe a coffee brewed black, and a profile always
+  describes the cup somebody puts to their mouth - the questionnaire asks about
+  milk precisely because it changes what a good cup is for them. Compared
+  without that step, somebody who always drinks a flat white is told every
+  bright coffee on the shelf is too sharp for them. The correction is applied
+  to the coffee, never to the profile: the profile is evidence about a person
+  and must not be rewritten by an inference.
+- **A difference nobody could taste is not a mismatch.** A point either way is
+  inside the noise of a weighted mean of a few questionnaire answers against a
+  weighted mean of a few label signals, and calling that a mismatch would have
+  the app disagreeing with somebody over nothing.
+- **The reasons are ordered by how much they say, not by how well they are
+  known.** A well-understood axis sitting exactly halfway is worth saying
+  nothing about; a well-understood axis at an extreme is the sentence the
+  verdict should lead with. Ordering by weight alone opens a verdict with "your
+  body preference is roughly met", which is true, dull and not why anybody
+  asked.
+- **Nothing is scored.** `fit` and `band` exist so the app can choose which
+  sentence to write and which axis to lead with. A percentage in front of a
+  shelf reads as a measurement of somebody's taste and nobody has measured
+  that, so what reaches the screen is one of four sentences and a list of axes
+  with directions - never a number, a grade or a colour.
+- **The model is handed the comparison already made.** `describeCoffeeMatch`
+  gives it the comparable axes, both values, which way each one misses and the
+  order to argue in. Given two lists of numbers a model does the comparison
+  silently, with no way for anybody to check which axes it weighed or whether
+  it argued from one nobody has evidence for; given the comparison made, with
+  the unusable axes left out, inventing a reason means disobeying an explicit
+  instruction rather than filling a gap it was never told about.
+- **The verdict never buys a reading to do it.** The estimate behind the match
+  is arithmetic and free, and a model's reading of that label is folded in only
+  if one has already been cached. A scan already pays for a reading and a
+  verdict, and quietly making it three calls is how an allowance disappears
+  into something nobody asked to spend it on.
+- **The offline verdict compares on the same five axes.** It used to weigh two
+  things - the roast level against a stated preference and the printed notes
+  against a handful of tags - and left out the thing the app knows most about.
+  The axis comparison now leads it, and the two older rules stay beside it
+  because a stated roast preference and a liked flavour are things somebody
+  said outright, and neither survives being folded into an axis.
+- **It is drawn as two shapes on one web**, the coffee dashed over the person
+  filled, with a legend saying which is which. Two charts side by side would
+  leave the difference to be worked out by eye across a gap, and the difference
+  is the entire question.
 
 ### The shop verdict
 
@@ -1173,28 +1322,131 @@ pop somebody out of the flow.
 
 ### The taste questionnaire
 
-Ten questions, one per screen, answered by tapping a card - no confirm button,
-because the card the finger is already on is the confirmation.
+One question per screen, answered by tapping a card - no confirm button,
+because the card the finger is already on is the confirmation. Which questions
+get asked is itself the first question.
 
+- **Three levels, because one questionnaire cannot serve both ends of this.**
+  Asked to rate the acidity they want, somebody whose coffee has always come
+  out of a capsule machine either guesses or picks the middle - and a guess
+  folded into a profile is worse than a question never asked, because the
+  profile then acts on it. Asked instead which chocolate they prefer, a
+  competition barista answers accurately and tells us almost nothing: they can
+  say what they want from a cup directly, and routing that through a proxy
+  throws the precision away. So `beginner`, `regular` and `expert` get
+  different questions rather than the same ones watered down. The five axes,
+  the fold and the stored profile are identical across all three; only the
+  evidence differs, which is the one thing that should.
+- **The level is asked, not guessed.** There is nothing to guess from - this is
+  the first screen of a brand-new account, before there is a cupboard, a brew
+  or a piece of equipment written down. The three options are described by what
+  somebody drinks rather than by a rank, because "začiatočník" is a label a
+  person has to accept about themselves to get past the screen, and enough
+  people would overclaim to avoid it that the question would stop working.
+- **One catalogue, filtered.** `TASTE_QUESTIONS` holds every question in the
+  order they are asked and each names its own audience through
+  `QUESTION_LEVELS`; `resolveLevelQuestions` is the filter. Three hand-kept
+  lists would overlap heavily - everybody is asked what ruins a cup for them
+  and how they take their milk - and a question that had to be added to two
+  lists is one that ends up in one. Filtering in the catalogue's own order also
+  keeps the alternation, so a beginner is not handed the four plain-language
+  questions in a block.
 - **Direct and indirect questions alternate.** Ten questions about coffee in a
-  row turn into an exam somebody feels unqualified to sit. A question about tea
-  or chocolate between them keeps it a conversation, and is the better evidence
-  of the two: most people cannot say how much body they want, but everybody
-  knows whether they reach for milk chocolate or dark.
+  row turn into an exam somebody feels unqualified to sit. A question about
+  tea, fruit or chocolate between them keeps it a conversation, and below the
+  expert level is the better evidence of the two: most people cannot say how
+  much body they want, but everybody knows whether they reach for milk
+  chocolate or dark.
+- **The beginner questions go around the word rather than through it.**
+  "Kyslosť" is the most misunderstood word in coffee: to somebody who has never
+  had a light roast brewed properly it means a cup that has gone off, so asked
+  whether they want an acidic coffee they say no and mean something else
+  entirely - and that answer is recorded at full confidence. `fruit` asks about
+  the same axis in words nobody can misunderstand, and `everydayCoffee` starts
+  from the reference point every recommendation will actually be judged
+  against.
+- **The expert questions have no proxies at all.** `origin` and `process`
+  because they are where specialty drinkers actually disagree with each other,
+  and `extraction` because it is the single most useful answer in the whole
+  questionnaire: everything else describes a coffee, and that one describes
+  what to do with it, which is what the recipe engine and the conversation
+  after a cup are deciding. Origin is weighed as behaviour rather than as a
+  preference, for the reason the insights screen already states out loud -
+  people also buy what the shop had.
 - **One file per question** under `constants/tasteQuestions/`, each carrying its
-  options and what each option claims. Adding a question is a file and a line in
-  the index.
-- **The answers fold into one observation, not ten events.** Every option states
-  where this person's cup sits on an axis, so several answers about the same
-  axis are averaged, weighted by how far their question is trusted. Ten separate
-  events would let the last question shout down the first nine by arriving last.
-- **`sourceRef` is a fingerprint of the answers** (`q-1-<hash>`, FNV-1a from
-  `lib/fingerprint`). Identical answers are the same evidence and count once,
-  which makes a retry on a flaky connection safe; different answers are new
-  evidence, which is what makes retaking the questionnaire mean anything.
+  options, its audience and what each option claims. Adding a question is a file
+  and a line in the index.
+- **The answers fold into one observation, not a dozen events.** Every option
+  states where this person's cup sits on an axis, so several answers about the
+  same axis are averaged, weighted by how far their question is trusted.
+  Separate events would let the last question shout down the ones before it
+  simply by arriving last.
+- **How much the answers agreed with each other travels with them.** The mean
+  of two contradictory answers looks exactly like the mean of two that agreed,
+  and until now the profile could not tell them apart. `foldAxisObservations`
+  measures the weighted deviation as well as the mean, and each axis leaves
+  with an `axisWeights` figure built from that agreement and from how much was
+  asked about it at all. Somebody who says they cannot stand a sour cup and
+  four questions later that they want something bright has said two honest
+  things describing different drinks: the mean is still recorded, because it is
+  the best guess available, but it arrives marked as a guess instead of as a
+  finding.
+- **The level scales the submission, never a value.** What somebody answered is
+  what the profile records whichever level they picked; `TASTE_EXPERIENCE_TRUST`
+  only decides how much the app may then claim to know them. An inference from
+  tea and chocolate is real evidence worth slightly less than a direct
+  statement - not evidence to be argued with.
+- **`sourceRef` carries the level beside the fingerprint** (`q-2-expert-<hash>`,
+  FNV-1a from `lib/fingerprint`). Identical answers are the same evidence and
+  count once, which makes a retry on a flaky connection safe. The level is part
+  of the identity rather than of the hash because the same taps against a
+  different set of questions are a different statement about somebody, and
+  coming back to answer properly has to count as the new evidence it is.
+- **The level is stored beside the answers**, in `onboardingState`, because the
+  answers alone do not say which questionnaire they came from - and read
+  against the wrong set they are evidence about questions nobody was asked.
+  Choosing a level clears the previous answers for the same reason.
 - **Each tap is written to the server before the next question appears**, so
   closing the app halfway through loses nothing. The taste event itself is sent
   once, at the end.
+
+### How an answer becomes a profile
+
+The arithmetic the whole product rests on, and the one thing in it that is
+allowed to be slow to change.
+
+- **Neutral is a placeholder for silence, not a position.** Every axis starts at
+  the middle of the scale, and the reducer used to blend the first observation
+  towards it - which averages a real statement with a stand-in for nobody having
+  said anything. Somebody who stated plainly that they cannot stand a sour cup
+  was recorded a third of the way back towards neutral and told they like a
+  mildly acidic coffee, and five axes treated that way produce a chart that is a
+  slightly dented pentagon whatever anybody answers. So the first thing heard
+  about an axis is now taken at its word, and everything after it blends
+  normally: the second observation is the first point at which there are two
+  real statements to weigh against each other.
+- **What the first observation costs instead is confidence**, which is a
+  separate number and is shown as one. Evidence counts what was heard, never
+  how far the value moved - adopting an axis outright on the strength of one
+  remark and then recording that as certainty is the mistake this split exists
+  to stop making.
+- **Confidence is per axis as well as overall.** One figure for the whole
+  profile cannot say the thing that matters: an account is routinely well
+  understood on the one axis it keeps complaining about and blank on the other
+  four, and a single number averages those into a half-truth about both.
+  `axis_confidence` is what lets the chart draw a vertex it has earned
+  differently from one it is guessing at.
+- **The profile is still exactly the fold of its events.** Which means a change
+  to the fold makes every stored row stale, and `isStaleProjection` says so: a
+  positive overall confidence over five axes that all claim to have been earned
+  from nothing is a state the current reducer cannot produce, so such a row is
+  rebuilt on the next read. A migration can add a column but cannot replay
+  anybody's events.
+- **The agreement arithmetic lives in `@brewmate/shared`**, with its own unit
+  tests, for the same reason the recipe conversion does: it is how a set of taps
+  becomes a claim about somebody's taste, and arithmetic that consequential has
+  to be checkable in a second against plain values, with no database, no model
+  and no phone.
 
 ### The calibration brew
 
@@ -1245,14 +1497,32 @@ of the product.
   from. Both are places to go rather than things to read, and a button inside a
   card whose heading had been borrowed from the screen it led to was the least
   legible thing on this page.
+- **The profile is drawn as a web, not as five bars.** Five bars against a 0-10
+  scale asked the reader to do three things before they learned anything: hold
+  the scale in their head, work out where its middle was, and then decide
+  whether 7,4 was a lot. A five-sided web answers all three at once - the shape
+  leans towards what somebody wants and away from what they do not, and nobody
+  has to be told which direction is which. Always the same five axes, in the
+  same order, against the full scale, so a profile that has barely moved off
+  the middle looks like one and the same profile is recognisable a month later.
+- **A vertex the profile has earned is solid; one it has heard nothing about is
+  an outline**, with its name muted beside it. A polygon cannot have a hole in
+  it, so an unknown axis is still drawn - at the middle, where the profile
+  stores silence - and this is where the chart says which of the five are real.
+  Without it a neat pentagon through five middles reads as a considered opinion
+  about somebody nobody has asked anything.
+- **`TasteReading` prints the same five in words, and never as numbers.**
+  "Kyslosť 7,4" is a measurement of something nobody measured - it is a
+  weighted average of a handful of answers about chocolate and tea - and a
+  decimal place invites the reader to argue with the digit instead of with the
+  claim. The band words are per axis rather than shared: a low body is "ľahké",
+  not "nízke", and Slovak declines the adjective for the noun it belongs to.
 - **The confidence line matters more than the chart.** A profile built from one
-  questionnaire is a guess, and a guess drawn as a neat bar chart stops looking
-  like one. `confidenceLevel` is shown as one of four words rather than a
-  percentage - "0,18" invites the reader to believe the second digit - with the
-  brew count beside it, because "celkom slušne" after no brews means something
-  different from the same word after twenty.
-- **The bars are always the same five, in the same order, against the full
-  scale**, so a profile that has barely moved off neutral looks like one.
+  questionnaire is a guess, and a guess drawn neatly stops looking like one.
+  `confidenceLevel` is shown as one of four words rather than a percentage -
+  "0,18" invites the reader to believe the second digit - with the brew count
+  beside it, because "celkom slušne" after no brews means something different
+  from the same word after twenty.
 - **Two ways to correct it, side by side.** Answering the questionnaire again is
   evidence; moving the sliders is an instruction. The manual event is sent from
   the most trusted source at full weight, so what the user leaves on the sliders
@@ -1366,9 +1636,10 @@ server/src/
 │                   Google Vision implementations, photo assessment, pricing
 ├── auth/             Token verifier + identity deleter, Firebase implementations, auth plugin
 ├── modules/          one domain each: repository -> service -> routes + mapper
-│   ├── ai/           the seven routes that cost money, the auxiliary
-│   │                 profileTuning call, the shared brew context reader, the
-│   │                 versioned prompts, the model routing table and completeJson
+│   ├── ai/           the eight routes that cost money, the auxiliary
+│   │                 profileTuning call, the coffee taste reading and its
+│   │                 shared cache, the brew context reader, the versioned
+│   │                 prompts, the model routing table and completeJson
 │   ├── health/       healthService + healthRoutes
 │   ├── users/        the account behind a Firebase identity
 │   ├── tasteProfiles/ profile, its audit trail and the fold that rebuilds it
@@ -1565,6 +1836,7 @@ is not an oracle for other people's ids.
 | POST             | `/analytics/events`            | a flushed batch of named flow steps              |
 | POST             | `/ai/parse-coffee-bag`         | reads a photographed label into the bag's fields |
 | POST             | `/ai/evaluate-coffee`          | writes the shop verdict and stores it            |
+| POST             | `/ai/estimate-coffee-taste`    | what is in the bag, on the profile's own axes    |
 | POST             | `/ai/generate-recipe`          | writes and stores the recipe for one brew        |
 | POST             | `/ai/recipe-chat`              | answers what somebody said about a cup           |
 | POST             | `/ai/parse-recipe`             | reads a found recipe into fields, holes and all  |
@@ -1602,6 +1874,10 @@ knowing before changing anything:
   recipes point at them.
 - **`taste_profiles` has `user_id` as its primary key.** A profile is a
   singleton per account, so a second one is impossible rather than unlikely.
+  `axis_confidence` beside the axes is `jsonb` where the axes themselves are
+  real columns, and the difference is deliberate: the axes are the thing the
+  profile _is_ - sorted, compared and read one at a time - while this is
+  metadata about them, in the same position `source_weights` already holds.
 - **`taste_profile_events` is append-only and the profile is its fold.** Adding
   an event replays the whole trail rather than patching the row, so the profile
   is always exactly what its evidence says. `source_ref`, with a partial unique
@@ -1620,6 +1896,14 @@ knowing before changing anything:
 - **`grinders_catalog.created_by_user_id` is nulled, not cascaded.** The entry
   is shared data other people's equipment points at; only the attribution is
   personal.
+- **`coffee_taste_readings` belongs to nobody either**, for the same reason and
+  on the same key: what a model made of one coffee's label is a statement about
+  a product on a shelf, so the row is shared, survives an account deletion, and
+  makes the second scan of a popular bag free. It caches only the model's
+  reading and never the finished estimate - the tables are re-folded on every
+  read, so correcting a roast level changes the answer immediately instead of
+  leaving a stale row behind, which is the same discipline that keeps a taste
+  profile a fold of its events rather than a patched row.
 - **`coffee_bag_parses` belongs to nobody.** It caches what was read off a
   label, under two keys: the photograph's hash, and a partial unique index on
   the normalised `(roaster_key, name_key)` pair. There is no `user_id`, so the
@@ -1726,9 +2010,10 @@ generated migration that has already been applied.
 
 Two kinds, and the split is deliberate.
 
-`shared` has unit tests, and only for the conversion module and the shot
-timeline: pure functions over plain values, testable with no database, no model
-and no server. That is the whole reason the conversion lives there rather than
+`shared` has unit tests, and only for the conversion module, the shot timeline,
+the taste axis fold, the coffee taste estimate and the match between a coffee
+and a drinker: pure functions over plain values, testable with no database, no
+model and no server. That is the whole reason the conversion lives there rather than
 in the API - arithmetic this consequential should be checkable in a second. The
 tests are written against the decisions rather than the implementation: that a
 curve reads back the point it was measured at, that an extrapolation says it is
@@ -1736,7 +2021,22 @@ one and a reading far outside the measured span is refused, that the two
 directions round-trip, that a converted grind is never reported as exact, that
 an estimated calibration and an unverified entry are both named, that scaling to
 a brewer keeps the source's own ratio, and that a ratio only moves when the
-recipe crosses into another family of brewer.
+recipe crosses into another family of brewer. The taste axis fold is tested for
+the one thing it exists to do that averaging cannot: that two answers pointing
+at opposite drinks come out reporting they agree about nothing, while two that
+repeat each other come out agreed - and that the contradictory pair still
+reports the mean, because it is the best guess available and the whole point is
+that it arrives marked as one. The coffee estimate is tested for what it has to
+do with almost nothing: that a bag naming only a country still produces a
+shape, that a bag naming nothing produces five middles carrying no confidence
+at all, that the roast outweighs the origin, that a label whose signals
+contradict each other comes back less certain rather than averaged, and that a
+country reads the same however the bag spells it. The match is tested for the
+rules that decide whether it may speak at all: that an axis either side is
+blank about is never compared, that one comparable axis is not a comparison,
+that a difference nobody could taste is not a mismatch, that the cup a milk
+drinker will actually pour is what gets compared, and that the argument leads
+with the axis that says the most.
 
 Everything else is integration tests, running against the real Neon test branch
 through `app.inject()` - no mocked database, no testcontainers (everything is
@@ -1753,7 +2053,11 @@ The tests are written around the schema decisions rather than around the CRUD:
 that both pinned-recipe rules hold (including the bagless one SQL would
 otherwise let through), that constraints discount a brew's learning weight and
 correcting them re-prices it, that a repeated questionnaire counts once, that a
-recompute reproduces the stored profile exactly, that deleting an account takes
+recompute reproduces the stored profile exactly - its per-axis confidence
+included - that the first thing heard about an axis is taken at its word rather
+than averaged with the neutral it started at, that confidence is earned per axis
+so an axis nobody has mentioned stays visibly unknown, that an observation may
+declare which of its own axes it is less sure of, that deleting an account takes
 everything but leaves a contributed catalogue entry without its author, and that
 one account's rows are invisible to another.
 
@@ -1764,7 +2068,12 @@ worth testing is everything around it: that a malformed answer is retried
 exactly once and both attempts are billed, that a photograph read before is not
 read again, that the same coffee shot by somebody else answers from the stored
 reading, that a coffee already judged is not judged twice, and that a verdict
-that will not validate is refused rather than stored broken.
+that will not validate is refused rather than stored broken. The taste estimate
+is tested for the rule its whole design rests on: that a model insisting a dark
+roast is the brightest coffee ever measured does not get its way, that a model
+which will not answer still leaves a complete estimate from the label alone,
+that one coffee is read once however many people scan it, and that a bag whose
+label could not be read is never cached under a blank key.
 
 The import and the dial-in are tested the same way, for the rules that a model
 would break silently: that a recipe read out of pasted text keeps its holes as
@@ -1946,7 +2255,11 @@ are absent by default:
   a JavaScript bundle is compatible with, and it is what stops an update
   reaching a build whose native modules it does not match - the one real
   failure mode of over-the-air updating. Anything that adds or upgrades a
-  native module needs a version bump and a store build.
+  native module needs a version bump and a store build. `react-native-svg` is
+  one of those: the taste profile is drawn as a polygon, and a polygon is the
+  one shape a stack of `View`s cannot produce. It is pinned to the version Expo
+  bundles for the SDK, and it is the only third-party native module in the app
+  that is not an `expo-*` package.
 - **The EAS project id and owner come from the environment.** A project id
   belongs to whoever owns the app rather than to the source, and a placeholder
   would fail a build with a message about somebody else's account. Without it

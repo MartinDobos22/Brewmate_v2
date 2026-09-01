@@ -41,11 +41,32 @@ export const BREW_SOURCES: readonly TasteProfileSource[] = [
 export const DEFAULT_EVENT_WEIGHT = 1;
 
 /**
+ * An event that does not distinguish between the axes it names speaks about
+ * all of them equally. Only the questionnaire currently says otherwise, and it
+ * says so because it can measure whether its own answers agreed.
+ */
+export const DEFAULT_AXIS_WEIGHT = 1;
+
+/** Nothing heard yet - the state the adopt-outright rule keys off. */
+export const NO_EVIDENCE = 0;
+
+/**
  * How much accumulated evidence amounts to a profile Brewmate is fully
  * confident in. Reached by, say, a questionnaire plus a handful of deliberate
  * calibration brews.
  */
 export const FULL_CONFIDENCE_EVIDENCE = 5;
+
+/**
+ * How much evidence about one axis amounts to knowing that axis.
+ *
+ * Lower than the whole-profile figure, and not because an axis is easier to
+ * learn. A profile is only fully known once every part of it is, so the two
+ * ceilings measure different things: this one is reached by a questionnaire
+ * that asked about the axis plus a few cups that mentioned it, which is
+ * genuinely as much as anybody ever says about their own bitterness.
+ */
+export const FULL_AXIS_EVIDENCE = 3;
 
 export const MIN_WEIGHT = 0;
 export const MAX_WEIGHT = 1;

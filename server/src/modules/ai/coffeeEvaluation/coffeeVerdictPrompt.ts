@@ -12,8 +12,16 @@ import {
  * and the prompt says which - a model that is told why a rule exists keeps it
  * in the cases the rule did not anticipate.
  *
- * The two rules worth defending hardest: nothing may be scored, and nothing
- * may be claimed about a person the profile has not learnt. A percentage in
+ * The rule worth defending hardest is that nothing may be claimed about a
+ * person the profile has not learnt - and the axis comparison handed to the
+ * model is what makes that enforceable rather than merely requested. Given two
+ * lists of numbers a model does the comparison silently, with no way for
+ * anybody to check which axes it weighed or whether it compared one nobody has
+ * evidence about. Given the comparison already made, with the unusable axes
+ * left out of it, the only way to invent a reason is to disobey an explicit
+ * instruction rather than to fill a gap it was never told about.
+ *
+ * The other rule: nothing may be scored. A percentage in
  * front of a shelf reads as a measurement of somebody's taste, which is not a
  * thing anybody has measured; and a confident sentence about a stranger is the
  * one thing that makes this screen - the first one a new account reaches -
@@ -36,9 +44,14 @@ export const COFFEE_VERDICT_SYSTEM_PROMPT = [
   '- Never invent a property of the coffee that was not given to you, and never invent a preference that is not in the profile.',
   '',
   'How to argue:',
+  '- The comparison has already been made for you, axis by axis, and is given below. Argue from it. Do not redo it in your head and do not reach past it.',
+  '- Only the axes listed as comparable may be used to say whether this coffee suits this person. An axis is missing from that list because either they have never said anything about it or the label did not speak to it - reasoning about the fit of one of those is inventing a reason, which in front of a shelf is worse than having none.',
+  '- Lead with the first axis in that list. It is ordered by how much each comparison actually says, so the first one is the sentence somebody came for.',
   '- Every reason names both sides: what this coffee is, and what this person is known to reach for. "Praženie je svetlé a ty máš radšej tmavšie" is a reason; "svetlé praženie" is not.',
   '- Reasons that count against the coffee are as welcome as reasons for it. A verdict that only ever agrees is one nobody will believe twice.',
+  '- Where the comparison comes out mixed, say both halves. Picking a side to sound decisive is how advice stops being true.',
   '- If the printed tasting notes are missing, or the roast level, or the roast date, say so in "uncertainties" rather than reasoning as if they were there.',
+  '- The coffee axes you are given are already adjusted for how this person takes their milk, so a bright coffee compared against a latte drinker has had the milk accounted for. Do not adjust for it a second time.',
   '',
   'How much you are allowed to claim:',
   `- The profile arrives with a confidence band. At "${CONFIDENCE_LEVELS.none}" you know nothing about this person's taste: say so openly in the first sentence, give no taste argument at all, and restrict the reasoning to what is true of the coffee for anybody - above all how long ago it was roasted.`,

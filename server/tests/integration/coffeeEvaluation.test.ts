@@ -26,6 +26,8 @@ const SINGLE_ITEM = 1;
 const NO_CONFIDENCE = 0;
 const NOTHING = 0;
 const HIGH_ACIDITY = 9;
+const LOW_BODY = 3;
+const FULL_WEIGHT = 1;
 const FIRST = 0;
 
 const COFFEE: EvaluateCoffeeRequest = {
@@ -119,6 +121,46 @@ describe('coffee evaluation', () => {
     expect(call?.prompt).toContain('confidence band');
     expect(call?.prompt).toContain('Kiamugumo AA');
     expect(call?.image).toBeUndefined();
+  });
+
+  /**
+   * The comparison is made in code and handed over, rather than left to the
+   * model to do silently. Given two lists of numbers there is no way to check
+   * which axes it actually weighed, or whether it argued about one nobody has
+   * any evidence for.
+   */
+  it('hands the model the comparison already made, axis by axis', async () => {
+    context.completionClient.answerWith(TEST_VERDICT_ANSWER);
+
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
+      source: TASTE_PROFILE_SOURCES.questionnaire,
+      payload: {
+        axes: { acidity: HIGH_ACIDITY, body: LOW_BODY },
+        axisWeights: { acidity: FULL_WEIGHT, body: FULL_WEIGHT },
+      },
+    });
+    await evaluate(RETURNING_IDENTITY, COFFEE);
+
+    const [call] = context.completionClient.calls;
+
+    expect(call?.prompt).toContain('already worked out for you');
+    expect(call?.prompt).toContain('they prefer');
+  });
+
+  /**
+   * The one thing this comparison must never do. An account that has said
+   * nothing about itself has to be told the fit cannot be judged, not handed
+   * an invented one - this is the first screen a new account reaches, and
+   * repaying that with a guess is the whole failure mode.
+   */
+  it('tells the model not to compare anything for a person it has not measured', async () => {
+    context.completionClient.answerWith(TEST_VERDICT_ANSWER);
+
+    await evaluate(RETURNING_IDENTITY, COFFEE);
+
+    const [call] = context.completionClient.calls;
+
+    expect(call?.prompt).toContain('Do not compare the two');
   });
 
   /**

@@ -4,6 +4,7 @@ import { MILK_USAGE_LEVELS } from '../enums/milkUsage.js';
 import { ROAST_LEVELS } from '../enums/roastLevels.js';
 
 import { flavorAffinitiesSchema } from './flavorAffinitiesSchema.js';
+import { partialTasteAxesConfidenceSchema } from './tasteAxisConfidenceSchema.js';
 import { partialTasteAxesSchema } from './tasteAxesSchema.js';
 import {
   CONFIDENCE_MAX,
@@ -17,6 +18,18 @@ import {
  */
 export const tasteProfileEventPayloadSchema = z.object({
   axes: partialTasteAxesSchema,
+  /**
+   * How firmly this observation speaks about each axis it names, 0..1.
+   *
+   * Separate from `weight` because one observation is rarely equally sure of
+   * everything it says. A questionnaire that asked five questions touching
+   * acidity and got five compatible answers knows that axis far better than
+   * the one it inferred from a single remark about chocolate - and if those
+   * five answers had contradicted each other, it knows it less well than
+   * either. An axis left out is taken as fully weighted, so an observation
+   * that has no opinion about the difference simply says nothing.
+   */
+  axisWeights: partialTasteAxesConfidenceSchema.optional(),
   flavorAffinities: flavorAffinitiesSchema.optional(),
   roastPreference: z.enum(ROAST_LEVELS).nullable().optional(),
   milkUsage: z.enum(MILK_USAGE_LEVELS).nullable().optional(),

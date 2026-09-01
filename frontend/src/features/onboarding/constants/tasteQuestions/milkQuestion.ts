@@ -3,6 +3,7 @@ import { MILK_USAGE_LEVELS } from '@brewmate/shared';
 import { TRANSLATION_KEYS } from '../../../../i18n';
 import type { TasteQuestion } from '../../services/tasteQuestionTypes';
 
+import { QUESTION_LEVELS } from './questionLevels';
 import { QUESTION_WEIGHTS } from './questionWeights';
 
 /**
@@ -15,6 +16,7 @@ export const MILK_QUESTION: TasteQuestion = {
   promptKey: TRANSLATION_KEYS.tqMilkPrompt,
   helpKey: TRANSLATION_KEYS.tqMilkHelp,
   weight: QUESTION_WEIGHTS.habit,
+  levels: QUESTION_LEVELS.everyone,
   options: [
     {
       id: 'never',

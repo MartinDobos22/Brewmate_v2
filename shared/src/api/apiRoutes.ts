@@ -52,6 +52,7 @@ export const API_ROUTES = {
 
   aiParseCoffeeBag: '/ai/parse-coffee-bag',
   aiEvaluateCoffee: '/ai/evaluate-coffee',
+  aiEstimateCoffeeTaste: '/ai/estimate-coffee-taste',
   aiGenerateRecipe: '/ai/generate-recipe',
   aiRecipeChat: '/ai/recipe-chat',
   aiParseRecipe: '/ai/parse-recipe',

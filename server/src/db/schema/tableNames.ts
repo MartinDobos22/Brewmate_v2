@@ -10,6 +10,7 @@ export const TABLE_NAMES = {
   coffeeBags: 'coffee_bags',
   bagEvaluations: 'bag_evaluations',
   coffeeBagParses: 'coffee_bag_parses',
+  coffeeTasteReadings: 'coffee_taste_readings',
   recipes: 'recipes',
   brewLogs: 'brew_logs',
   recipeChatMessages: 'recipe_chat_messages',
@@ -32,4 +33,5 @@ export const TRUNCATABLE_TABLE_NAMES = [
   TABLE_NAMES.brewMethods,
   TABLE_NAMES.grindersCatalog,
   TABLE_NAMES.coffeeBagParses,
+  TABLE_NAMES.coffeeTasteReadings,
 ] as const;

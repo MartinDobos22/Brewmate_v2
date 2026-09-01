@@ -10,6 +10,7 @@ import { toPage } from '../../db/rows/toPage.js';
 import type { TasteProfileEventRow } from '../../db/schema/tasteProfileEventsTable.js';
 
 import { foldTasteProfileEvents, type FoldableEvent } from './foldTasteProfileEvents.js';
+import { isStaleProjection } from './isStaleProjection.js';
 import { toTasteProfile, toTasteProfileEvent } from './tasteProfileMapper.js';
 import type { TasteProfileEventRepository } from './tasteProfileEventRepository.js';
 import type { TasteProfileRepository } from './tasteProfileRepository.js';
@@ -53,11 +54,16 @@ export const createTasteProfileService = (
   return {
     recompute,
 
-    /** A profile nobody has taught anything yet is the neutral one, not an error. */
+    /**
+     * A profile nobody has taught anything yet is the neutral one, not an
+     * error - and one written by a reducer that has since changed is rebuilt
+     * rather than served, because the row only means anything as the fold of
+     * the trail behind it.
+     */
     get: async (userId): Promise<TasteProfile> => {
       const row = await repository.findByUserId(userId);
 
-      return row === null ? recompute(userId) : toTasteProfile(row);
+      return row === null || isStaleProjection(row) ? recompute(userId) : toTasteProfile(row);
     },
 
     listEvents: async (userId, { limit, offset }) =>

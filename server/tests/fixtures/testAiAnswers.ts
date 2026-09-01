@@ -35,6 +35,36 @@ export const TEST_VERDICT_ANSWER = JSON.stringify({
 /** Answers that are the right shape only on the second attempt, and never. */
 export const MALFORMED_ANSWER = 'I could not read this label, sorry.';
 
+const BRIGHT_ACIDITY = 8.5;
+const MODEST_SWEETNESS = 6;
+const LIGHT_BODY = 4;
+const WELL_READ_LABEL = 0.8;
+const OFF_THE_SCALE = 10;
+const NONE = 0;
+const CERTAIN = 1;
+
+export const TEST_TASTE_SUMMARY =
+  'Bude to svetlá, výrazne ovocná káva s ľahkým telom. Ríbezle a grep budú vpredu, horkosť skoro žiadna.';
+
+/** What the model is asked for here: observations about the coffee, never a verdict. */
+export const TEST_TASTE_READING_ANSWER = JSON.stringify({
+  axes: { acidity: BRIGHT_ACIDITY, sweetness: MODEST_SWEETNESS, body: LIGHT_BODY },
+  confidence: WELL_READ_LABEL,
+  flavourNotes: ['ríbezle', 'grep', 'čaj'],
+  summary: TEST_TASTE_SUMMARY,
+});
+
+/**
+ * A reading that flatly contradicts a dark roast, for the one test that
+ * matters most: the model contributes evidence, never an answer.
+ */
+export const OVERCONFIDENT_TASTE_ANSWER = JSON.stringify({
+  axes: { acidity: OFF_THE_SCALE, bitterness: NONE, body: NONE },
+  confidence: CERTAIN,
+  flavourNotes: [],
+  summary: 'Extrémne kyslá a ľahká káva.',
+});
+
 export const TEST_SUGGESTION_EXPLANATION =
   'Z posledných ôsmich káv malo osem svetlé praženie, tvoj profil o pražení zatiaľ nehovorí nič. Vychádzam z toho, čo si varil - ak to tak nie je, pokojne odmietni.';
 

@@ -1,4 +1,9 @@
-import { TASTE_AXIS_NEUTRAL, type FlavorAffinities, type SourceWeights } from '@brewmate/shared';
+import {
+  TASTE_AXIS_NEUTRAL,
+  type FlavorAffinities,
+  type SourceWeights,
+  type TasteAxisConfidence,
+} from '@brewmate/shared';
 import { integer, pgTable, real, timestamp, uuid, jsonb } from 'drizzle-orm/pg-core';
 
 import { milkUsageEnum, roastLevelEnum } from './columnEnums.js';
@@ -8,6 +13,13 @@ import { usersTable } from './usersTable.js';
 const EMPTY_FLAVOR_AFFINITIES: FlavorAffinities = {};
 const EMPTY_SOURCE_WEIGHTS: SourceWeights = {};
 const NO_CONFIDENCE = 0;
+const NO_AXIS_CONFIDENCE: TasteAxisConfidence = {
+  acidity: NO_CONFIDENCE,
+  sweetness: NO_CONFIDENCE,
+  body: NO_CONFIDENCE,
+  bitterness: NO_CONFIDENCE,
+  intensity: NO_CONFIDENCE,
+};
 const NO_BREWS = 0;
 
 /**
@@ -42,6 +54,19 @@ export const tasteProfilesTable = pgTable(TABLE_NAMES.tasteProfiles, {
     .$type<SourceWeights>()
     .notNull()
     .default(EMPTY_SOURCE_WEIGHTS),
+  /**
+   * How much of each axis has been earned, beside the axis columns themselves.
+   *
+   * `jsonb` where the axes are real columns, and the difference is deliberate:
+   * the axes are the thing the profile *is* - sorted, compared and read one at
+   * a time - while this is metadata about them, in the same position
+   * `source_weights` already holds. Five more `real` columns would double the
+   * width of the table to say something nothing will ever query on.
+   */
+  axisConfidence: jsonb('axis_confidence')
+    .$type<TasteAxisConfidence>()
+    .notNull()
+    .default(NO_AXIS_CONFIDENCE),
   confidenceLevel: real('confidence_level').notNull().default(NO_CONFIDENCE),
   brewCount: integer('brew_count').notNull().default(NO_BREWS),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

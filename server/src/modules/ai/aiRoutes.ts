@@ -5,6 +5,8 @@ import {
   errorResponseSchema,
   espressoDialInRequestSchema,
   espressoDialInResponseSchema,
+  estimateCoffeeTasteRequestSchema,
+  estimateCoffeeTasteResponseSchema,
   evaluateCoffeeRequestSchema,
   evaluateCoffeeResponseSchema,
   generateRecipeRequestSchema,
@@ -26,6 +28,7 @@ import type { AiUsageService } from '../aiUsage/aiUsageService.js';
 
 import type { CoffeeBagParseService } from './coffeeBagParse/coffeeBagParseService.js';
 import type { CoffeeEvaluationService } from './coffeeEvaluation/coffeeEvaluationService.js';
+import type { CoffeeTasteEstimateService } from './coffeeTasteEstimate/coffeeTasteEstimateService.js';
 import type { EspressoDialInService } from './espressoDialIn/espressoDialInService.js';
 import type { RecipeConversionService } from './recipeImport/recipeConversionService.js';
 import type { RecipeParseService } from './recipeImport/recipeParseService.js';
@@ -38,6 +41,7 @@ export interface AiRoutesOptions {
   /** Null wherever no model provider is configured; every route then answers 503. */
   readonly coffeeBagParseService: CoffeeBagParseService | null;
   readonly coffeeEvaluationService: CoffeeEvaluationService | null;
+  readonly coffeeTasteEstimateService: CoffeeTasteEstimateService | null;
   readonly recipeGenerationService: RecipeGenerationService | null;
   readonly recipeCoachService: RecipeCoachService | null;
   readonly recipeParseService: RecipeParseService | null;
@@ -120,6 +124,37 @@ export const aiRoutes: FastifyPluginAsyncZod<AiRoutesOptions> = async (app, opti
     },
     async (request) =>
       requireService(options.coffeeEvaluationService).evaluate(
+        requireCurrentUser(request).id,
+        request.body,
+      ),
+  );
+
+  /**
+   * What is in the bag, rather than whether to buy it.
+   *
+   * Its own route rather than a field on the verdict, because the two answer
+   * different questions and are wanted in different places: a coffee already
+   * in the cupboard has a taste and no verdict, and a coffee on a shelf wants
+   * both. Nothing about the caller reaches the estimate, which is what lets
+   * one reading be cached and shared - the same bag tastes the same for
+   * everybody, and only the verdict is personal.
+   */
+  app.post(
+    API_ROUTES.aiEstimateCoffeeTaste,
+    {
+      onRequest: app.authenticate,
+      schema: {
+        body: estimateCoffeeTasteRequestSchema,
+        response: {
+          [HTTP_STATUS.ok]: estimateCoffeeTasteResponseSchema,
+          [HTTP_STATUS.unauthorized]: errorResponseSchema,
+          [HTTP_STATUS.unprocessableEntity]: errorResponseSchema,
+          [HTTP_STATUS.serviceUnavailable]: errorResponseSchema,
+        },
+      },
+    },
+    async (request) =>
+      requireService(options.coffeeTasteEstimateService).estimate(
         requireCurrentUser(request).id,
         request.body,
       ),

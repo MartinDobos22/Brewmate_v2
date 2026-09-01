@@ -5,5 +5,7 @@ export { OnboardingStepLayout } from './OnboardingStepLayout';
 export type { OnboardingStepLayoutProps } from './OnboardingStepLayout';
 export { OnboardingProgress } from './OnboardingProgress';
 export type { OnboardingProgressProps } from './OnboardingProgress';
+export { TasteLevelPicker } from './TasteLevelPicker';
+export type { TasteLevelPickerProps } from './TasteLevelPicker';
 export { OnboardingStepContent } from './OnboardingStepContent';
 export type { OnboardingStepContentProps } from './OnboardingStepContent';

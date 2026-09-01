@@ -8,6 +8,7 @@ import { Button, SectionHeading, Tile } from '../../../../components/ui';
 import { buildBrewRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
+import { CoffeeTasteSection } from '../../../coffeeTaste/components';
 import { INVENTORY_TILE_ICONS } from '../../constants';
 import { useArchiveCoffeeBag } from '../../hooks';
 
@@ -25,8 +26,11 @@ export interface CoffeeBagDetailBodyProps {
 /**
  * The screen, in the order somebody came here for it.
  *
- * Which coffee this is, what state it is in, what can be done about it, how it
- * has been brewed, and only then what the label said. The one action that used
+ * Which coffee this is, what state it is in, what can be done about it, what
+ * it will taste like, how it has been brewed, and only then what the label
+ * said. The estimate sits above the recipes rather than beside the label,
+ * because it answers the question somebody opened this screen with - "what am
+ * I about to drink" - rather than reporting what was printed on the bag. The one action that used
  * to be missing entirely is the obvious one: a coffee's own screen with no way
  * to brew it is a page about a thing rather than a thing you can use.
  *
@@ -55,6 +59,8 @@ export const CoffeeBagDetailBody = ({ bag, recipes }: CoffeeBagDetailBodyProps):
           }}
         />
       </TileRow>
+
+      <CoffeeTasteSection coffee={bag} />
 
       <SectionHeading
         title={t(TRANSLATION_KEYS.bagRecipesTitle)}

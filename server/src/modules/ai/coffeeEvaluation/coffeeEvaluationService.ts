@@ -1,9 +1,15 @@
-import type {
-  BagEvaluation,
-  EvaluateCoffeeRequest,
-  EvaluateCoffeeResponse,
-  ParsedBagData,
-  TasteProfile,
+import {
+  estimateCoffeeTaste,
+  matchCoffeeToProfile,
+  readCoffeeSignals,
+  toModelSignal,
+  type BagEvaluation,
+  type CoffeeMatch,
+  type CoffeeTasteSignal,
+  type EvaluateCoffeeRequest,
+  type EvaluateCoffeeResponse,
+  type ParsedBagData,
+  type TasteProfile,
 } from '@brewmate/shared';
 
 import { AI_EFFORT_LEVELS, AI_VERDICT_MAX_TOKENS } from '../../../ai/constants/aiModels.js';
@@ -21,9 +27,12 @@ import { AI_FUNCTION_NAMES } from '../constants/aiFunctionNames.js';
 import { PROMPT_HISTORY_LIMIT, PROMPT_SECTION_SEPARATOR } from '../constants/promptFormatting.js';
 import { normalizeLabelKey } from '../coffeeBagParse/normalizeLabelKey.js';
 
+import type { CoffeeTasteReadingRepository } from '../coffeeTasteEstimate/coffeeTasteReadingRepository.js';
+
 import { coffeeVerdictSchema, type CoffeeVerdict } from './coffeeVerdictSchema.js';
 import { COFFEE_VERDICT_SYSTEM_PROMPT } from './coffeeVerdictPrompt.js';
 import { describeCoffee } from './describeCoffee.js';
+import { describeCoffeeMatch } from './describeCoffeeMatch.js';
 import { describeHistory } from './describeHistory.js';
 import { describeTasteProfile } from './describeTasteProfile.js';
 
@@ -38,6 +47,8 @@ export interface CoffeeEvaluationDependencies {
   readonly repository: BagEvaluationRepository;
   readonly bagEvaluationService: BagEvaluationService;
   readonly tasteProfileService: TasteProfileService;
+  /** Read-only here: the verdict uses a reading that exists, never buys one. */
+  readonly tasteReadingRepository: CoffeeTasteReadingRepository;
   readonly aiUsageService: AiUsageService;
 }
 
@@ -62,8 +73,45 @@ export const createCoffeeEvaluationService = ({
   repository,
   bagEvaluationService,
   tasteProfileService,
+  tasteReadingRepository,
   aiUsageService,
 }: CoffeeEvaluationDependencies): CoffeeEvaluationService => {
+  /**
+   * The coffee on the same five axes as the person, held up against them.
+   *
+   * The estimate is arithmetic and costs nothing, so it always runs. A model's
+   * reading of this label is folded in only if one has already been bought and
+   * cached - the verdict never buys one itself, because a scan already pays
+   * for a reading and a verdict, and quietly making it three calls is how a
+   * per-account allowance disappears into a feature nobody asked to spend it
+   * on.
+   */
+  const matchAgainstProfile = async (
+    coffee: ParsedBagData,
+    profile: TasteProfile,
+  ): Promise<CoffeeMatch> => {
+    const roasterKey = normalizeLabelKey(coffee.roaster);
+    const nameKey = normalizeLabelKey(coffee.name);
+    const cached =
+      roasterKey === null || nameKey === null
+        ? null
+        : await tasteReadingRepository.findByLabel({ roasterKey, nameKey });
+    const signals: readonly CoffeeTasteSignal[] = [
+      ...readCoffeeSignals(coffee),
+      ...(cached === null ? [] : [toModelSignal(cached.reading)]),
+    ];
+
+    return matchCoffeeToProfile(estimateCoffeeTaste(signals), {
+      acidity: profile.acidity,
+      sweetness: profile.sweetness,
+      body: profile.body,
+      bitterness: profile.bitterness,
+      intensity: profile.intensity,
+      axisConfidence: profile.axisConfidence,
+      milkUsage: profile.milkUsage,
+    });
+  };
+
   const findEarlierVerdict = async (
     userId: string,
     coffee: ParsedBagData,
@@ -85,10 +133,12 @@ export const createCoffeeEvaluationService = ({
     coffee: ParsedBagData,
     profile: TasteProfile,
     history: readonly BagEvaluation[],
+    match: CoffeeMatch,
   ): Promise<CoffeeVerdict> => {
     const sections = [
       describeTasteProfile(profile),
       describeCoffee(coffee, new Date()),
+      describeCoffeeMatch(match),
       describeHistory(history),
       CLOSING_INSTRUCTION,
     ].filter((section: string | null): section is string => section !== null);
@@ -127,6 +177,7 @@ export const createCoffeeEvaluationService = ({
         input.parsedData,
         profile,
         history.map(toBagEvaluation),
+        await matchAgainstProfile(input.parsedData, profile),
       );
 
       return {

@@ -15,6 +15,7 @@ export const toTasteProfile = (row: TasteProfileRow): TasteProfile => ({
   roastPreference: row.roastPreference,
   milkUsage: row.milkUsage,
   sourceWeights: row.sourceWeights,
+  axisConfidence: row.axisConfidence,
   confidenceLevel: row.confidenceLevel,
   brewCount: row.brewCount,
   updatedAt: row.updatedAt.toISOString(),

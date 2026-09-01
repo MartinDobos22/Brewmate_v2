@@ -1,6 +1,7 @@
 import { TRANSLATION_KEYS } from '../../../../i18n';
 import type { TasteQuestion } from '../../services/tasteQuestionTypes';
 
+import { QUESTION_LEVELS } from './questionLevels';
 import { QUESTION_WEIGHTS } from './questionWeights';
 
 /**
@@ -15,6 +16,7 @@ export const DISLIKE_QUESTION: TasteQuestion = {
   promptKey: TRANSLATION_KEYS.tqDislikePrompt,
   helpKey: TRANSLATION_KEYS.tqDislikeHelp,
   weight: QUESTION_WEIGHTS.direct,
+  levels: QUESTION_LEVELS.everyone,
   options: [
     {
       id: 'sour',

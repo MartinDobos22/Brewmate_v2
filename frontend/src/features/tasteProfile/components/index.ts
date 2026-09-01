@@ -1,5 +1,7 @@
-export { TasteProfileChart } from './TasteProfileChart';
-export type { TasteProfileChartProps } from './TasteProfileChart';
+export { TasteRadarChart } from './TasteRadarChart';
+export type { TasteRadarChartProps } from './TasteRadarChart';
+export { TasteReading } from './TasteReading';
+export type { TasteReadingProps } from './TasteReading';
 export { ConfidenceIndicator } from './ConfidenceIndicator';
 export type { ConfidenceIndicatorProps } from './ConfidenceIndicator';
 export { FlavorAffinityChips } from './FlavorAffinityChips';

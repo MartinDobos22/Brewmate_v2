@@ -6,7 +6,8 @@ import {
   ConfidenceBoost,
   ConfidenceIndicator,
   FlavorAffinityChips,
-  TasteProfileChart,
+  TasteRadarChart,
+  TasteReading,
 } from '../../../tasteProfile/components';
 import { useTasteProfile } from '../../../tasteProfile/hooks';
 
@@ -42,7 +43,8 @@ export const TasteProfileSection = (): JSX.Element => {
   return (
     <Card>
       <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileTasteTitle)}</Text>
-      <TasteProfileChart axes={profile} />
+      <TasteRadarChart axes={profile} axisConfidence={profile.axisConfidence} />
+      <TasteReading axes={profile} axisConfidence={profile.axisConfidence} />
       <TastePreferenceRows profile={profile} />
       <FlavorAffinityChips affinities={profile.flavorAffinities} />
       <ConfidenceIndicator profile={profile} />

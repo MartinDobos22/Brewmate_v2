@@ -6,12 +6,11 @@ import { ROUTES } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { ONBOARDING_STEPS } from '../../../onboarding/constants';
 import { useOnboardingStepLink } from '../../../onboarding/hooks';
+import { TasteRadarChart } from '../../../tasteProfile/components';
 import { CONFIDENCE_LABEL_KEYS, CONFIDENCE_LEVELS } from '../../../tasteProfile/constants';
 import { useTasteProfile } from '../../../tasteProfile/hooks';
-import { resolveConfidenceLevel } from '../../../tasteProfile/services';
+import { hasKnownAxis, resolveConfidenceLevel } from '../../../tasteProfile/services';
 import { HOME_TILE_ICONS } from '../../constants';
-
-import { TasteMiniChart } from './TasteMiniChart';
 
 /**
  * What Brewmate believes about the person reading the screen.
@@ -30,7 +29,18 @@ export const TasteProfileTile = (): JSX.Element => {
 
   const level =
     profile.data === undefined ? null : resolveConfidenceLevel(profile.data.confidenceLevel);
-  const known = level !== null && level !== CONFIDENCE_LEVELS.none;
+  /**
+   * Two conditions, because they can disagree and the chart is only honest
+   * when both hold. An account can carry a real confidence built entirely from
+   * a roast preference and a milk habit, having said nothing about any axis -
+   * and the web drawn from that is five middles, which is exactly the neat
+   * pentagon this tile exists to refuse to draw.
+   */
+  const known =
+    level !== null &&
+    level !== CONFIDENCE_LEVELS.none &&
+    profile.data !== undefined &&
+    hasKnownAxis(profile.data.axisConfidence);
 
   return (
     <Tile
@@ -51,7 +61,9 @@ export const TasteProfileTile = (): JSX.Element => {
         openStep(ONBOARDING_STEPS.taste);
       }}
     >
-      {known && profile.data !== undefined ? <TasteMiniChart axes={profile.data} /> : null}
+      {known ? (
+        <TasteRadarChart axes={profile.data} axisConfidence={profile.data.axisConfidence} compact />
+      ) : null}
     </Tile>
   );
 };
