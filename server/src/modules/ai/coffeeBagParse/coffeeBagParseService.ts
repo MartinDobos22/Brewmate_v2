@@ -16,8 +16,7 @@ import { badRequestError } from '../../../errors/badRequestError.js';
 import { ERROR_MESSAGES } from '../../../errors/errorMessages.js';
 import { serviceUnavailableError } from '../../../errors/serviceUnavailableError.js';
 import type { AiUsageService } from '../../aiUsage/aiUsageService.js';
-import { completeJson } from '../completeJson.js';
-import { recordJsonUsage } from '../recordJsonUsage.js';
+import { completeBilledJson } from '../completeBilledJson.js';
 import { AI_FUNCTION_NAMES } from '../constants/aiFunctionNames.js';
 
 import { BAG_LABEL_PROMPT, BAG_LABEL_SYSTEM_PROMPT, describeLabelText } from './bagLabelPrompt.js';
@@ -111,7 +110,9 @@ export const createCoffeeBagParseService = ({
     image: AiImage,
     printed: string | null,
   ): Promise<LabelReading> => {
-    const completion = await completeJson({
+    const completion = await completeBilledJson({
+      aiUsageService,
+      userId,
       client: completionClient,
       schema: parsedBagFieldsSchema,
       functionName: AI_FUNCTION_NAMES.parseCoffeeBag,
@@ -125,8 +126,6 @@ export const createCoffeeBagParseService = ({
         ? badRequestError(ERROR_MESSAGES.bagLabelUnreadable, cause)
         : serviceUnavailableError(ERROR_MESSAGES.aiUnavailable, cause);
     });
-
-    await recordJsonUsage(aiUsageService, { userId, completion });
 
     return { fields: completion.value, model: completion.model };
   };

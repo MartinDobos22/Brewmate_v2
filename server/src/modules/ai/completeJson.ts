@@ -10,6 +10,7 @@ import {
 } from '../../ai/constants/aiModels.js';
 import type { TextCompletionClient } from '../../ai/textCompletionClient.js';
 
+import { AiCompletionFailure, type SpentAiCall } from './aiCompletionFailure.js';
 import { AI_MODEL_ROUTES } from './constants/aiModelRoutes.js';
 import type { AiFunctionName } from './constants/aiFunctionNames.js';
 import { readJsonPayload } from './readJsonPayload.js';
@@ -69,6 +70,12 @@ export interface JsonCompletion<TValue> {
  * back. Once, because the second attempt is what tells the two cases apart: a
  * model that slipped, and a photograph nothing can be read from. A third would
  * only spend somebody's afternoon proving the same thing.
+ *
+ * Every way out of here reports what was spent. Returning is the easy half;
+ * the half that was missing is that giving up after two malformed answers, or
+ * having the provider fail with one attempt already paid for, are both money
+ * gone - and an exception carrying no token count is money nobody can bill,
+ * cap or show on a dashboard.
  */
 export const completeJson = async <TValue>({
   client,
@@ -83,18 +90,35 @@ export const completeJson = async <TValue>({
   const modelId = AI_MODEL_ROUTES[functionName];
 
   let usage = EMPTY_AI_TOKEN_USAGE;
-  let model = '';
+  /**
+   * The id that was asked for, until the provider names its own dated variant.
+   *
+   * A call that failed before any answer came back still has to be billed, and
+   * a usage row naming no model at all is one nobody can price or read.
+   */
+  let model: string = modelId;
   let correction = '';
 
+  const spent = (): SpentAiCall => ({ functionName, model, modelId, usage });
+
   for (let attempt = FIRST_ATTEMPT; attempt < AI_VALIDATION_ATTEMPTS; attempt += 1) {
-    const completion = await client.complete({
-      model: modelId,
-      system,
-      prompt: correction === '' ? prompt : [prompt, correction].join(LINE_BREAK),
-      image,
-      maxTokens,
-      effort,
-    });
+    /*
+     * A provider that fails on the second attempt has still been paid for the
+     * first, so its error is re-thrown carrying what the first one cost rather
+     * than propagating raw and taking that figure with it.
+     */
+    const completion = await client
+      .complete({
+        model: modelId,
+        system,
+        prompt: correction === '' ? prompt : [prompt, correction].join(LINE_BREAK),
+        image,
+        maxTokens,
+        effort,
+      })
+      .catch((cause: unknown): never => {
+        throw new AiCompletionFailure(AI_ERROR_MESSAGES.providerUnreachable, spent(), cause);
+      });
 
     usage = addAiTokenUsage(usage, completion.usage);
     model = completion.model;
@@ -108,5 +132,5 @@ export const completeJson = async <TValue>({
     correction = [CORRECTION_PREFIX, z.prettifyError(parsed.error)].join(LINE_BREAK);
   }
 
-  throw new Error(AI_ERROR_MESSAGES.answerMalformed);
+  throw new AiCompletionFailure(AI_ERROR_MESSAGES.answerMalformed, spent());
 };

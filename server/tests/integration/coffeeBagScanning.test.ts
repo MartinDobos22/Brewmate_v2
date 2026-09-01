@@ -21,10 +21,17 @@ import {
 } from '../fixtures/testAiAnswers.js';
 import { RETURNING_IDENTITY, SECOND_IDENTITY } from '../fixtures/testIdentities.js';
 import { createTestContext, type TestContext } from '../setup/createTestContext.js';
+import {
+  FAKE_CACHE_READ_TOKENS,
+  FAKE_TOKENS_IN,
+  FAKE_TOKENS_OUT,
+} from '../setup/fakeCompletionClient.js';
 import { createTestApi, type TestApi } from '../setup/testApi.js';
 
 const ONE_CALL = 1;
 const TWO_CALLS = 2;
+const NO_ROWS = 0;
+const BOTH_ATTEMPTS = 2;
 const NO_CALLS = 0;
 const NOTHING = 0;
 const UNREADABLE_PHOTO = {
@@ -213,5 +220,57 @@ describe('coffee bag scanning', () => {
     expect(usage.items).toHaveLength(ONE_CALL);
     expect(usage.items[NOTHING]?.tokensIn).toBeGreaterThan(NOTHING);
     expect(Number(usage.items[NOTHING]?.costEstimate)).toBeGreaterThan(NOTHING);
+  });
+
+  /**
+   * The expensive case was the one nothing recorded.
+   *
+   * Two calls at the provider, a 400 for the user, and - until this - no row
+   * in `ai_usage_logs`, nothing on the cost dashboard and nothing counted
+   * against the allowance. The trigger is not rare: a photograph a model
+   * cannot read fails identically every time and is deliberately not cached,
+   * so every press of "Odfotiť znova" bought two more invisible calls.
+   */
+  it('bills both attempts even when it gives up on the answer', async () => {
+    context.completionClient.answerWith(MALFORMED_ANSWER);
+
+    const refused = await api.post(API_ROUTES.aiParseCoffeeBag, RETURNING_IDENTITY, {
+      imageUrl: TEST_IMAGE_URL,
+    });
+
+    expect(refused.statusCode).toBe(HTTP_STATUS.badRequest);
+    expect(context.completionClient.calls).toHaveLength(TWO_CALLS);
+
+    const usage = listResponseSchema(aiUsageLogSchema).parse(
+      (await api.get(API_ROUTES.aiUsage, RETURNING_IDENTITY)).json(),
+    );
+
+    expect(usage.items).toHaveLength(ONE_CALL);
+    expect(usage.items[NOTHING]?.tokensIn).toBe(
+      (FAKE_TOKENS_IN + FAKE_CACHE_READ_TOKENS) * BOTH_ATTEMPTS,
+    );
+    expect(usage.items[NOTHING]?.tokensOut).toBe(FAKE_TOKENS_OUT * BOTH_ATTEMPTS);
+    expect(Number(usage.items[NOTHING]?.costEstimate)).toBeGreaterThan(NOTHING);
+  });
+
+  /**
+   * A usage row is also a call against the daily ceiling, so an outage of ours
+   * must not eat somebody's allowance. Nothing was read and nothing was
+   * written, so there is nothing to bill.
+   */
+  it('bills nothing for a provider that never answered', async () => {
+    context.completionClient.failWith(new Error('the provider is down'));
+
+    const failed = await api.post(API_ROUTES.aiParseCoffeeBag, RETURNING_IDENTITY, {
+      imageUrl: TEST_IMAGE_URL,
+    });
+
+    expect(failed.statusCode).toBe(HTTP_STATUS.serviceUnavailable);
+
+    const usage = listResponseSchema(aiUsageLogSchema).parse(
+      (await api.get(API_ROUTES.aiUsage, RETURNING_IDENTITY)).json(),
+    );
+
+    expect(usage.items).toHaveLength(NO_ROWS);
   });
 });

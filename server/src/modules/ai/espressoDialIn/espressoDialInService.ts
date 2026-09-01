@@ -30,13 +30,12 @@ import type { RecipeService } from '../../recipes/recipeService.js';
 import type { TasteProfileService } from '../../tasteProfiles/tasteProfileService.js';
 import type { BrewContextResolver } from '../brewContext/brewContextResolver.js';
 import { describeTasteProfile } from '../coffeeEvaluation/describeTasteProfile.js';
-import { completeJson } from '../completeJson.js';
+import { completeBilledJson } from '../completeBilledJson.js';
 import { AI_FUNCTION_NAMES } from '../constants/aiFunctionNames.js';
 import { PROMPT_SECTION_SEPARATOR } from '../constants/promptFormatting.js';
 import { describeCoffeeForBrew } from '../recipeEngine/describeCoffeeForBrew.js';
 import { describeConstraints } from '../recipeEngine/describeConstraints.js';
 import { describeGear } from '../recipeEngine/describeGear.js';
-import { recordJsonUsage } from '../recordJsonUsage.js';
 
 import { resolveDialInAnswerSchema, type DialInAnswer } from './dialInAnswerSchema.js';
 import { DIAL_IN_CLOSING_INSTRUCTION, DIAL_IN_SYSTEM_PROMPT } from './dialInPrompt.js';
@@ -239,7 +238,9 @@ export const createEspressoDialInService = ({
         DIAL_IN_CLOSING_INSTRUCTION,
       ];
 
-      const completion = await completeJson<DialInAnswer>({
+      const completion = await completeBilledJson<DialInAnswer>({
+        aiUsageService,
+        userId,
         client: completionClient,
         schema: resolveDialInAnswerSchema(constraints),
         functionName: AI_FUNCTION_NAMES.espressoDialIn,
@@ -250,8 +251,6 @@ export const createEspressoDialInService = ({
       }).catch((cause: unknown): never => {
         throw serviceUnavailableError(ERROR_MESSAGES.espressoDialInUnavailable, cause);
       });
-
-      await recordJsonUsage(aiUsageService, { userId, completion });
 
       const patch: RecipePatch | null = toDialInPatch(completion.value, recipe.params);
       const assistantMessage = await recipeChatService.append(userId, recipe.id, {

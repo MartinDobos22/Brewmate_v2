@@ -18,10 +18,9 @@ import { toRecipe } from '../../recipes/recipeMapper.js';
 import type { RecipeRepository } from '../../recipes/recipeRepository.js';
 import type { RecipeService } from '../../recipes/recipeService.js';
 import type { BrewContextResolver } from '../brewContext/brewContextResolver.js';
-import { completeJson } from '../completeJson.js';
+import { completeBilledJson } from '../completeBilledJson.js';
 import { AI_FUNCTION_NAMES } from '../constants/aiFunctionNames.js';
 import { PROMPT_SECTION_SEPARATOR } from '../constants/promptFormatting.js';
-import { recordJsonUsage } from '../recordJsonUsage.js';
 import { describeTasteProfile } from '../coffeeEvaluation/describeTasteProfile.js';
 
 import { describeBrewHistory, type BrewHistoryEntry } from './describeBrewHistory.js';
@@ -158,7 +157,9 @@ export const createRecipeGenerationService = ({
         CLOSING_INSTRUCTION,
       ].filter((section: string | null): section is string => section !== null);
 
-      const completion = await completeJson<GeneratedRecipe>({
+      const completion = await completeBilledJson<GeneratedRecipe>({
+        aiUsageService,
+        userId,
         client: completionClient,
         schema: resolveGeneratedRecipeSchema(method.category),
         functionName: AI_FUNCTION_NAMES.generateRecipe,
@@ -169,8 +170,6 @@ export const createRecipeGenerationService = ({
       }).catch((cause: unknown): never => {
         throw serviceUnavailableError(ERROR_MESSAGES.recipeUnavailable, cause);
       });
-
-      await recordJsonUsage(aiUsageService, { userId, completion });
 
       return {
         recipe: await recipeService.create(userId, {

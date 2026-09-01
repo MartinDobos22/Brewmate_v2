@@ -1,8 +1,4 @@
-import {
-  EMPTY_PARSED_BAG_FIELDS,
-  type LabelPhotoIssue,
-  type ParsedBagFields,
-} from '@brewmate/shared';
+import type { LabelPhotoIssue, ParsedBagFields } from '@brewmate/shared';
 import { useState } from 'react';
 
 import { isPhotoScanningConfigured } from '../../../config';
@@ -113,7 +109,14 @@ export const useBagPhoto = (): BagPhoto => {
       } catch {
         setFailed(true);
 
-        return { outcome: BAG_CAPTURE_RESULTS.unavailable, fields: EMPTY_PARSED_BAG_FIELDS };
+        /*
+         * Nothing was read, which is not the same as having read nothing.
+         * Handing back a set of empty fields would have the caller overwrite
+         * whatever is already on the form with them - harmless while there is
+         * only one way to reach the camera, and a way to lose a label the
+         * moment there is a second.
+         */
+        return UNAVAILABLE;
       } finally {
         setWorking(false);
       }

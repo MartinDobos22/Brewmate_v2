@@ -16,14 +16,13 @@ import { toGrinder } from '../../grinders/grinderMapper.js';
 import type { GrinderRepository } from '../../grinders/grinderRepository.js';
 import type { RecipeService } from '../../recipes/recipeService.js';
 import type { BrewContextResolver } from '../brewContext/brewContextResolver.js';
-import { completeJson } from '../completeJson.js';
+import { completeBilledJson } from '../completeBilledJson.js';
 import { AI_FUNCTION_NAMES } from '../constants/aiFunctionNames.js';
 import { PROMPT_SECTION_SEPARATOR } from '../constants/promptFormatting.js';
 import { describeCoffeeForBrew } from '../recipeEngine/describeCoffeeForBrew.js';
 import { describeConstraints } from '../recipeEngine/describeConstraints.js';
 import { describeGear } from '../recipeEngine/describeGear.js';
 import { describeWater } from '../recipeEngine/describeBrew.js';
-import { recordJsonUsage } from '../recordJsonUsage.js';
 
 import { resolveConversionAnswerSchema, type ConversionAnswer } from './conversionAnswerSchema.js';
 import { CONVERSION_CLOSING_INSTRUCTION, CONVERSION_SYSTEM_PROMPT } from './conversionPrompt.js';
@@ -133,7 +132,9 @@ export const createRecipeConversionService = ({
         CONVERSION_CLOSING_INSTRUCTION,
       ];
 
-      const completion = await completeJson<ConversionAnswer>({
+      const completion = await completeBilledJson<ConversionAnswer>({
+        aiUsageService,
+        userId,
         client: completionClient,
         schema: resolveConversionAnswerSchema({ result, targetCategory: method.category }),
         functionName: AI_FUNCTION_NAMES.convertRecipe,
@@ -144,8 +145,6 @@ export const createRecipeConversionService = ({
       }).catch((cause: unknown): never => {
         throw serviceUnavailableError(ERROR_MESSAGES.recipeConversionUnavailable, cause);
       });
-
-      await recordJsonUsage(aiUsageService, { userId, completion });
 
       return {
         recipe: await recipeService.create(userId, {

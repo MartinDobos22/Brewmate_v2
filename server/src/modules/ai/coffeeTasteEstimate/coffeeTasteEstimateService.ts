@@ -14,11 +14,10 @@ import { AI_EFFORT_LEVELS, AI_PARSE_MAX_TOKENS } from '../../../ai/constants/aiM
 import type { TextCompletionClient } from '../../../ai/textCompletionClient.js';
 import type { AiUsageService } from '../../aiUsage/aiUsageService.js';
 import { normalizeLabelKey } from '../coffeeBagParse/normalizeLabelKey.js';
-import { completeJson } from '../completeJson.js';
+import { completeBilledJson } from '../completeBilledJson.js';
 import { AI_FUNCTION_NAMES } from '../constants/aiFunctionNames.js';
 import { PROMPT_SECTION_SEPARATOR } from '../constants/promptFormatting.js';
 import { describeCoffee } from '../coffeeEvaluation/describeCoffee.js';
-import { recordJsonUsage } from '../recordJsonUsage.js';
 
 import { COFFEE_TASTE_SYSTEM_PROMPT } from './coffeeTastePrompt.js';
 import type { CoffeeTasteReadingRepository } from './coffeeTasteReadingRepository.js';
@@ -69,7 +68,9 @@ export const createCoffeeTasteEstimateService = ({
     userId: string,
     coffee: ParsedBagData,
   ): Promise<{ readonly reading: CoffeeTasteReading; readonly model: string }> => {
-    const completion = await completeJson({
+    const completion = await completeBilledJson({
+      aiUsageService,
+      userId,
       client: completionClient,
       schema: coffeeTasteReadingSchema,
       functionName: AI_FUNCTION_NAMES.estimateCoffeeTaste,
@@ -80,8 +81,6 @@ export const createCoffeeTasteEstimateService = ({
       maxTokens: AI_PARSE_MAX_TOKENS,
       effort: AI_EFFORT_LEVELS.medium,
     });
-
-    await recordJsonUsage(aiUsageService, { userId, completion });
 
     return { reading: completion.value, model: completion.model };
   };

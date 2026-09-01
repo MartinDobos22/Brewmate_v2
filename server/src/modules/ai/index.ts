@@ -1,8 +1,12 @@
 export * from './constants/index.js';
 export { readJsonPayload } from './readJsonPayload.js';
 export { completeJson } from './completeJson.js';
+export { completeBilledJson } from './completeBilledJson.js';
+export type { BilledJsonCompletionRequest } from './completeBilledJson.js';
 export { recordJsonUsage } from './recordJsonUsage.js';
 export type { JsonUsageRecord } from './recordJsonUsage.js';
+export { AiCompletionFailure, isAiCompletionFailure } from './aiCompletionFailure.js';
+export type { SpentAiCall } from './aiCompletionFailure.js';
 export type { JsonCompletion, JsonCompletionRequest } from './completeJson.js';
 export * from './coffeeBagParse/index.js';
 export * from './coffeeEvaluation/index.js';
