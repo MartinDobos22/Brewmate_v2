@@ -26,7 +26,7 @@ export const SK_HOME_TILES = {
 
   homeTileTasteTitle: 'Tvoja chuť',
   homeTileTasteCaption: 'Poznám ťa: {level}',
-  homeTileTasteUnknown: 'Zatiaľ ťa nepoznám - vyplň dotazník.',
+  homeTileTasteUnknown: 'Ešte ťa nepoznám. Pár otázok a budem vedieť, čo ti odporúčať.',
   homeTileTasteChartLabel: 'Tvoj chuťový profil',
 
   homeTileInventoryTitle: 'V skrinke',
@@ -42,8 +42,6 @@ export const SK_HOME_TILES = {
   homeTileStatsTotalLabel: 'Spolu varení',
   homeTileStatsWeekLabel: 'Posledných sedem dní',
 
-  homeHintTasteTitle: 'Ešte ťa nepoznám',
-  homeHintTasteBody: 'Desať otázok a budem vedieť, čo ti odporúčať. Zaberie to tri minúty.',
   homeHintNoCoffeeTitle: 'V skrinke máš prázdno',
   homeHintNoCoffeeBody: 'Zapíš si balíček, ktorý máš doma. Bude z toho história, z ktorej sa učím.',
   homeHintAgingTitle: '{name} už starne',

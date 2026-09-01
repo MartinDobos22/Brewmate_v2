@@ -7,5 +7,7 @@ export { OnboardingProgress } from './OnboardingProgress';
 export type { OnboardingProgressProps } from './OnboardingProgress';
 export { TasteLevelPicker } from './TasteLevelPicker';
 export type { TasteLevelPickerProps } from './TasteLevelPicker';
+export { TasteSavedPanel } from './TasteSavedPanel';
+export type { TasteSavedPanelProps } from './TasteSavedPanel';
 export { OnboardingStepContent } from './OnboardingStepContent';
 export type { OnboardingStepContentProps } from './OnboardingStepContent';

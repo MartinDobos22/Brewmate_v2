@@ -16,7 +16,6 @@ const NOTHING = 0;
 const FIRST_TIP = HOME_HINT_IDS.tipGrind;
 
 export interface HomeHintInput {
-  readonly knowsTaste: boolean;
   readonly bagCount: number;
   readonly aging: InventoryHighlight | null;
   readonly resting: InventoryHighlight | null;
@@ -46,15 +45,15 @@ const named = (id: HomeHintId, bag: InventoryHighlight): HomeHint => ({
  * something true about this account beats a general tip, and a bag going off
  * on somebody's shelf beats being told to weigh their coffee.
  *
+ * Nothing here says anything about the taste profile. The tile underneath the
+ * hint already says it, in the same words, leading to the same questionnaire -
+ * and one screen asking twice is not twice as persuasive.
+ *
  * When there is genuinely nothing to report it teaches one thing instead,
  * picked by the calendar day. A card that went blank on a well-kept account
  * would punish exactly the people using the app properly.
  */
 export const resolveHomeHint = (input: HomeHintInput): HomeHint => {
-  if (!input.knowsTaste) {
-    return { id: HOME_HINT_IDS.taste, values: undefined };
-  }
-
   if (input.bagCount === NOTHING) {
     return { id: HOME_HINT_IDS.noCoffee, values: undefined };
   }

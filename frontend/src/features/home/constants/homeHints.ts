@@ -10,11 +10,15 @@ import { HOME_TILE_ICONS } from './homeTiles';
  * Every hint either names something about this account that is true right now,
  * or - when there is nothing to report - teaches one thing about brewing. The
  * order they are checked in is the order they matter: what is wrong with the
- * coffee on the shelf beats a general tip, and not knowing the drinker at all
- * beats both.
+ * coffee on the shelf beats a general tip.
+ *
+ * There is deliberately no hint about an empty taste profile. The tile below
+ * this one is about exactly that, says the same sentence and leads to the same
+ * questionnaire, so a brand-new account was asked to fill it in twice within
+ * one screen - and the second ask makes the first one look ignored rather than
+ * making either more likely to be answered.
  */
 export const HOME_HINT_IDS = {
-  taste: 'taste',
   noCoffee: 'noCoffee',
   aging: 'aging',
   resting: 'resting',
@@ -46,12 +50,6 @@ export interface HomeHintPresentation {
 }
 
 export const HOME_HINTS: Record<HomeHintId, HomeHintPresentation> = {
-  [HOME_HINT_IDS.taste]: {
-    titleKey: TRANSLATION_KEYS.homeHintTasteTitle,
-    bodyKey: TRANSLATION_KEYS.homeHintTasteBody,
-    icon: HOME_TILE_ICONS.taste,
-    route: ROUTES.onboarding,
-  },
   [HOME_HINT_IDS.noCoffee]: {
     titleKey: TRANSLATION_KEYS.homeHintNoCoffeeTitle,
     bodyKey: TRANSLATION_KEYS.homeHintNoCoffeeBody,

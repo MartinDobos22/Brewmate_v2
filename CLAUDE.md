@@ -403,12 +403,20 @@ here is allowed to be a blank screen with the words "žiadne dáta".
   shape made of tokens is right in both, at any size, forever.
 - **One hint, chosen from the account.** Not a list: five pieces of advice at
   once is five nobody reads. `resolveHomeHint` walks an order that is the whole
-  point - a profile nobody has filled in, then an empty cupboard, then a bag
-  going off on somebody's shelf, then a fortnight without a cup - and only when
-  there is genuinely nothing to report does it teach one thing instead, picked
-  by the calendar day so it is the same all day and different tomorrow. A card
-  that went blank on a well-kept account would punish exactly the people using
-  the app properly.
+  point - an empty cupboard, then a bag going off on somebody's shelf, then a
+  fortnight without a cup - and only when there is genuinely nothing to report
+  does it teach one thing instead, picked by the calendar day so it is the same
+  all day and different tomorrow. A card that went blank on a well-kept account
+  would punish exactly the people using the app properly.
+- **The hint says nothing about the taste profile, and that is the rule it is
+  missing on purpose.** It used to open with one, which meant a brand-new
+  account got "ešte ťa nepoznám, vyplň dotazník" as a hint and, two rows below
+  it, the same sentence on the taste tile leading to the same questionnaire -
+  plus a tick for it on the getting-started card. One screen asking three times
+  is not three times as persuasive; it reads as an app that did not notice the
+  first ask. The tile is the one that keeps it, because it is the permanent
+  slot: it is where the profile lives once there is one, so it is where the
+  invitation belongs while there is not.
 - **A tile reports what it can prove.** The cupboard sums the same page the
   cupboard screen itself reads, so the two cannot disagree; an unweighed
   cupboard says "nezvážené" rather than printing a confident nought; and the
@@ -1415,10 +1423,35 @@ get asked is itself the first question.
 - **The level is stored beside the answers**, in `onboardingState`, because the
   answers alone do not say which questionnaire they came from - and read
   against the wrong set they are evidence about questions nobody was asked.
-  Choosing a level clears the previous answers for the same reason.
+  Choosing a _different_ level clears the previous answers for the same reason;
+  re-picking the one somebody already had keeps them, filled in, because those
+  answers belong to exactly this set of questions and re-tapping eight
+  identical cards is not evidence about anything.
+- **Reopened on its own, the questionnaire starts at the level again.** Inside
+  the flow the stored level is a resume point - somebody who answered three
+  questions yesterday carries on with the same set today - but "vyplniť
+  dotazník znova" from the profile or the home tile is a fresh statement about
+  a person, and which set of questions it is made against is its first
+  question. Skipped, the level was answered once ever, on the first run, by
+  somebody who had used the app for ninety seconds.
+- **The count above the question is the questionnaire's own.** As one of seven
+  steps this screen said "krok 1 z 7" from the first question to the last, so
+  the longest stretch in the product looked like a screen that had stopped
+  moving. `readQuestionnaireProgress` counts the level as question one, because
+  it is answered by tapping a card like the rest and decides more about the
+  profile than any single question after it. A step reopened on its own has no
+  flow bar at all - nothing is going to follow it, so counting it as the first
+  of seven was the screen counting a journey that was not happening.
 - **Each tap is written to the server before the next question appears**, so
   closing the app halfway through loses nothing. The taste event itself is sent
   once, at the end.
+- **The end says so, and waits.** The last card used to send the answers and
+  slide straight on, so the one moment the questionnaire exists for - the
+  profile actually being taught something - was the one moment nothing was
+  said, and a submission that failed left a bare "skúsiť znova" with no
+  sentence explaining what had gone wrong. It now lands on the profile it just
+  built, drawn as the same web the closing screen draws, and moves on when
+  somebody taps.
 
 ### How an answer becomes a profile
 
@@ -1452,6 +1485,16 @@ allowed to be slow to change.
   from nothing is a state the current reducer cannot produce, so such a row is
   rebuilt on the next read. A migration can add a column but cannot replay
   anybody's events.
+- **A delta is a difference, and is bounded like one.** What the reducer did
+  with an event is stored beside it, and it was described by the same schema as
+  a value on the axis - which meant a delta could only ever be positive. Half
+  of everything anybody says about coffee asks for less of something, so almost
+  every questionnaire produced a response the contract refused _after_ the
+  event had been stored and the profile rebuilt: the profile learned, the app
+  was told the request had failed, and the home screen went on asking for a
+  questionnaire that had in fact been answered. `tasteProfileDeltaSchema` now
+  bounds a move by the width of the scale in both directions, and the axis
+  schema keeps describing positions.
 - **The agreement arithmetic lives in `@brewmate/shared`**, with its own unit
   tests, for the same reason the recipe conversion does: it is how a set of taps
   becomes a claim about somebody's taste, and arithmetic that consequential has
@@ -2067,7 +2110,9 @@ recompute reproduces the stored profile exactly - its per-axis confidence
 included - that the first thing heard about an axis is taken at its word rather
 than averaged with the neutral it started at, that confidence is earned per axis
 so an axis nobody has mentioned stays visibly unknown, that an observation may
-declare which of its own axes it is less sure of, that deleting an account takes
+declare which of its own axes it is less sure of, that an observation asking for
+_less_ of something is answered rather than refused on the way out, that
+deleting an account takes
 everything but leaves a contributed catalogue entry without its author, and that
 one account's rows are invisible to another.
 
