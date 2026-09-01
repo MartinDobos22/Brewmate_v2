@@ -28,14 +28,13 @@ import type { RecipeService } from '../../recipes/recipeService.js';
 import type { TasteProfileService } from '../../tasteProfiles/tasteProfileService.js';
 import type { BrewContextResolver } from '../brewContext/brewContextResolver.js';
 import { describeTasteProfile } from '../coffeeEvaluation/describeTasteProfile.js';
-import { completeJson } from '../completeJson.js';
+import { completeBilledJson } from '../completeBilledJson.js';
 import { AI_FUNCTION_NAMES } from '../constants/aiFunctionNames.js';
 import { PROMPT_SECTION_SEPARATOR } from '../constants/promptFormatting.js';
 import { describeWater } from '../recipeEngine/describeBrew.js';
 import { describeCoffeeForBrew } from '../recipeEngine/describeCoffeeForBrew.js';
 import { describeConstraints } from '../recipeEngine/describeConstraints.js';
 import { describeGear } from '../recipeEngine/describeGear.js';
-import { recordJsonUsage } from '../recordJsonUsage.js';
 
 import {
   resolveCoachAnswerSchema,
@@ -252,7 +251,9 @@ export const createRecipeCoachService = ({
         CLOSING_INSTRUCTION,
       ].filter((section: string | null): section is string => section !== null);
 
-      const completion = await completeJson<CoachAnswer>({
+      const completion = await completeBilledJson<CoachAnswer>({
+        aiUsageService,
+        userId,
         client: completionClient,
         schema: resolveCoachAnswerSchema(constraints),
         functionName: AI_FUNCTION_NAMES.recipeChat,
@@ -263,8 +264,6 @@ export const createRecipeCoachService = ({
       }).catch((cause: unknown): never => {
         throw serviceUnavailableError(ERROR_MESSAGES.recipeChatUnavailable, cause);
       });
-
-      await recordJsonUsage(aiUsageService, { userId, completion });
 
       const patch: RecipePatch | null = toRecipePatch(completion.value, recipe.params);
       const assistantMessage = await recipeChatService.append(userId, recipe.id, {

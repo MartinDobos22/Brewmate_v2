@@ -21,8 +21,7 @@ import type { BagEvaluationRepository } from '../../bagEvaluations/bagEvaluation
 import type { BagEvaluationService } from '../../bagEvaluations/bagEvaluationService.js';
 import type { AiUsageService } from '../../aiUsage/aiUsageService.js';
 import type { TasteProfileService } from '../../tasteProfiles/tasteProfileService.js';
-import { completeJson } from '../completeJson.js';
-import { recordJsonUsage } from '../recordJsonUsage.js';
+import { completeBilledJson } from '../completeBilledJson.js';
 import { AI_FUNCTION_NAMES } from '../constants/aiFunctionNames.js';
 import { PROMPT_HISTORY_LIMIT, PROMPT_SECTION_SEPARATOR } from '../constants/promptFormatting.js';
 import { normalizeLabelKey } from '../coffeeBagParse/normalizeLabelKey.js';
@@ -81,10 +80,15 @@ export const createCoffeeEvaluationService = ({
    *
    * The estimate is arithmetic and costs nothing, so it always runs. A model's
    * reading of this label is folded in only if one has already been bought and
-   * cached - the verdict never buys one itself, because a scan already pays
-   * for a reading and a verdict, and quietly making it three calls is how a
-   * per-account allowance disappears into a feature nobody asked to spend it
-   * on.
+   * cached - the verdict never buys one itself.
+   *
+   * Which is not the same as saying a scan is two calls. The app asks for the
+   * closer reading first and waits for it, precisely so this verdict has it to
+   * argue from, and that reading is cached per coffee rather than per person -
+   * so the cost is paid once for a bag and shared by everybody who picks it up
+   * afterwards. What this rule stops is a *second* reading bought here, on a
+   * label the scan has already read, which would spend an allowance on an
+   * answer already sitting in the table next door.
    */
   const matchAgainstProfile = async (
     coffee: ParsedBagData,
@@ -143,7 +147,9 @@ export const createCoffeeEvaluationService = ({
       CLOSING_INSTRUCTION,
     ].filter((section: string | null): section is string => section !== null);
 
-    const completion = await completeJson({
+    const completion = await completeBilledJson({
+      aiUsageService,
+      userId,
       client: completionClient,
       schema: coffeeVerdictSchema,
       functionName: AI_FUNCTION_NAMES.evaluateCoffee,
@@ -154,8 +160,6 @@ export const createCoffeeEvaluationService = ({
     }).catch((cause: unknown): never => {
       throw serviceUnavailableError(ERROR_MESSAGES.coffeeVerdictUnavailable, cause);
     });
-
-    await recordJsonUsage(aiUsageService, { userId, completion });
 
     return completion.value;
   };

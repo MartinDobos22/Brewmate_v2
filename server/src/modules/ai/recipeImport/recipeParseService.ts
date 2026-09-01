@@ -15,10 +15,9 @@ import { serviceUnavailableError } from '../../../errors/serviceUnavailableError
 import type { AiUsageService } from '../../aiUsage/aiUsageService.js';
 import { toGrinder } from '../../grinders/grinderMapper.js';
 import type { GrinderRepository } from '../../grinders/grinderRepository.js';
-import { completeJson } from '../completeJson.js';
+import { completeBilledJson } from '../completeBilledJson.js';
 import { AI_FUNCTION_NAMES } from '../constants/aiFunctionNames.js';
 import { PROMPT_SECTION_SEPARATOR } from '../constants/promptFormatting.js';
-import { recordJsonUsage } from '../recordJsonUsage.js';
 
 import { parsedSourceRecipeSchema, type ParsedSourceRecipe } from './parsedSourceRecipeSchema.js';
 import {
@@ -112,7 +111,9 @@ export const createRecipeParseService = ({
       ...(text === null ? [] : [text]),
     ];
 
-    const completion = await completeJson({
+    const completion = await completeBilledJson({
+      aiUsageService,
+      userId,
       client: completionClient,
       schema: parsedSourceRecipeSchema,
       functionName: AI_FUNCTION_NAMES.parseRecipe,
@@ -126,8 +127,6 @@ export const createRecipeParseService = ({
         ? badRequestError(ERROR_MESSAGES.recipeSourceUnreadable, cause)
         : serviceUnavailableError(ERROR_MESSAGES.recipeImportUnavailable, cause);
     });
-
-    await recordJsonUsage(aiUsageService, { userId, completion });
 
     return completion.value;
   };

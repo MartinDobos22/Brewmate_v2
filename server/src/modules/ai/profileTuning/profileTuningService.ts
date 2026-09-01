@@ -3,9 +3,8 @@ import type { FlavorAffinities, RoastLevel, SuggestionReason } from '@brewmate/s
 import { AI_EFFORT_LEVELS, AI_EXPLANATION_MAX_TOKENS } from '../../../ai/constants/aiModels.js';
 import type { TextCompletionClient } from '../../../ai/textCompletionClient.js';
 import type { AiUsageService } from '../../aiUsage/aiUsageService.js';
-import { completeJson } from '../completeJson.js';
+import { completeBilledJson } from '../completeBilledJson.js';
 import { AI_FUNCTION_NAMES } from '../constants/aiFunctionNames.js';
-import { recordJsonUsage } from '../recordJsonUsage.js';
 
 import { describeSuggestion } from './describeSuggestion.js';
 import {
@@ -47,7 +46,9 @@ export const createProfileTuningService = ({
   aiUsageService,
 }: ProfileTuningDependencies): ProfileTuningService => ({
   explain: async (input): Promise<string | null> => {
-    const completion = await completeJson<SuggestionExplanation>({
+    const completion = await completeBilledJson<SuggestionExplanation>({
+      aiUsageService,
+      userId: input.userId,
       client: completionClient,
       schema: suggestionExplanationSchema,
       functionName: AI_FUNCTION_NAMES.tuneProfile,
@@ -66,8 +67,6 @@ export const createProfileTuningService = ({
     if (completion === null) {
       return null;
     }
-
-    await recordJsonUsage(aiUsageService, { userId: input.userId, completion });
 
     return completion.value.explanation;
   },

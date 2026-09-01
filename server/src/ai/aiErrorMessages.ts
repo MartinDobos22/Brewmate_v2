@@ -6,6 +6,7 @@
  */
 export const AI_ERROR_MESSAGES = {
   providerRefused: 'The model declined to answer this request.',
+  providerUnreachable: 'The model could not be reached, or failed before it answered.',
   imageUnreachable: 'The uploaded photograph could not be downloaded.',
   imageTooLarge: 'The uploaded photograph is larger than the accepted maximum.',
   imageTypeUnsupported: 'The uploaded file is not an image format the model accepts.',

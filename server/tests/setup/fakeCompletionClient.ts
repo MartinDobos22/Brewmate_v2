@@ -13,6 +13,14 @@ export interface RecordingCompletionClient extends TextCompletionClient {
   readonly calls: readonly AiCompletionRequest[];
   /** Queues one answer; the client hands them out in order and repeats the last. */
   readonly answerWith: (...answers: readonly string[]) => void;
+  /**
+   * Makes every call from now on reject, standing in for a provider that is
+   * down rather than one that answered badly. The two are billed differently:
+   * a provider that never answered consumed nothing, and charging somebody's
+   * allowance for our outage would take the app away for a reason that was
+   * never theirs.
+   */
+  readonly failWith: (error: Error) => void;
   readonly reset: () => void;
 }
 
@@ -27,6 +35,7 @@ export interface RecordingCompletionClient extends TextCompletionClient {
  */
 export const createFakeCompletionClient = (): RecordingCompletionClient => {
   let queue: string[] = [];
+  let failure: Error | null = null;
   const calls: AiCompletionRequest[] = [];
 
   return {
@@ -34,15 +43,25 @@ export const createFakeCompletionClient = (): RecordingCompletionClient => {
 
     answerWith: (...answers: readonly string[]): void => {
       queue = [...answers];
+      failure = null;
+    },
+
+    failWith: (error: Error): void => {
+      failure = error;
     },
 
     reset: (): void => {
       queue = [];
+      failure = null;
       calls.length = FIRST;
     },
 
     complete: (request: AiCompletionRequest): Promise<AiCompletion> => {
       calls.push(request);
+
+      if (failure !== null) {
+        return Promise.reject(failure);
+      }
 
       const answer = queue.length > 1 ? (queue.shift() ?? '') : (queue[FIRST] ?? '');
 

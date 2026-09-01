@@ -31,8 +31,8 @@ export type { BrewLogInput } from './buildBrewLog';
 export {
   readPendingBrewLogs,
   enqueuePendingBrewLog,
-  takePendingBrewLogs,
-  restorePendingBrewLogs,
+  dropFirstPendingBrewLog,
 } from './pendingBrewLogs';
+export { isPermanentlyRejectedBrewLog } from './isPermanentlyRejectedBrewLog';
 export { resolveQuickBrewSteps } from './resolveQuickBrewSteps';
 export type { QuickBrewSteps } from './resolveQuickBrewSteps';

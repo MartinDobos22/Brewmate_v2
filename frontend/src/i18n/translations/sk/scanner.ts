@@ -111,6 +111,7 @@ export const SK_SCANNER = {
   scanReasonNoNotes: 'Chuťové poznámky som nemal.',
   scanReasonNoRoastDate: 'Dátum praženia som nemal.',
   scanReasonNoProfile: 'O tvojej chuti zatiaľ viem primálo.',
+  scanReasonTooFewAxes: 'Na porovnanie chutí je zatiaľ primálo spoločných údajov.',
 
   scanOutcomeTitle: 'Kúpil si ju?',
   scanOutcomeBody: 'Podľa toho sa naučím, kedy ti moje rady sadli a kedy nie.',

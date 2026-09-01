@@ -480,8 +480,14 @@ The first thing in Brewmate that asks a model anything, and the reason
   once**, with the validation error handed back. Once, because the second
   attempt is what tells a model that slipped apart from a photograph nothing
   can be read from; a third only spends somebody's afternoon proving the same
-  thing. Both attempts are billed into `ai_usage_logs` - a usage log that hides
-  a retry is one that disagrees with the invoice.
+  thing. Both attempts are billed into `ai_usage_logs` whether or not the second
+  one worked - a usage log that hides a retry is one that disagrees with the
+  invoice, and the case that hid the most was giving up: two calls paid for,
+  nothing recorded, and nothing counted against the allowance that exists to
+  stop exactly that. A provider that never answered bills nothing, because it
+  consumed nothing and a usage row is also a call against the daily ceiling.
+  Neither is left to a caller to remember: `completeBilledJson` asks and pays
+  in one step, so a service cannot record one without the other.
 - **Readings are cached under two keys, in `coffee_bag_parses`.** The
   photograph's own hash catches the cheap repeat; the normalised
   `(roaster, name)` pair catches the same coffee shot by somebody else in
@@ -661,7 +667,11 @@ where the two meet.
   against a handful of tags - and left out the thing the app knows most about.
   The axis comparison now leads it, and the two older rules stay beside it
   because a stated roast preference and a liked flavour are things somebody
-  said outright, and neither survives being folded into an axis.
+  said outright, and neither survives being folded into an axis. It speaks only
+  when `matchCoffeeToProfile` says it may - two comparable axes, the same floor
+  the server's own prompt applies - because one axis is an anecdote, and the
+  offline path is the one used in a shop by the newest accounts, where the app
+  has least standing to sound certain.
 - **It is drawn as two shapes on one web**, the coffee dashed over the person
   filled, with a legend saying which is which. Two charts side by side would
   leave the difference to be worked out by eye across a gap, and the difference
@@ -1639,7 +1649,7 @@ server/src/
 │   ├── ai/           the eight routes that cost money, the auxiliary
 │   │                 profileTuning call, the coffee taste reading and its
 │   │                 shared cache, the brew context reader, the versioned
-│   │                 prompts, the model routing table and completeJson
+│   │                 prompts, the model routing table and completeBilledJson
 │   ├── health/       healthService + healthRoutes
 │   ├── users/        the account behind a Firebase identity
 │   ├── tasteProfiles/ profile, its audit trail and the fold that rebuilds it
@@ -2065,8 +2075,10 @@ The AI routes are tested the same way, through a recording stub model rather
 than a live one: real vision calls cannot be made in CI, cost money and are not
 deterministic - and none of the behaviour worth testing is the model's. What is
 worth testing is everything around it: that a malformed answer is retried
-exactly once and both attempts are billed, that a photograph read before is not
-read again, that the same coffee shot by somebody else answers from the stored
+exactly once and both attempts are billed - including when the second one is
+malformed too, which is the case that used to spend money invisibly - that a
+provider which never answered is billed for nothing, that a photograph read
+before is not read again, that the same coffee shot by somebody else answers from the stored
 reading, that a coffee already judged is not judged twice, and that a verdict
 that will not validate is refused rather than stored broken. The taste estimate
 is tested for the rule its whole design rests on: that a model insisting a dark

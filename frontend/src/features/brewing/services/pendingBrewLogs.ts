@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { STORAGE_KEYS } from '../../../constants/storageKeys';
 
 const EMPTY_QUEUE: readonly CreateBrewLogRequest[] = [];
+const FIRST_UNSENT = 1;
 
 const queueSchema = z.array(createBrewLogRequestSchema);
 
@@ -44,22 +45,28 @@ export const enqueuePendingBrewLog = async (log: CreateBrewLogRequest): Promise<
 };
 
 /**
- * Hands back everything waiting and empties the queue in one step.
+ * Drops the brew at the head of the queue, once and only once the API has
+ * accounted for it.
  *
- * Taken rather than read, so a flush that fails halfway can put back exactly
- * what is left instead of guessing which entries went through.
+ * This is the whole crash-safety of the queue, and it used to be the opposite.
+ * A flush began by taking the queue and deleting the stored copy, then sent
+ * the entries one by one and wrote back whatever had failed at the end - so
+ * between those two moments every unsent brew existed only in memory. The app
+ * being killed in that window is not a hypothetical: the window is a sequence
+ * of network calls, and the flush runs when somebody opens the app after a
+ * weekend away and then locks the phone. Every brew still in flight went with
+ * it, from the one mechanism written to lose nothing.
+ *
+ * Re-reading before writing is what keeps a brew finished during the flush -
+ * appended at the tail while the head is being sent - from being dropped along
+ * with the entry that was.
+ *
+ * @returns what is left waiting, so the caller does not have to read it again.
  */
-export const takePendingBrewLogs = async (): Promise<readonly CreateBrewLogRequest[]> => {
-  const queue = await readPendingBrewLogs();
+export const dropFirstPendingBrewLog = async (): Promise<readonly CreateBrewLogRequest[]> => {
+  const remaining = (await readPendingBrewLogs()).slice(FIRST_UNSENT);
 
-  await AsyncStorage.removeItem(STORAGE_KEYS.pendingBrewLogs);
+  await writeQueue(remaining);
 
-  return queue;
-};
-
-/** Puts back what a failed flush could not send. */
-export const restorePendingBrewLogs = async (
-  logs: readonly CreateBrewLogRequest[],
-): Promise<void> => {
-  await writeQueue([...logs, ...(await readPendingBrewLogs())]);
+  return remaining;
 };
