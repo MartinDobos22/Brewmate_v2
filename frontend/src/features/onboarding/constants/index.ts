@@ -20,6 +20,8 @@ export {
   isTasteExperienceLevel,
 } from './tasteExperienceLevels';
 export type { TasteExperienceLevel } from './tasteExperienceLevels';
+export { QUESTIONNAIRE_VIEWS } from './questionnaireViews';
+export type { QuestionnaireView } from './questionnaireViews';
 export { MAX_AXIS_DISAGREEMENT, FULL_AXIS_COVERAGE } from './questionnaireEvidence';
 export { QUESTIONNAIRE_SOURCE_REF } from './fingerprint';
 export {

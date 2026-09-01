@@ -3,86 +3,30 @@ import { useState } from 'react';
 
 import { trackEvent } from '../../../lib/analytics';
 import { useAddTasteProfileEvent } from '../../tasteProfile/hooks';
-import {
-  isTasteExperienceLevel,
-  type TasteExperienceLevel,
-} from '../constants/tasteExperienceLevels';
+import { QUESTIONNAIRE_VIEWS, type QuestionnaireView } from '../constants/questionnaireViews';
+import type { TasteExperienceLevel } from '../constants/tasteExperienceLevels';
+import { buildAnswerSummary } from '../services/buildAnswerSummary';
 import { buildQuestionnairePayload } from '../services/buildQuestionnairePayload';
 import { buildQuestionnaireSourceRef } from '../services/buildQuestionnaireSourceRef';
 import { withAnswers, withQuestionnaireLevel } from '../services/onboardingState';
 import {
-  readQuestionnaireProgress,
-  type QuestionnaireProgress,
-} from '../services/questionnaireProgress';
+  firstUnansweredIndex,
+  readOpeningView,
+  readStoredLevel,
+} from '../services/questionnaireStart';
+import { readQuestionnaireProgress } from '../services/questionnaireProgress';
 import { resolveLevelQuestions } from '../services/resolveLevelQuestions';
-import type { TasteQuestion } from '../services/tasteQuestionTypes';
 
+import type { TasteQuestionnaire } from './tasteQuestionnaireTypes';
 import type { OnboardingFlow } from './useOnboardingFlow';
 
 const FIRST = 0;
 const NEXT = 1;
-const NOT_FOUND = -1;
 
 type Answers = Readonly<Record<string, string>>;
 
-export interface TasteQuestionnaire {
-  /** Null while the level is still being chosen, and once the answers are in. */
-  readonly question: TasteQuestion | null;
-  /** True on question zero: which set of questions this person gets asked. */
-  readonly isPickingLevel: boolean;
-  readonly level: TasteExperienceLevel | null;
-  /** The level the stored answers belong to, which the picker shows as chosen. */
-  readonly previousLevel: TasteExperienceLevel | null;
-  readonly chooseLevel: (level: TasteExperienceLevel) => void;
-  /**
-   * Where in the questionnaire this screen is, the level counted as its first,
-   * or null on the screens where there is nothing honest to count.
-   */
-  readonly progress: QuestionnaireProgress | null;
-  readonly selectedOptionId: string | null;
-  readonly answer: (optionId: string) => void;
-  readonly canGoBack: boolean;
-  readonly goBack: () => void;
-  readonly isSubmitting: boolean;
-  readonly hasFailed: boolean;
-  readonly retry: () => void;
-  /** True once the profile has actually been taught what was answered. */
-  readonly isSaved: boolean;
-  /** Leaves the questionnaire, which is a tap rather than something automatic. */
-  readonly finish: () => void;
-}
-
-/** Resuming lands on the first question nobody has answered yet. */
-const firstUnansweredIndex = (questions: readonly TasteQuestion[], answers: Answers): number => {
-  const index = questions.findIndex(
-    (question: TasteQuestion): boolean => answers[question.id] === undefined,
-  );
-
-  return index === NOT_FOUND ? FIRST : index;
-};
-
-const storedLevel = (flow: OnboardingFlow): TasteExperienceLevel | null => {
-  const stored = flow.state.questionnaireLevel;
-
-  return isTasteExperienceLevel(stored) ? stored : null;
-};
-
 /**
- * Which level the screen opens on, which is not always the stored one.
- *
- * Inside the flow the stored level is a resume point: somebody who answered
- * three questions yesterday is carrying on with the same set today, and asking
- * again would throw those three away. Reopened on its own from the profile or
- * the home screen it is not a resume at all - "vyplniť dotazník znova" is
- * somebody making a fresh statement about themselves, and which set of
- * questions that statement is made against is its first question. Skipping it
- * left the level answered once, on the first run, with no way back to it.
- */
-const openingLevel = (flow: OnboardingFlow): TasteExperienceLevel | null =>
-  flow.isSingleStep ? null : storedLevel(flow);
-
-/**
- * The questionnaire as one screen at a time.
+ * The questionnaire as one screen at a time, and then as one list.
  *
  * It opens by asking how much coffee vocabulary the person has, because that
  * decides which questions are worth asking them at all - and the answer is
@@ -92,9 +36,12 @@ const openingLevel = (flow: OnboardingFlow): TasteExperienceLevel | null =>
  * Each tap is written to the server before the next question appears, so
  * closing the app halfway through loses nothing. The taste event itself is
  * sent once, at the end, because a dozen separate events would let the last
- * question overwrite the ones before it simply by arriving last - and the
- * screen says so when it lands, rather than sliding on to the next step as if
- * nothing had been asked.
+ * question overwrite the ones before it simply by arriving last.
+ *
+ * What happens after that is the part this hook exists for. The answers land
+ * on a summary that says they were saved and cannot be changed by touching it;
+ * editing is a button, one row at a time, and the profile is not told anything
+ * new until somebody presses save.
  */
 export const useTasteQuestionnaire = (flow: OnboardingFlow): TasteQuestionnaire => {
   /**
@@ -105,14 +52,19 @@ export const useTasteQuestionnaire = (flow: OnboardingFlow): TasteQuestionnaire 
    */
   const [answers, setAnswers] = useState<Answers>((): Answers => flow.state.questionnaireAnswers);
   const [level, setLevel] = useState<TasteExperienceLevel | null>((): TasteExperienceLevel | null =>
-    openingLevel(flow),
+    readStoredLevel(flow.state),
   );
+  const [view, setView] = useState<QuestionnaireView>((): QuestionnaireView =>
+    readOpeningView(flow.state, flow.isSingleStep),
+  );
+  const [isEditing, setIsEditing] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
   const questions = level === null ? [] : resolveLevelQuestions(level);
   const [index, setIndex] = useState((): number => firstUnansweredIndex(questions, answers));
   const submit = useAddTasteProfileEvent();
   const question =
-    level === null || isSaved ? null : (questions[index] ?? questions[FIRST] ?? null);
+    view === QUESTIONNAIRE_VIEWS.question ? (questions[index] ?? questions[FIRST] ?? null) : null;
 
   const send = (submitted: Answers, at: TasteExperienceLevel): void => {
     submit.mutate(
@@ -130,24 +82,45 @@ export const useTasteQuestionnaire = (flow: OnboardingFlow): TasteQuestionnaire 
            */
           trackEvent(ANALYTICS_EVENT_NAMES.questionnaireCompleted);
           setIsSaved(true);
+          setIsDirty(false);
+          setIsEditing(false);
+          setView(QUESTIONNAIRE_VIEWS.summary);
         },
       },
     );
   };
 
   return {
+    view,
     question,
-    level,
+    isEditing,
     isSaved,
-    isPickingLevel: level === null && !isSaved,
-    previousLevel: storedLevel(flow),
+    isDirty,
     finish: flow.goNext,
-    progress: readQuestionnaireProgress({ level, index, asked: questions.length, isSaved }),
+    previousLevel: readStoredLevel(flow.state),
+    rows: level === null ? [] : buildAnswerSummary(level, answers),
+    progress: readQuestionnaireProgress({ view, index, asked: questions.length }),
     selectedOptionId: question === null ? null : (answers[question.id] ?? null),
     isSubmitting: submit.isPending,
     hasFailed: submit.isError,
-    canGoBack: !isSaved && (level !== null || flow.canGoBack),
-    retry: (): void => {
+    canGoBack: view !== QUESTIONNAIRE_VIEWS.summary || isEditing,
+
+    edit: (): void => {
+      setIsEditing(true);
+    },
+
+    openRow: (questionIndex: number | null): void => {
+      if (questionIndex === null) {
+        setView(QUESTIONNAIRE_VIEWS.level);
+
+        return;
+      }
+
+      setIndex(questionIndex);
+      setView(QUESTIONNAIRE_VIEWS.question);
+    },
+
+    save: (): void => {
       if (level !== null) {
         send(answers, level);
       }
@@ -159,8 +132,7 @@ export const useTasteQuestionnaire = (flow: OnboardingFlow): TasteQuestionnaire 
      * two levels, and an answer kept from a set the person is no longer being
      * shown is evidence about a question they were never asked. Re-picking the
      * level somebody already had is not that: those answers belong to exactly
-     * this set of questions, so they stay, filled in, to be confirmed or
-     * changed one tap at a time.
+     * this set of questions, so they stay and the summary comes straight back.
      */
     chooseLevel: (chosen: TasteExperienceLevel): void => {
       /**
@@ -169,14 +141,24 @@ export const useTasteQuestionnaire = (flow: OnboardingFlow): TasteQuestionnaire 
        * still be the empty one it started with - and writing that back would
        * throw away the answers somebody came here to change.
        */
-      const kept: Answers = chosen === storedLevel(flow) ? flow.state.questionnaireAnswers : {};
+      const isSame = chosen === readStoredLevel(flow.state);
+      const kept: Answers = isSame ? flow.state.questionnaireAnswers : {};
 
       setLevel(chosen);
       setAnswers(kept);
       setIndex(FIRST);
+      setIsDirty(!isSame);
+      setView(isSame && isEditing ? QUESTIONNAIRE_VIEWS.summary : QUESTIONNAIRE_VIEWS.question);
+      setIsEditing(isSame && isEditing);
       flow.saveState(withQuestionnaireLevel(withAnswers(flow.state, kept), chosen));
     },
 
+    /**
+     * One tap answers the question. Where it goes afterwards is the difference
+     * between filling the questionnaire in and correcting it: the first run
+     * walks forward and submits itself at the end, while a correction returns
+     * to the list it was opened from and waits to be saved.
+     */
     answer: (optionId: string): void => {
       if (question === null || level === null) {
         return;
@@ -185,7 +167,14 @@ export const useTasteQuestionnaire = (flow: OnboardingFlow): TasteQuestionnaire 
       const updated: Answers = { ...answers, [question.id]: optionId };
 
       setAnswers(updated);
+      setIsDirty(true);
       flow.saveState(withAnswers(flow.state, updated));
+
+      if (isEditing) {
+        setView(QUESTIONNAIRE_VIEWS.summary);
+
+        return;
+      }
 
       if (index + NEXT < questions.length) {
         setIndex(index + NEXT);
@@ -196,21 +185,24 @@ export const useTasteQuestionnaire = (flow: OnboardingFlow): TasteQuestionnaire 
       send(updated, level);
     },
 
+    /**
+     * Back is the way out of whatever is on screen, in the order they nest:
+     * out of editing, out of a question opened from the summary, out of a
+     * question into the one before it, out of the first question into the
+     * level, and only from the level out of the step itself.
+     */
     goBack: (): void => {
-      if (index > FIRST) {
+      if (view === QUESTIONNAIRE_VIEWS.summary) {
+        setIsEditing(false);
+      } else if (isEditing || isSaved) {
+        setView(QUESTIONNAIRE_VIEWS.summary);
+      } else if (view === QUESTIONNAIRE_VIEWS.level) {
+        flow.goBack();
+      } else if (index > FIRST) {
         setIndex(index - NEXT);
-
-        return;
+      } else {
+        setView(QUESTIONNAIRE_VIEWS.level);
       }
-
-      /** Back from the first question re-opens the level, not the step before. */
-      if (level !== null) {
-        setLevel(null);
-
-        return;
-      }
-
-      flow.goBack();
     },
   };
 };

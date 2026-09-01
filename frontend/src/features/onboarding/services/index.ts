@@ -2,6 +2,8 @@ export { buildQuestionnairePayload } from './buildQuestionnairePayload';
 export { resolveLevelQuestions } from './resolveLevelQuestions';
 export { buildQuestionnaireSourceRef } from './buildQuestionnaireSourceRef';
 export { findAnsweredOptions } from './findAnsweredOptions';
+export { buildAnswerSummary } from './buildAnswerSummary';
+export type { AnswerSummaryRow } from './buildAnswerSummary';
 export { readQuestionnaireProgress } from './questionnaireProgress';
 export type { QuestionnaireProgress } from './questionnaireProgress';
 export type { AnsweredOption } from './findAnsweredOptions';

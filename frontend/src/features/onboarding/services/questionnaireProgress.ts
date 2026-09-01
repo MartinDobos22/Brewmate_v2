@@ -1,15 +1,14 @@
-import type { TasteExperienceLevel } from '../constants/tasteExperienceLevels';
+import { QUESTIONNAIRE_VIEWS, type QuestionnaireView } from '../constants/questionnaireViews';
 
 /** The level is a question like any other, and the first one that gets asked. */
 const LEVEL_QUESTION = 1;
 const AFTER_LEVEL = 2;
 
 export interface QuestionnaireProgressInput {
-  readonly level: TasteExperienceLevel | null;
+  readonly view: QuestionnaireView;
   /** Where in this level's own questions the screen is, counting from zero. */
   readonly index: number;
   readonly asked: number;
-  readonly isSaved: boolean;
 }
 
 export interface QuestionnaireProgress {
@@ -35,16 +34,15 @@ export interface QuestionnaireProgress {
  * Null on the level screen itself, because how many questions follow is
  * precisely what is being decided there - a beginner is asked fewer than an
  * expert - and a total invented before the answer would be a promise the next
- * screen breaks. Null once the answers are in, for the reason the shared
- * progress bar draws nothing at zero: a flow that has finished is showing what
- * happened, not a step left to get through.
+ * screen breaks. Null on the summary, for the reason the shared progress bar
+ * draws nothing at zero: a list of what was answered is showing what happened,
+ * not a step left to get through.
  */
 export const readQuestionnaireProgress = ({
-  level,
+  view,
   index,
   asked,
-  isSaved,
 }: QuestionnaireProgressInput): QuestionnaireProgress | null =>
-  level === null || isSaved
-    ? null
-    : { current: index + AFTER_LEVEL, total: asked + LEVEL_QUESTION };
+  view === QUESTIONNAIRE_VIEWS.question
+    ? { current: index + AFTER_LEVEL, total: asked + LEVEL_QUESTION }
+    : null;
