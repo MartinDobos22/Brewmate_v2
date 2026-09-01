@@ -8,6 +8,7 @@
 export const AI_FUNCTION_NAMES = {
   parseCoffeeBag: 'parse-coffee-bag',
   evaluateCoffee: 'evaluate-coffee',
+  estimateCoffeeTaste: 'estimate-coffee-taste',
   generateRecipe: 'generate-recipe',
   recipeChat: 'recipe-chat',
   parseRecipe: 'parse-recipe',

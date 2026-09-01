@@ -21,4 +21,5 @@ export * from './history/index.js';
 export * from './insights/index.js';
 export * from './conversion/index.js';
 export * from './espresso/index.js';
+export * from './coffeeTaste/index.js';
 export * from './ai/index.js';

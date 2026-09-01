@@ -75,6 +75,7 @@ export const buildApp = async (dependencies: AppDependencies): Promise<FastifyIn
     aiUsageService: services.aiUsageService,
     coffeeBagParseService: services.coffeeBagParseService,
     coffeeEvaluationService: services.coffeeEvaluationService,
+    coffeeTasteEstimateService: services.coffeeTasteEstimateService,
     recipeGenerationService: services.recipeGenerationService,
     recipeCoachService: services.recipeCoachService,
     recipeParseService: services.recipeParseService,

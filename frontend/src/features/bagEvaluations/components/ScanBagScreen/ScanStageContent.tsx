@@ -2,6 +2,8 @@ import type { JSX } from 'react';
 
 import { LoadingState } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { CoffeeTasteSection } from '../../../coffeeTaste/components';
+import { toParsedBagData } from '../../../inventory/services';
 import { BAG_SCAN_STAGES } from '../../constants/bagScan';
 import type { BagScan } from '../../hooks/useBagScan';
 import { BagLabelForm } from '../BagLabelForm';
@@ -45,6 +47,7 @@ export const ScanStageContent = ({ scan }: { readonly scan: BagScan }): JSX.Elem
           coffeeName={scan.label.name}
           roaster={scan.label.roaster}
         />
+        <CoffeeTasteSection coffee={toParsedBagData(scan.label)} />
         <ScanOutcomeStep scan={scan} />
       </>
     );

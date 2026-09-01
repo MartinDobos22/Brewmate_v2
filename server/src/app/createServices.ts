@@ -11,6 +11,11 @@ import {
   type CoffeeEvaluationService,
 } from '../modules/ai/coffeeEvaluation/coffeeEvaluationService.js';
 import {
+  createCoffeeTasteEstimateService,
+  type CoffeeTasteEstimateService,
+} from '../modules/ai/coffeeTasteEstimate/coffeeTasteEstimateService.js';
+import { createCoffeeTasteReadingRepository } from '../modules/ai/coffeeTasteEstimate/coffeeTasteReadingRepository.js';
+import {
   createRecipeCoachService,
   type RecipeCoachService,
 } from '../modules/ai/recipeCoach/recipeCoachService.js';
@@ -121,6 +126,7 @@ export interface AppServices {
   /** Null wherever no model provider is configured; the AI routes then 503. */
   readonly coffeeBagParseService: CoffeeBagParseService | null;
   readonly coffeeEvaluationService: CoffeeEvaluationService | null;
+  readonly coffeeTasteEstimateService: CoffeeTasteEstimateService | null;
   readonly recipeGenerationService: RecipeGenerationService | null;
   readonly recipeCoachService: RecipeCoachService | null;
   readonly recipeParseService: RecipeParseService | null;
@@ -263,6 +269,14 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
             repository: bagEvaluationRepository,
             bagEvaluationService,
             tasteProfileService,
+            aiUsageService,
+          }),
+    coffeeTasteEstimateService:
+      ai === null
+        ? null
+        : createCoffeeTasteEstimateService({
+            completionClient: ai.completionClient,
+            repository: createCoffeeTasteReadingRepository(db),
             aiUsageService,
           }),
     recipeGenerationService:

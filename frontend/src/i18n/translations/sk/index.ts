@@ -4,6 +4,7 @@ import { SK_BREWING } from './brewing';
 import { SK_CUPBOARD_AND_BREW } from './cupboardAndBrew';
 import { SK_BREW_MODE } from './brewMode';
 import { SK_CALIBRATION } from './calibration';
+import { SK_COFFEE_TASTE } from './coffeeTaste';
 import { SK_COMMON } from './common';
 import { SK_DESIGN_SYSTEM } from './designSystem';
 import { SK_DIAL_IN } from './dialIn';
@@ -63,6 +64,7 @@ export const SK_TRANSLATIONS = {
   ...SK_INVENTORY,
   ...SK_TASTE_PROFILE,
   ...SK_TASTE_AXIS_BANDS,
+  ...SK_COFFEE_TASTE,
   ...SK_PROFILE_SECTIONS,
   ...SK_HISTORY,
   ...SK_AI_COSTS,

@@ -13,8 +13,11 @@ brew) and the profile screen it all ends up in. On top of that sits the empty
 app: the home screen a brand-new account sees, quick brewing without an
 inventory, the cupboard, the shop scanner and the states every screen falls
 back to. Coffee bag scanning is the first thing here that asks a model
-anything: a photographed label is read into fields, and the shop verdict is
-written as an argument rather than picked from three sentences. The calibration
+anything: a photographed label is read into fields, the shop verdict is
+written as an argument rather than picked from three sentences, and the coffee
+itself is estimated onto the same five axes the drinker is described on - by
+arithmetic on the phone first, and only then by a model reading what the tables
+cannot. The calibration
 brew is still read by a Slovak lexicon, and the three arithmetic rules survive
 as the scanner's offline fallback.
 
@@ -66,8 +69,10 @@ copy of the type.
 
 It also holds the pieces of arithmetic both ends have to agree on exactly:
 `shared/src/brewing/ratioCalculator.ts`, `shared/src/conversion/` - the recipe
-conversion - and `shared/src/tasteProfiles/foldAxisObservations.ts`, which is
-how a set of taps becomes a claim about somebody's taste. Each is
+conversion - `shared/src/tasteProfiles/foldAxisObservations.ts`, which is how a
+set of taps becomes a claim about somebody's taste, and
+`shared/src/coffeeTaste/`, which is how a printed label becomes a claim about a
+coffee. Each is
 self-contained, depends on nothing but plain values and has its own unit tests
 (`shared/tests/`), so a better algorithm can replace one without touching
 anything else.
@@ -234,8 +239,9 @@ frontend/
     │   └── layout/     Screen, TileRow, AppProviders, RootStack, TabsNavigator,
     │                   TabBarIcon, BottomNavBar
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
-    │                   chat, tasteProfile, bagEvaluations, recipeImport,
-    │                   espresso, history, onboarding, profile, designSystem);
+    │                   chat, tasteProfile, coffeeTaste, bagEvaluations,
+    │                   recipeImport, espresso, history, onboarding, profile,
+    │                   designSystem);
     │                   each has services/ for the API calls and hooks/ for the
     │                   queries and mutations over them. `brewing` owns the
     │                   pre-brew screen, the recipe engine client and brew mode;
@@ -269,7 +275,8 @@ frontend/
   `tasteQuestionsIndirect`, `tasteQuestionsBeginner`, `tasteQuestionsExpert`,
   `equipmentSetup`, `waterAndSets`, `calibration`, `brewing`, `preBrew`,
   `brewMode`, `recipeChat`, `recipeImport`, `dialIn`, `scanner`,
-  `tasteProfile`, `tasteAxisBands`, `profileSections`, `history`, `aiCosts`,
+  `tasteProfile`, `tasteAxisBands`, `coffeeTaste`, `profileSections`,
+  `history`, `aiCosts`,
   `cupboardAndBrew`, `errors`, `designSystem`) and merged in
   `sk/index.ts`. One file would break the 150-line limit.
   `SK_TRANSLATIONS` is the source of truth for the key list: every future locale
@@ -523,6 +530,74 @@ The first thing in Brewmate that asks a model anything, and the reason
   ledger prices model tokens and an annotation has none. They are bounded by
   shape instead: one per scan, only after the image hash misses, and never for a
   photograph that has been read before.
+
+### What is in the bag
+
+The counterpart to the taste profile, and the reason that profile is measured
+the way it is. `POST /ai/estimate-coffee-taste` answers what a coffee tastes
+like - on the same five axes, with the same per-axis confidence, folded by the
+same arithmetic - so that the coffee and the person can eventually be held up
+against each other without either being translated first.
+
+- **The estimate is arithmetic over signals, and the signals are the whole
+  argument.** `shared/src/coffeeTaste/` reads a label into weighted
+  observations: the roast level, the process, the origin, the altitude, the
+  variety and every printed note the lexicon recognises. Each one states where
+  a coffee like this sits, and `foldAxisObservations` - the same function the
+  questionnaire uses - weighs them against each other. The tables live in
+  `constants/` with the reason for each weight written next to it, because
+  those weights are the entire claim this feature makes.
+- **The roast outweighs the origin, and the process is close behind.** A dark
+  Ethiopian and a light Ethiopian are further apart than a light Ethiopian and
+  a light Kenyan, so an ordering that put the country first would get the
+  common case wrong. Printed notes sit just under the roast: the roaster tasted
+  this lot, which is more specific than any generalisation about a country -
+  and they are also marketing, which is why they are not first.
+- **It runs on the phone, before any request is made.** The estimate is on
+  screen instantly, offline, with no allowance spent, and it updates as
+  somebody types a coffee into the form by hand. That is the feature rather
+  than a fallback: this is used standing in a shop on one bar of signal, and a
+  screen that waited for a server to say that a dark roast is bitter would be
+  worse in every case.
+- **A bag that says almost nothing still gets an answer.** One country is
+  enough for a shape, and it comes back at about a quarter confidence. What it
+  must never do is answer with five middles stated firmly - an axis nothing
+  spoke about is left at neutral carrying no confidence at all, which is what
+  the chart then draws as an outline rather than as an opinion.
+- **The model contributes evidence, never an answer, and the schema is what
+  enforces it.** There is no field anywhere in `coffeeTasteReadingSchema` for a
+  finished estimate. What comes back is observations plus how much the label
+  supported them, and `toModelSignal` turns that into one more weighted signal
+  that has to survive the same fold. Asked outright what a coffee tastes like,
+  a model will describe a bag it has never met with total confidence, and
+  nobody - including the model - could then say which part came from the label
+  and which from a roaster's marketing copy it once read.
+- **Where the model and the label disagree, the confidence falls.** It cannot
+  turn a dark roast into a bright coffee; it can only make the app less sure,
+  which is the correct outcome, because a label and a model that contradict
+  each other genuinely do not know what is in the bag. What the model is
+  actually for is the part no table can do: a note nobody wrote a rule for,
+  what Yirgacheffe or Nyeri implies, a label in a language the lexicon does not
+  cover.
+- **A reading is cached per coffee, not per person**, in `coffee_taste_readings`
+  - user-less like `coffee_bag_parses`, and for the same reason: the same bag
+    tastes the same for everybody, so the second person to scan a popular one
+    gets the reading free. Only the model's reading is stored, never the finished
+    estimate, so correcting a roast level on the form changes the answer
+    immediately instead of leaving a stale row behind.
+- **The summary is the one part a model writes.** Five numbers are a shape;
+  "bude to plná, čokoládová káva s nízkou kyslosťou" is what somebody standing
+  in a shop actually wanted to know. It is absent rather than faked wherever no
+  model was reached, and the card simply prints one fewer line.
+- **The card says what the estimate rests on.** An estimate from a country
+  alone and one from a full label are five numbers either way, and the
+  difference between them is the difference between a guess and a reading.
+  Naming the evidence is what lets somebody disagree with the answer rather
+  than only believe or disbelieve it.
+- **It is drawn as the same web as the taste profile**, deliberately the same
+  component rather than a chart of its own. The entire point of describing a
+  coffee on these axes is that it can be compared with a person, and two
+  pictures drawn differently would leave that comparison to the reader.
 
 ### The shop verdict
 
@@ -1493,9 +1568,10 @@ server/src/
 │                   Google Vision implementations, photo assessment, pricing
 ├── auth/             Token verifier + identity deleter, Firebase implementations, auth plugin
 ├── modules/          one domain each: repository -> service -> routes + mapper
-│   ├── ai/           the seven routes that cost money, the auxiliary
-│   │                 profileTuning call, the shared brew context reader, the
-│   │                 versioned prompts, the model routing table and completeJson
+│   ├── ai/           the eight routes that cost money, the auxiliary
+│   │                 profileTuning call, the coffee taste reading and its
+│   │                 shared cache, the brew context reader, the versioned
+│   │                 prompts, the model routing table and completeJson
 │   ├── health/       healthService + healthRoutes
 │   ├── users/        the account behind a Firebase identity
 │   ├── tasteProfiles/ profile, its audit trail and the fold that rebuilds it
@@ -1692,6 +1768,7 @@ is not an oracle for other people's ids.
 | POST             | `/analytics/events`            | a flushed batch of named flow steps              |
 | POST             | `/ai/parse-coffee-bag`         | reads a photographed label into the bag's fields |
 | POST             | `/ai/evaluate-coffee`          | writes the shop verdict and stores it            |
+| POST             | `/ai/estimate-coffee-taste`    | what is in the bag, on the profile's own axes    |
 | POST             | `/ai/generate-recipe`          | writes and stores the recipe for one brew        |
 | POST             | `/ai/recipe-chat`              | answers what somebody said about a cup           |
 | POST             | `/ai/parse-recipe`             | reads a found recipe into fields, holes and all  |
@@ -1751,6 +1828,14 @@ knowing before changing anything:
 - **`grinders_catalog.created_by_user_id` is nulled, not cascaded.** The entry
   is shared data other people's equipment points at; only the attribution is
   personal.
+- **`coffee_taste_readings` belongs to nobody either**, for the same reason and
+  on the same key: what a model made of one coffee's label is a statement about
+  a product on a shelf, so the row is shared, survives an account deletion, and
+  makes the second scan of a popular bag free. It caches only the model's
+  reading and never the finished estimate - the tables are re-folded on every
+  read, so correcting a roast level changes the answer immediately instead of
+  leaving a stale row behind, which is the same discipline that keeps a taste
+  profile a fold of its events rather than a patched row.
 - **`coffee_bag_parses` belongs to nobody.** It caches what was read off a
   label, under two keys: the photograph's hash, and a partial unique index on
   the normalised `(roaster_key, name_key)` pair. There is no `user_id`, so the
@@ -1857,9 +1942,9 @@ generated migration that has already been applied.
 
 Two kinds, and the split is deliberate.
 
-`shared` has unit tests, and only for the conversion module, the shot timeline
-and the taste axis fold: pure functions over plain values, testable with no
-database, no model and no server. That is the whole reason the conversion lives there rather than
+`shared` has unit tests, and only for the conversion module, the shot timeline,
+the taste axis fold and the coffee taste estimate: pure functions over plain
+values, testable with no database, no model and no server. That is the whole reason the conversion lives there rather than
 in the API - arithmetic this consequential should be checkable in a second. The
 tests are written against the decisions rather than the implementation: that a
 curve reads back the point it was measured at, that an extrapolation says it is
@@ -1904,7 +1989,12 @@ worth testing is everything around it: that a malformed answer is retried
 exactly once and both attempts are billed, that a photograph read before is not
 read again, that the same coffee shot by somebody else answers from the stored
 reading, that a coffee already judged is not judged twice, and that a verdict
-that will not validate is refused rather than stored broken.
+that will not validate is refused rather than stored broken. The taste estimate
+is tested for the rule its whole design rests on: that a model insisting a dark
+roast is the brightest coffee ever measured does not get its way, that a model
+which will not answer still leaves a complete estimate from the label alone,
+that one coffee is read once however many people scan it, and that a bag whose
+label could not be read is never cached under a blank key.
 
 The import and the dial-in are tested the same way, for the rules that a model
 would break silently: that a recipe read out of pasted text keeps its holes as
