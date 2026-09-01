@@ -3,13 +3,14 @@ import type { JSX } from 'react';
 import { Button, LoadingState, OptionCard, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { ONBOARDING_STEPS } from '../../constants/onboardingSteps';
+import { QUESTIONNAIRE_VIEWS } from '../../constants/questionnaireViews';
 import { useTasteQuestionnaire } from '../../hooks/useTasteQuestionnaire';
 import type { OnboardingFlow } from '../../hooks/useOnboardingFlow';
 import type { QuestionnaireProgress } from '../../services/questionnaireProgress';
 import type { TasteQuestionOption } from '../../services/tasteQuestionTypes';
 import { OnboardingStepLayout } from '../OnboardingStepLayout';
 import { TasteLevelPicker } from '../TasteLevelPicker';
-import { TasteSavedPanel } from '../TasteSavedPanel';
+import { TasteSummary } from '../TasteSummary';
 
 export interface TasteStepProps {
   readonly flow: OnboardingFlow;
@@ -27,7 +28,8 @@ const readProgressNote = (
     : t(TRANSLATION_KEYS.tqProgress, { current: progress.current, total: progress.total });
 
 /**
- * One question per screen, the first of which is which questions to ask.
+ * One question per screen, the first of which is which questions to ask, and
+ * then the list of what was answered.
  *
  * Tapping an answer is the whole interaction - no confirm button, because the
  * card the finger is already on is the confirmation. Going back re-opens the
@@ -43,6 +45,7 @@ const readProgressNote = (
 export const TasteStep = ({ flow }: TasteStepProps): JSX.Element => {
   const { t } = useTranslation();
   const questionnaire = useTasteQuestionnaire(flow);
+  const isAnswering = questionnaire.view !== QUESTIONNAIRE_VIEWS.summary;
 
   return (
     <OnboardingStepLayout
@@ -52,10 +55,10 @@ export const TasteStep = ({ flow }: TasteStepProps): JSX.Element => {
       onBack={questionnaire.goBack}
       note={readProgressNote(t, questionnaire.progress)}
     >
-      {questionnaire.isSaved ? (
-        <TasteSavedPanel isSingleStep={flow.isSingleStep} onContinue={questionnaire.finish} />
+      {questionnaire.view === QUESTIONNAIRE_VIEWS.summary ? (
+        <TasteSummary questionnaire={questionnaire} isSingleStep={flow.isSingleStep} />
       ) : null}
-      {questionnaire.isPickingLevel ? (
+      {questionnaire.view === QUESTIONNAIRE_VIEWS.level ? (
         <TasteLevelPicker
           selected={questionnaire.previousLevel}
           onChoose={questionnaire.chooseLevel}
@@ -81,8 +84,10 @@ export const TasteStep = ({ flow }: TasteStepProps): JSX.Element => {
           ))}
         </>
       )}
-      {questionnaire.isSubmitting ? <LoadingState label={t(TRANSLATION_KEYS.tqSaving)} /> : null}
-      {questionnaire.hasFailed ? (
+      {questionnaire.isSubmitting && isAnswering ? (
+        <LoadingState label={t(TRANSLATION_KEYS.tqSaving)} />
+      ) : null}
+      {questionnaire.hasFailed && isAnswering ? (
         <>
           <Text variant="bodySmall" tone="error">
             {t(TRANSLATION_KEYS.tqSaveFailed)}
@@ -90,7 +95,7 @@ export const TasteStep = ({ flow }: TasteStepProps): JSX.Element => {
           <Button
             label={t(TRANSLATION_KEYS.actionRetry)}
             variant="secondary"
-            onPress={questionnaire.retry}
+            onPress={questionnaire.save}
             fullWidth
           />
         </>

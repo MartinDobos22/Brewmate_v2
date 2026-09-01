@@ -5,6 +5,6 @@ export type { OnboardingFlow } from './useOnboardingFlow';
 export { useOnboardingRedirect } from './useOnboardingRedirect';
 export { useOnboardingStepLink } from './useOnboardingStepLink';
 export { useTasteQuestionnaire } from './useTasteQuestionnaire';
-export type { TasteQuestionnaire } from './useTasteQuestionnaire';
+export type { TasteQuestionnaire } from './tasteQuestionnaireTypes';
 export { useCalibrationBrew } from './useCalibrationBrew';
 export type { CalibrationBrew } from './useCalibrationBrew';
