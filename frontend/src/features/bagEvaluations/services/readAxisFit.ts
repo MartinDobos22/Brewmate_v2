@@ -6,6 +6,7 @@ import { OFFLINE_MATCH_REASONS } from '../constants/bagScan';
 import type { BagVerdictParts } from './bagVerdictTypes';
 
 const NO_PARTS: BagVerdictParts = { points: [], uncertainties: [] };
+const NOTHING = 0;
 
 /**
  * What the five-axis comparison says, as verdict points.
@@ -22,13 +23,13 @@ const NO_PARTS: BagVerdictParts = { points: [], uncertainties: [] };
  * end - the two or three that carry the argument are the argument.
  */
 export const readAxisFit = (match: CoffeeMatch): BagVerdictParts => {
-  if (match.comparable.length === NO_PARTS.points.length) {
+  if (match.comparable.length === NOTHING) {
     return NO_PARTS;
   }
 
   return {
     points: match.comparable
-      .slice(NO_PARTS.points.length, OFFLINE_MATCH_REASONS)
+      .slice(NOTHING, OFFLINE_MATCH_REASONS)
       .map((axis: AxisMatch) =>
         axis.direction === MATCH_DIRECTIONS.aligned
           ? { key: MATCH_ALIGNED_KEYS[axis.axis], isAgainst: false }

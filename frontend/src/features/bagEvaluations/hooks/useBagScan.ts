@@ -1,6 +1,7 @@
 import { lowConfidenceFieldNames, type ParsedBagFieldName } from '@brewmate/shared';
 import { useState } from 'react';
 
+import { usePrefetchCoffeeTaste } from '../../coffeeTaste/hooks';
 import { useCreateCoffeeBag } from '../../inventory/hooks';
 import {
   EMPTY_COFFEE_BAG_FORM,
@@ -56,6 +57,7 @@ export interface BagScan {
 export const useBagScan = (initialMode?: BagScanMode): BagScan => {
   const photo = useBagPhoto();
   const verdict = useBagVerdict();
+  const prefetchTaste = usePrefetchCoffeeTaste();
   const createBag = useCreateCoffeeBag();
   const [stage, setStage] = useState<BagScanStage>(
     initialMode === undefined ? BAG_SCAN_STAGES.mode : BAG_SCAN_STAGES.capture,
@@ -127,8 +129,23 @@ export const useBagScan = (initialMode?: BagScanMode): BagScan => {
         return;
       }
 
+      const coffee = toParsedBagData(label);
+
       setStage(BAG_SCAN_STAGES.verdict);
-      void verdict.ask(toParsedBagData(label), photo.imageUrl);
+
+      /**
+       * The label is read for taste before the verdict is asked for, not
+       * after.
+       *
+       * Both calls happen either way and the screen shows the same waiting
+       * state throughout, so this costs nothing - but in the other order the
+       * verdict for a coffee nobody had scanned before was argued from the
+       * label's own arithmetic alone, and the closer reading reached the
+       * shared cache a moment after the sentence that needed it.
+       */
+      void prefetchTaste(coffee).then((): void => {
+        void verdict.ask(coffee, photo.imageUrl);
+      });
     },
 
     /**

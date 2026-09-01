@@ -7,9 +7,7 @@ import {
 } from '@brewmate/shared';
 import { useQuery } from '@tanstack/react-query';
 
-import { QUERY_KEYS } from '../../../constants/queryKeys';
-import { estimateCoffeeTaste } from '../services/coffeeTasteApi';
-import { coffeeTasteFingerprint } from '../services/coffeeTasteFingerprint';
+import { coffeeTasteEstimateQuery } from '../services/coffeeTasteEstimateQuery';
 
 const NO_NOTES: readonly string[] = [];
 
@@ -47,11 +45,7 @@ export const useCoffeeTasteEstimate = (
   enabled = true,
 ): CoffeeTasteReadout => {
   const local = foldEstimate(readCoffeeSignals(coffee));
-  const query = useQuery({
-    queryKey: QUERY_KEYS.coffeeTasteEstimate(coffeeTasteFingerprint(coffee)),
-    queryFn: async () => estimateCoffeeTaste({ parsedData: coffee }),
-    enabled,
-  });
+  const query = useQuery({ ...coffeeTasteEstimateQuery(coffee), enabled });
 
   return {
     estimate: query.data?.estimate ?? local,
