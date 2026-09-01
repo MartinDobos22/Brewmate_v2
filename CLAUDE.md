@@ -1427,13 +1427,14 @@ get asked is itself the first question.
   re-picking the one somebody already had keeps them, filled in, because those
   answers belong to exactly this set of questions and re-tapping eight
   identical cards is not evidence about anything.
-- **Reopened on its own, the questionnaire starts at the level again.** Inside
-  the flow the stored level is a resume point - somebody who answered three
-  questions yesterday carries on with the same set today - but "vyplniť
-  dotazník znova" from the profile or the home tile is a fresh statement about
-  a person, and which set of questions it is made against is its first
-  question. Skipped, the level was answered once ever, on the first run, by
-  somebody who had used the app for ninety seconds.
+- **Reopened on its own, the questionnaire opens read-only.** Inside the flow
+  it is a conversation being had; from the profile or the home tile it is a
+  record being consulted, and those want opposite things. The way back into the
+  questionnaire is also the way to overwrite what it taught, so a screen of
+  tappable cards under a returning thumb is one stray tap away from re-teaching
+  the profile - which is precisely the tap nobody would notice having made.
+  `readOpeningView` therefore sends anybody with answers already stored to the
+  summary, and the questions themselves are reachable only through "upraviť".
 - **The count above the question is the questionnaire's own.** As one of seven
   steps this screen said "krok 1 z 7" from the first question to the last, so
   the longest stretch in the product looked like a screen that had stopped
@@ -1449,9 +1450,32 @@ get asked is itself the first question.
   slide straight on, so the one moment the questionnaire exists for - the
   profile actually being taught something - was the one moment nothing was
   said, and a submission that failed left a bare "skúsiť znova" with no
-  sentence explaining what had gone wrong. It now lands on the profile it just
-  built, drawn as the same web the closing screen draws, and moves on when
-  somebody taps.
+  sentence explaining what had gone wrong. It now lands on the summary, drawn
+  as the same web the closing screen draws, and moves on when somebody taps.
+- **The summary is the questionnaire held still, and it has two states.** Read
+  and edit, and which one it is in is written at the top rather than left to be
+  worked out from whether the rows respond. Read is the default and the one
+  that matters: the rows carry no press handler at all, so they are not
+  announced as buttons to the operating system either - "view only" is a fact
+  about the component rather than a style applied to it.
+- **Editing is a button, one row at a time, and a save at the end.** Somebody
+  who wants to change one answer should change one answer; the old alternative
+  was to tap through all eleven, which is not editing but re-answering, and it
+  overwrote nine answers to correct one. What a row opens is the same question
+  screen the first run uses, and answering it comes straight back to the list.
+- **What is written down and what the profile was told are different things,
+  and the screen says which is which.** Every tap is still saved to
+  `onboardingState` immediately - that is what makes a run resumable - but the
+  taste event is sent only when somebody presses save, so an edit in progress
+  cannot half-teach a profile. Until it is sent the summary says there are
+  changes it does not know about, and a questionnaire with a hole in it is
+  called unfinished rather than saved, because a set that never reached the
+  last question never reached the profile either.
+- **Saving the same answers twice is free, so the save is never disabled.**
+  `sourceRef` fingerprints the submission, so the API answers with the event it
+  already holds. A disabled save would strand the two people most likely to
+  press it: somebody confirming what they just read, and somebody finishing a
+  questionnaire they abandoned weeks ago.
 
 ### How an answer becomes a profile
 

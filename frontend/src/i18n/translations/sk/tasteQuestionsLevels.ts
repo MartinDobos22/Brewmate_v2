@@ -29,6 +29,18 @@ export const SK_TASTE_QUESTIONS_LEVELS = {
   tqSavedTitle: 'Hotovo, mám to',
   tqSavedBody:
     'Odpovede sú uložené a takto ti zatiaľ rozumiem. Podľa toho ti budem radiť v obchode aj pri varení.',
-  tqSavedHint:
-    'Plné vrcholy sú to, čo o tebe naozaj viem. Zvyšok sa doplní, keď mi povieš, aká bola káva. Dotazník môžeš kedykoľvek vyplniť znova v profile.',
+
+  tqSummaryTitle: 'Tvoje odpovede',
+  tqSummaryBody:
+    'Uložené. Takto ti rozumiem - tu sa nedá nič zmeniť omylom, na úpravu je tlačidlo nižšie.',
+  tqSummaryUnsaved: 'Máš zmeny, o ktorých ešte neviem. Ulož ich, nech podľa nich viem radiť.',
+  tqSummaryUnfinishedTitle: 'Nedokončený dotazník',
+  tqSummaryUnfinishedBody:
+    'Zopár otázok ostalo bez odpovede, takže som sa z toho ešte nič nenaučil. Doplň ich a ulož - stačí pár klepnutí.',
+  tqSummaryEditTitle: 'Upravuješ odpovede',
+  tqSummaryEditBody:
+    'Klepni na otázku, ktorú chceš zmeniť. Do profilu sa to zapíše až keď dole potvrdíš uloženie.',
+  tqEditAnswers: 'Upraviť odpovede',
+  tqSaveAnswers: 'Uložiť odpovede',
+  tqUnanswered: 'Nezodpovedané',
 } as const;
