@@ -11,6 +11,12 @@ import { createTasteRadarChartStyles } from './TasteRadarChart.styles';
 import { TasteRadarLabels } from './TasteRadarLabels';
 import { TasteRadarWeb } from './TasteRadarWeb';
 
+/** A second shape on the same web, with its own idea of what it knows. */
+export interface RadarOverlay {
+  readonly axes: TasteAxes;
+  readonly axisConfidence: TasteAxisConfidence;
+}
+
 export interface TasteRadarChartProps {
   readonly axes: TasteAxes;
   readonly axisConfidence: TasteAxisConfidence;
@@ -25,6 +31,15 @@ export interface TasteRadarChartProps {
    * at a glance is which way the shape leans.
    */
   readonly compact?: boolean;
+  /**
+   * A second profile to hold this one up against - a coffee over a person, or
+   * a person under a coffee.
+   *
+   * One chart with two shapes rather than two charts side by side, because the
+   * question somebody is asking is about the difference between them, and two
+   * charts leave that difference to be worked out by eye across a gap.
+   */
+  readonly overlay?: RadarOverlay;
 }
 
 /** With no labels there is nothing to reserve room for, so the web fills the square. */
@@ -53,11 +68,14 @@ export const TasteRadarChart = ({
   axes,
   axisConfidence,
   compact = false,
+  overlay,
 }: TasteRadarChartProps): JSX.Element => {
   const styles = useThemedStyles(createTasteRadarChartStyles);
   const theme = useTheme();
   const { t } = useTranslation();
   const readings = readTasteAxisReadings(axes, axisConfidence);
+  const overlayReadings =
+    overlay === undefined ? undefined : readTasteAxisReadings(overlay.axes, overlay.axisConfidence);
   const size = compact ? theme.size.radarChartCompactSize : theme.size.radarChartSize;
   const frame = radarFrame(
     size,
@@ -73,7 +91,12 @@ export const TasteRadarChart = ({
         accessibilityLabel={t(TRANSLATION_KEYS.profileTasteChartLabel)}
       >
         <Svg width={size} height={size}>
-          <TasteRadarWeb frame={frame} readings={readings} theme={theme} />
+          <TasteRadarWeb
+            frame={frame}
+            readings={readings}
+            overlay={overlayReadings}
+            theme={theme}
+          />
         </Svg>
         {compact ? null : <TasteRadarLabels frame={frame} readings={readings} />}
       </View>

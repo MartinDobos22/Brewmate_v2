@@ -68,3 +68,12 @@ export const BAG_SCAN_FIELDS = {
  * would notice on a shelf, let alone across roasters.
  */
 export const ROAST_LEVEL_NEAR_DISTANCE = 1;
+
+/**
+ * How many axes the offline verdict argues from.
+ *
+ * Three. The matcher orders them by how much each comparison actually says, so
+ * the first few carry the argument - and a verdict that lists all five axes is
+ * one nobody reads to the end, standing in a shop with a bag in one hand.
+ */
+export const OFFLINE_MATCH_REASONS = 3;

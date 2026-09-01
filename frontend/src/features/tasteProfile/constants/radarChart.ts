@@ -31,6 +31,16 @@ export const RADAR_CHART = {
   unknownVertexStrokeWidth: 1.5,
   /** How far outside the web an axis label sits. */
   labelGap: 15,
+  /**
+   * The second shape, when a coffee is held up against a person.
+   *
+   * Dashed and unfilled, so it reads as the thing being compared rather than
+   * as a second opinion competing with the first. Two filled polygons at the
+   * same weight produce a picture where neither is legible and the overlap is
+   * a third colour that means nothing.
+   */
+  overlayStrokeWidth: 2,
+  overlayDash: '5,4',
 } as const;
 
 /**

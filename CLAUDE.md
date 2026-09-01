@@ -17,7 +17,8 @@ anything: a photographed label is read into fields, the shop verdict is
 written as an argument rather than picked from three sentences, and the coffee
 itself is estimated onto the same five axes the drinker is described on - by
 arithmetic on the phone first, and only then by a model reading what the tables
-cannot. The calibration
+cannot - and the two are finally held up against each other, axis by axis,
+weighted by what both sides actually know. The calibration
 brew is still read by a Slovak lexicon, and the three arithmetic rules survive
 as the scanner's offline fallback.
 
@@ -70,9 +71,10 @@ copy of the type.
 It also holds the pieces of arithmetic both ends have to agree on exactly:
 `shared/src/brewing/ratioCalculator.ts`, `shared/src/conversion/` - the recipe
 conversion - `shared/src/tasteProfiles/foldAxisObservations.ts`, which is how a
-set of taps becomes a claim about somebody's taste, and
-`shared/src/coffeeTaste/`, which is how a printed label becomes a claim about a
-coffee. Each is
+set of taps becomes a claim about somebody's taste, `shared/src/coffeeTaste/`,
+which is how a printed label becomes a claim about a coffee, and
+`shared/src/coffeeMatch/`, which is where those two claims are held up against
+each other. Each is
 self-contained, depends on nothing but plain values and has its own unit tests
 (`shared/tests/`), so a better algorithm can replace one without touching
 anything else.
@@ -275,7 +277,8 @@ frontend/
   `tasteQuestionsIndirect`, `tasteQuestionsBeginner`, `tasteQuestionsExpert`,
   `equipmentSetup`, `waterAndSets`, `calibration`, `brewing`, `preBrew`,
   `brewMode`, `recipeChat`, `recipeImport`, `dialIn`, `scanner`,
-  `tasteProfile`, `tasteAxisBands`, `coffeeTaste`, `profileSections`,
+  `tasteProfile`, `tasteAxisBands`, `coffeeTaste`, `coffeeMatch`,
+  `profileSections`,
   `history`, `aiCosts`,
   `cupboardAndBrew`, `errors`, `designSystem`) and merged in
   `sk/index.ts`. One file would break the 150-line limit.
@@ -598,6 +601,71 @@ against each other without either being translated first.
   component rather than a chart of its own. The entire point of describing a
   coffee on these axes is that it can be compared with a person, and two
   pictures drawn differently would leave that comparison to the reader.
+
+### Holding the coffee up against the drinker
+
+The third thing this app is built on, and the one the other two exist to make
+possible. A person is folded onto five axes with a confidence each; a coffee is
+folded onto the same five with a confidence each; `shared/src/coffeeMatch/` is
+where the two meet.
+
+- **An axis is compared only where both sides know it.** The weight of a
+  comparison is what the person knows about that axis multiplied by what the
+  label knows about it - a product, not an average, and that is the single most
+  important line in the module. An average lets one confident side carry a
+  blank one, so a fully-read label against an axis nobody has ever mentioned
+  would come out as a half-strength reason and the app would argue about
+  somebody's bitterness on the strength of having read a bag.
+- **Two axes, or it is not a comparison.** One axis on its own is an anecdote:
+  a coffee whose acidity happens to suit somebody says nothing about whether
+  they will enjoy drinking it. Below that the match reports `unknown` and the
+  verdict falls back to what is true of the coffee for anybody, which is the
+  same thing it does for a person nobody has measured.
+- **The coffee is adjusted for how this person takes their milk first.** A
+  label can only ever describe a coffee brewed black, and a profile always
+  describes the cup somebody puts to their mouth - the questionnaire asks about
+  milk precisely because it changes what a good cup is for them. Compared
+  without that step, somebody who always drinks a flat white is told every
+  bright coffee on the shelf is too sharp for them. The correction is applied
+  to the coffee, never to the profile: the profile is evidence about a person
+  and must not be rewritten by an inference.
+- **A difference nobody could taste is not a mismatch.** A point either way is
+  inside the noise of a weighted mean of a few questionnaire answers against a
+  weighted mean of a few label signals, and calling that a mismatch would have
+  the app disagreeing with somebody over nothing.
+- **The reasons are ordered by how much they say, not by how well they are
+  known.** A well-understood axis sitting exactly halfway is worth saying
+  nothing about; a well-understood axis at an extreme is the sentence the
+  verdict should lead with. Ordering by weight alone opens a verdict with "your
+  body preference is roughly met", which is true, dull and not why anybody
+  asked.
+- **Nothing is scored.** `fit` and `band` exist so the app can choose which
+  sentence to write and which axis to lead with. A percentage in front of a
+  shelf reads as a measurement of somebody's taste and nobody has measured
+  that, so what reaches the screen is one of four sentences and a list of axes
+  with directions - never a number, a grade or a colour.
+- **The model is handed the comparison already made.** `describeCoffeeMatch`
+  gives it the comparable axes, both values, which way each one misses and the
+  order to argue in. Given two lists of numbers a model does the comparison
+  silently, with no way for anybody to check which axes it weighed or whether
+  it argued from one nobody has evidence for; given the comparison made, with
+  the unusable axes left out, inventing a reason means disobeying an explicit
+  instruction rather than filling a gap it was never told about.
+- **The verdict never buys a reading to do it.** The estimate behind the match
+  is arithmetic and free, and a model's reading of that label is folded in only
+  if one has already been cached. A scan already pays for a reading and a
+  verdict, and quietly making it three calls is how an allowance disappears
+  into something nobody asked to spend it on.
+- **The offline verdict compares on the same five axes.** It used to weigh two
+  things - the roast level against a stated preference and the printed notes
+  against a handful of tags - and left out the thing the app knows most about.
+  The axis comparison now leads it, and the two older rules stay beside it
+  because a stated roast preference and a liked flavour are things somebody
+  said outright, and neither survives being folded into an axis.
+- **It is drawn as two shapes on one web**, the coffee dashed over the person
+  filled, with a legend saying which is which. Two charts side by side would
+  leave the difference to be worked out by eye across a gap, and the difference
+  is the entire question.
 
 ### The shop verdict
 
@@ -1943,8 +2011,9 @@ generated migration that has already been applied.
 Two kinds, and the split is deliberate.
 
 `shared` has unit tests, and only for the conversion module, the shot timeline,
-the taste axis fold and the coffee taste estimate: pure functions over plain
-values, testable with no database, no model and no server. That is the whole reason the conversion lives there rather than
+the taste axis fold, the coffee taste estimate and the match between a coffee
+and a drinker: pure functions over plain values, testable with no database, no
+model and no server. That is the whole reason the conversion lives there rather than
 in the API - arithmetic this consequential should be checkable in a second. The
 tests are written against the decisions rather than the implementation: that a
 curve reads back the point it was measured at, that an extrapolation says it is
@@ -1957,7 +2026,17 @@ the one thing it exists to do that averaging cannot: that two answers pointing
 at opposite drinks come out reporting they agree about nothing, while two that
 repeat each other come out agreed - and that the contradictory pair still
 reports the mean, because it is the best guess available and the whole point is
-that it arrives marked as one.
+that it arrives marked as one. The coffee estimate is tested for what it has to
+do with almost nothing: that a bag naming only a country still produces a
+shape, that a bag naming nothing produces five middles carrying no confidence
+at all, that the roast outweighs the origin, that a label whose signals
+contradict each other comes back less certain rather than averaged, and that a
+country reads the same however the bag spells it. The match is tested for the
+rules that decide whether it may speak at all: that an axis either side is
+blank about is never compared, that one comparable axis is not a comparison,
+that a difference nobody could taste is not a mismatch, that the cup a milk
+drinker will actually pour is what gets compared, and that the argument leads
+with the axis that says the most.
 
 Everything else is integration tests, running against the real Neon test branch
 through `app.inject()` - no mocked database, no testcontainers (everything is

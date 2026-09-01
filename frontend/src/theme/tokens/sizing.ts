@@ -37,6 +37,10 @@ export const SIZE = {
   radarChartCompactSize: 96,
   /** The box one axis label is centred in, so five of them cannot overlap. */
   radarLabelWidth: 76,
+  /** The swatch that says which shape on the web is you and which is the coffee. */
+  legendSwatchWidth: 16,
+  legendSwatchHeight: 8,
+  legendSwatchBorder: 2,
   /** The onboarding progress bar, thinner than a slider track is tall. */
   progressBarHeight: 6,
   /** A questionnaire answer card. Big enough to tap without aiming. */

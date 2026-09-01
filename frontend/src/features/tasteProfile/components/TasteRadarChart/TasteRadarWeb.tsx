@@ -18,8 +18,17 @@ const OUTER_RING = RADAR_CHART.ringCount - 1;
 export interface TasteRadarWebProps {
   readonly frame: RadarFrame;
   readonly readings: readonly TasteAxisReading[];
+  /** A second shape to hold this one up against, drawn dashed and unfilled. */
+  readonly overlay?: readonly TasteAxisReading[];
   readonly theme: Theme;
 }
+
+const shapePoints = (frame: RadarFrame, readings: readonly TasteAxisReading[]): string =>
+  toPolygonPoints(
+    readings.map((reading: TasteAxisReading, index: number): RadarPoint =>
+      radarPoint(frame, index, frame.radius * reading.share),
+    ),
+  );
 
 /**
  * The web, the shape and the vertices - everything drawn inside the square.
@@ -28,7 +37,12 @@ export interface TasteRadarWebProps {
  * and one component holding both the polar arithmetic and five absolutely
  * positioned pieces of text was doing two things.
  */
-export const TasteRadarWeb = ({ frame, readings, theme }: TasteRadarWebProps): JSX.Element => (
+export const TasteRadarWeb = ({
+  frame,
+  readings,
+  overlay,
+  theme,
+}: TasteRadarWebProps): JSX.Element => (
   <G>
     {radarRings(frame, RADAR_CHART.ringCount).map(
       (ring: readonly RadarPoint[], index: number): JSX.Element => (
@@ -69,6 +83,21 @@ export const TasteRadarWeb = ({ frame, readings, theme }: TasteRadarWebProps): J
       strokeWidth={RADAR_CHART.shapeStrokeWidth}
       strokeLinejoin="round"
     />
+    {overlay === undefined ? null : (
+      /**
+       * Drawn after the filled shape and before the vertices, so it reads as
+       * laid over the first rather than hidden behind it - and unfilled, so
+       * where the two overlap the reader sees both instead of a third colour.
+       */
+      <Polygon
+        points={shapePoints(frame, overlay)}
+        fill="none"
+        stroke={theme.colors.tertiary}
+        strokeWidth={RADAR_CHART.overlayStrokeWidth}
+        strokeDasharray={RADAR_CHART.overlayDash}
+        strokeLinejoin="round"
+      />
+    )}
     {readings.map((reading: TasteAxisReading, index: number): JSX.Element => {
       const point = radarPoint(frame, index, frame.radius * reading.share);
 

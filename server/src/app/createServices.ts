@@ -269,6 +269,7 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
             repository: bagEvaluationRepository,
             bagEvaluationService,
             tasteProfileService,
+            tasteReadingRepository: createCoffeeTasteReadingRepository(db),
             aiUsageService,
           }),
     coffeeTasteEstimateService:
