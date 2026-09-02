@@ -1,0 +1,132 @@
+<!-- @dsCard group="Spacing" name="Spacing and elevation" subtitle="4pt grid; surfaces over shadows" width="1100" height="640" -->
+<!-- title: Spacing -->
+<div class="schemes">
+  <div class="scheme">
+    <p class="scheme-label">SPACING &mdash; 4pt grid</p>
+    <div class="stack-sm">
+      <div class="bar-row">
+        <span>xxs</span>
+        <div class="bar" style="width: var(--space-xxs)"></div>
+        <em>2</em>
+      </div>
+      <div class="bar-row">
+        <span>xs</span>
+        <div class="bar" style="width: var(--space-xs)"></div>
+        <em>4</em>
+      </div>
+      <div class="bar-row">
+        <span>sm</span>
+        <div class="bar" style="width: var(--space-sm)"></div>
+        <em>8</em>
+      </div>
+      <div class="bar-row">
+        <span>md</span>
+        <div class="bar" style="width: var(--space-md)"></div>
+        <em>12</em>
+      </div>
+      <div class="bar-row">
+        <span>lg</span>
+        <div class="bar" style="width: var(--space-lg)"></div>
+        <em>16</em>
+      </div>
+      <div class="bar-row">
+        <span>xl</span>
+        <div class="bar" style="width: var(--space-xl)"></div>
+        <em>24</em>
+      </div>
+      <div class="bar-row">
+        <span>xxl</span>
+        <div class="bar" style="width: var(--space-xxl)"></div>
+        <em>32</em>
+      </div>
+      <div class="bar-row">
+        <span>xxxl</span>
+        <div class="bar" style="width: var(--space-xxxl)"></div>
+        <em>48</em>
+      </div>
+    </div>
+    <p class="scheme-label" style="margin-top: var(--space-xl)">LAYOUT_SPACING</p>
+    <table>
+      <tr>
+        <td>screenEdge</td>
+        <td>16</td>
+      </tr>
+      <tr>
+        <td>cardPadding</td>
+        <td>16</td>
+      </tr>
+      <tr>
+        <td>cardGap</td>
+        <td>12</td>
+      </tr>
+      <tr>
+        <td>sectionGap</td>
+        <td>24</td>
+      </tr>
+      <tr>
+        <td>inlineGap</td>
+        <td>8</td>
+      </tr>
+    </table>
+  </div>
+  <div class="scheme dark">
+    <p class="scheme-label">Elevation &mdash; only what genuinely floats</p>
+    <div class="stack">
+      <div class="card card-outlined">
+        <span class="title-small">none</span>
+        <span class="body-small tone-muted">Karta v zozname. Vlastný povrch a tichý outline.</span>
+      </div>
+      <div class="card" style="box-shadow: 0 2px 6px rgb(0 0 0 / 12%)">
+        <span class="title-small">raised</span>
+        <span class="body-small tone-muted">FAB, dialóg.</span>
+      </div>
+      <div class="card" style="box-shadow: 0 -2px 16px rgb(0 0 0 / 18%)">
+        <span class="title-small">overlay</span>
+        <span class="body-small tone-muted">Bottom sheet.</span>
+      </div>
+    </div>
+    <p class="note">
+      Povrchy sa rozlišujú farbou (<code>surfaceContainer</code>), nie tieňom. Tieň má len to, čo
+      naozaj pláva nad obsahom.
+    </p>
+  </div>
+</div>
+<style>
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+  .bar-row span {
+    width: 40px;
+    font: 500 12px var(--font-body);
+  }
+  .bar {
+    height: 16px;
+    background: var(--primary);
+    border-radius: var(--radius-xs);
+  }
+  .bar-row em {
+    font: 400 11px var(--font-numeric);
+    color: var(--on-surface-variant);
+    font-style: normal;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font: 400 13px/20px var(--font-body);
+  }
+  td {
+    padding: var(--space-xs) 0;
+    border-bottom: var(--border-thin) solid var(--outline-variant);
+  }
+  td:last-child {
+    text-align: right;
+    font-family: var(--font-numeric);
+    font-size: 12px;
+    color: var(--on-surface-variant);
+  }
+  code {
+    font: 400 12px var(--font-numeric);
+  }
+</style>

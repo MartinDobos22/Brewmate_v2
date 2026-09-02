@@ -1,0 +1,63 @@
+<!-- @dsCard group="Type" name="Type scale" subtitle="Schibsted Grotesk, Inter, IBM Plex Mono" width="1100" height="900" -->
+<!-- title: Typografia -->
+<div class="schemes">
+  <div class="scheme">
+    <p class="scheme-label">Display + headline &mdash; Schibsted Grotesk</p>
+    <div class="stack-sm">
+      <div><span class="display-large">Brewmate</span><em>displayLarge 44/52</em></div>
+      <div><span class="display-medium">Brewmate</span><em>displayMedium 36/44</em></div>
+      <div><span class="display-small">Brewmate</span><em>displaySmall 30/38</em></div>
+      <div><span class="headline-large">Skrinka</span><em>headlineLarge 28/36</em></div>
+      <div><span class="headline-medium">Skrinka</span><em>headlineMedium 24/32</em></div>
+      <div><span class="headline-small">Skrinka</span><em>headlineSmall 20/28</em></div>
+    </div>
+    <p class="scheme-label" style="margin-top: var(--space-xl)">
+      Title + body + label &mdash; Inter
+    </p>
+    <div class="stack-sm">
+      <div><span class="title-large">Etiópia Guji</span><em>titleLarge 20/28</em></div>
+      <div><span class="title-medium">Etiópia Guji</span><em>titleMedium 16/24</em></div>
+      <div><span class="title-small">Etiópia Guji</span><em>titleSmall 14/20</em></div>
+      <div><span class="body-large">Plná, čokoládová káva</span><em>bodyLarge 16/24</em></div>
+      <div><span class="body-medium">Plná, čokoládová káva</span><em>bodyMedium 14/20</em></div>
+      <div><span class="body-small">Plná, čokoládová káva</span><em>bodySmall 12/16</em></div>
+      <div><span class="label-large">Uložiť</span><em>labelLarge 14/20</em></div>
+      <div><span class="label-medium">Uložiť</span><em>labelMedium 12/16</em></div>
+      <div><span class="label-small">Uložiť</span><em>labelSmall 11/16</em></div>
+    </div>
+  </div>
+  <div class="scheme dark">
+    <p class="scheme-label">Numeric &mdash; IBM Plex Mono, tabular</p>
+    <div class="stack-sm">
+      <div>
+        <span class="numeric-display">2:45</span
+        ><em>numericDisplay 88/96 &mdash; brew mode, nič iné</em>
+      </div>
+      <div><span class="numeric-hero">17,5 g</span><em>numericHero 56/64</em></div>
+      <div><span class="numeric-large">1:16,5</span><em>numericLarge 32/40</em></div>
+      <div><span class="numeric-medium">94 °C</span><em>numericMedium 20/28</em></div>
+      <div><span class="numeric-small">22 klikov</span><em>numericSmall 14/20</em></div>
+    </div>
+    <p class="note">
+      Každá merateľná hodnota &mdash; gramy, sekundy, teplota, pomer, nastavenie mlynčeka &mdash;
+      ide monospacom s tabuľkovými číslicami. Proporcionálne číslice poskakujú na každom tiku
+      časovača.
+    </p>
+  </div>
+</div>
+<style>
+  .stack-sm > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    padding-bottom: var(--space-xs);
+    border-bottom: var(--border-thin) solid var(--outline-variant);
+  }
+  em {
+    font: 400 11px/16px var(--font-numeric);
+    color: var(--on-surface-variant);
+    font-style: normal;
+    white-space: nowrap;
+  }
+</style>

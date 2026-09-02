@@ -1,0 +1,83 @@
+<!-- @dsCard group="Components" name="Progress, slider, stepper" subtitle="Segments over one bar; the one allowed circle" width="1100" height="600" -->
+<!-- title: Progres a ovládače -->
+<div class="schemes">
+  <div class="scheme">
+    <p class="scheme-label">Light</p>
+    <div class="stack">
+      <div>
+        <span class="label-medium tone-muted">StepProgress &mdash; krok 3 z 5</span>
+        <div class="step-track" style="margin-top: var(--space-sm)">
+          <div class="step-segment step-done"></div>
+          <div class="step-segment step-done"></div>
+          <div class="step-segment step-done"></div>
+          <div class="step-segment step-todo"></div>
+          <div class="step-segment step-todo"></div>
+        </div>
+      </div>
+      <div>
+        <span class="label-medium tone-muted">ProgressBar &mdash; zvyšok vrecka</span>
+        <div class="progress-track" style="margin-top: var(--space-sm)">
+          <div class="progress-fill" style="flex: 0 0 62%"></div>
+        </div>
+      </div>
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline">
+          <span class="label-medium tone-muted">Kyslosť</span><span class="numeric-small">7,4</span>
+        </div>
+        <div class="slider-area">
+          <div class="slider-track"></div>
+          <div class="slider-fill" style="width: 74%"></div>
+          <div class="slider-thumb" style="left: calc(74% - 12px)"></div>
+        </div>
+      </div>
+      <div>
+        <span class="label-medium tone-muted">Dávka</span>
+        <div class="stepper-row" style="margin-top: var(--space-sm)">
+          <div class="stepper-button">&minus;</div>
+          <div class="stepper-value">
+            <span class="numeric-large">17,5</span
+            ><span
+              class="body-small tone-muted"
+              style="align-self: flex-end; margin-left: var(--space-xs)"
+              >g</span
+            >
+          </div>
+          <div class="stepper-button">+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scheme dark">
+    <p class="scheme-label">Dark</p>
+    <div class="stack">
+      <div>
+        <span class="label-medium tone-muted">StepProgress &mdash; krok 3 z 5</span>
+        <div class="step-track" style="margin-top: var(--space-sm)">
+          <div class="step-segment step-done"></div>
+          <div class="step-segment step-done"></div>
+          <div class="step-segment step-done"></div>
+          <div class="step-segment step-todo"></div>
+          <div class="step-segment step-todo"></div>
+        </div>
+      </div>
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline">
+          <span class="label-medium tone-muted">Telo</span><span class="numeric-small">5,1</span>
+        </div>
+        <div class="slider-area">
+          <div class="slider-track"></div>
+          <div class="slider-fill" style="width: 51%"></div>
+          <div class="slider-thumb" style="left: calc(51% - 12px)"></div>
+        </div>
+      </div>
+      <div class="card card-container" style="align-items: center; text-align: center">
+        <span class="numeric-display">2:45</span>
+        <span class="label-medium tone-muted">Nalej do 250 g</span>
+      </div>
+    </div>
+    <p class="note">
+      Segmenty namiesto jedného pruhu, lebo kroky sú spočítateľné a je ich málo. Súvislý pruh na 66
+      % núti čitateľa dorátať tretinu; tri bloky s dvomi vyplnenými povedia to isté bez počítania.
+    </p>
+  </div>
+</div>

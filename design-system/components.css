@@ -1,0 +1,412 @@
+/*
+ * Brewmate components, transcribed from frontend/src/components/ui/*.styles.ts.
+ * Every value here is a token reference - no literal may appear below.
+ */
+
+/* Button - rectangles with radius 12, never pills */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  height: var(--button-height-medium);
+  padding: 0 var(--space-lg);
+  border-radius: var(--shape-button);
+  border: var(--border-thin) solid var(--primary);
+  font: 500 14px/20px var(--font-body);
+  letter-spacing: 0.1px;
+  cursor: pointer;
+}
+.btn-small {
+  height: var(--button-height-small);
+  padding: 0 var(--space-md);
+}
+.btn-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+.btn-secondary {
+  background: var(--primary-container);
+  border-color: var(--primary-container);
+  color: var(--on-primary-container);
+}
+.btn-tertiary {
+  background: var(--surface);
+  border-color: var(--outline-variant);
+  color: var(--on-surface);
+}
+.btn-danger {
+  background: var(--error);
+  border-color: var(--error);
+  color: var(--on-error);
+}
+.btn-pressed {
+  opacity: var(--opacity-pressed);
+}
+.btn-disabled {
+  background: var(--disabled);
+  border-color: var(--disabled);
+  color: var(--on-disabled);
+  opacity: var(--opacity-disabled);
+}
+.btn-full {
+  display: flex;
+  width: 100%;
+}
+
+/* Chip - radius 8, the small end of the scale */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--chip-height);
+  padding: 0 var(--space-md);
+  border-radius: var(--shape-chip);
+  border: var(--border-thin) solid var(--outline-variant);
+  background: var(--surface);
+  color: var(--on-surface-variant);
+  font: 500 12px/16px var(--font-body);
+  letter-spacing: 0.5px;
+}
+.chip-selected {
+  background: var(--secondary-container);
+  border-color: var(--secondary-container);
+  color: var(--secondary);
+}
+.chip-disabled {
+  background: var(--disabled);
+  border-color: var(--disabled);
+  color: var(--on-disabled);
+}
+
+/* Card - told apart by surface, never by shadow */
+.card {
+  border-radius: var(--shape-card);
+  padding: var(--card-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  overflow: hidden;
+  background: var(--surface);
+}
+.card-container {
+  background: var(--surface-container);
+}
+.card-container-high {
+  background: var(--surface-container-high);
+}
+.card-outlined {
+  border: var(--border-thin) solid var(--outline-variant);
+}
+
+/* Tile - a card that has been given a shape */
+.tile-row {
+  display: flex;
+  gap: var(--card-gap);
+}
+.tile {
+  position: relative;
+  flex: 1 1 0;
+  min-height: var(--tile-min-height);
+  border-radius: var(--shape-card);
+  padding: var(--card-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  justify-content: space-between;
+  overflow: hidden;
+}
+.tile-primary {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+.tile-accent {
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+}
+.tile-neutral {
+  background: var(--surface);
+  border: var(--border-thin) solid var(--outline-variant);
+  color: var(--on-surface);
+}
+/* The rings container is 148x148 pushed out of the top right corner by 46,
+   with both rings centred in it. Opacity sits on the container, so the two
+   rings never double up where they overlap. */
+.tile-rings {
+  position: absolute;
+  top: var(--tile-ring-offset);
+  right: var(--tile-ring-offset);
+  width: var(--tile-ring-outer);
+  height: var(--tile-ring-outer);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: var(--opacity-watermark);
+  pointer-events: none;
+}
+.tile-ring-outer {
+  position: absolute;
+  width: var(--tile-ring-outer);
+  height: var(--tile-ring-outer);
+  border-radius: var(--shape-avatar);
+  border: var(--border-thick) solid;
+}
+.tile-ring-inner {
+  width: var(--tile-ring-inner);
+  height: var(--tile-ring-inner);
+  border-radius: var(--shape-avatar);
+  border: var(--border-thick) solid;
+}
+.tile-primary .tile-ring-outer,
+.tile-primary .tile-ring-inner {
+  border-color: var(--primary);
+}
+.tile-accent .tile-ring-outer,
+.tile-accent .tile-ring-inner {
+  border-color: var(--secondary);
+}
+.tile-neutral .tile-ring-outer,
+.tile-neutral .tile-ring-inner {
+  border-color: var(--outline);
+}
+
+/* Badge fill and glyph colour, per tone. */
+.tile-primary .tile-badge {
+  background: var(--surface);
+  color: var(--primary);
+}
+.tile-accent .tile-badge {
+  background: var(--surface);
+  color: var(--secondary);
+}
+.tile-neutral .tile-badge {
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+}
+
+.tile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  position: relative;
+}
+.tile-badge {
+  width: var(--tile-badge-size);
+  height: var(--tile-badge-size);
+  border-radius: var(--shape-avatar);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  font-size: var(--icon-medium);
+  line-height: 1;
+}
+.tile-heading {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+}
+
+/* Input - shares the chip radius */
+.field {
+  display: flex;
+  align-items: center;
+  height: var(--input-height);
+  padding: 0 var(--space-md);
+  border-radius: var(--shape-input);
+  border: var(--border-thin) solid var(--outline);
+  background: var(--surface);
+  color: var(--on-surface);
+  font: 400 16px/24px var(--font-body);
+  letter-spacing: 0.15px;
+}
+.field-focused {
+  border-width: var(--border-thick);
+  border-color: var(--primary);
+}
+.field-errored {
+  border-color: var(--error);
+}
+/* Ochre rather than red: the value is unverified, not wrong. */
+.field-unverified {
+  border-width: var(--border-thick);
+  border-color: var(--tertiary);
+}
+.field-disabled {
+  background: var(--disabled);
+  border-color: var(--disabled);
+  color: var(--on-disabled);
+}
+
+/* OptionCard - the whole card is the touch target */
+.option {
+  min-height: var(--option-card-min-height);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--card-padding);
+  border-radius: var(--shape-card);
+  border: var(--border-thin) solid var(--outline-variant);
+  background: var(--surface);
+}
+.option-selected {
+  background: var(--secondary-container);
+  border: var(--border-thick) solid var(--secondary);
+}
+.option-badge {
+  width: var(--tile-badge-size);
+  height: var(--tile-badge-size);
+  border-radius: var(--shape-avatar);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-container);
+  flex: none;
+  font-size: var(--icon-medium);
+  line-height: 1;
+}
+.option-selected .option-badge {
+  background: var(--surface);
+}
+.option-content {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+}
+
+/* ListItem - shares the button radius */
+.list-item {
+  min-height: var(--list-item-min-height);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--shape-list-item);
+  background: var(--surface);
+}
+.list-item-pressed {
+  background: var(--surface-container);
+}
+.list-item-divider {
+  border-bottom: var(--border-thin) solid var(--outline-variant);
+  border-bottom-left-radius: var(--radius-none);
+  border-bottom-right-radius: var(--radius-none);
+}
+.list-item-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+}
+
+/* ChatBubble - card radius on three corners, the fourth tightened */
+.bubble-row {
+  display: flex;
+}
+.bubble-row-user {
+  justify-content: flex-end;
+}
+.bubble {
+  max-width: 78%;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--shape-card);
+}
+.bubble-user {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  border-bottom-right-radius: var(--radius-xs);
+}
+.bubble-assistant {
+  background: var(--surface-container);
+  color: var(--on-surface);
+  border-bottom-left-radius: var(--radius-xs);
+}
+
+/* ProgressBar / StepProgress / Slider */
+.progress-track {
+  display: flex;
+  height: var(--progress-bar-height);
+  border-radius: var(--radius-xs);
+  background: var(--surface-container-high);
+  overflow: hidden;
+}
+.progress-fill {
+  background: var(--primary);
+}
+.step-track {
+  display: flex;
+  gap: var(--space-xs);
+}
+.step-segment {
+  flex: 1 1 0;
+  height: var(--progress-bar-height);
+  border-radius: var(--radius-xs);
+}
+.step-done {
+  background: var(--primary);
+}
+.step-todo {
+  background: var(--surface-container-high);
+}
+.slider-area {
+  height: var(--min-touch-target);
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.slider-track {
+  height: var(--slider-track-height);
+  border-radius: var(--radius-xs);
+  background: var(--surface-container-high);
+  width: 100%;
+}
+.slider-fill {
+  position: absolute;
+  height: var(--slider-track-height);
+  border-radius: var(--radius-xs);
+  background: var(--primary);
+}
+/* The thumb is the one circle allowed outside an avatar: it is a control, not a shape. */
+.slider-thumb {
+  position: absolute;
+  width: var(--slider-thumb-size);
+  height: var(--slider-thumb-size);
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  border: var(--border-thick) solid var(--surface);
+}
+
+/* NumberStepper */
+.stepper-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+.stepper-button {
+  width: var(--stepper-button-size);
+  height: var(--stepper-button-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--shape-small-button);
+  border: var(--border-thin) solid var(--outline-variant);
+  background: var(--surface);
+  color: var(--on-surface);
+  font-size: var(--icon-medium);
+}
+.stepper-value {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+/* SectionHeading - no surface of its own */
+.section-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  padding-top: var(--space-lg);
+}

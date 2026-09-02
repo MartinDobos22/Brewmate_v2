@@ -1,0 +1,103 @@
+<!-- @dsCard group="Shape" name="Radius and shape" subtitle="No pills - the deliberate MD3 deviation" width="1100" height="620" -->
+<!-- title: Tvary -->
+<div class="schemes">
+  <div class="scheme">
+    <p class="scheme-label">RADIUS &mdash; the raw scale</p>
+    <div class="row" style="gap: var(--space-md)">
+      <div class="box" style="border-radius: var(--radius-none)">
+        <span>none<br />0</span>
+      </div>
+      <div class="box" style="border-radius: var(--radius-xs)">
+        <span>xs<br />4</span>
+      </div>
+      <div class="box" style="border-radius: var(--radius-sm)">
+        <span>sm<br />8</span>
+      </div>
+      <div class="box" style="border-radius: var(--radius-md)">
+        <span>md<br />12</span>
+      </div>
+      <div class="box" style="border-radius: var(--radius-lg)">
+        <span>lg<br />16</span>
+      </div>
+      <div class="box" style="border-radius: var(--radius-xl)">
+        <span>xl<br />24</span>
+      </div>
+      <div class="box" style="border-radius: var(--radius-full)">
+        <span>full<br />999</span>
+      </div>
+    </div>
+    <p class="note">
+      Odchýlka od Material Design 3: MD3 dáva tlačidlám a chipom pill tvar (radius 20+). Brewmate
+      nie. Tlačidlá sú obdĺžniky s radiusom 12 &mdash; appka pôsobí hranatejšie a pokojnejšie, ale
+      žiadny roh nie je nikdy ostrý. <code>full</code> je vyhradený pre avatar a kruhový progress.
+    </p>
+  </div>
+  <div class="scheme dark">
+    <p class="scheme-label">SHAPE &mdash; which radius each element gets</p>
+    <table>
+      <tr>
+        <td>icon, checkbox, badge</td>
+        <td>xs &middot; 4</td>
+      </tr>
+      <tr>
+        <td>chip, input, smallButton</td>
+        <td>sm &middot; 8</td>
+      </tr>
+      <tr>
+        <td>button, listItem</td>
+        <td>md &middot; 12</td>
+      </tr>
+      <tr>
+        <td>card</td>
+        <td>lg &middot; 16</td>
+      </tr>
+      <tr>
+        <td>sheet, modal</td>
+        <td>xl &middot; 24</td>
+      </tr>
+      <tr>
+        <td>avatar, progressRing</td>
+        <td>full &middot; 999</td>
+      </tr>
+      <tr>
+        <td>counterBadge</td>
+        <td>full &mdash; the one pill</td>
+      </tr>
+    </table>
+    <p class="note">
+      Komponenty čítajú <code>SHAPE</code>, nikdy <code>RADIUS</code>, takže rovnaký druh prvku má
+      všade rovnaký radius.
+    </p>
+  </div>
+</div>
+<style>
+  .box {
+    width: 72px;
+    height: 72px;
+    background: var(--primary-container);
+    color: var(--on-primary-container);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font: 500 11px/14px var(--font-body);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font: 400 13px/20px var(--font-body);
+  }
+  td {
+    padding: var(--space-sm) 0;
+    border-bottom: var(--border-thin) solid var(--outline-variant);
+  }
+  td:last-child {
+    text-align: right;
+    font-family: var(--font-numeric);
+    font-size: 12px;
+    color: var(--on-surface-variant);
+  }
+  code {
+    font: 400 12px var(--font-numeric);
+  }
+</style>

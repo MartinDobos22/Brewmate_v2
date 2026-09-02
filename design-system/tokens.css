@@ -1,0 +1,304 @@
+/*
+ * Brewmate design tokens, transcribed from frontend/src/theme/tokens/.
+ *
+ * This file is the single source of truth for the Claude Design bundle.
+ * build.sh inlines it into every preview so each card renders standalone.
+ * When a token changes in TypeScript, change it here and re-run build.sh.
+ */
+
+:root {
+  /* Light palette - LIGHT_COLORS */
+  --primary: #6b4226;
+  --on-primary: #ffffff;
+  --primary-container: #e8d9cb;
+  --on-primary-container: #2a1a0f;
+  --secondary: #4a6130;
+  --on-secondary: #ffffff;
+  --secondary-container: #dce3ce;
+  --on-secondary-container: #1b2412;
+  --tertiary: #a8722c;
+  --on-tertiary: #ffffff;
+  --tertiary-container: #f0dfc6;
+  --on-tertiary-container: #3a2710;
+  --background: #f5f1ec;
+  --on-background: #241c15;
+  --surface: #fffdfa;
+  --on-surface: #241c15;
+  --on-surface-variant: #5c5148;
+  --surface-container: #ede6dd;
+  --surface-container-high: #e5dcd1;
+  --outline: #8a7d70;
+  --outline-variant: #d6ccc0;
+  --error: #8c3a2b;
+  --on-error: #ffffff;
+  --error-container: #f2dcd6;
+  --on-error-container: #3a130c;
+  --scrim: #241c15;
+  --shadow: #241c15;
+  --inverse-surface: #332822;
+  --on-inverse-surface: #f5f1ec;
+  --disabled: #e5dcd1;
+  --on-disabled: #9a8b7d;
+
+  /* SPACING - 4pt grid */
+  --space-xxs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  --space-xxxl: 48px;
+
+  /* LAYOUT_SPACING */
+  --screen-edge: 16px;
+  --card-padding: 16px;
+  --card-gap: 12px;
+  --section-gap: 24px;
+  --inline-gap: 8px;
+
+  /* RADIUS - no pills, deliberately */
+  --radius-none: 0px;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* SHAPE - which radius each kind of element gets */
+  --shape-icon: var(--radius-xs);
+  --shape-badge: var(--radius-xs);
+  --shape-chip: var(--radius-sm);
+  --shape-input: var(--radius-sm);
+  --shape-small-button: var(--radius-sm);
+  --shape-button: var(--radius-md);
+  --shape-list-item: var(--radius-md);
+  --shape-card: var(--radius-lg);
+  --shape-sheet: var(--radius-xl);
+  --shape-avatar: var(--radius-full);
+
+  /* BORDER_WIDTH */
+  --border-thin: 1px;
+  --border-thick: 2px;
+
+  /* OPACITY */
+  --opacity-pressed: 0.72;
+  --opacity-disabled: 0.38;
+  --opacity-watermark: 0.16;
+
+  /* SIZE */
+  --button-height-small: 36px;
+  --button-height-medium: 48px;
+  --input-height: 48px;
+  --chip-height: 32px;
+  --list-item-min-height: 56px;
+  --icon-small: 16px;
+  --icon-medium: 24px;
+  --tile-min-height: 132px;
+  --tile-badge-size: 36px;
+  --tile-ring-outer: 148px;
+  --tile-ring-inner: 96px;
+  --tile-ring-offset: -46px;
+  --option-card-min-height: 72px;
+  --progress-bar-height: 6px;
+  --slider-track-height: 4px;
+  --slider-thumb-size: 24px;
+  --stepper-button-size: 40px;
+  --min-touch-target: 44px;
+
+  /* FONT_FAMILIES */
+  --font-display: 'Schibsted Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-numeric: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+.dark {
+  /* Dark palette - DARK_COLORS. Dark brown, never black, never blue-tinted. */
+  --primary: #d9b99c;
+  --on-primary: #3b2415;
+  --primary-container: #4e3220;
+  --on-primary-container: #f0decc;
+  --secondary: #b6c79a;
+  --on-secondary: #253216;
+  --secondary-container: #374524;
+  --on-secondary-container: #d6e2c4;
+  --tertiary: #ddb27a;
+  --on-tertiary: #3f2a10;
+  --tertiary-container: #5a3f1c;
+  --on-tertiary-container: #f2dcbe;
+  --background: #16120f;
+  --on-background: #ede4da;
+  --surface: #1e1815;
+  --on-surface: #ede4da;
+  --on-surface-variant: #c4b6a9;
+  --surface-container: #29211c;
+  --surface-container-high: #342a24;
+  --outline: #9a8b7d;
+  --outline-variant: #4a3e36;
+  --error: #e0a093;
+  --on-error: #4a1810;
+  --error-container: #66281c;
+  --on-error-container: #f7ded7;
+  --scrim: #0c0a08;
+  --shadow: #0c0a08;
+  --inverse-surface: #ede4da;
+  --on-inverse-surface: #1e1815;
+  --disabled: #342a24;
+  --on-disabled: #7a6c60;
+}
+
+/* Type scale - TYPE_SCALE + NUMERIC_SCALE */
+.display-large {
+  font: 600 44px/52px var(--font-display);
+  letter-spacing: -0.5px;
+}
+.display-medium {
+  font: 600 36px/44px var(--font-display);
+  letter-spacing: -0.25px;
+}
+.display-small {
+  font: 500 30px/38px var(--font-display);
+}
+.headline-large {
+  font: 500 28px/36px var(--font-display);
+}
+.headline-medium {
+  font: 500 24px/32px var(--font-display);
+}
+.headline-small {
+  font: 500 20px/28px var(--font-display);
+}
+.title-large {
+  font: 600 20px/28px var(--font-body);
+}
+.title-medium {
+  font: 600 16px/24px var(--font-body);
+  letter-spacing: 0.15px;
+}
+.title-small {
+  font: 600 14px/20px var(--font-body);
+  letter-spacing: 0.1px;
+}
+.body-large {
+  font: 400 16px/24px var(--font-body);
+  letter-spacing: 0.15px;
+}
+.body-medium {
+  font: 400 14px/20px var(--font-body);
+  letter-spacing: 0.25px;
+}
+.body-small {
+  font: 400 12px/16px var(--font-body);
+  letter-spacing: 0.4px;
+}
+.label-large {
+  font: 500 14px/20px var(--font-body);
+  letter-spacing: 0.1px;
+}
+.label-medium {
+  font: 500 12px/16px var(--font-body);
+  letter-spacing: 0.5px;
+}
+.label-small {
+  font: 500 11px/16px var(--font-body);
+  letter-spacing: 0.5px;
+}
+.numeric-display {
+  font: 500 88px/96px var(--font-numeric);
+  letter-spacing: -2px;
+}
+.numeric-hero {
+  font: 500 56px/64px var(--font-numeric);
+  letter-spacing: -1px;
+}
+.numeric-large {
+  font: 500 32px/40px var(--font-numeric);
+  letter-spacing: -0.5px;
+}
+.numeric-medium {
+  font: 500 20px/28px var(--font-numeric);
+}
+.numeric-small {
+  font: 400 14px/20px var(--font-numeric);
+}
+
+/* Tones */
+.tone-muted {
+  color: var(--on-surface-variant);
+}
+.tone-primary {
+  color: var(--primary);
+}
+.tone-on-primary {
+  color: var(--on-primary);
+}
+.tone-secondary {
+  color: var(--secondary);
+}
+.tone-tertiary {
+  color: var(--tertiary);
+}
+.tone-error {
+  color: var(--error);
+}
+.tone-disabled {
+  color: var(--on-disabled);
+}
+
+/* Preview chrome - not part of the app */
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: var(--font-body);
+}
+html,
+body {
+  height: 100%;
+}
+.schemes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  align-items: stretch;
+  min-height: 100vh;
+}
+.scheme {
+  flex: 1 1 380px;
+  min-width: 340px;
+  padding: var(--space-xl);
+  background: var(--background);
+  color: var(--on-surface);
+}
+.scheme-label {
+  font: 500 11px/16px var(--font-body);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  margin-bottom: var(--space-lg);
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+}
+.stack-sm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+.note {
+  font: 400 12px/16px var(--font-body);
+  color: var(--on-surface-variant);
+  margin: var(--space-lg) 0 0;
+  padding-top: var(--space-md);
+  border-top: var(--border-thin) solid var(--outline-variant);
+}

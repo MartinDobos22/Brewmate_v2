@@ -1,0 +1,158 @@
+<!-- @dsCard group="Colors" name="Palette" subtitle="Warm neutral scale, light and dark" width="1100" height="760" -->
+<!-- title: Farby -->
+<div class="schemes">
+  <div class="scheme">
+    <p class="scheme-label">Light</p>
+    <div class="swatches">
+      <div class="swatch" style="background: var(--primary); color: var(--on-primary)">
+        <span>primary</span><span>#6B4226</span>
+      </div>
+      <div
+        class="swatch"
+        style="background: var(--primary-container); color: var(--on-primary-container)"
+      >
+        <span>primaryContainer</span><span>#E8D9CB</span>
+      </div>
+      <div class="swatch" style="background: var(--secondary); color: var(--on-secondary)">
+        <span>secondary</span><span>#4A6130</span>
+      </div>
+      <div
+        class="swatch"
+        style="background: var(--secondary-container); color: var(--on-secondary-container)"
+      >
+        <span>secondaryContainer</span><span>#DCE3CE</span>
+      </div>
+      <div class="swatch" style="background: var(--tertiary); color: var(--on-tertiary)">
+        <span>tertiary</span><span>#A8722C</span>
+      </div>
+      <div
+        class="swatch"
+        style="background: var(--tertiary-container); color: var(--on-tertiary-container)"
+      >
+        <span>tertiaryContainer</span><span>#F0DFC6</span>
+      </div>
+      <div
+        class="swatch"
+        style="
+          background: var(--background);
+          color: var(--on-background);
+          border: var(--border-thin) solid var(--outline-variant);
+        "
+      >
+        <span>background</span><span>#F5F1EC</span>
+      </div>
+      <div
+        class="swatch"
+        style="
+          background: var(--surface);
+          color: var(--on-surface);
+          border: var(--border-thin) solid var(--outline-variant);
+        "
+      >
+        <span>surface</span><span>#FFFDFA</span>
+      </div>
+      <div class="swatch" style="background: var(--surface-container); color: var(--on-surface)">
+        <span>surfaceContainer</span><span>#EDE6DD</span>
+      </div>
+      <div
+        class="swatch"
+        style="background: var(--surface-container-high); color: var(--on-surface)"
+      >
+        <span>surfaceContainerHigh</span><span>#E5DCD1</span>
+      </div>
+      <div class="swatch" style="background: var(--error); color: var(--on-error)">
+        <span>error</span><span>#8C3A2B</span>
+      </div>
+      <div class="swatch" style="background: var(--disabled); color: var(--on-disabled)">
+        <span>disabled</span><span>#E5DCD1</span>
+      </div>
+    </div>
+  </div>
+  <div class="scheme dark">
+    <p class="scheme-label">Dark</p>
+    <div class="swatches">
+      <div class="swatch" style="background: var(--primary); color: var(--on-primary)">
+        <span>primary</span><span>#D9B99C</span>
+      </div>
+      <div
+        class="swatch"
+        style="background: var(--primary-container); color: var(--on-primary-container)"
+      >
+        <span>primaryContainer</span><span>#4E3220</span>
+      </div>
+      <div class="swatch" style="background: var(--secondary); color: var(--on-secondary)">
+        <span>secondary</span><span>#B6C79A</span>
+      </div>
+      <div
+        class="swatch"
+        style="background: var(--secondary-container); color: var(--on-secondary-container)"
+      >
+        <span>secondaryContainer</span><span>#374524</span>
+      </div>
+      <div class="swatch" style="background: var(--tertiary); color: var(--on-tertiary)">
+        <span>tertiary</span><span>#DDB27A</span>
+      </div>
+      <div
+        class="swatch"
+        style="background: var(--tertiary-container); color: var(--on-tertiary-container)"
+      >
+        <span>tertiaryContainer</span><span>#5A3F1C</span>
+      </div>
+      <div
+        class="swatch"
+        style="
+          background: var(--background);
+          color: var(--on-background);
+          border: var(--border-thin) solid var(--outline-variant);
+        "
+      >
+        <span>background</span><span>#16120F</span>
+      </div>
+      <div
+        class="swatch"
+        style="
+          background: var(--surface);
+          color: var(--on-surface);
+          border: var(--border-thin) solid var(--outline-variant);
+        "
+      >
+        <span>surface</span><span>#1E1815</span>
+      </div>
+      <div class="swatch" style="background: var(--surface-container); color: var(--on-surface)">
+        <span>surfaceContainer</span><span>#29211C</span>
+      </div>
+      <div
+        class="swatch"
+        style="background: var(--surface-container-high); color: var(--on-surface)"
+      >
+        <span>surfaceContainerHigh</span><span>#342A24</span>
+      </div>
+      <div class="swatch" style="background: var(--error); color: var(--on-error)">
+        <span>error</span><span>#E0A093</span>
+      </div>
+      <div class="swatch" style="background: var(--disabled); color: var(--on-disabled)">
+        <span>disabled</span><span>#342A24</span>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  .swatches {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+  }
+  .swatch {
+    border-radius: var(--shape-card);
+    padding: var(--space-md);
+    min-height: 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font: 500 12px/16px var(--font-body);
+  }
+  .swatch span:last-child {
+    font: 400 11px/16px var(--font-numeric);
+    opacity: 0.8;
+  }
+</style>
