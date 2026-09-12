@@ -1,8 +1,10 @@
 import {
   resolveRatio,
+  snapToStep,
   type BrewConstraints,
   type BrewParams,
   type BrewStep,
+  type Grinder,
   type WaterType,
 } from '@brewmate/shared';
 
@@ -15,7 +17,34 @@ export interface ChosenBrewAmounts {
   readonly waterGrams: number;
   readonly waterType: WaterType;
   readonly constraints: BrewConstraints;
+  /** The catalogue entry behind their grinder, where there is one. */
+  readonly grinder: Grinder | null;
 }
+
+/**
+ * The nearest setting the collar can actually be left at.
+ *
+ * A clicked grinder has detents, and 22.4 on a forty-click collar is not a
+ * setting anybody can dial - it is a number that makes somebody guess which
+ * of the two neighbouring clicks was meant, which is the one thing a recipe
+ * card must never do. Clamped to the collar's own ends for the same reason: a
+ * grinder cannot be turned past where it stops.
+ *
+ * Nothing here is the model being overruled. The number it chose is kept; it
+ * is only rounded to something that exists on the object in front of the
+ * person reading it.
+ */
+const toDialableSetting = (setting: number | null, grinder: Grinder | null): number | null => {
+  if (setting === null || grinder === null) {
+    return setting;
+  }
+
+  return snapToStep(
+    Math.min(Math.max(setting, grinder.minSetting), grinder.maxSetting),
+    grinder.step,
+    grinder.minSetting,
+  );
+};
 
 const toStep = (step: GeneratedRecipe['steps'][number]): BrewStep => ({
   order: step.order,
@@ -44,12 +73,12 @@ const toStep = (step: GeneratedRecipe['steps'][number]): BrewStep => ({
  */
 export const toBrewParams = (
   answer: GeneratedRecipe,
-  { doseGrams, waterGrams, waterType, constraints }: ChosenBrewAmounts,
+  { doseGrams, waterGrams, waterType, constraints, grinder }: ChosenBrewAmounts,
 ): BrewParams => ({
   doseGrams,
   waterGrams,
   ratio: resolveRatio(doseGrams, waterGrams),
-  grindSetting: answer.grindSetting,
+  grindSetting: toDialableSetting(answer.grindSetting, grinder),
   grindLabel: answer.grindLabel,
   waterTempC: answer.waterTempC,
   waterType,

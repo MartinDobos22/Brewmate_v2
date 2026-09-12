@@ -2,13 +2,20 @@ import {
   API_ROUTES,
   aiUsageLogSchema,
   generateRecipeResponseSchema,
+  grinderSchema,
   listResponseSchema,
   recipeSchema,
   resolveRatio,
+  CALIBRATION_ESTIMATED_BY_DEFAULT,
+  EQUIPMENT_TYPES,
+  GRINDER_TYPICAL_USES,
+  GRINDER_UNIT_TYPES,
   RECIPE_SOURCES,
   WATER_TYPES,
+  type CreateGrinderRequest,
   type GenerateRecipeRequest,
   type GenerateRecipeResponse,
+  type Grinder,
 } from '@brewmate/shared';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
@@ -36,6 +43,36 @@ const TWO_HINTS = 2;
 const TWO_STEPS = 2;
 const NOTHING = 0;
 const FIRST = 0;
+
+const COLLAR_MIN = 0;
+const COLLAR_MAX = 60;
+/** Five clicks between detents, so a number the model picks is usually not one of them. */
+const COLLAR_STEP = 5;
+const COLLAR_FINE_MICRONS = 200;
+const COLLAR_COARSE_MICRONS = 1400;
+/** 22 rounded onto a collar that only stops every five clicks, counting from zero. */
+const SNAPPED_GRIND_SETTING = 20;
+
+const CLICKED_COLLAR: CreateGrinderRequest = {
+  brand: 'Testovaci',
+  model: 'Po piatich',
+  unitType: GRINDER_UNIT_TYPES.clicks,
+  minSetting: COLLAR_MIN,
+  maxSetting: COLLAR_MAX,
+  step: COLLAR_STEP,
+  micronCalibration: {
+    points: [
+      { setting: COLLAR_MIN, microns: COLLAR_FINE_MICRONS },
+      { setting: COLLAR_MAX, microns: COLLAR_COARSE_MICRONS },
+    ],
+    isEstimated: CALIBRATION_ESTIMATED_BY_DEFAULT,
+  },
+  typicalUse: GRINDER_TYPICAL_USES.both,
+};
+
+const GRIND_SECTION_HEADING = 'Where to start the grind';
+const NOTHING_KNOWN_ABOUT_THE_COFFEE = 'nothing is known about this coffee';
+const COLLAR_HEADING = 'on their own collar';
 
 describe('recipe generation', () => {
   let context: TestContext;
@@ -192,6 +229,60 @@ describe('recipe generation', () => {
 
     expect(recipe.params.espresso?.preInfusionSeconds).toBe(TEST_PRE_INFUSION_SECONDS);
     expect(recipe.params.steps).toHaveLength(NOTHING);
+  });
+
+  /**
+   * The grind used to be the one number in a recipe with nothing behind it:
+   * the model was told the collar runs 0 to 60 and had to invent a place on
+   * it, which is how the same coffee in the same brewer came back at 18 one
+   * morning and 26 the next. It is now worked out from the method window, the
+   * bag and the grinder curve before the model is asked anything.
+   */
+  it('works the grind starting point out before asking the model for anything', async () => {
+    context.completionClient.answerWith(TEST_RECIPE_ANSWER);
+
+    await generate(request({}));
+
+    expect(context.completionClient.calls[FIRST]?.prompt).toContain(GRIND_SECTION_HEADING);
+  });
+
+  /**
+   * A quick brew has no bag behind it, and the starting point has to say so
+   * rather than reading as if a roast date had been found somewhere.
+   */
+  it('says the starting point is the method middle when nothing is known about the coffee', async () => {
+    context.completionClient.answerWith(TEST_RECIPE_ANSWER);
+
+    await generate(request({}));
+
+    expect(context.completionClient.calls[FIRST]?.prompt).toContain(NOTHING_KNOWN_ABOUT_THE_COFFEE);
+  });
+
+  /**
+   * The number is only worth having on somebody's own collar, so a catalogued
+   * grinder turns the micron figure into one - and the stored recipe carries a
+   * setting that collar can actually be left at. A clicked grinder has detents;
+   * 22 on a collar that stops every five clicks is a number that makes somebody
+   * guess which of two neighbours was meant.
+   */
+  it('reads the starting point onto their own collar and stores a setting they can dial', async () => {
+    const grinder: Grinder = grinderSchema.parse(
+      (await api.post(API_ROUTES.grinders, RETURNING_IDENTITY, CLICKED_COLLAR)).json(),
+    );
+
+    await api.post(API_ROUTES.equipment, RETURNING_IDENTITY, {
+      type: EQUIPMENT_TYPES.grinder,
+      catalogGrinderId: grinder.id,
+      brand: CLICKED_COLLAR.brand,
+      model: CLICKED_COLLAR.model,
+    });
+
+    context.completionClient.answerWith(TEST_RECIPE_ANSWER);
+
+    const { recipe } = await generate(request({}));
+
+    expect(context.completionClient.calls[FIRST]?.prompt).toContain(COLLAR_HEADING);
+    expect(recipe.params.grindSetting).toBe(SNAPPED_GRIND_SETTING);
   });
 
   /** A retry is spent money, and a usage log that hides it disagrees with the invoice. */

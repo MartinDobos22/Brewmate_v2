@@ -21,7 +21,7 @@ import { RECIPE_ANSWER_KINDS } from './generatedRecipeSchema.js';
  * water to 94 °C when they have said they cannot measure temperature is a
  * recipe that will be missed and then blamed on the coffee.
  */
-export const RECIPE_SYSTEM_PROMPT_VERSION = `${String(EXTRACTION_KNOWLEDGE_VERSION)}.1`;
+export const RECIPE_SYSTEM_PROMPT_VERSION = `${String(EXTRACTION_KNOWLEDGE_VERSION)}.2`;
 
 const CONSTRAINT_RULES = [
   'noTemperatureControl: they have a kettle with an on switch and nothing else. Never state a target temperature; give them a procedure instead - bring it to the boil and let it stand with the lid open for a stated number of seconds, longer for a darker roast, shorter for a lighter one. Say that water cools faster in a cold room, outdoors or at a cabin than in a heated flat, so the wait is a starting point rather than a measurement.',
@@ -64,6 +64,18 @@ export const RECIPE_SYSTEM_PROMPT = [
   'Both shapes also carry:',
   '- "rationale": two to four Slovak sentences saying why this recipe and not another one. Name the things that actually decided it - the roast, the processing, the days since roasting, the water, this person\'s profile - not general advice about coffee.',
   '- "constraintHints": one entry per constraint you were told about, and none for anything else. Each is {"constraint","hint"} where "constraint" is exactly the machine name you were given and "hint" is one or two short Slovak sentences of practical advice.',
+  '',
+  'THE GRIND IS ALREADY WORKED OUT',
+  '',
+  'You are given a starting point for the grind: a particle size in microns, the same thing in words, what about this coffee moved it off the middle of the window for this method, and - where their grinder is in the catalogue - the number to put on their own collar and what one unit of that collar is worth.',
+  '',
+  'That is arithmetic, not an opinion. It comes from the micron window this family of brewer is actually ground into, moved by the roast, the processing and the days since roasting, and read back through the measured curve for that exact grinder. Use it. Put its collar number in "grindSetting" and describe the same grind in "grindLabel".',
+  '',
+  'You may depart from it, and there are real reasons to: a basket or a brewer that changes what the method needs, something in the brew history saying this person has already found the answer somewhere else, a constraint that makes the number unreachable. If you do, stay inside the band you were given unless you can name the reason, and say the reason in the rationale in one clause. What you must never do is move it silently, or ignore it and pick a number off the collar range because it looked like the middle.',
+  '',
+  'Where the grind is given in words only, their grinder has no curve in the catalogue: answer with "grindSetting" null rather than inventing a scale to put a number on.',
+  '',
+  'The step figure is what makes your advice followable. When you tell somebody which way to move if the cup is sour or bitter, say it in units of their collar using that figure - "o dva kliky jemnejsie" - never as "a little finer". A click is worth ten microns on one grinder and forty on another, and "a little" is how a bag gets ground away finding out which.',
   '',
   'WHAT YOU MAY NOT CHANGE',
   '',
