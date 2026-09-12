@@ -104,7 +104,7 @@ export const SK_PRE_BREW = {
   preBrewGrindBand: '{target} (rozumné rozpätie {min} až {max})',
   preBrewGrindWords: 'Hrubosť',
   preBrewGrindStep: 'Jedna úprava, ktorú ochutnáš',
-  preBrewGrindStepValue: '{settings} dielikov na stupnici (jeden dielik je asi {microns} µm)',
+  preBrewGrindStepValue: 'posuň o {settings} na stupnici (jeden krok je asi {microns} µm)',
   preBrewGrindReasons: 'Prečo práve sem',
   preBrewGrindNoReasons: 'O tejto káve neviem nič, takže je to stred rozsahu pre túto prípravu.',
   preBrewGrindShiftEntry: '{fact} → {direction}',
