@@ -1,13 +1,21 @@
 import { GRINDER_TYPICAL_USES, GRINDER_UNIT_TYPES } from '@brewmate/shared';
 
+import { estimatedCalibration } from './estimatedCalibration.js';
 import type { GrinderSeed } from './grinderSeed.js';
 
 /**
  * Electric grinders built around filter brewing.
  *
- * Their dials print numbers rather than counting clicks, and none of the
- * manufacturers publish a micron figure for them, so no curve is claimed.
- * A stepless dial is recorded with a step of zero.
+ * Their dials print numbers rather than counting clicks, and the
+ * manufacturers publish no micron figure for any of them. A stepless dial is
+ * recorded with a step of zero. *
+ * A handful of them now carry a curve after all. It is not a manufacturer
+ * figure and does not pretend to be: it is fitted from where a published
+ * grind-size chart puts each brewing method on that exact collar, the same way
+ * `chartGrinderSeeds.ts` does it and only for the entries whose collar the
+ * chart describes identically. Flagged as an estimate, like every other curve
+ * here. A grind with a number and a click size beats a grind with neither, as
+ * long as the app keeps saying which it is holding.
  */
 export const FILTER_GRINDER_SEEDS: readonly GrinderSeed[] = [
   {
@@ -17,7 +25,11 @@ export const FILTER_GRINDER_SEEDS: readonly GrinderSeed[] = [
     minSetting: 1,
     maxSetting: 40,
     step: 1,
-    micronCalibration: null,
+    micronCalibration: estimatedCalibration([
+      { setting: 1, microns: 285 },
+      { setting: 20, microns: 757 },
+      { setting: 40, microns: 1229 },
+    ]),
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {
@@ -27,7 +39,11 @@ export const FILTER_GRINDER_SEEDS: readonly GrinderSeed[] = [
     minSetting: 1,
     maxSetting: 40,
     step: 1,
-    micronCalibration: null,
+    micronCalibration: estimatedCalibration([
+      { setting: 1, microns: 119 },
+      { setting: 20, microns: 655 },
+      { setting: 40, microns: 1191 },
+    ]),
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -37,7 +53,11 @@ export const FILTER_GRINDER_SEEDS: readonly GrinderSeed[] = [
     minSetting: 1,
     maxSetting: 40,
     step: 1,
-    micronCalibration: null,
+    micronCalibration: estimatedCalibration([
+      { setting: 1, microns: 246 },
+      { setting: 20, microns: 738 },
+      { setting: 40, microns: 1229 },
+    ]),
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {
@@ -67,7 +87,11 @@ export const FILTER_GRINDER_SEEDS: readonly GrinderSeed[] = [
     minSetting: 1,
     maxSetting: 31,
     step: 1,
-    micronCalibration: null,
+    micronCalibration: estimatedCalibration([
+      { setting: 1, microns: 200 },
+      { setting: 16, microns: 663 },
+      { setting: 31, microns: 1125 },
+    ]),
     typicalUse: GRINDER_TYPICAL_USES.espresso,
   },
 
@@ -98,7 +122,11 @@ export const FILTER_GRINDER_SEEDS: readonly GrinderSeed[] = [
     minSetting: 1,
     maxSetting: 11,
     step: 1,
-    micronCalibration: null,
+    micronCalibration: estimatedCalibration([
+      { setting: 1, microns: 257 },
+      { setting: 6, microns: 738 },
+      { setting: 11, microns: 1220 },
+    ]),
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
 
@@ -109,7 +137,11 @@ export const FILTER_GRINDER_SEEDS: readonly GrinderSeed[] = [
     minSetting: 1,
     maxSetting: 40,
     step: 1,
-    micronCalibration: null,
+    micronCalibration: estimatedCalibration([
+      { setting: 1, microns: 199 },
+      { setting: 21, microns: 678 },
+      { setting: 40, microns: 1158 },
+    ]),
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {

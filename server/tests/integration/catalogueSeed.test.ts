@@ -17,16 +17,41 @@ import { createTestContext, type TestContext } from '../setup/createTestContext.
 import { createTestApi, type TestApi } from '../setup/testApi.js';
 
 const NONE = 0;
+const FIRST_PAGE = 0;
 const WHOLE_CATALOGUE = `?limit=${String(LIST_LIMIT_MAX)}`;
 
 describe('the shipped catalogues', () => {
   let context: TestContext;
   let api: TestApi;
 
-  const listGrinders = async (query: string): Promise<readonly Grinder[]> =>
-    listResponseSchema(grinderSchema).parse(
-      (await api.get(`${API_ROUTES.grinders}${query}`, RETURNING_IDENTITY)).json(),
-    ).items;
+  /**
+   * The whole catalogue, a page at a time.
+   *
+   * It outgrew a single page some time ago, and a test that asked for
+   * `limit=LIST_LIMIT_MAX` and counted what came back was really asserting that
+   * the catalogue is smaller than one page - which stopped being true the day
+   * the long tail was seeded, and would have failed as if the seed were broken.
+   */
+  const readWholeCatalogue = async (identity = RETURNING_IDENTITY): Promise<readonly Grinder[]> => {
+    const all: Grinder[] = [];
+
+    for (let offset = FIRST_PAGE; ; offset += LIST_LIMIT_MAX) {
+      const page = listResponseSchema(grinderSchema).parse(
+        (
+          await api.get(
+            `${API_ROUTES.grinders}?limit=${String(LIST_LIMIT_MAX)}&offset=${String(offset)}`,
+            identity,
+          )
+        ).json(),
+      ).items;
+
+      all.push(...page);
+
+      if (page.length < LIST_LIMIT_MAX) {
+        return all;
+      }
+    }
+  };
 
   beforeAll(async () => {
     context = await createTestContext();
@@ -76,16 +101,12 @@ describe('the shipped catalogues', () => {
     );
 
     expect(methods.items).toHaveLength(BREW_METHOD_SEEDS.length);
-    expect(await listGrinders(WHOLE_CATALOGUE)).toHaveLength(GRINDER_SEEDS.length);
+    expect(await readWholeCatalogue()).toHaveLength(GRINDER_SEEDS.length);
   });
 
   /** The catalogue belongs to nobody, so it is there before anyone contributes. */
   it('offers the grinders to an account that has contributed nothing', async () => {
-    const theirs = listResponseSchema(grinderSchema).parse(
-      (await api.get(`${API_ROUTES.grinders}${WHOLE_CATALOGUE}`, SECOND_IDENTITY)).json(),
-    );
-
-    expect(theirs.items).toHaveLength(GRINDER_SEEDS.length);
+    expect(await readWholeCatalogue(SECOND_IDENTITY)).toHaveLength(GRINDER_SEEDS.length);
   });
 
   /**
@@ -93,7 +114,7 @@ describe('the shipped catalogues', () => {
    * no shipped curve may claim to have been measured.
    */
   it('presents every shipped micron curve as an estimate', async () => {
-    const calibrated = (await listGrinders(WHOLE_CATALOGUE)).filter(
+    const calibrated = (await readWholeCatalogue()).filter(
       (grinder): boolean => grinder.micronCalibration !== null,
     );
 
@@ -105,7 +126,7 @@ describe('the shipped catalogues', () => {
 
   /** Where no figure is published, none is invented: the app says so instead. */
   it('leaves the grinders nobody publishes a figure for without a curve', async () => {
-    const uncalibrated = (await listGrinders(WHOLE_CATALOGUE)).filter(
+    const uncalibrated = (await readWholeCatalogue()).filter(
       (grinder): boolean => grinder.micronCalibration === null,
     );
 

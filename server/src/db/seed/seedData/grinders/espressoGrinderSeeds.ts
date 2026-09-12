@@ -1,5 +1,6 @@
 import { GRINDER_TYPICAL_USES, GRINDER_UNIT_TYPES } from '@brewmate/shared';
 
+import { estimatedCalibration } from './estimatedCalibration.js';
 import type { GrinderSeed } from './grinderSeed.js';
 
 /**
@@ -7,7 +8,14 @@ import type { GrinderSeed } from './grinderSeed.js';
  *
  * Most of them are stepless, which is recorded as a step of zero: the collar
  * carries numbers to remember a position by, not detents to count. None of
- * them come with a published micron figure, so none is claimed.
+ * them comes with a published micron figure. *
+ * A handful of them now carry a curve after all. It is not a manufacturer
+ * figure and does not pretend to be: it is fitted from where a published
+ * grind-size chart puts each brewing method on that exact collar, the same way
+ * `chartGrinderSeeds.ts` does it and only for the entries whose collar the
+ * chart describes identically. Flagged as an estimate, like every other curve
+ * here. A grind with a number and a click size beats a grind with neither, as
+ * long as the app keeps saying which it is holding.
  */
 export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
   {
@@ -161,7 +169,11 @@ export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
     minSetting: 0,
     maxSetting: 90,
     step: 0,
-    micronCalibration: null,
+    micronCalibration: estimatedCalibration([
+      { setting: 1.43, microns: 80 },
+      { setting: 45.71, microns: 601 },
+      { setting: 90, microns: 1121 },
+    ]),
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -213,7 +225,11 @@ export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
     minSetting: 0,
     maxSetting: 55,
     step: 1,
-    micronCalibration: null,
+    micronCalibration: estimatedCalibration([
+      { setting: 0, microns: 216 },
+      { setting: 27.5, microns: 708 },
+      { setting: 55, microns: 1199 },
+    ]),
     typicalUse: GRINDER_TYPICAL_USES.espresso,
   },
 
@@ -225,7 +241,11 @@ export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
     minSetting: 1,
     maxSetting: 60,
     step: 1,
-    micronCalibration: null,
+    micronCalibration: estimatedCalibration([
+      { setting: 1, microns: 130 },
+      { setting: 30.5, microns: 584 },
+      { setting: 60, microns: 1039 },
+    ]),
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -235,7 +255,11 @@ export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
     minSetting: 1,
     maxSetting: 60,
     step: 1,
-    micronCalibration: null,
+    micronCalibration: estimatedCalibration([
+      { setting: 1, microns: 130 },
+      { setting: 30.5, microns: 584 },
+      { setting: 60, microns: 1039 },
+    ]),
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
 

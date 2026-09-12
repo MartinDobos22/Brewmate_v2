@@ -1370,6 +1370,21 @@ The first product screen: `/grinders`, reached from the inventory tab.
   form, and so does a button under the list. The form asks for brand, model,
   scale, range and step - never a calibration curve, because nobody has one to
   hand and an entry without one still works.
+- **The long tail is generated, not typed.** `chartGrinderSeeds.ts` is derived
+  from a published grind-size chart and carries the grinders nobody would put
+  in a curated list - which are exactly the ones whose owner has no idea where
+  to start, and for whom "not in the catalogue" is the answer that sends them
+  away. It is deduplicated against the four hand-written lists on brand and
+  model, so one grinder is one row.
+- **Its curves are derived, and the derivation is checked against something
+  else.** The chart says where each brewing method sits on each collar; the
+  file fits a line through those positions against `GRIND_MICRON_WINDOWS` and
+  takes three points off it. The fitted slope reproduces the separately
+  published microns-per-step figure to within a few percent - two unrelated
+  derivations agreeing is the only reason it ships. The handful where they
+  disagree by more than a factor of two ship with no curve rather than a
+  plausible-looking one, and so do the grinders whose chart covers too few
+  methods to fit anything.
 
 ### Onboarding
 
