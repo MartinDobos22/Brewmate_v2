@@ -98,8 +98,10 @@ export const SK_PRE_BREW = {
   preBrewMissingMethod: 'Najprv vyber prípravu.',
 
   preBrewGrindSection: 'Kde začať s mlynčekom',
-  preBrewGrindIntro:
-    'Vyrátané z prípravy, z toho, čo je na balíčku, a zo stupnice tvojho mlynčeka. Je to štart, nie výsledok.',
+  preBrewGrindIntroPublished:
+    'Rozsah je publikovaný pre tento mlynček; v ňom ťa posúvam podľa toho, čo je na balíčku. Je to štart, nie výsledok.',
+  preBrewGrindIntroWindow:
+    'Pre tento mlynček a túto prípravu nikto rozsah nezverejnil, tak vychádzam z bežného okna pre tento typ prípravy a z krivky mlynčeka. Hrubší odhad — po prvej šálke ho doladíme.',
   preBrewGrindOnCollar: 'Na mlynčeku {grinder}',
   preBrewGrindBand: '{target} (rozumné rozpätie {min} až {max})',
   preBrewGrindWords: 'Hrubosť',

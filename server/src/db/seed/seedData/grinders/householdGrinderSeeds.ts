@@ -1,4 +1,4 @@
-import { GRINDER_TYPICAL_USES, GRINDER_UNIT_TYPES } from '@brewmate/shared';
+import { BREW_METHOD_CATEGORIES, GRINDER_TYPICAL_USES, GRINDER_UNIT_TYPES } from '@brewmate/shared';
 
 import { estimatedCalibration } from './estimatedCalibration.js';
 import type { GrinderSeed } from './grinderSeed.js';
@@ -61,6 +61,13 @@ export const HOUSEHOLD_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 9, microns: 736 },
       { setting: 17, microns: 1151 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 9 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2, max: 10 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 15 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 10, max: 17 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 13, max: 17 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {

@@ -1,4 +1,9 @@
-import type { BrewMethod, CoffeeBag, EquipmentSet } from '@brewmate/shared';
+import {
+  GRIND_GUIDANCE_SOURCES,
+  type BrewMethod,
+  type CoffeeBag,
+  type EquipmentSet,
+} from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
@@ -53,7 +58,11 @@ export const PreBrewGrindSection = ({
       </View>
       <View style={styles.note}>
         <Text variant="bodySmall" tone="muted">
-          {t(TRANSLATION_KEYS.preBrewGrindIntro)}
+          {t(
+            reading.guidance.source === GRIND_GUIDANCE_SOURCES.publishedRange
+              ? TRANSLATION_KEYS.preBrewGrindIntroPublished
+              : TRANSLATION_KEYS.preBrewGrindIntroWindow,
+          )}
         </Text>
       </View>
     </Card>

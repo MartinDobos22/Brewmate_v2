@@ -1072,12 +1072,30 @@ on it, which is how the same coffee in the same brewer came back at 18 one
 morning and 26 the next. It is now arithmetic, and the model is told the answer
 as a fact rather than asked for one.
 
+- **A published range for this grinder beats anything derived, and the guidance
+  reads it first.** `settingRanges` on a catalogue entry says where each family
+  of brewer sits on that exact collar, as somebody published it. Where it
+  exists the band _is_ that range and the bean only decides where inside it to
+  stand; where it does not, the answer falls back to the method window read
+  through the curve, and `source` says which happened so the prompt and the
+  screen can both be honest about it.
+- **That split was learned by measuring, not designed.** The first version had
+  only the curve, and reconstructing a band by converting a generic micron
+  window through it landed about a third of a method's range too coarse -
+  reliably, in one direction, on every grinder checked. Fitting the curve
+  differently did not help: the per-method residuals alternate in sign, which
+  means one straight line cannot satisfy position and slope at once. Running the
+  curve through the published anchors instead fixed position and made 46% of its
+  segments absurd in slope. So the curve is asked only what it is good at -
+  slope, and cross-grinder comparability - and position comes from the published
+  range.
 - **The method's window decides the ballpark, the bag decides where in it to
-  stand, the grinder's own curve turns that into a number on a collar.** Three
-  inputs, each of which may be missing, and the answer degrades one step at a
-  time rather than disappearing: no bag facts is the middle of the window
-  reported as exactly that, and no calibrated grinder is a grind in words and
-  no number at all.
+  stand, the grinder's own curve turns that into a number on a collar.** That is
+  the fallback path, for the 31% of grinder-and-method pairs nobody has
+  published a range for. Three inputs, each of which may be missing, and the
+  answer degrades one step at a time rather than disappearing: no bag facts is
+  the middle of the window reported as exactly that, and no calibrated grinder
+  is a grind in words and no number at all.
 - **Every shift is a fraction of the family's own window, never a figure in
   microns.** This is the decision the whole module turns on. An espresso window
   is two hundred microns wide and a cold brew window is four hundred; "a notch
@@ -1376,6 +1394,11 @@ The first product screen: `/grinders`, reached from the inventory tab.
   to start, and for whom "not in the catalogue" is the answer that sends them
   away. It is deduplicated against the four hand-written lists on brand and
   model, so one grinder is one row.
+- **It carries two different things, and the difference matters.**
+  `settingRanges` is copied from the chart: where each brew sits on that collar.
+  `micronCalibration` is derived from those same positions. The first is what
+  the guidance starts from; the second is what makes two grinders comparable and
+  what says how far one click moves the cup.
 - **Its curves are derived, and the derivation is checked against something
   else.** The chart says where each brewing method sits on each collar; the
   file fits a line through those positions against `GRIND_MICRON_WINDOWS` and
@@ -2177,7 +2200,11 @@ that the same roast difference is worth more microns in a wider window, that a
 grinder with no curve gets a word and no number, that a collar marked the other
 way round still reports its band the right way up, that one taste-step is never
 less than one click, and that a finer collar is asked for more clicks than a
-coarse one to make the same change.
+coarse one to make the same change. Since a published range outranks every
+derivation, it is also tested that a grinder carrying one reports that range
+rather than a band reconstructed through microns, that the bean still moves the
+target inside it and never outside it, and that a brew nobody published a range
+for falls back to the window without claiming it did anything else.
 
 Everything else is integration tests, running against the real Neon test branch
 through `app.inject()` - no mocked database, no testcontainers (everything is

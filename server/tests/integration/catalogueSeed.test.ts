@@ -124,6 +124,26 @@ describe('the shipped catalogues', () => {
     ).toBe(true);
   });
 
+  /**
+   * The most direct evidence the catalogue holds: where each family of brewer
+   * sits on one exact collar, as somebody published it. The grind guidance
+   * reads this before it reads anything else, because reconstructing the same
+   * band by converting a generic micron window through a grinder curve landed
+   * reliably coarse on every grinder it was measured against.
+   */
+  it('carries the published per-method ranges for the grinders that have them', async () => {
+    const withRanges = (await readWholeCatalogue()).filter(
+      (grinder): boolean => grinder.settingRanges !== null,
+    );
+
+    expect(withRanges).not.toHaveLength(NONE);
+    expect(
+      withRanges.every((grinder): boolean =>
+        Object.values(grinder.settingRanges ?? {}).every((range): boolean => range.max > range.min),
+      ),
+    ).toBe(true);
+  });
+
   /** Where no figure is published, none is invented: the app says so instead. */
   it('leaves the grinders nobody publishes a figure for without a curve', async () => {
     const uncalibrated = (await readWholeCatalogue()).filter(

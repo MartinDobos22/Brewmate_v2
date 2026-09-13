@@ -1,4 +1,5 @@
 import {
+  GRIND_GUIDANCE_SOURCES,
   GRIND_SHIFT_SOURCES,
   resolveGrindGuidance,
   type BrewMethodCategory,
@@ -6,6 +7,7 @@ import {
   type GrindCoffeeFacts,
   type GrindGuidance,
   type GrindShift,
+  type GrindGuidanceSource,
   type GrindShiftSource,
   type Grinder,
 } from '@brewmate/shared';
@@ -25,6 +27,22 @@ const FINER = 'finer';
 const MICRONS = 'µm';
 const NO_REASONS =
   'nothing, because nothing is known about this coffee - this is the middle of the window for the method alone';
+
+/**
+ * How much the band is worth, said out loud.
+ *
+ * The two are not equally good and the difference changes what the model
+ * should do with it. A published range is what somebody says about this exact
+ * model, so departing from it needs a reason. A method window is Brewmate's
+ * own figure for a whole family of brewer, so it is a sensible middle and
+ * nothing more.
+ */
+const BAND_SOURCES: Record<GrindGuidanceSource, string> = {
+  [GRIND_GUIDANCE_SOURCES.publishedRange]:
+    'the range published for this exact grinder, so it is about their machine rather than about brewing in general - stay inside it unless you can name why',
+  [GRIND_GUIDANCE_SOURCES.methodWindow]:
+    'the usual window for this family of brewer, read through their grinder curve - nobody has published a range for this grinder and this method, so it is a sound middle rather than a recommendation about their machine',
+};
 
 const line = (label: string, value: string): string =>
   [PROMPT_BULLET, label, PROMPT_LABEL_SEPARATOR, value].join(EMPTY);
@@ -127,10 +145,8 @@ export const describeGrindStart = ({
       band(guidance.microns, ` ${MICRONS}`),
     ),
     line('which is, in words', guidance.descriptor),
-    line(
-      'what moved it off the middle of the window for this method',
-      describeReasons(guidance.shifts),
-    ),
+    line('what moved it off the middle of that range', describeReasons(guidance.shifts)),
+    line('where the range itself comes from', BAND_SOURCES[guidance.source]),
     ...describeCollar(guidance),
   ].join(PROMPT_LINE_SEPARATOR);
 };

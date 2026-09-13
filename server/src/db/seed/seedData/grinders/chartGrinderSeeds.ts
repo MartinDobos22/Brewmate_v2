@@ -1,11 +1,11 @@
-import { GRINDER_TYPICAL_USES, GRINDER_UNIT_TYPES } from '@brewmate/shared';
+import { BREW_METHOD_CATEGORIES, GRINDER_TYPICAL_USES, GRINDER_UNIT_TYPES } from '@brewmate/shared';
 
 import { estimatedCalibration } from './estimatedCalibration.js';
 import type { GrinderSeed } from './grinderSeed.js';
 
 /**
  * The long tail: every grinder a published grind-size chart covers that the
- * four hand-written lists above do not.
+ * four hand-written lists do not.
  *
  * Why it exists. The four lists are the grinders somebody sat down and wrote
  * out, which means they are the grinders somebody thought of - and the one
@@ -14,32 +14,39 @@ import type { GrinderSeed } from './grinderSeed.js';
  * would put in a curated list is exactly the one whose owner has no idea where
  * to start, and "not in the catalogue" is the answer that sends them away.
  *
- * Where the numbers come from, and what each of them is worth:
+ * Two different things are recorded here, and the difference matters:
  *
- * - `minSetting`, `maxSetting` and `step` are the collar as the manufacturer
- *   marks it. `step` is the finest detent the scale admits, so a grinder
- *   counted in tenths of a rotation records 0.1 rather than 1.
- * - `micronCalibration` is **derived, not copied**. The source charts publish
- *   which part of each collar each brewing method lives on; this file fits a
- *   straight line through those positions against Brewmate's own micron
- *   windows (`GRIND_MICRON_WINDOWS`) and takes three points off it. The fitted
- *   slope reproduces the separately published microns-per-step figure for these
- *   grinders to within a few percent, which is the only reason it is shipped at
- *   all - two unrelated derivations agreeing is evidence, one derivation is a
- *   guess with more steps.
- * - A straight line, and only three points, because the evidence is a handful
- *   of wide ranges. A spline through six approximate positions would be a more
- *   elaborate way of being equally wrong, and it would read as precision this
- *   data has not earned.
- * - Every curve here is `isEstimated`, which the app prints beside the number.
- * - Where a chart covers too few brewing methods to fit anything, the entry
- *   ships with no curve at all. The grinder is still in the picker, still
- *   searchable, and still gets a grind in words - an invented curve would be
- *   worse than none.
+ * - `settingRanges` is what the chart actually says: where each family of
+ *   brewer sits on this exact collar. It is copied, not derived, and it is
+ *   what the grind guidance reads first. This is the most direct evidence the
+ *   catalogue can hold about a grinder.
+ * - `micronCalibration` is derived. It fits a straight line through those same
+ *   positions against Brewmate's own micron windows and takes three points off
+ *   it. The fitted slope reproduces the separately published microns-per-step
+ *   figure to within a few percent, which is the only reason it ships - two
+ *   unrelated derivations agreeing is evidence, one derivation is a guess with
+ *   more steps. Its job is what a curve is for: making two different grinders
+ *   comparable, and saying how far one click moves the cup.
+ *
+ * Keeping both is deliberate, and the split was learned the hard way. Deriving
+ * the starting point from the curve alone means converting a window drawn for
+ * a whole family of brewer; measured against the published ranges it was
+ * supposed to reproduce, that round trip landed about a third of a method's
+ * range too coarse - reliably, in one direction, on every grinder. The curve
+ * is right about slope and wrong about position, so it is asked only about
+ * slope.
+ *
+ * `minSetting`, `maxSetting` and `step` are the collar as the manufacturer
+ * marks it; `step` is the finest detent the scale admits, so a grinder counted
+ * in tenths of a rotation records 0.1 rather than 1. Every curve is
+ * `isEstimated`, which the app prints beside the number. Where a chart covers
+ * too few brewing methods to fit a line, the entry ships with no curve at all:
+ * the grinder is still in the picker, still searchable, and still gets a grind
+ * in words.
  *
  * Entries already covered by the hand-written lists are deliberately absent:
- * the seed is matched on brand and model, and two rows for one grinder would be
- * two answers to the same question.
+ * the seed is matched on brand and model, and two rows for one grinder would
+ * be two answers to the same question.
  */
 export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
   {
@@ -54,6 +61,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 21.41, microns: 634 },
       { setting: 40, microns: 1187 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 6.67, max: 14 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 13.33, max: 24.33 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 15, max: 25.67 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 11.33, max: 33.33 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 25.67, max: 40 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 29.67, max: 40 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -68,6 +83,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 23.3, microns: 659 },
       { setting: 45, microns: 1228 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 6.9, max: 14.3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 13.7, max: 24.9 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 15.2, max: 26.4 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 11.4, max: 34 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 26.1, max: 45 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 30.3, max: 45 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -82,6 +105,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 29.31, microns: 578 },
       { setting: 50, microns: 1075 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 10.67, max: 21.67 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 21, max: 37.67 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 23, max: 40 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 17.33, max: 50 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 39.67, max: 50 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 46, max: 50 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -96,6 +127,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 21.41, microns: 634 },
       { setting: 40, microns: 1187 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 6.67, max: 14 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 13.33, max: 24.33 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 15, max: 25.67 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 11.33, max: 33.33 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 25.67, max: 40 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 29.67, max: 40 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -110,6 +149,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 28.81, microns: 592 },
       { setting: 50, microns: 1103 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 10, max: 20.75 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 19.75, max: 36 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 22, max: 38.25 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 16.5, max: 49 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 37.75, max: 50 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 43.75, max: 50 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -124,6 +171,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 8.95, microns: 729 },
       { setting: 17.4, microns: 1317 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 2.3, max: 4.7 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4.5, max: 8.2 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5, max: 8.7 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 3.8, max: 11.1 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 8.6, max: 16.1 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 10, max: 17.4 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -138,6 +193,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 20.55, microns: 720 },
       { setting: 40, microns: 1301 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5.1, max: 11 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10.2, max: 19.1 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 12, max: 20.1 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 9, max: 26.1 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 20.1, max: 38 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 23.2, max: 40 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -152,6 +215,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 20.55, microns: 720 },
       { setting: 40, microns: 1301 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5.1, max: 11 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10.2, max: 19.1 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 12, max: 20.1 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 9, max: 26.1 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 20.1, max: 38 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 23.2, max: 40 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -166,6 +237,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 20.55, microns: 720 },
       { setting: 40, microns: 1301 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5.1, max: 11 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10.2, max: 19.1 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 12, max: 20.1 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 9, max: 26.1 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 20.1, max: 38 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 23.2, max: 40 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -180,6 +259,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 20.55, microns: 720 },
       { setting: 40, microns: 1301 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5.1, max: 11 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10.2, max: 19.1 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 12, max: 20.1 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 9, max: 26.1 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 20.1, max: 38 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 23.2, max: 40 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -194,6 +281,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 12.4, microns: 675 },
       { setting: 24, microns: 1242 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 3.5, max: 7.3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 7, max: 12.7 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 7.8, max: 13.5 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 5.9, max: 17.4 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 13.4, max: 24 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 15.5, max: 24 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -208,6 +303,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 12.4, microns: 665 },
       { setting: 24, microns: 1234 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 3.6, max: 7.5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 7.2, max: 13 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 8, max: 13.8 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 6, max: 17.8 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 13.7, max: 24 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 15.9, max: 24 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -222,6 +325,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 4.5, microns: 709 },
       { setting: 9, microns: 1183 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 1.5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1.4, max: 4.6 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1.8, max: 5.1 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 0.7, max: 7.3 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 5, max: 9 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 6.3, max: 9 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -236,6 +347,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 9.65, microns: 730 },
       { setting: 18.7, microns: 1316 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 2.5, max: 5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4.9, max: 8.8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5.4, max: 9.3 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 4.1, max: 12 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 9.3, max: 17.3 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 10.7, max: 18.7 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -250,6 +369,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 14, microns: 794 },
       { setting: 28, microns: 1318 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 4.2 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4, max: 10.8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5, max: 11.8 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 2.6, max: 16.4 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 11.6, max: 25.6 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 14.2, max: 28 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -260,6 +387,12 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
     maxSetting: 14,
     step: 1,
     micronCalibration: null,
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0.3, max: 8.3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 8, max: 14 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 9.3, max: 14 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 5.2, max: 14 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -274,6 +407,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 12, microns: 739 },
       { setting: 23, microns: 1291 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 3, max: 6 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 6, max: 10 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 7, max: 11 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 5, max: 14 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 12, max: 21 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 14, max: 23 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -288,6 +429,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 35.63, microns: 559 },
       { setting: 60, microns: 1037 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 40.1 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 37, max: 47 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 40.7, max: 48 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 23, max: 52.8 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 47.8, max: 60 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 50.5, max: 60 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -302,6 +451,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 5.98, microns: 737 },
       { setting: 10.96, microns: 1221 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 2.62 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2.42, max: 5.65 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.85, max: 6.08 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.77, max: 8.23 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 6, max: 10.96 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 7.19, max: 10.96 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -316,6 +473,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 5.98, microns: 737 },
       { setting: 10.96, microns: 1221 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 2.62 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2.42, max: 5.65 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.85, max: 6.08 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.77, max: 8.23 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 6, max: 10.96 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 7.19, max: 10.96 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -330,6 +495,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 20.5, microns: 674 },
       { setting: 40, microns: 1154 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 9 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 9, max: 23 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 11, max: 25 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 6, max: 34 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 25, max: 40 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 30, max: 40 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -344,6 +517,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 20.5, microns: 674 },
       { setting: 40, microns: 1154 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 9 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 9, max: 23 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 11, max: 25 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 6, max: 34 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 25, max: 40 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 30, max: 40 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -358,6 +539,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 20.95, microns: 730 },
       { setting: 40.91, microns: 1224 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 8.36 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 7.64, max: 19.91 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 9.27, max: 21.55 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 5.18, max: 29.73 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 21.18, max: 40.91 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 25.73, max: 40.91 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -372,6 +561,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 16, microns: 663 },
       { setting: 31, microns: 1125 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 7 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 7, max: 18 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 9, max: 20 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 4, max: 28 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 21, max: 31 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 25, max: 31 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -386,6 +583,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 16, microns: 663 },
       { setting: 31, microns: 1125 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 7 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 7, max: 18 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 9, max: 20 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 4, max: 28 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 21, max: 31 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 25, max: 31 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -400,6 +605,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 16, microns: 663 },
       { setting: 31, microns: 1125 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 7 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 7, max: 18 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 9, max: 20 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 4, max: 28 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 21, max: 31 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 25, max: 31 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -414,6 +627,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 20.5, microns: 674 },
       { setting: 40, microns: 1154 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 9 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 9, max: 23 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 11, max: 25 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 6, max: 34 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 25, max: 40 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 30, max: 40 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -428,6 +649,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 5.98, microns: 737 },
       { setting: 10.96, microns: 1222 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 2.61 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2.44, max: 5.65 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.87, max: 6.04 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.78, max: 8.22 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 6, max: 10.96 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 7.17, max: 10.96 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -442,6 +671,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 5.98, microns: 738 },
       { setting: 10.96, microns: 1222 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 2.59 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2.41, max: 5.64 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.86, max: 6.04 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.77, max: 8.23 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 6, max: 10.96 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 7.18, max: 10.96 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -456,6 +693,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 20, microns: 705 },
       { setting: 40, microns: 1195 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 8 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 8, max: 20 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 9, max: 22 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 5, max: 31 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 22, max: 40 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 27, max: 40 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -470,6 +715,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 20, microns: 677 },
       { setting: 40, microns: 1150 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 8 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 8, max: 22 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 10, max: 24 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 5, max: 34 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 25, max: 40 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 30, max: 40 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -484,6 +737,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 25.11, microns: 640 },
       { setting: 48, microns: 1200 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 8, max: 16 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 16, max: 28 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 17, max: 29 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 13, max: 38 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 30, max: 48 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 34, max: 48 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -498,6 +759,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 25, microns: 806 },
       { setting: 49, microns: 1319 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 7 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 7, max: 18 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 9, max: 20 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 5, max: 28 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 21, max: 44 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 25, max: 49 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -512,6 +781,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 720, microns: 729 },
       { setting: 1400, microns: 1317 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 180, max: 380 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 360, max: 660 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 400, max: 700 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 300, max: 900 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 690, max: 1300 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 800, max: 1400 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -526,6 +803,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 6.5, microns: 852 },
       { setting: 12, microns: 1301 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 4 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2, max: 4 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 6 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 5, max: 11 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 6, max: 12 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -540,6 +824,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 9.6, microns: 732 },
       { setting: 18.6, microns: 1316 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 2.4, max: 5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4.8, max: 8.7 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5.4, max: 9.3 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 4, max: 11.9 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 9.2, max: 17.2 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 10.7, max: 18.6 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -554,6 +846,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 9.16, microns: 594 },
       { setting: 16, microns: 1108 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 4, max: 6 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 7, max: 11 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 8, max: 11 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 6, max: 14 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 12, max: 16 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 14, max: 16 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -568,6 +868,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 8.5, microns: 757 },
       { setting: 16, microns: 1236 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 3, max: 7 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 4, max: 8 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 2, max: 11 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 8, max: 16 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 10, max: 16 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -582,6 +890,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 8.5, microns: 757 },
       { setting: 16, microns: 1236 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 3, max: 7 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 4, max: 8 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 2, max: 11 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 8, max: 16 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 10, max: 16 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -596,6 +912,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 42.73, microns: 635 },
       { setting: 80, microns: 1189 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 14, max: 27 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 27, max: 48 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 30, max: 51 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 23, max: 66 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 51, max: 80 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 59, max: 80 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -610,6 +934,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 29.55, microns: 635 },
       { setting: 55, microns: 1190 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 10, max: 19 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 19, max: 33 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 21, max: 35 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 16, max: 45 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 35, max: 55 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 41, max: 55 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -624,6 +956,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 58.72, microns: 636 },
       { setting: 110, microns: 1191 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 19, max: 38 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 37, max: 66 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 41, max: 70 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 31, max: 90 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 70, max: 110 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 81, max: 110 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -638,6 +978,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 21.18, microns: 628 },
       { setting: 40, microns: 1176 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 7, max: 13 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 14, max: 24 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 15, max: 25 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 12, max: 33 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 26, max: 40 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 30, max: 40 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -652,6 +1000,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 42.73, microns: 635 },
       { setting: 80, microns: 1189 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 14, max: 27 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 27, max: 48 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 30, max: 51 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 23, max: 66 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 51, max: 80 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 59, max: 80 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -666,6 +1022,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 15, microns: 788 },
       { setting: 30, microns: 1250 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 3, max: 11 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 4, max: 12 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 18 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 13, max: 30 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 16, max: 30 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -680,6 +1044,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 15, microns: 788 },
       { setting: 30, microns: 1250 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 3, max: 11 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 4, max: 12 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 18 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 13, max: 30 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 16, max: 30 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -694,6 +1066,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 15, microns: 788 },
       { setting: 30, microns: 1250 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 3, max: 11 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 4, max: 12 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 18 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 13, max: 30 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 16, max: 30 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -708,6 +1088,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 5.25, microns: 852 },
       { setting: 9.5, microns: 1336 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 1.25 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1.25, max: 3.5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1.75, max: 3.75 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 5.5 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 4, max: 8.5 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 4.75, max: 9.5 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -722,6 +1110,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 7, microns: 888 },
       { setting: 13, microns: 1259 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1, max: 4 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 6 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 5, max: 11 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 6, max: 13 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {
@@ -736,6 +1131,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 6.5, microns: 878 },
       { setting: 12, microns: 1250 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1, max: 4 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 6 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 5, max: 10 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 6, max: 12 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {
@@ -750,6 +1152,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 8, microns: 822 },
       { setting: 16, microns: 1263 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 0, max: 5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1, max: 6 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 0, max: 9 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 6, max: 16 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 8, max: 16 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -764,6 +1173,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 8, microns: 822 },
       { setting: 16, microns: 1263 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 0, max: 5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1, max: 6 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 0, max: 9 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 6, max: 16 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 8, max: 16 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -778,6 +1194,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 38.5, microns: 817 },
       { setting: 77, microns: 1323 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 8 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 8, max: 27 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 11, max: 30 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 4, max: 43 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 30, max: 70 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 37, max: 77 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -792,6 +1216,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 12, microns: 713 },
       { setting: 23, microns: 1219 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1.5, max: 5.5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 5.5, max: 11.75 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 6.25, max: 12.5 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 4.25, max: 16.75 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 12.5, max: 23 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 15, max: 23 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -806,6 +1238,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 12, microns: 713 },
       { setting: 23, microns: 1219 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1.5, max: 5.5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 5.5, max: 11.75 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 6.25, max: 12.5 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 4.25, max: 16.75 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 12.5, max: 23 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 15, max: 23 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -820,6 +1260,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 12, microns: 713 },
       { setting: 23, microns: 1219 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1.5, max: 5.5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 5.5, max: 11.75 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 6.25, max: 12.5 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 4.25, max: 16.75 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 12.5, max: 23 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 15, max: 23 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -834,6 +1282,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 15, microns: 784 },
       { setting: 30, microns: 1312 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0.5, max: 5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 5, max: 11.5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 6, max: 12.5 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 3.5, max: 17.5 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 13, max: 27.5 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 15.5, max: 30 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -848,6 +1304,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 15, microns: 784 },
       { setting: 30, microns: 1312 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0.5, max: 5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 5, max: 11.5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 6, max: 12.5 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 3.5, max: 17.5 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 13, max: 27.5 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 15.5, max: 30 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -862,6 +1326,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 4.09, microns: 578 },
       { setting: 8, microns: 1075 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0.6, max: 2.6 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2.5, max: 5.6 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.9, max: 6.1 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.9, max: 8 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 6.1, max: 8 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 7.2, max: 8 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -876,6 +1348,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 6, microns: 785 },
       { setting: 12, microns: 1302 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 1.5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2, max: 4.5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.5, max: 5 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.5, max: 7 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 5, max: 11 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 6.5, max: 12 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -890,6 +1370,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 15, microns: 644 },
       { setting: 30, microns: 1123 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 7.1 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 7, max: 18.1 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 8.1, max: 20 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 4.2, max: 28 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 20, max: 30 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 24.1, max: 30 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -904,6 +1392,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 12, microns: 791 },
       { setting: 24, microns: 1311 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 3.5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 3.5, max: 9 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 4.5, max: 10 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 2.5, max: 14 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 10, max: 22 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 12.5, max: 24 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -918,6 +1414,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 6, microns: 944 },
       { setting: 11, microns: 1350 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 2 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1, max: 2.2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 5 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 2.2, max: 9.2 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 4, max: 11 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {
@@ -932,6 +1435,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 6, microns: 765 },
       { setting: 11, microns: 1210 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 2 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2, max: 5.1 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.2, max: 5.2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.1, max: 8 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 6, max: 11 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 7, max: 11 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -946,6 +1457,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 5, microns: 614 },
       { setting: 10, microns: 1105 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0.2, max: 2.8 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2.6, max: 6.5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 3.1, max: 7 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.8, max: 9.7 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 7, max: 10 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 8.4, max: 10 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -960,6 +1479,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 5, microns: 675 },
       { setting: 10, microns: 1149 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 2 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1.8, max: 5.7 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.3, max: 6.2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 8.9 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 6.2, max: 10 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 7.6, max: 10 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -974,6 +1501,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 39.37, microns: 534 },
       { setting: 73, microns: 987 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 7, max: 30 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 28, max: 63 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 33, max: 68 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 21, max: 73 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 68, max: 73 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -988,6 +1522,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 39.37, microns: 534 },
       { setting: 73, microns: 987 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 7, max: 30 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 28, max: 63 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 33, max: 68 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 21, max: 73 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 68, max: 73 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1002,6 +1543,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 18, microns: 728 },
       { setting: 35, microns: 1313 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 4.5, max: 9.5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 9, max: 16.5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 10, max: 17.5 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 7.5, max: 22.5 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 17.5, max: 32.5 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 20, max: 35 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1016,6 +1565,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 5.5, microns: 744 },
       { setting: 10, microns: 1203 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 2 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2, max: 5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.5, max: 5.5 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.5, max: 7.5 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 5.5, max: 10 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 7, max: 10 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1030,6 +1587,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 120, microns: 731 },
       { setting: 233, microns: 1315 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 30, max: 63 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 60, max: 109 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 67, max: 116 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 50, max: 149 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 115, max: 216 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 134, max: 233 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1044,6 +1609,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 3, microns: 855 },
       { setting: 6, microns: 1335 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 0.5, max: 1.5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 0.5, max: 2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 0, max: 3 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 2, max: 5 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 3, max: 6 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1058,6 +1630,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 10.5, microns: 796 },
       { setting: 20, microns: 1307 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4, max: 8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5, max: 8 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 3, max: 12 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 9, max: 18 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 11, max: 20 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1072,6 +1652,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 10.5, microns: 796 },
       { setting: 20, microns: 1307 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4, max: 8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5, max: 8 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 3, max: 12 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 9, max: 18 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 11, max: 20 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1086,6 +1674,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 5, microns: 840 },
       { setting: 9, microns: 1297 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2, max: 3 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2, max: 3 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 5 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 4, max: 8 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 5, max: 9 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1100,6 +1695,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 5, microns: 840 },
       { setting: 9, microns: 1297 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2, max: 3 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2, max: 3 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 5 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 4, max: 8 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 5, max: 9 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1114,6 +1716,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 7.5, microns: 807 },
       { setting: 14, microns: 1295 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 2 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 3, max: 5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 3, max: 6 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 2, max: 8 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 7, max: 12 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 8, max: 14 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1128,6 +1738,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 5, microns: 725 },
       { setting: 10, microns: 1243 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0.5, max: 2 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2, max: 4.5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.5, max: 5 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.5, max: 6.75 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 5, max: 10 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 6, max: 10 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1142,6 +1760,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 22.5, microns: 687 },
       { setting: 44, microns: 1113 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4, max: 26 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 7, max: 29 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 44 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 29, max: 44 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 37, max: 44 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1156,6 +1782,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 41.5, microns: 734 },
       { setting: 80, microns: 1314 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 11, max: 21 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 21, max: 37 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 23, max: 40 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 18, max: 51 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 40, max: 74 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 46, max: 80 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1170,6 +1804,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 17.4, microns: 730 },
       { setting: 33.8, microns: 1316 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 4.4, max: 9 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 8.8, max: 15.8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 9.8, max: 16.8 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 7.4, max: 21.6 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 16.8, max: 31.2 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 19.4, max: 33.8 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1184,6 +1826,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 4.05, microns: 628 },
       { setting: 8, microns: 1176 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0.9, max: 2.5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2.4, max: 4.7 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.7, max: 5 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.9, max: 6.7 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 5.1, max: 8 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 5.9, max: 8 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1194,6 +1844,10 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
     maxSetting: 55,
     step: 1,
     micronCalibration: null,
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5, max: 20 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 40, max: 55 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1208,6 +1862,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 16.5, microns: 726 },
       { setting: 32, microns: 1316 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5, max: 8 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 9, max: 15 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 10, max: 16 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 7, max: 20 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 16, max: 29 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 19, max: 32 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1222,6 +1884,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 10.5, microns: 777 },
       { setting: 20, microns: 1309 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 2, max: 4 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4, max: 8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5, max: 9 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 4, max: 12 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 10, max: 18 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 11, max: 20 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1236,6 +1906,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 19.5, microns: 804 },
       { setting: 39, microns: 1316 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 5, max: 14 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 7, max: 15 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 3, max: 22 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 16, max: 35 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 20, max: 39 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1250,6 +1928,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 0.65, microns: 819 },
       { setting: 1.2, microns: 1360 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 0.3, max: 0.4 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 0.3, max: 0.5 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 0.3, max: 0.6 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 0.5, max: 1.1 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 0.6, max: 1.2 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1264,6 +1949,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 4.5, microns: 870 },
       { setting: 8, microns: 1220 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 2 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 4 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 4, max: 7 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 4, max: 8 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {
@@ -1278,6 +1970,11 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 0.63, microns: 693 },
       { setting: 1.25, microns: 1315 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.batch]: { min: 0.5, max: 0.75 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 0.75, max: 1 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 0.75, max: 1.25 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1292,6 +1989,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 6, microns: 898 },
       { setting: 11, microns: 1275 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 5 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 4, max: 9 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 5, max: 11 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {
@@ -1306,6 +2010,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 3.5, microns: 898 },
       { setting: 6, microns: 1275 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 2 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1, max: 2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 2.5, max: 5 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 3, max: 6 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {
@@ -1320,6 +2031,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 1.29, microns: 570 },
       { setting: 2.2, microns: 1064 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0.5, max: 0.95 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 0.95, max: 1.65 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1.05, max: 1.75 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 0.8, max: 2.2 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 1.8, max: 2.2 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 2.05, max: 2.2 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1334,6 +2053,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 76.52, microns: 623 },
       { setting: 140, microns: 1166 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 25, max: 51 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 49, max: 89 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 55, max: 95 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 41, max: 122 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 94, max: 140 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 109, max: 140 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1348,6 +2075,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 76.52, microns: 623 },
       { setting: 140, microns: 1166 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 25, max: 51 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 49, max: 89 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 55, max: 95 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 41, max: 122 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 94, max: 140 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 109, max: 140 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1362,6 +2097,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 76.52, microns: 623 },
       { setting: 140, microns: 1166 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 25, max: 51 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 49, max: 89 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 55, max: 95 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 41, max: 122 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 94, max: 140 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 109, max: 140 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1376,6 +2119,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 67, microns: 729 },
       { setting: 130, microns: 1314 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 17, max: 35 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 34, max: 61 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 38, max: 65 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 28, max: 83 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 65, max: 120 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 75, max: 130 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1390,6 +2141,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 67, microns: 729 },
       { setting: 130, microns: 1314 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 17, max: 35 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 34, max: 61 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 38, max: 65 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 28, max: 83 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 65, max: 120 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 75, max: 130 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1404,6 +2163,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 4.4, microns: 734 },
       { setting: 8.5, microns: 1320 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1.1, max: 2.3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2.2, max: 4 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.5, max: 4.2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.9, max: 5.4 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 4.2, max: 7.8 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 4.9, max: 8.5 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1418,6 +2185,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 4.4, microns: 734 },
       { setting: 8.5, microns: 1320 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1.1, max: 2.3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2.2, max: 4 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.5, max: 4.2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.9, max: 5.4 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 4.2, max: 7.8 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 4.9, max: 8.5 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1432,6 +2207,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 4.4, microns: 734 },
       { setting: 8.5, microns: 1320 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1.1, max: 2.3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2.2, max: 4 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.5, max: 4.2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.9, max: 5.4 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 4.2, max: 7.8 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 4.9, max: 8.5 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1446,6 +2229,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 4.4, microns: 734 },
       { setting: 8.5, microns: 1320 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1.1, max: 2.3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2.2, max: 4 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.5, max: 4.2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.9, max: 5.4 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 4.2, max: 7.8 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 4.9, max: 8.5 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1460,6 +2251,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 4.5, microns: 729 },
       { setting: 8, microns: 301 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 5, max: 7 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5, max: 6 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 3, max: 7 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 1, max: 4 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 1, max: 3 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1474,6 +2272,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 35.5, microns: 736 },
       { setting: 70, microns: 258 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 60, max: 70 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 38, max: 60 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 35, max: 57 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 19, max: 65 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 1, max: 35 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 1, max: 26 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1488,6 +2294,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 2.6, microns: 738 },
       { setting: 5, microns: 1368 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0.8, max: 1.4 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1.4, max: 2.4 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1.6, max: 2.6 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.1, max: 3.2 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 2.6, max: 4.7 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 2.11, max: 5 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1502,6 +2316,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 32, microns: 732 },
       { setting: 62, microns: 1316 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 8, max: 16.67 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 16, max: 29 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 18, max: 31 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 13.33, max: 39.67 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 30.67, max: 57.33 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 35.67, max: 62 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1516,6 +2338,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 9, microns: 736 },
       { setting: 17, microns: 1151 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 9 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2, max: 10 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 15 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 10, max: 17 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 13, max: 17 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1530,6 +2359,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 6.5, microns: 852 },
       { setting: 12, microns: 1301 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 4 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2, max: 4 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 6 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 5, max: 11 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 6, max: 12 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1544,6 +2380,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 8.5, microns: 881 },
       { setting: 16, microns: 1259 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 4 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1, max: 5 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 8 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 6, max: 14 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 7, max: 16 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {
@@ -1558,6 +2401,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 8, microns: 568 },
       { setting: 16, microns: 1025 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 5.1 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4.7, max: 12.3 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5.7, max: 13.3 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 3.1, max: 16 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 13.1, max: 16 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1572,6 +2422,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 6, microns: 567 },
       { setting: 11, microns: 1025 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 4.2 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 3.9, max: 8.7 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 4.6, max: 9.3 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 3, max: 11 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 9.2, max: 11 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1586,6 +2443,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 8.5, microns: 651 },
       { setting: 17, microns: 1196 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 2, max: 4 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 5, max: 9 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 6, max: 10 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 4, max: 13 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 10, max: 17 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 12, max: 17 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1600,6 +2465,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 7, microns: 625 },
       { setting: 13, microns: 1129 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 2, max: 4 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4, max: 8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5, max: 9 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 3, max: 12 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 9, max: 13 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 11, max: 13 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1614,6 +2487,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 7, microns: 625 },
       { setting: 13, microns: 1129 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 2, max: 4 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4, max: 8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5, max: 9 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 3, max: 12 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 9, max: 13 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 11, max: 13 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1628,6 +2509,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 6.2, microns: 661 },
       { setting: 12, microns: 1231 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1.8, max: 3.8 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 3.6, max: 6.6 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 4, max: 7 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 3, max: 9 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 6.9, max: 12 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 8, max: 12 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1641,6 +2530,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 40, microns: 40 },
       { setting: 1400, microns: 1400 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 180, max: 380 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 360, max: 660 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 400, max: 700 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 300, max: 900 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 690, max: 1300 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 800, max: 1400 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1654,6 +2551,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 40, microns: 40 },
       { setting: 1400, microns: 1400 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 180, max: 380 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 360, max: 660 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 400, max: 700 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 300, max: 900 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 690, max: 1300 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 800, max: 1400 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1668,6 +2573,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 19, microns: 874 },
       { setting: 37, microns: 1273 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 10 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2, max: 12 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 19 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 12, max: 33 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 16, max: 37 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {
@@ -1682,6 +2594,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 9, microns: 717 },
       { setting: 17, microns: 1180 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4, max: 8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5, max: 9 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 3, max: 13 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 10, max: 17 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 12, max: 17 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1696,6 +2616,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 18, microns: 716 },
       { setting: 36, microns: 1223 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0.6, max: 7.6 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 7, max: 17.4 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 8.4, max: 18.8 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 4.8, max: 26 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 18.8, max: 36 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 22.6, max: 36 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1710,6 +2638,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 4.07, microns: 610 },
       { setting: 8, microns: 1140 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0.8, max: 2.5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2.4, max: 5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.8, max: 5.4 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.9, max: 7.2 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 5.4, max: 8 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 6.4, max: 8 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1724,6 +2660,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 5, microns: 844 },
       { setting: 9, microns: 1173 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 5 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 4, max: 9 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 5, max: 9 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {
@@ -1738,6 +2681,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 14.5, microns: 731 },
       { setting: 28, microns: 1311 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 4, max: 7 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 8, max: 13 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 8, max: 14 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 6, max: 18 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 14, max: 26 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 16, max: 28 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1752,6 +2703,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 4.2, microns: 908 },
       { setting: 7.4, microns: 1305 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 2.1 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1, max: 2.4 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 3.8 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 2.4, max: 6.6 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 3.2, max: 7.4 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {
@@ -1766,6 +2724,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 15.2, microns: 730 },
       { setting: 29.5, microns: 1317 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 3.8, max: 8 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 7.6, max: 13.9 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 8.5, max: 14.7 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 6.4, max: 18.9 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 14.6, max: 27.3 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 16.9, max: 29.5 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1780,6 +2746,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 72, microns: 729 },
       { setting: 140, microns: 1317 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 18, max: 38 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 36, max: 66 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 40, max: 70 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 30, max: 90 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 69, max: 130 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 80, max: 140 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1794,6 +2768,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 102, microns: 730 },
       { setting: 198, microns: 1316 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 26, max: 53 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 51, max: 93 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 57, max: 99 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 43, max: 127 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 98, max: 183 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 114, max: 198 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1808,6 +2790,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 720, microns: 729 },
       { setting: 1400, microns: 1317 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 180, max: 380 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 360, max: 660 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 400, max: 700 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 300, max: 900 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 690, max: 1300 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 800, max: 1400 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1822,6 +2812,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 8, microns: 726 },
       { setting: 15, microns: 1206 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 3.2 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 3.2, max: 8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 4.1, max: 8.2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 2.2, max: 11.2 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 8.2, max: 15 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 10.2, max: 15 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1836,6 +2834,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 18, microns: 847 },
       { setting: 36, microns: 1329 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 1 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2, max: 11 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 3, max: 12 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 0, max: 19 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 13, max: 32 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 16, max: 36 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1850,6 +2856,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 12.5, microns: 731 },
       { setting: 24, microns: 1318 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 4, max: 6 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 7, max: 11 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 7, max: 12 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 6, max: 15 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 12, max: 22 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 14, max: 24 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1864,6 +2878,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 12.5, microns: 731 },
       { setting: 24, microns: 1318 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 4, max: 6 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 7, max: 11 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 7, max: 12 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 6, max: 15 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 12, max: 22 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 14, max: 24 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1878,6 +2900,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 7, microns: 810 },
       { setting: 14, microns: 1321 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 1 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2, max: 5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 3, max: 5 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 8 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 6, max: 12 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 7, max: 14 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1892,6 +2922,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 27.5, microns: 708 },
       { setting: 55, microns: 1199 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 11 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10, max: 27 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 13, max: 30 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 7, max: 42 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 30, max: 55 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 37, max: 55 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1906,6 +2944,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 13, microns: 672 },
       { setting: 25, microns: 1151 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 6 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 6, max: 14 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 8, max: 15 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 5, max: 21 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 16, max: 25 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 19, max: 25 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1920,6 +2966,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 50.5, microns: 729 },
       { setting: 98, microns: 1313 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 13, max: 26 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 26, max: 46 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 28, max: 49 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 21, max: 63 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 49, max: 91 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 56, max: 98 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1934,6 +2988,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 15, microns: 746 },
       { setting: 30, microns: 1214 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 4 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4, max: 13 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5, max: 15 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 2, max: 21 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 15, max: 30 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 19, max: 30 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -1948,174 +3010,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 15, microns: 746 },
       { setting: 30, microns: 1214 },
     ]),
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-  {
-    brand: 'Timemore',
-    model: 'Chestnut C2',
-    unitType: GRINDER_UNIT_TYPES.clicks,
-    minSetting: 2,
-    maxSetting: 30,
-    step: 1,
-    micronCalibration: estimatedCalibration([
-      { setting: 4.01, microns: 80 },
-      { setting: 17.01, microns: 599 },
-      { setting: 30, microns: 1118 },
-    ]),
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-  {
-    brand: 'Timemore',
-    model: 'Chestnut C2 Fold',
-    unitType: GRINDER_UNIT_TYPES.clicks,
-    minSetting: 2,
-    maxSetting: 30,
-    step: 1,
-    micronCalibration: estimatedCalibration([
-      { setting: 4.01, microns: 80 },
-      { setting: 17.01, microns: 599 },
-      { setting: 30, microns: 1118 },
-    ]),
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-  {
-    brand: 'Timemore',
-    model: 'Chestnut C2 Max',
-    unitType: GRINDER_UNIT_TYPES.clicks,
-    minSetting: 2,
-    maxSetting: 30,
-    step: 1,
-    micronCalibration: estimatedCalibration([
-      { setting: 4.01, microns: 80 },
-      { setting: 17.01, microns: 599 },
-      { setting: 30, microns: 1118 },
-    ]),
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-  {
-    brand: 'Timemore',
-    model: 'Chestnut C2 Max Pro',
-    unitType: GRINDER_UNIT_TYPES.clicks,
-    minSetting: 2,
-    maxSetting: 30,
-    step: 1,
-    micronCalibration: estimatedCalibration([
-      { setting: 4.01, microns: 80 },
-      { setting: 17.01, microns: 599 },
-      { setting: 30, microns: 1118 },
-    ]),
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-  {
-    brand: 'Timemore',
-    model: 'Chestnut C3',
-    unitType: GRINDER_UNIT_TYPES.clicks,
-    minSetting: 2,
-    maxSetting: 25,
-    step: 1,
-    micronCalibration: estimatedCalibration([
-      { setting: 3.04, microns: 80 },
-      { setting: 14.02, microns: 592 },
-      { setting: 25, microns: 1104 },
-    ]),
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-  {
-    brand: 'Timemore',
-    model: 'Chestnut C3 ESP',
-    unitType: GRINDER_UNIT_TYPES.numbers,
-    minSetting: 1.333,
-    maxSetting: 30,
-    step: 0.333,
-    micronCalibration: estimatedCalibration([
-      { setting: 3.04, microns: 80 },
-      { setting: 16.52, microns: 616 },
-      { setting: 30, microns: 1152 },
-    ]),
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-  {
-    brand: 'Timemore',
-    model: 'Chestnut C3 ESP Pro',
-    unitType: GRINDER_UNIT_TYPES.numbers,
-    minSetting: 1.333,
-    maxSetting: 30,
-    step: 0.333,
-    micronCalibration: estimatedCalibration([
-      { setting: 3.04, microns: 80 },
-      { setting: 16.52, microns: 616 },
-      { setting: 30, microns: 1152 },
-    ]),
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-  {
-    brand: 'Timemore',
-    model: 'Chestnut C3 Max',
-    unitType: GRINDER_UNIT_TYPES.clicks,
-    minSetting: 2,
-    maxSetting: 25,
-    step: 1,
-    micronCalibration: estimatedCalibration([
-      { setting: 3.04, microns: 80 },
-      { setting: 14.02, microns: 592 },
-      { setting: 25, microns: 1104 },
-    ]),
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-  {
-    brand: 'Timemore',
-    model: 'Chestnut C3 Max Pro',
-    unitType: GRINDER_UNIT_TYPES.clicks,
-    minSetting: 2,
-    maxSetting: 25,
-    step: 1,
-    micronCalibration: estimatedCalibration([
-      { setting: 3.04, microns: 80 },
-      { setting: 14.02, microns: 592 },
-      { setting: 25, microns: 1104 },
-    ]),
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-  {
-    brand: 'Timemore',
-    model: 'Chestnut C3 Pro',
-    unitType: GRINDER_UNIT_TYPES.clicks,
-    minSetting: 2,
-    maxSetting: 25,
-    step: 1,
-    micronCalibration: estimatedCalibration([
-      { setting: 3.04, microns: 80 },
-      { setting: 14.02, microns: 592 },
-      { setting: 25, microns: 1104 },
-    ]),
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-  {
-    brand: 'Timemore',
-    model: 'Chestnut C3S',
-    unitType: GRINDER_UNIT_TYPES.clicks,
-    minSetting: 2,
-    maxSetting: 25,
-    step: 1,
-    micronCalibration: estimatedCalibration([
-      { setting: 3.04, microns: 80 },
-      { setting: 14.02, microns: 592 },
-      { setting: 25, microns: 1104 },
-    ]),
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-  {
-    brand: 'Timemore',
-    model: 'Chestnut C3S Pro',
-    unitType: GRINDER_UNIT_TYPES.clicks,
-    minSetting: 2,
-    maxSetting: 25,
-    step: 1,
-    micronCalibration: estimatedCalibration([
-      { setting: 3.04, microns: 80 },
-      { setting: 14.02, microns: 592 },
-      { setting: 25, microns: 1104 },
-    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 4 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4, max: 13 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5, max: 15 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 2, max: 21 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 15, max: 30 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 19, max: 30 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2130,6 +3032,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 15.5, microns: 679 },
       { setting: 30, microns: 1244 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 4.4, max: 9 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 8.8, max: 15.8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 9.6, max: 16.8 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 7.2, max: 21.4 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 16.6, max: 30 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 19.2, max: 30 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2144,6 +3054,278 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 9.03, microns: 608 },
       { setting: 16, microns: 1137 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 3.1, max: 6.1 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 6.1, max: 11 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 7, max: 11.2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 5.1, max: 15 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 11.2, max: 16 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 13.2, max: 16 },
+    },
+    typicalUse: GRINDER_TYPICAL_USES.both,
+  },
+  {
+    brand: 'Timemore',
+    model: 'Chestnut C2',
+    unitType: GRINDER_UNIT_TYPES.clicks,
+    minSetting: 2,
+    maxSetting: 30,
+    step: 1,
+    micronCalibration: estimatedCalibration([
+      { setting: 4.01, microns: 80 },
+      { setting: 17.01, microns: 599 },
+      { setting: 30, microns: 1118 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 6, max: 12 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 12, max: 20 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 13, max: 22 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 10, max: 28 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 22, max: 30 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 26, max: 30 },
+    },
+    typicalUse: GRINDER_TYPICAL_USES.both,
+  },
+  {
+    brand: 'Timemore',
+    model: 'Chestnut C2 Fold',
+    unitType: GRINDER_UNIT_TYPES.clicks,
+    minSetting: 2,
+    maxSetting: 30,
+    step: 1,
+    micronCalibration: estimatedCalibration([
+      { setting: 4.01, microns: 80 },
+      { setting: 17.01, microns: 599 },
+      { setting: 30, microns: 1118 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 6, max: 12 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 12, max: 20 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 13, max: 22 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 10, max: 28 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 22, max: 30 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 26, max: 30 },
+    },
+    typicalUse: GRINDER_TYPICAL_USES.both,
+  },
+  {
+    brand: 'Timemore',
+    model: 'Chestnut C2 Max',
+    unitType: GRINDER_UNIT_TYPES.clicks,
+    minSetting: 2,
+    maxSetting: 30,
+    step: 1,
+    micronCalibration: estimatedCalibration([
+      { setting: 4.01, microns: 80 },
+      { setting: 17.01, microns: 599 },
+      { setting: 30, microns: 1118 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 6, max: 12 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 12, max: 20 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 13, max: 22 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 10, max: 28 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 22, max: 30 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 26, max: 30 },
+    },
+    typicalUse: GRINDER_TYPICAL_USES.both,
+  },
+  {
+    brand: 'Timemore',
+    model: 'Chestnut C2 Max Pro',
+    unitType: GRINDER_UNIT_TYPES.clicks,
+    minSetting: 2,
+    maxSetting: 30,
+    step: 1,
+    micronCalibration: estimatedCalibration([
+      { setting: 4.01, microns: 80 },
+      { setting: 17.01, microns: 599 },
+      { setting: 30, microns: 1118 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 6, max: 12 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 12, max: 20 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 13, max: 22 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 10, max: 28 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 22, max: 30 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 26, max: 30 },
+    },
+    typicalUse: GRINDER_TYPICAL_USES.both,
+  },
+  {
+    brand: 'Timemore',
+    model: 'Chestnut C3',
+    unitType: GRINDER_UNIT_TYPES.clicks,
+    minSetting: 2,
+    maxSetting: 25,
+    step: 1,
+    micronCalibration: estimatedCalibration([
+      { setting: 3.04, microns: 80 },
+      { setting: 14.02, microns: 592 },
+      { setting: 25, microns: 1104 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5, max: 10 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10, max: 17 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 11, max: 18 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 8, max: 23 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 19, max: 25 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 22, max: 25 },
+    },
+    typicalUse: GRINDER_TYPICAL_USES.both,
+  },
+  {
+    brand: 'Timemore',
+    model: 'Chestnut C3 ESP',
+    unitType: GRINDER_UNIT_TYPES.numbers,
+    minSetting: 1.333,
+    maxSetting: 30,
+    step: 0.333,
+    micronCalibration: estimatedCalibration([
+      { setting: 3.04, microns: 80 },
+      { setting: 16.52, microns: 616 },
+      { setting: 30, microns: 1152 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5.67, max: 11 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 11, max: 19.33 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 12, max: 20.67 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 9, max: 26.67 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 20.67, max: 30 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 24, max: 30 },
+    },
+    typicalUse: GRINDER_TYPICAL_USES.both,
+  },
+  {
+    brand: 'Timemore',
+    model: 'Chestnut C3 ESP Pro',
+    unitType: GRINDER_UNIT_TYPES.numbers,
+    minSetting: 1.333,
+    maxSetting: 30,
+    step: 0.333,
+    micronCalibration: estimatedCalibration([
+      { setting: 3.04, microns: 80 },
+      { setting: 16.52, microns: 616 },
+      { setting: 30, microns: 1152 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5.67, max: 11 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 11, max: 19.33 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 12, max: 20.67 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 9, max: 26.67 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 20.67, max: 30 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 24, max: 30 },
+    },
+    typicalUse: GRINDER_TYPICAL_USES.both,
+  },
+  {
+    brand: 'Timemore',
+    model: 'Chestnut C3 Max',
+    unitType: GRINDER_UNIT_TYPES.clicks,
+    minSetting: 2,
+    maxSetting: 25,
+    step: 1,
+    micronCalibration: estimatedCalibration([
+      { setting: 3.04, microns: 80 },
+      { setting: 14.02, microns: 592 },
+      { setting: 25, microns: 1104 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5, max: 10 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10, max: 17 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 11, max: 18 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 8, max: 23 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 19, max: 25 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 22, max: 25 },
+    },
+    typicalUse: GRINDER_TYPICAL_USES.both,
+  },
+  {
+    brand: 'Timemore',
+    model: 'Chestnut C3 Max Pro',
+    unitType: GRINDER_UNIT_TYPES.clicks,
+    minSetting: 2,
+    maxSetting: 25,
+    step: 1,
+    micronCalibration: estimatedCalibration([
+      { setting: 3.04, microns: 80 },
+      { setting: 14.02, microns: 592 },
+      { setting: 25, microns: 1104 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5, max: 10 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10, max: 17 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 11, max: 18 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 8, max: 23 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 19, max: 25 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 22, max: 25 },
+    },
+    typicalUse: GRINDER_TYPICAL_USES.both,
+  },
+  {
+    brand: 'Timemore',
+    model: 'Chestnut C3 Pro',
+    unitType: GRINDER_UNIT_TYPES.clicks,
+    minSetting: 2,
+    maxSetting: 25,
+    step: 1,
+    micronCalibration: estimatedCalibration([
+      { setting: 3.04, microns: 80 },
+      { setting: 14.02, microns: 592 },
+      { setting: 25, microns: 1104 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5, max: 10 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10, max: 17 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 11, max: 18 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 8, max: 23 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 19, max: 25 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 22, max: 25 },
+    },
+    typicalUse: GRINDER_TYPICAL_USES.both,
+  },
+  {
+    brand: 'Timemore',
+    model: 'Chestnut C3S',
+    unitType: GRINDER_UNIT_TYPES.clicks,
+    minSetting: 2,
+    maxSetting: 25,
+    step: 1,
+    micronCalibration: estimatedCalibration([
+      { setting: 3.04, microns: 80 },
+      { setting: 14.02, microns: 592 },
+      { setting: 25, microns: 1104 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5, max: 10 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10, max: 17 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 11, max: 18 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 8, max: 23 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 19, max: 25 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 22, max: 25 },
+    },
+    typicalUse: GRINDER_TYPICAL_USES.both,
+  },
+  {
+    brand: 'Timemore',
+    model: 'Chestnut C3S Pro',
+    unitType: GRINDER_UNIT_TYPES.clicks,
+    minSetting: 2,
+    maxSetting: 25,
+    step: 1,
+    micronCalibration: estimatedCalibration([
+      { setting: 3.04, microns: 80 },
+      { setting: 14.02, microns: 592 },
+      { setting: 25, microns: 1104 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5, max: 10 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10, max: 17 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 11, max: 18 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 8, max: 23 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 19, max: 25 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 22, max: 25 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2158,6 +3340,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 12.48, microns: 610 },
       { setting: 24, microns: 1140 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 2.8, max: 8 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 7.6, max: 15.4 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 8.6, max: 16.4 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 6, max: 21.8 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 16.4, max: 24 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 19.2, max: 24 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2172,6 +3362,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 15.28, microns: 619 },
       { setting: 28, microns: 1158 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5, max: 10 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10, max: 18 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 11, max: 19 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 9, max: 24 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 19, max: 28 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 22, max: 28 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2186,6 +3384,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 15.28, microns: 619 },
       { setting: 28, microns: 1158 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5, max: 10 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10, max: 18 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 11, max: 19 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 9, max: 24 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 19, max: 28 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 22, max: 28 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2200,6 +3406,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 17.65, microns: 551 },
       { setting: 30, microns: 1022 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 7, max: 13 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 14, max: 24 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 15, max: 25 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 11, max: 30 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 26, max: 30 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2214,6 +3427,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 4.5, microns: 771 },
       { setting: 9, microns: 1219 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 0.5 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 0.4, max: 3.8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 0.9, max: 4.2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 0, max: 6.5 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 4.2, max: 9 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 5.5, max: 9 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2228,6 +3449,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 8, microns: 701 },
       { setting: 16, microns: 1179 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 2.9 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2.5, max: 8.5 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 3.3, max: 9.3 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.3, max: 13.3 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 9.1, max: 16 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 11.3, max: 16 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2242,6 +3471,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 17.01, microns: 599 },
       { setting: 30, microns: 1118 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 6, max: 12 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 12, max: 20 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 13, max: 22 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 10, max: 28 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 22, max: 30 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 26, max: 30 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2256,6 +3493,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 9.6, microns: 642 },
       { setting: 19.2, microns: 1108 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 4.2 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 4.1, max: 12.1 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 5.1, max: 13.1 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 2.2, max: 18.2 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 13.1, max: 19.2 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 16.1, max: 19.2 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2270,6 +3515,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 5, microns: 767 },
       { setting: 10, microns: 1311 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0.4, max: 1.9 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1.9, max: 4.1 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2.2, max: 4.4 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1.4, max: 6 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 4.5, max: 9.2 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 5.3, max: 10 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2284,6 +3537,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 46.04, microns: 577 },
       { setting: 90, microns: 1073 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 6, max: 30 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 28, max: 64 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 33, max: 69 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 21, max: 90 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 68, max: 90 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 82, max: 90 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2298,6 +3559,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 46.64, microns: 584 },
       { setting: 90, microns: 1089 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 8, max: 30 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 29, max: 62 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 34, max: 67 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 22, max: 89 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 67, max: 90 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 79, max: 90 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2312,6 +3581,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 45, microns: 715 },
       { setting: 90, microns: 1227 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 3, max: 19 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 18, max: 43 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 22, max: 47 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 13, max: 64 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 47, max: 90 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 56, max: 90 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2326,6 +3603,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 45, microns: 680 },
       { setting: 90, microns: 1171 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 20 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 19, max: 49 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 23, max: 53 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 13, max: 74 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 53, max: 90 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 65, max: 90 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2340,6 +3625,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 45, microns: 616 },
       { setting: 90, microns: 1151 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 8, max: 27 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 26, max: 55 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 30, max: 59 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 20, max: 79 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 59, max: 90 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 70, max: 90 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2354,6 +3647,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 45, microns: 688 },
       { setting: 90, microns: 1210 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 5, max: 22 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 21, max: 46 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 24, max: 50 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 15, max: 67 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 50, max: 90 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 60, max: 90 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2368,6 +3669,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 10.22, microns: 614 },
       { setting: 19, microns: 1147 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 2.8, max: 6.8 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 6.4, max: 12.4 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 7.2, max: 13.2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 5.2, max: 17.2 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 13, max: 19 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 15.2, max: 19 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2382,6 +3691,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 10.22, microns: 614 },
       { setting: 19, microns: 1147 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 2.8, max: 6.8 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 6.4, max: 12.4 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 7.2, max: 13.2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 5.2, max: 17.2 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 13, max: 19 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 15.2, max: 19 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2396,6 +3713,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 74.72, microns: 563 },
       { setting: 144, microns: 1045 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 11, max: 51 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 48, max: 109 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 56, max: 117 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 35, max: 144 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 116, max: 144 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 138, max: 144 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2410,6 +3735,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 43, microns: 733 },
       { setting: 83, microns: 1312 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 11, max: 22 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 22, max: 39 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 24, max: 41 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 18, max: 53 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 41, max: 77 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 48, max: 83 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2424,6 +3757,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 9.8, microns: 785 },
       { setting: 19.6, microns: 1315 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0.2, max: 3.3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 3.1, max: 7.8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 3.7, max: 8.4 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 2.1, max: 11.6 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 8.3, max: 18 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 10.1, max: 19.6 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2438,6 +3779,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 9.8, microns: 785 },
       { setting: 19.6, microns: 1315 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0.2, max: 3.3 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 3.1, max: 7.8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 3.7, max: 8.4 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 2.1, max: 11.6 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 8.3, max: 18 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 10.1, max: 19.6 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2452,6 +3801,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 3.5, microns: 841 },
       { setting: 6, microns: 1137 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 2 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1, max: 2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 3, max: 6 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 4, max: 6 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {
@@ -2466,6 +3822,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 3.5, microns: 841 },
       { setting: 6, microns: 1137 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 1, max: 2 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 1, max: 2 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 3 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 3, max: 6 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 4, max: 6 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.filter,
   },
   {
@@ -2480,6 +3843,13 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 24.5, microns: 862 },
       { setting: 49, microns: 1332 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 0, max: 13 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 2, max: 15 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 0, max: 25 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 16, max: 44 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 21, max: 49 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2494,6 +3864,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 30, microns: 615 },
       { setting: 60, microns: 1122 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 3, max: 17 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 16, max: 38 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 19, max: 41 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 12, max: 56 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 41, max: 60 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 49, max: 60 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2508,6 +3886,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 25.57, microns: 599 },
       { setting: 45, microns: 1117 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 8.8, max: 18 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 17.4, max: 31.4 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 19.2, max: 33.4 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 14.4, max: 43 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 33.2, max: 45 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 38.4, max: 45 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2522,6 +3908,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 16, microns: 799 },
       { setting: 31, microns: 1240 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 2 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 2, max: 12 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 3, max: 13 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 20 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 14, max: 31 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 17, max: 31 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2536,6 +3930,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 9.5, microns: 756 },
       { setting: 18, microns: 1187 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 2 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 3, max: 8 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 3, max: 9 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 1, max: 13 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 10, max: 18 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 12, max: 18 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2550,6 +3952,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 40, microns: 678 },
       { setting: 80, microns: 1171 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 18 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 17, max: 44 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 21, max: 47 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 12, max: 66 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 47, max: 80 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 58, max: 80 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2563,6 +3973,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 40, microns: 40 },
       { setting: 1400, microns: 1400 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 180, max: 380 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 360, max: 660 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 400, max: 700 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 300, max: 900 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 690, max: 1300 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 800, max: 1400 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -2577,6 +3995,14 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 70, microns: 703 },
       { setting: 140, microns: 1182 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 25 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 23, max: 73 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 30, max: 80 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 13, max: 114 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 79, max: 140 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 98, max: 140 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
 ];

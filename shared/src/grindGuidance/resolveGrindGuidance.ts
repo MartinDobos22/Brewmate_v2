@@ -9,6 +9,7 @@ import {
 } from '../conversion/interpolateMicrons.js';
 import type { MicronWindow } from '../conversion/micronWindowSchema.js';
 import type { Grinder } from '../grinders/grinderSchema.js';
+import type { SettingRange } from '../grinders/settingRangeSchema.js';
 
 import {
   BEAN_SHIFT_LIMIT,
@@ -21,6 +22,7 @@ import {
   WINDOW_HALF_WIDTH_FRACTION,
 } from './grindGuidanceFieldLimits.js';
 import type { GrindCoffeeFacts } from './grindCoffeeFacts.js';
+import { GRIND_GUIDANCE_SOURCES, type GrindGuidanceSource } from './grindGuidanceSources.js';
 import type { GrindShift } from './grindShiftSources.js';
 import { readBeanGrindShift } from './readBeanGrindShift.js';
 
@@ -66,6 +68,8 @@ export interface GrindGuidance {
   readonly step: GrindStepAdvice | null;
   /** Why the starting point is not the middle of the window. Empty when nothing was known. */
   readonly shifts: readonly GrindShift[];
+  /** Whether the band is this grinder's own published range or the family window. */
+  readonly source: GrindGuidanceSource;
   /** Whether the numbers rest on a curve nobody measured or an entry nobody checked. */
   readonly isCollarEstimated: boolean;
 }
@@ -165,6 +169,64 @@ const readSlope = (grinder: Grinder, at: number): number | null => {
 };
 
 /**
+ * The band this grinder's own publisher gives for this family of brewer.
+ *
+ * Preferred over the micron round trip wherever it exists, and that preference
+ * is the whole reason the field is stored. Going through microns means going
+ * through a window drawn for a whole family of brewer; measured against the
+ * published ranges it was supposed to reproduce, that round trip landed about
+ * a third of a method's range too coarse, reliably and in one direction, on
+ * every grinder it was checked against. A published range is what somebody
+ * says about this exact model, and it needs no round trip at all.
+ *
+ * The bean still decides where inside the range to stand, exactly as it does
+ * inside a micron window - the range is the range, not the answer.
+ */
+const readPublishedBand = (
+  grinder: Grinder,
+  category: BrewMethodCategory,
+  shift: number,
+): GrindBand | null => {
+  const range: SettingRange | undefined = grinder.settingRanges?.[category];
+
+  if (range === undefined || range.max <= range.min) {
+    return null;
+  }
+
+  const halfRange = (range.max - range.min) * WINDOW_HALF_WIDTH_FRACTION;
+  const middle = (range.min + range.max) * WINDOW_HALF_WIDTH_FRACTION;
+  const snap = (value: number): number => snapToStep(value, grinder.step, grinder.minSetting);
+
+  return {
+    target: snap(clamp(middle + shift * halfRange, range.min, range.max)),
+    min: snap(range.min),
+    max: snap(range.max),
+  };
+};
+
+/**
+ * What that band works out to in microns, so the word attached to it and the
+ * number on the collar are describing the same coffee.
+ *
+ * Null where the grinder has no curve, which is a normal outcome: a published
+ * range is perfectly usable on its own, and the descriptor then comes from the
+ * method's window instead.
+ */
+const readMicronsFor = (grinder: Grinder, band: GrindBand): GrindBand | null => {
+  const at = (setting: number): number | null =>
+    settingToMicrons(grinder.micronCalibration, setting)?.value ?? null;
+  const target = at(band.target);
+  const low = at(band.min);
+  const high = at(band.max);
+
+  if (target === null || low === null || high === null) {
+    return null;
+  }
+
+  return { target, min: Math.min(low, high), max: Math.max(low, high) };
+};
+
+/**
  * How far to turn this collar for one change somebody can actually taste.
  *
  * Rounded to whole steps of the collar and never below one, because half a
@@ -227,8 +289,14 @@ export const resolveGrindGuidance = ({
 }: GrindGuidanceRequest): GrindGuidance => {
   const window = GRIND_MICRON_WINDOWS[methodCategory];
   const shifts = readBeanGrindShift(coffee);
-  const microns = resolveMicronBand(window, totalShift(shifts));
-  const setting = grinder === null ? null : readBand(grinder, microns);
+  const shift = totalShift(shifts);
+  const fromWindow = resolveMicronBand(window, shift);
+  const published = grinder === null ? null : readPublishedBand(grinder, methodCategory, shift);
+  const setting = published ?? (grinder === null ? null : readBand(grinder, fromWindow));
+  const microns =
+    published === null || grinder === null
+      ? fromWindow
+      : (readMicronsFor(grinder, published) ?? fromWindow);
 
   return {
     microns,
@@ -236,6 +304,10 @@ export const resolveGrindGuidance = ({
     setting,
     step: grinder === null || setting === null ? null : readStep(grinder, window, setting),
     shifts,
+    source:
+      published === null
+        ? GRIND_GUIDANCE_SOURCES.methodWindow
+        : GRIND_GUIDANCE_SOURCES.publishedRange,
     isCollarEstimated:
       grinder !== null && (grinder.micronCalibration?.isEstimated === true || !grinder.isVerified),
   };

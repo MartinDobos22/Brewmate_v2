@@ -12,6 +12,7 @@ export const toGrinder = (row: GrinderRow): Grinder => ({
   maxSetting: row.maxSetting,
   step: row.step,
   micronCalibration: row.micronCalibration ?? null,
+  settingRanges: row.settingRanges ?? null,
   typicalUse: row.typicalUse,
   isVerified: row.isVerified,
   createdByUserId: row.createdByUserId,

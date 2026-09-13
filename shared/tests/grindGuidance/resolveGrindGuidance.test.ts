@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   BREW_METHOD_CATEGORIES,
   GRIND_DESCRIPTORS,
+  GRIND_GUIDANCE_SOURCES,
   GRIND_MICRON_WINDOWS,
   GRIND_SHIFT_SOURCES,
   ROAST_LEVELS,
@@ -23,9 +24,16 @@ import {
   UNCALIBRATED_GRINDER,
 } from '../conversion/testGrinders.js';
 
-import { ESPRESSO_GRINDER, REVERSED_GRINDER } from './testGuidanceGrinders.js';
+import {
+  ESPRESSO_GRINDER,
+  PUBLISHED_GRINDER,
+  PUBLISHED_POUR_OVER_MAX,
+  PUBLISHED_POUR_OVER_MIN,
+  REVERSED_GRINDER,
+} from './testGuidanceGrinders.js';
 
 const NOTHING = 0;
+const TWO = 2;
 const RESTED_DAYS = 10;
 const STILL_DEGASSING_DAYS = 2;
 const LONG_FORGOTTEN_DAYS = 90;
@@ -272,5 +280,76 @@ describe('how far to move the collar', () => {
 
   it('reports what one unit of the collar is actually worth', () => {
     expect(pourOver(UNKNOWN_COFFEE).step?.micronsPerSetting).toBe(COARSE_MICRONS_PER_CLICK);
+  });
+});
+
+describe('a grinder whose maker says where each brew lives on the collar', () => {
+  /**
+   * The reason the field exists. Reconstructing the band by converting a
+   * generic micron window through this grinder's curve lands reliably coarse -
+   * measured against the published ranges it was meant to reproduce, about a
+   * third of a method's range out, in one direction, on every grinder checked.
+   * Where somebody has published the range, that is the answer.
+   */
+  it('reports the published range rather than a band reconstructed through microns', () => {
+    const guidance = pourOver(UNKNOWN_COFFEE, PUBLISHED_GRINDER);
+
+    expect(guidance.setting?.min).toBe(PUBLISHED_POUR_OVER_MIN);
+    expect(guidance.setting?.max).toBe(PUBLISHED_POUR_OVER_MAX);
+    expect(guidance.source).toBe(GRIND_GUIDANCE_SOURCES.publishedRange);
+  });
+
+  it('starts a coffee nobody described in the middle of that range', () => {
+    const guidance = pourOver(UNKNOWN_COFFEE, PUBLISHED_GRINDER);
+    const middle = (PUBLISHED_POUR_OVER_MIN + PUBLISHED_POUR_OVER_MAX) / TWO;
+
+    expect(guidance.setting?.target).toBeGreaterThanOrEqual(Math.floor(middle));
+    expect(guidance.setting?.target).toBeLessThanOrEqual(Math.ceil(middle));
+  });
+
+  it('still lets the bag decide where inside the range to stand', () => {
+    const dark = pourOver(coffee({ roastLevel: ROAST_LEVELS.dark }), PUBLISHED_GRINDER);
+    const light = pourOver(coffee({ roastLevel: ROAST_LEVELS.light }), PUBLISHED_GRINDER);
+
+    expect(dark.setting?.target).toBeGreaterThan(light.setting?.target ?? NOTHING);
+  });
+
+  /** The range is the range. A dark natural is still a pour-over grind. */
+  it('never sends the starting point outside the published range', () => {
+    const extreme = pourOver(
+      coffee({ roastLevel: ROAST_LEVELS.dark, process: 'anaeróbne', daysSinceRoast: RESTED_DAYS }),
+      PUBLISHED_GRINDER,
+    );
+
+    expect(extreme.setting?.target).toBeLessThanOrEqual(PUBLISHED_POUR_OVER_MAX);
+    expect(extreme.setting?.target).toBeGreaterThanOrEqual(PUBLISHED_POUR_OVER_MIN);
+  });
+
+  /**
+   * A published chart covers the brews somebody thought to measure. The rest
+   * is the ordinary case, not a failure, and falls back to the method window
+   * read through the curve.
+   */
+  it('falls back to the method window for a brew nobody published a range for', () => {
+    const guidance = resolveGrindGuidance({
+      methodCategory: BREW_METHOD_CATEGORIES.immersion,
+      coffee: UNKNOWN_COFFEE,
+      grinder: PUBLISHED_GRINDER,
+    });
+
+    expect(guidance.source).toBe(GRIND_GUIDANCE_SOURCES.methodWindow);
+    expect(guidance.setting).not.toBeNull();
+  });
+
+  it('says so when the band came from the method window instead', () => {
+    expect(pourOver(UNKNOWN_COFFEE).source).toBe(GRIND_GUIDANCE_SOURCES.methodWindow);
+  });
+
+  /** The word and the number have to be describing the same coffee. */
+  it('reads the microns back off the collar so the word matches the number', () => {
+    const guidance = pourOver(UNKNOWN_COFFEE, PUBLISHED_GRINDER);
+
+    expect(guidance.microns.min).toBeLessThan(guidance.microns.target);
+    expect(guidance.microns.target).toBeLessThan(guidance.microns.max);
   });
 });

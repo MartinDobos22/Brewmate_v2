@@ -1,4 +1,4 @@
-import { GRINDER_TYPICAL_USES, GRINDER_UNIT_TYPES } from '@brewmate/shared';
+import { BREW_METHOD_CATEGORIES, GRINDER_TYPICAL_USES, GRINDER_UNIT_TYPES } from '@brewmate/shared';
 
 import { estimatedCalibration } from './estimatedCalibration.js';
 import type { GrinderSeed } from './grinderSeed.js';
@@ -174,6 +174,14 @@ export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 45.71, microns: 601 },
       { setting: 90, microns: 1121 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 8, max: 28 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 27, max: 58 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 32, max: 63 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 21, max: 84 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 63, max: 90 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 74, max: 90 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -230,6 +238,14 @@ export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 27.5, microns: 708 },
       { setting: 55, microns: 1199 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 11 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10, max: 27 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 13, max: 30 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 7, max: 42 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 30, max: 55 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 37, max: 55 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.espresso,
   },
 
@@ -246,6 +262,14 @@ export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 30.5, microns: 584 },
       { setting: 60, microns: 1039 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 18 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 17, max: 44 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 21, max: 48 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 11, max: 60 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 48, max: 60 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 59, max: 60 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -260,6 +284,14 @@ export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
       { setting: 30.5, microns: 584 },
       { setting: 60, microns: 1039 },
     ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 18 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 17, max: 44 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 21, max: 48 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 11, max: 60 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 48, max: 60 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 59, max: 60 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
 

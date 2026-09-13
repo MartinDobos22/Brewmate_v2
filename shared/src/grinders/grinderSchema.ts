@@ -11,6 +11,7 @@ import {
   GRINDER_STEP_MIN,
 } from './grinderFieldLimits.js';
 import { micronCalibrationSchema } from './micronCalibrationSchema.js';
+import { settingRangesSchema } from './settingRangeSchema.js';
 
 /**
  * A grinder in the shared catalogue.
@@ -32,6 +33,8 @@ export const grinderSchema = z.object({
   maxSetting: z.number().min(GRINDER_SETTING_MIN).max(GRINDER_SETTING_MAX),
   step: z.number().min(GRINDER_STEP_MIN),
   micronCalibration: micronCalibrationSchema.nullable(),
+  /** Where each family of brewer sits on this collar, where anybody published it. */
+  settingRanges: settingRangesSchema.nullable(),
   typicalUse: z.enum(GRINDER_TYPICAL_USES),
   isVerified: z.boolean(),
   createdByUserId: z.uuid().nullable(),

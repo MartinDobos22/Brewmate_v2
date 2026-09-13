@@ -13,6 +13,8 @@ export { ROAST_GRIND_SHIFTS } from './constants/roastGrindShifts.js';
 export { PROCESS_GRIND_SHIFTS } from './constants/processGrindShifts.js';
 export { REST_GRIND_BANDS, STALE_GRIND_SHIFT } from './constants/restGrindShifts.js';
 export type { RestGrindBand } from './constants/restGrindShifts.js';
+export { GRIND_GUIDANCE_SOURCES } from './grindGuidanceSources.js';
+export type { GrindGuidanceSource } from './grindGuidanceSources.js';
 export { GRIND_SHIFT_SOURCES } from './grindShiftSources.js';
 export type { GrindShift, GrindShiftSource } from './grindShiftSources.js';
 export { UNKNOWN_COFFEE } from './grindCoffeeFacts.js';

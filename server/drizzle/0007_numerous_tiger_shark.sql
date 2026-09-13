@@ -1,0 +1,1 @@
+ALTER TABLE "grinders_catalog" ADD COLUMN "setting_ranges" jsonb;

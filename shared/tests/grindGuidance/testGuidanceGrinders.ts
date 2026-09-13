@@ -1,4 +1,9 @@
-import { GRINDER_TYPICAL_USES, GRINDER_UNIT_TYPES, type Grinder } from '../../src/index.js';
+import {
+  BREW_METHOD_CATEGORIES,
+  GRINDER_TYPICAL_USES,
+  GRINDER_UNIT_TYPES,
+  type Grinder,
+} from '../../src/index.js';
 
 const MEASURED = false;
 const VERIFIED = true;
@@ -16,6 +21,9 @@ const ESPRESSO_MAX_SETTING = 60;
 const ESPRESSO_STEP = 1;
 const ESPRESSO_FINE_MICRONS = 180;
 const ESPRESSO_COARSE_MICRONS = 600;
+
+/** Most of the catalogue has no published per-method range, and these fixtures say so. */
+const NO_PUBLISHED_RANGES = null;
 
 const CREATED_AT = '2026-01-01T00:00:00.000Z';
 const NOBODY = null;
@@ -44,6 +52,7 @@ export const REVERSED_GRINDER: Grinder = {
     ],
     isEstimated: MEASURED,
   },
+  settingRanges: NO_PUBLISHED_RANGES,
   typicalUse: GRINDER_TYPICAL_USES.filter,
   isVerified: VERIFIED,
   createdByUserId: NOBODY,
@@ -66,7 +75,57 @@ export const ESPRESSO_GRINDER: Grinder = {
     ],
     isEstimated: MEASURED,
   },
+  settingRanges: NO_PUBLISHED_RANGES,
   typicalUse: GRINDER_TYPICAL_USES.espresso,
+  isVerified: VERIFIED,
+  createdByUserId: NOBODY,
+  createdAt: CREATED_AT,
+};
+
+export const PUBLISHED_MIN_SETTING = 2;
+export const PUBLISHED_MAX_SETTING = 25;
+export const PUBLISHED_POUR_OVER_MIN = 11;
+export const PUBLISHED_POUR_OVER_MAX = 18;
+
+const PUBLISHED_ESPRESSO_MIN = 5;
+const PUBLISHED_ESPRESSO_MAX = 10;
+const PUBLISHED_FINE_MICRONS = 80;
+const PUBLISHED_COARSE_MICRONS = 1100;
+
+/**
+ * A grinder whose maker publishes where each brew lives on the collar.
+ *
+ * Deliberately without a range for immersion, because that is the ordinary
+ * case: a published chart covers the brews somebody thought to measure and the
+ * rest has to fall back to the method window. A fixture that had all six would
+ * never exercise the fallback.
+ */
+export const PUBLISHED_GRINDER: Grinder = {
+  id: grinderId('13'),
+  brand: 'Testovací',
+  model: 'S odporúčaniami',
+  unitType: GRINDER_UNIT_TYPES.clicks,
+  minSetting: PUBLISHED_MIN_SETTING,
+  maxSetting: PUBLISHED_MAX_SETTING,
+  step: REVERSED_STEP,
+  micronCalibration: {
+    points: [
+      { setting: PUBLISHED_MIN_SETTING, microns: PUBLISHED_FINE_MICRONS },
+      { setting: PUBLISHED_MAX_SETTING, microns: PUBLISHED_COARSE_MICRONS },
+    ],
+    isEstimated: MEASURED,
+  },
+  settingRanges: {
+    [BREW_METHOD_CATEGORIES.espresso]: {
+      min: PUBLISHED_ESPRESSO_MIN,
+      max: PUBLISHED_ESPRESSO_MAX,
+    },
+    [BREW_METHOD_CATEGORIES.pourOver]: {
+      min: PUBLISHED_POUR_OVER_MIN,
+      max: PUBLISHED_POUR_OVER_MAX,
+    },
+  },
+  typicalUse: GRINDER_TYPICAL_USES.both,
   isVerified: VERIFIED,
   createdByUserId: NOBODY,
   createdAt: CREATED_AT,
