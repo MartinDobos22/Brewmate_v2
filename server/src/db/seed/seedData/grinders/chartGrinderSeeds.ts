@@ -1952,7 +1952,7 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
   },
   {
     brand: 'Timemore',
-    model: 'C2',
+    model: 'Chestnut C2',
     unitType: GRINDER_UNIT_TYPES.clicks,
     minSetting: 2,
     maxSetting: 30,
@@ -1966,7 +1966,7 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
   },
   {
     brand: 'Timemore',
-    model: 'C2 Fold',
+    model: 'Chestnut C2 Fold',
     unitType: GRINDER_UNIT_TYPES.clicks,
     minSetting: 2,
     maxSetting: 30,
@@ -1980,7 +1980,7 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
   },
   {
     brand: 'Timemore',
-    model: 'C2 Max',
+    model: 'Chestnut C2 Max',
     unitType: GRINDER_UNIT_TYPES.clicks,
     minSetting: 2,
     maxSetting: 30,
@@ -1994,7 +1994,7 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
   },
   {
     brand: 'Timemore',
-    model: 'C2 Max Pro',
+    model: 'Chestnut C2 Max Pro',
     unitType: GRINDER_UNIT_TYPES.clicks,
     minSetting: 2,
     maxSetting: 30,
@@ -2008,7 +2008,7 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
   },
   {
     brand: 'Timemore',
-    model: 'C3',
+    model: 'Chestnut C3',
     unitType: GRINDER_UNIT_TYPES.clicks,
     minSetting: 2,
     maxSetting: 25,
@@ -2022,7 +2022,7 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
   },
   {
     brand: 'Timemore',
-    model: 'C3 ESP',
+    model: 'Chestnut C3 ESP',
     unitType: GRINDER_UNIT_TYPES.numbers,
     minSetting: 1.333,
     maxSetting: 30,
@@ -2036,7 +2036,7 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
   },
   {
     brand: 'Timemore',
-    model: 'C3 ESP Pro',
+    model: 'Chestnut C3 ESP Pro',
     unitType: GRINDER_UNIT_TYPES.numbers,
     minSetting: 1.333,
     maxSetting: 30,
@@ -2050,7 +2050,7 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
   },
   {
     brand: 'Timemore',
-    model: 'C3 Max',
+    model: 'Chestnut C3 Max',
     unitType: GRINDER_UNIT_TYPES.clicks,
     minSetting: 2,
     maxSetting: 25,
@@ -2064,7 +2064,7 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
   },
   {
     brand: 'Timemore',
-    model: 'C3 Max Pro',
+    model: 'Chestnut C3 Max Pro',
     unitType: GRINDER_UNIT_TYPES.clicks,
     minSetting: 2,
     maxSetting: 25,
@@ -2078,7 +2078,7 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
   },
   {
     brand: 'Timemore',
-    model: 'C3 Pro',
+    model: 'Chestnut C3 Pro',
     unitType: GRINDER_UNIT_TYPES.clicks,
     minSetting: 2,
     maxSetting: 25,
@@ -2092,7 +2092,7 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
   },
   {
     brand: 'Timemore',
-    model: 'C3S',
+    model: 'Chestnut C3S',
     unitType: GRINDER_UNIT_TYPES.clicks,
     minSetting: 2,
     maxSetting: 25,
@@ -2106,7 +2106,7 @@ export const CHART_GRINDER_SEEDS: readonly GrinderSeed[] = [
   },
   {
     brand: 'Timemore',
-    model: 'C3S Pro',
+    model: 'Chestnut C3S Pro',
     unitType: GRINDER_UNIT_TYPES.clicks,
     minSetting: 2,
     maxSetting: 25,
