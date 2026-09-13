@@ -1091,8 +1091,9 @@ as a fact rather than asked for one.
   range.
 - **The method's window decides the ballpark, the bag decides where in it to
   stand, the grinder's own curve turns that into a number on a collar.** That is
-  the fallback path, for the 31% of grinder-and-method pairs nobody has
-  published a range for. Three inputs, each of which may be missing, and the
+  the fallback path, for the 18% of grinder-and-method pairs nobody has
+  published a range for - most of them stepless collars, where a numbered range
+  is not a thing anybody can publish. Three inputs, each of which may be missing, and the
   answer degrades one step at a time rather than disappearing: no bag facts is
   the middle of the window reported as exactly that, and no calibrated grinder
   is a grind in words and no number at all.
