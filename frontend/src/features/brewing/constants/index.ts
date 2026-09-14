@@ -14,3 +14,4 @@ export {
 } from './brewMethodIcons';
 export { COFFEE_SOURCE_STAGES, COFFEE_SOURCE_ICONS } from './coffeeSource';
 export type { CoffeeSourceStage } from './coffeeSource';
+export { GRIND_DESCRIPTOR_LABEL_KEYS, GRIND_SHIFT_LABEL_KEYS } from './grindGuidanceLabels';

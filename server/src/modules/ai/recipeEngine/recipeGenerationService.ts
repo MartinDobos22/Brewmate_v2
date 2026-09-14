@@ -1,5 +1,6 @@
 import {
   RECIPE_SOURCES,
+  readGrindCoffeeFacts,
   type BrewLog,
   type GenerateRecipeRequest,
   type GenerateRecipeResponse,
@@ -28,6 +29,7 @@ import { describeChosenAmounts } from './describeBrew.js';
 import { describeCoffeeForBrew } from './describeCoffeeForBrew.js';
 import { describeConstraints } from './describeConstraints.js';
 import { describeGear } from './describeGear.js';
+import { describeGrindStart } from './describeGrindStart.js';
 import { resolveGeneratedRecipeSchema, type GeneratedRecipe } from './generatedRecipeSchema.js';
 import { RECIPE_SYSTEM_PROMPT } from './recipePrompt.js';
 import { toBrewParams } from './toBrewParams.js';
@@ -141,11 +143,17 @@ export const createRecipeGenerationService = ({
         equipmentSetId: input.equipmentSetId ?? null,
       });
       const history = await readHistory(userId, bagId, method.id);
+      const now = new Date();
 
       const sections = [
         describeTasteProfile(context.profile),
-        describeCoffeeForBrew(context.bag, input.coffeeDescription ?? null, new Date()),
+        describeCoffeeForBrew(context.bag, input.coffeeDescription ?? null, now),
         describeGear({ method, equipment: context.equipment, grinder: context.grinder }),
+        describeGrindStart({
+          methodCategory: method.category,
+          coffee: readGrindCoffeeFacts(context.bag, now),
+          grinder: context.grinder,
+        }),
         describeChosenAmounts({
           doseGrams: input.doseGrams,
           waterGrams: input.waterGrams,
@@ -181,6 +189,7 @@ export const createRecipeGenerationService = ({
             waterGrams: input.waterGrams,
             waterType: input.waterType,
             constraints: input.constraints,
+            grinder: context.grinder,
           }),
           rationale: completion.value.rationale,
           source: RECIPE_SOURCES.ai,

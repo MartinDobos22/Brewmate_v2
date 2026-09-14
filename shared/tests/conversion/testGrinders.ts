@@ -29,6 +29,9 @@ const ESTIMATED = true;
 const VERIFIED = true;
 const CONTRIBUTED = false;
 
+/** Most of the catalogue has no published per-method range, and these fixtures say so. */
+const NO_PUBLISHED_RANGES = null;
+
 const CREATED_AT = '2026-01-01T00:00:00.000Z';
 const NOBODY = null;
 
@@ -57,6 +60,7 @@ export const MEASURED_GRINDER: Grinder = {
     ],
     isEstimated: MEASURED,
   },
+  settingRanges: NO_PUBLISHED_RANGES,
   typicalUse: GRINDER_TYPICAL_USES.filter,
   isVerified: VERIFIED,
   createdByUserId: NOBODY,
@@ -79,6 +83,7 @@ export const ESTIMATED_GRINDER: Grinder = {
     ],
     isEstimated: ESTIMATED,
   },
+  settingRanges: NO_PUBLISHED_RANGES,
   typicalUse: GRINDER_TYPICAL_USES.both,
   isVerified: VERIFIED,
   createdByUserId: NOBODY,
@@ -102,6 +107,7 @@ export const UNCALIBRATED_GRINDER: Grinder = {
   maxSetting: STEPLESS_MAX_SETTING,
   step: STEPLESS,
   micronCalibration: null,
+  settingRanges: NO_PUBLISHED_RANGES,
   typicalUse: GRINDER_TYPICAL_USES.espresso,
   isVerified: VERIFIED,
   createdByUserId: NOBODY,

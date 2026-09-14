@@ -74,7 +74,8 @@ conversion - `shared/src/tasteProfiles/foldAxisObservations.ts`, which is how a
 set of taps becomes a claim about somebody's taste, `shared/src/coffeeTaste/`,
 which is how a printed label becomes a claim about a coffee, and
 `shared/src/coffeeMatch/`, which is where those two claims are held up against
-each other. Each is
+each other, and `shared/src/grindGuidance/`, which is where to start grinding a
+particular coffee in a particular brewer on a particular grinder. Each is
 self-contained, depends on nothing but plain values and has its own unit tests
 (`shared/tests/`), so a better algorithm can replace one without touching
 anything else.
@@ -1060,6 +1061,87 @@ reason}` in machine names: `exact` came across untouched or is arithmetic
   month that has lost the sentence about the grind has turned an estimate into a
   measurement by doing nothing at all.
 
+### Where the grind starts
+
+`shared/src/grindGuidance/`, run by the API before it writes a recipe and by
+the app before a single token is spent. Deterministic, offline and free.
+
+The grind used to be the one number in a recipe with nothing behind it. The
+model was told the collar runs 0 to 40 in steps of 1 and had to invent a place
+on it, which is how the same coffee in the same brewer came back at 18 one
+morning and 26 the next. It is now arithmetic, and the model is told the answer
+as a fact rather than asked for one.
+
+- **A published range for this grinder beats anything derived, and the guidance
+  reads it first.** `settingRanges` on a catalogue entry says where each family
+  of brewer sits on that exact collar, as somebody published it. Where it
+  exists the band _is_ that range and the bean only decides where inside it to
+  stand; where it does not, the answer falls back to the method window read
+  through the curve, and `source` says which happened so the prompt and the
+  screen can both be honest about it.
+- **That split was learned by measuring, not designed.** The first version had
+  only the curve, and reconstructing a band by converting a generic micron
+  window through it landed about a third of a method's range too coarse -
+  reliably, in one direction, on every grinder checked. Fitting the curve
+  differently did not help: the per-method residuals alternate in sign, which
+  means one straight line cannot satisfy position and slope at once. Running the
+  curve through the published anchors instead fixed position and made 46% of its
+  segments absurd in slope. So the curve is asked only what it is good at -
+  slope, and cross-grinder comparability - and position comes from the published
+  range.
+- **The method's window decides the ballpark, the bag decides where in it to
+  stand, the grinder's own curve turns that into a number on a collar.** That is
+  the fallback path, for the 26% of grinder-and-method pairs nobody has
+  published a range for - stepless collars, where a numbered range is not a
+  thing anybody can publish, and the shop-sourced entries, where nobody has
+  written down what any position grinds to. Three inputs, each of which may be missing, and the
+  answer degrades one step at a time rather than disappearing: no bag facts is
+  the middle of the window reported as exactly that, and no calibrated grinder
+  is a grind in words and no number at all.
+- **Every shift is a fraction of the family's own window, never a figure in
+  microns.** This is the decision the whole module turns on. An espresso window
+  is two hundred microns wide and a cold brew window is four hundred; "a notch
+  coarser for a dark roast" has to be the same amount of taste in both, and a
+  fixed micron shift would be a nudge on one and a different drink on the other.
+- **Three facts move it, and they are ranked.** How dark it was roasted moves it
+  most, because roast level is what changes solubility most. Processing moves it
+  less. Days since roasting move it from both ends and in the same direction:
+  a bag still degassing brews thin, a bag past its month has gone flat, and the
+  answer to both is a finer grind - opposite reasons, one adjustment.
+- **The bag may choose where in the window to stand; it may not leave it.**
+  `BEAN_SHIFT_LIMIT` caps the total below one half-width, so a dark anaerobic
+  in a V60 is still a V60 grind.
+- **The reasons travel with the number.** `GRIND_SHIFT_SOURCES` is a closed set
+  the prompt names and the app prints, because a starting point that cannot say
+  why it is where it is cannot be told apart from a guess - and disagreeing
+  with the reasoning correctly is how somebody learns their own grinder.
+- **The step advice is the half nobody can write into a prompt.** What one click
+  is worth is read as a local slope off that grinder's curve around that
+  setting, and the move is rounded to whole steps of the collar and never below
+  one. A click is ten microns on one grinder and forty on another, so "one or
+  two clicks finer" is either a nudge or a different drink depending on whose
+  grinder it is said to. This is the number a cafe opening a new bag is paying
+  for: "o dva kliky jemnejsie" spends one dose, where "a little finer" spends
+  however many it takes to find out what little meant.
+- **A collar is not obliged to count upwards towards coarse.** The band's ends
+  are sorted rather than assigned, because several grinders people own are
+  marked the other way round and every piece of arithmetic that assumed
+  otherwise prints its band backwards on all of them.
+- **The app runs the same function rather than asking for the answer.** Two
+  copies of this arithmetic would be two answers to "where do I start" that
+  eventually disagree on one screen, and the one somebody trusts is whichever
+  they read first. `PreBrewGrindSection` shows it above the recipe button, so
+  somebody can grind while the recipe is still being written and can see what
+  the recipe was built on rather than only what it concluded.
+- **What reaches the recipe is a setting the collar can be left at.**
+  `toBrewParams` clamps the model's number to the grinder's ends and snaps it to
+  its step. Nothing is overruled - the number it chose is kept and only rounded
+  to something that exists on the object in front of the person reading it.
+- **It claims nothing.** Burr alignment, bean density, how the last person left
+  the collar and the age of the burrs all move a real grind further than this
+  arithmetic does. It is the difference between starting two clicks out and
+  starting ten, which over a new bag is two shots instead of six.
+
 ### Dialling in an espresso
 
 `/dial-in` - the recipe chat, narrowed until it can only do one thing per turn.
@@ -1308,6 +1390,33 @@ The first product screen: `/grinders`, reached from the inventory tab.
   form, and so does a button under the list. The form asks for brand, model,
   scale, range and step - never a calibration curve, because nobody has one to
   hand and an entry without one still works.
+- **The long tail is generated, not typed.** `chartGrinderSeeds.ts` is derived
+  from a published grind-size chart and carries the grinders nobody would put
+  in a curated list - which are exactly the ones whose owner has no idea where
+  to start, and for whom "not in the catalogue" is the answer that sends them
+  away. It is deduplicated against the four hand-written lists on brand and
+  model, so one grinder is one row.
+- **It carries two different things, and the difference matters.**
+  `settingRanges` is copied from the chart: where each brew sits on that collar.
+  `micronCalibration` is derived from those same positions. The first is what
+  the guidance starts from; the second is what makes two grinders comparable and
+  what says how far one click moves the cup.
+- **A sixth list comes from a shop, not a chart.** `shopGrinderSeeds.ts` is the
+  Czech and Slovak shelf: grinders people here actually buy that no grind-size
+  chart has ever covered. A shop listing states how many positions a collar has
+  and nothing else, so those entries carry a collar, a brand, a model and an
+  espresso-or-filter flag - no curve and no ranges. They answer "is my grinder
+  in here" and hand the guidance back to the method window. Every listing that
+  stated no position count was left out rather than given a plausible range.
+- **Its curves are derived, and the derivation is checked against something
+  else.** The chart says where each brewing method sits on each collar; the
+  file fits a line through those positions against `GRIND_MICRON_WINDOWS` and
+  takes three points off it. The fitted slope reproduces the separately
+  published microns-per-step figure to within a few percent - two unrelated
+  derivations agreeing is the only reason it ships. The handful where they
+  disagree by more than a factor of two ship with no curve rather than a
+  plausible-looking one, and so do the grinders whose chart covers too few
+  methods to fit anything.
 
 ### Onboarding
 
@@ -2064,9 +2173,9 @@ generated migration that has already been applied.
 Two kinds, and the split is deliberate.
 
 `shared` has unit tests, and only for the conversion module, the shot timeline,
-the taste axis fold, the coffee taste estimate and the match between a coffee
-and a drinker: pure functions over plain values, testable with no database, no
-model and no server. That is the whole reason the conversion lives there rather than
+the taste axis fold, the coffee taste estimate, the match between a coffee and
+a drinker, and where a grind starts: pure functions over plain values, testable
+with no database, no model and no server. That is the whole reason the conversion lives there rather than
 in the API - arithmetic this consequential should be checkable in a second. The
 tests are written against the decisions rather than the implementation: that a
 curve reads back the point it was measured at, that an extrapolation says it is
@@ -2089,7 +2198,22 @@ rules that decide whether it may speak at all: that an axis either side is
 blank about is never compared, that one comparable axis is not a comparison,
 that a difference nobody could taste is not a mismatch, that the cup a milk
 drinker will actually pour is what gets compared, and that the argument leads
-with the axis that says the most.
+with the axis that says the most. The grind guidance is tested for the
+promises it makes about honesty and about arithmetic: that a coffee nobody has
+written anything down about lands in the middle of the method's window with no
+reasons attached, that a dark roast starts coarser than a light one and a
+natural coarser than a washed, that the specific fermentation is read before the
+general word inside it, that both ends of the shelf life pull the grind finer,
+that the bag can move the starting point inside the window but never out of it,
+that the same roast difference is worth more microns in a wider window, that a
+grinder with no curve gets a word and no number, that a collar marked the other
+way round still reports its band the right way up, that one taste-step is never
+less than one click, and that a finer collar is asked for more clicks than a
+coarse one to make the same change. Since a published range outranks every
+derivation, it is also tested that a grinder carrying one reports that range
+rather than a band reconstructed through microns, that the bean still moves the
+target inside it and never outside it, and that a brew nobody published a range
+for falls back to the window without claiming it did anything else.
 
 Everything else is integration tests, running against the real Neon test branch
 through `app.inject()` - no mocked database, no testcontainers (everything is

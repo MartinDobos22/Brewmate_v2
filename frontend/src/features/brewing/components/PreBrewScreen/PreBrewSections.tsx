@@ -6,6 +6,7 @@ import type { BrewSetup } from '../../hooks/useBrewSetup';
 import { BrewConstraintsSection } from '../BrewConstraintsSection';
 import { PreBrewAmountsSection } from '../PreBrewAmountsSection';
 import { PreBrewCoffeeSection } from '../PreBrewCoffeeSection';
+import { PreBrewGrindSection } from '../PreBrewGrindSection';
 import { PreBrewMethodSection } from '../PreBrewMethodSection';
 
 export interface PreBrewSectionsProps {
@@ -42,6 +43,7 @@ export const PreBrewSections = ({ setup }: PreBrewSectionsProps): JSX.Element =>
         />
         <WaterTypePicker selected={setup.waterType} onSelect={setup.chooseWater} />
         <PreBrewAmountsSection control={setup} method={setup.method} warnings={setup.warnings} />
+        <PreBrewGrindSection method={setup.method} bag={setup.bag} equipmentSet={setup.activeSet} />
         <ConfidenceNotice />
       </>
     )}

@@ -1,5 +1,6 @@
 import {
   BREW_METHOD_CATEGORIES,
+  readGrindCoffeeFacts,
   CHAT_ROLES,
   DIAL_IN_HISTORY_SHOTS,
   TASTE_PROFILE_SOURCES,
@@ -36,6 +37,7 @@ import { PROMPT_SECTION_SEPARATOR } from '../constants/promptFormatting.js';
 import { describeCoffeeForBrew } from '../recipeEngine/describeCoffeeForBrew.js';
 import { describeConstraints } from '../recipeEngine/describeConstraints.js';
 import { describeGear } from '../recipeEngine/describeGear.js';
+import { describeGrindStart } from '../recipeEngine/describeGrindStart.js';
 
 import { resolveDialInAnswerSchema, type DialInAnswer } from './dialInAnswerSchema.js';
 import { DIAL_IN_CLOSING_INSTRUCTION, DIAL_IN_SYSTEM_PROMPT } from './dialInPrompt.js';
@@ -228,10 +230,16 @@ export const createEspressoDialInService = ({
         content: input.message,
       });
 
+      const now = new Date();
       const sections = [
         describeTasteProfile(context.profile),
-        describeCoffeeForBrew(context.bag, null, new Date()),
+        describeCoffeeForBrew(context.bag, null, now),
         describeGear({ method, equipment: context.equipment, grinder: context.grinder }),
+        describeGrindStart({
+          methodCategory: method.category,
+          coffee: readGrindCoffeeFacts(context.bag, now),
+          grinder: context.grinder,
+        }),
         describeShots(shots),
         describeConstraints(constraints),
         `What they said about the shot they have just pulled: ${input.message}`,

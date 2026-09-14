@@ -13,6 +13,8 @@ export { describeCoffeeForBrew } from './describeCoffeeForBrew.js';
 export { describeConstraints } from './describeConstraints.js';
 export { describeGear } from './describeGear.js';
 export type { GearDescription } from './describeGear.js';
+export { describeGrindStart } from './describeGrindStart.js';
+export type { GrindStartDescription } from './describeGrindStart.js';
 export { describeBrewHistory } from './describeBrewHistory.js';
 export type { BrewHistoryEntry } from './describeBrewHistory.js';
 export { toBrewParams } from './toBrewParams.js';

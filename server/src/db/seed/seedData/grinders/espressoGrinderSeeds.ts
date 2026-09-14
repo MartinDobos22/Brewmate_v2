@@ -1,5 +1,6 @@
-import { GRINDER_TYPICAL_USES, GRINDER_UNIT_TYPES } from '@brewmate/shared';
+import { BREW_METHOD_CATEGORIES, GRINDER_TYPICAL_USES, GRINDER_UNIT_TYPES } from '@brewmate/shared';
 
+import { estimatedCalibration } from './estimatedCalibration.js';
 import type { GrinderSeed } from './grinderSeed.js';
 
 /**
@@ -7,22 +8,19 @@ import type { GrinderSeed } from './grinderSeed.js';
  *
  * Most of them are stepless, which is recorded as a step of zero: the collar
  * carries numbers to remember a position by, not detents to count. None of
- * them come with a published micron figure, so none is claimed.
+ * them comes with a published micron figure. *
+ * A handful of them now carry a curve after all. It is not a manufacturer
+ * figure and does not pretend to be: it is fitted from where a published
+ * grind-size chart puts each brewing method on that exact collar, the same way
+ * `chartGrinderSeeds.ts` does it and only for the entries whose collar the
+ * chart describes identically. Flagged as an estimate, like every other curve
+ * here. A grind with a number and a click size beats a grind with neither, as
+ * long as the app keeps saying which it is holding.
  */
 export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
   {
     brand: 'Eureka',
     model: 'Mignon Specialita',
-    unitType: GRINDER_UNIT_TYPES.numbers,
-    minSetting: 0,
-    maxSetting: 50,
-    step: 0,
-    micronCalibration: null,
-    typicalUse: GRINDER_TYPICAL_USES.espresso,
-  },
-  {
-    brand: 'Eureka',
-    model: 'Mignon Silenzio',
     unitType: GRINDER_UNIT_TYPES.numbers,
     minSetting: 0,
     maxSetting: 50,
@@ -49,37 +47,6 @@ export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
     step: 0,
     micronCalibration: null,
     typicalUse: GRINDER_TYPICAL_USES.espresso,
-  },
-  {
-    brand: 'Eureka',
-    model: 'Mignon Oro',
-    unitType: GRINDER_UNIT_TYPES.numbers,
-    minSetting: 0,
-    maxSetting: 50,
-    step: 0,
-    micronCalibration: null,
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-
-  {
-    brand: 'Niche',
-    model: 'Zero',
-    unitType: GRINDER_UNIT_TYPES.numbers,
-    minSetting: 0,
-    maxSetting: 50,
-    step: 0,
-    micronCalibration: null,
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-  {
-    brand: 'Niche',
-    model: 'Duo',
-    unitType: GRINDER_UNIT_TYPES.numbers,
-    minSetting: 0,
-    maxSetting: 100,
-    step: 0,
-    micronCalibration: null,
-    typicalUse: GRINDER_TYPICAL_USES.both,
   },
 
   {
@@ -161,7 +128,19 @@ export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
     minSetting: 0,
     maxSetting: 90,
     step: 0,
-    micronCalibration: null,
+    micronCalibration: estimatedCalibration([
+      { setting: 1.43, microns: 80 },
+      { setting: 45.71, microns: 601 },
+      { setting: 90, microns: 1121 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 8, max: 28 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 27, max: 58 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 32, max: 63 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 21, max: 84 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 63, max: 90 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 74, max: 90 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -213,7 +192,19 @@ export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
     minSetting: 0,
     maxSetting: 55,
     step: 1,
-    micronCalibration: null,
+    micronCalibration: estimatedCalibration([
+      { setting: 0, microns: 216 },
+      { setting: 27.5, microns: 708 },
+      { setting: 55, microns: 1199 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 0, max: 11 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 10, max: 27 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 13, max: 30 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 7, max: 42 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 30, max: 55 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 37, max: 55 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.espresso,
   },
 
@@ -225,7 +216,19 @@ export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
     minSetting: 1,
     maxSetting: 60,
     step: 1,
-    micronCalibration: null,
+    micronCalibration: estimatedCalibration([
+      { setting: 1, microns: 130 },
+      { setting: 30.5, microns: 584 },
+      { setting: 60, microns: 1039 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 18 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 17, max: 44 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 21, max: 48 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 11, max: 60 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 48, max: 60 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 59, max: 60 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
   {
@@ -235,7 +238,19 @@ export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
     minSetting: 1,
     maxSetting: 60,
     step: 1,
-    micronCalibration: null,
+    micronCalibration: estimatedCalibration([
+      { setting: 1, microns: 130 },
+      { setting: 30.5, microns: 584 },
+      { setting: 60, microns: 1039 },
+    ]),
+    settingRanges: {
+      [BREW_METHOD_CATEGORIES.espresso]: { min: 1, max: 18 },
+      [BREW_METHOD_CATEGORIES.stovetop]: { min: 17, max: 44 },
+      [BREW_METHOD_CATEGORIES.pourOver]: { min: 21, max: 48 },
+      [BREW_METHOD_CATEGORIES.batch]: { min: 11, max: 60 },
+      [BREW_METHOD_CATEGORIES.immersion]: { min: 48, max: 60 },
+      [BREW_METHOD_CATEGORIES.cold]: { min: 59, max: 60 },
+    },
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
 
@@ -249,30 +264,10 @@ export const ESPRESSO_GRINDER_SEEDS: readonly GrinderSeed[] = [
     micronCalibration: null,
     typicalUse: GRINDER_TYPICAL_USES.both,
   },
-  {
-    brand: 'Weber Workshops',
-    model: 'EG-1',
-    unitType: GRINDER_UNIT_TYPES.numbers,
-    minSetting: 0,
-    maxSetting: 100,
-    step: 0,
-    micronCalibration: null,
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
 
   {
     brand: 'Option-O',
     model: 'Lagom Mini',
-    unitType: GRINDER_UNIT_TYPES.numbers,
-    minSetting: 0,
-    maxSetting: 100,
-    step: 0,
-    micronCalibration: null,
-    typicalUse: GRINDER_TYPICAL_USES.both,
-  },
-  {
-    brand: 'Option-O',
-    model: 'Lagom P64',
     unitType: GRINDER_UNIT_TYPES.numbers,
     minSetting: 0,
     maxSetting: 100,

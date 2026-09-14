@@ -96,4 +96,35 @@ export const SK_PRE_BREW = {
   preBrewError: 'Recept sa nepodarilo napísať. Skús to prosím znova.',
   preBrewOffline: 'Si offline. Recept ti napíšem, keď budeš mať signál.',
   preBrewMissingMethod: 'Najprv vyber prípravu.',
+
+  preBrewGrindSection: 'Kde začať s mlynčekom',
+  preBrewGrindIntroPublished:
+    'Rozsah je publikovaný pre tento mlynček; v ňom ťa posúvam podľa toho, čo je na balíčku. Je to štart, nie výsledok.',
+  preBrewGrindIntroWindow:
+    'Pre tento mlynček a túto prípravu nikto rozsah nezverejnil, tak vychádzam z bežného okna pre tento typ prípravy a z krivky mlynčeka. Hrubší odhad — po prvej šálke ho doladíme.',
+  preBrewGrindOnCollar: 'Na mlynčeku {grinder}',
+  preBrewGrindBand: '{target} (rozumné rozpätie {min} až {max})',
+  preBrewGrindWords: 'Hrubosť',
+  preBrewGrindStep: 'Jedna úprava, ktorú ochutnáš',
+  preBrewGrindStepValue: 'posuň o {settings} na stupnici (jeden krok je asi {microns} µm)',
+  preBrewGrindReasons: 'Prečo práve sem',
+  preBrewGrindNoReasons: 'O tejto káve neviem nič, takže je to stred rozsahu pre túto prípravu.',
+  preBrewGrindShiftEntry: '{fact} → {direction}',
+  preBrewGrindShiftRoast: 'praženie',
+  preBrewGrindShiftProcess: 'spracovanie',
+  preBrewGrindShiftRest: 'čas od upraženia',
+  preBrewGrindFiner: 'jemnejšie',
+  preBrewGrindCoarser: 'hrubšie',
+  preBrewGrindNoCurve:
+    'Tvoj mlynček nemám v katalógu s mikrónovou krivkou, tak ti viem povedať len hrubosť slovom.',
+  preBrewGrindNoGrinder:
+    'Zapíš si mlynček medzi vybavenie a poviem ti rovno číslo na jeho stupnici.',
+  preBrewGrindEstimated: 'Krivka toho mlynčeka je odhad z katalógu, nie meranie sitom.',
+
+  grindDescriptorExtraFine: 'veľmi jemné',
+  grindDescriptorFine: 'jemné',
+  grindDescriptorMediumFine: 'stredne jemné',
+  grindDescriptorMedium: 'stredné',
+  grindDescriptorMediumCoarse: 'stredne hrubé',
+  grindDescriptorCoarse: 'hrubé',
 } as const;

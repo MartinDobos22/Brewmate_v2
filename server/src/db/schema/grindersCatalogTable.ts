@@ -1,4 +1,4 @@
-import type { MicronCalibration } from '@brewmate/shared';
+import type { MicronCalibration, SettingRanges } from '@brewmate/shared';
 import { sql } from 'drizzle-orm';
 import {
   boolean,
@@ -44,6 +44,12 @@ export const grindersCatalogTable = pgTable(
     step: real('step').notNull(),
     /** Measured pairs of setting and microns; everything between is interpolated. */
     micronCalibration: jsonb('micron_calibration').$type<MicronCalibration>(),
+    /**
+     * Where each family of brewer sits on this collar, where anybody published
+     * it. Separate from the curve on purpose: the curve says what a setting
+     * produces, this says what a setting is for on this exact model.
+     */
+    settingRanges: jsonb('setting_ranges').$type<SettingRanges>(),
     typicalUse: grinderTypicalUseEnum('typical_use').notNull(),
     isVerified: boolean('is_verified').notNull().default(UNVERIFIED_BY_DEFAULT),
     createdByUserId: uuid('created_by_user_id').references(() => usersTable.id, {

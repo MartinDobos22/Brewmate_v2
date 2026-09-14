@@ -23,3 +23,5 @@ export { createGrinderRequestSchema } from './createGrinderSchema.js';
 export type { CreateGrinderRequest } from './createGrinderSchema.js';
 export { grinderQuerySchema } from './grinderQuerySchema.js';
 export type { GrinderQuery, GrinderFilter } from './grinderQuerySchema.js';
+export { settingRangeSchema, settingRangesSchema } from './settingRangeSchema.js';
+export type { SettingRange, SettingRanges } from './settingRangeSchema.js';

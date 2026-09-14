@@ -35,3 +35,6 @@ export { useQuickBrew } from './useQuickBrew';
 export type { QuickBrew } from './useQuickBrew';
 export { useCoffeeSource } from './useCoffeeSource';
 export type { CoffeeSource } from './useCoffeeSource';
+
+export { useGrindGuidance } from './useGrindGuidance';
+export type { GrindGuidanceReading } from './useGrindGuidance';
