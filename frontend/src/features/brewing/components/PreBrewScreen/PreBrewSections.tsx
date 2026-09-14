@@ -4,6 +4,7 @@ import { ConfidenceNotice } from '../../../tasteProfile/components';
 import { WaterTypePicker } from '../../../inventory/components';
 import type { BrewSetup } from '../../hooks/useBrewSetup';
 import { BrewConstraintsSection } from '../BrewConstraintsSection';
+import { PreBrewPreviousRecipe } from '../PreBrewPreviousRecipe';
 import { PreBrewAmountsSection } from '../PreBrewAmountsSection';
 import { PreBrewCoffeeSection } from '../PreBrewCoffeeSection';
 import { PreBrewGrindSection } from '../PreBrewGrindSection';
@@ -20,6 +21,12 @@ export interface PreBrewSectionsProps {
  * appear only once one is chosen. Asking somebody for a dose before they have
  * said what they are brewing in is asking them to guess at a number the next
  * answer is about to change.
+ *
+ * The recipe they already have for this pair comes first of those, above every
+ * question it has already answered. It is an offer rather than a default -
+ * writing a new one is still the button at the bottom - but an offer made
+ * after somebody has set a dose, a ratio and a grind is one that saved them
+ * nothing.
  */
 export const PreBrewSections = ({ setup }: PreBrewSectionsProps): JSX.Element => (
   <>
@@ -36,6 +43,11 @@ export const PreBrewSections = ({ setup }: PreBrewSectionsProps): JSX.Element =>
     />
     {setup.method === undefined ? null : (
       <>
+        <PreBrewPreviousRecipe
+          bag={setup.bag}
+          method={setup.method}
+          equipmentSetId={setup.activeSet?.id}
+        />
         <BrewConstraintsSection
           constraints={setup.constraints}
           fromSet={setup.activeSet !== undefined}

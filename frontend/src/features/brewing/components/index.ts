@@ -20,5 +20,7 @@ export { PreBrewPlanCard } from './PreBrewPlanCard';
 export type { PreBrewPlanCardProps } from './PreBrewPlanCard';
 export { BrewStepProgress } from './BrewStepProgress';
 export type { BrewStepProgressProps } from './BrewStepProgress';
+export { PreBrewPreviousRecipe } from './PreBrewPreviousRecipe';
+export type { PreBrewPreviousRecipeProps } from './PreBrewPreviousRecipe';
 export { PreBrewGrindSection } from './PreBrewGrindSection';
 export type { PreBrewGrindSectionProps } from './PreBrewGrindSection';
