@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import {
   EQUIPMENT_TYPES,
+  chooseGrinderEquipment,
   readGrindCoffeeFacts,
   resolveGrindGuidance,
   type BrewMethod,
@@ -18,6 +19,17 @@ const ACTIVE_ONLY = true;
 export interface GrindGuidanceReading {
   /** Null only until a method has been chosen; every other gap is inside the guidance. */
   readonly guidance: GrindGuidance | null;
+  /**
+   * Every grinder this brew could be ground on, which is what makes the
+   * choice askable at all.
+   *
+   * Narrowed to the active set for the same reason the method list is: the
+   * grinder at the cabin is the one grinding this coffee, whatever is sitting
+   * on the counter at home.
+   */
+  readonly candidates: readonly Equipment[];
+  /** The one the numbers below were read off, chosen or defaulted to. */
+  readonly chosenId: string | null;
   /** What to call the grinder the numbers were read off, where there is one. */
   readonly grinderName: string | null;
   /** Whether they own a grinder at all, which is a different gap from owning an uncatalogued one. */
@@ -42,30 +54,36 @@ const nameOf = (grinder: { readonly brand: string; readonly model: string }): st
  * morning, and a number that arrived after a request and a spinner is a number
  * they would stop waiting for by the third bag.
  *
- * The grinder is read out of the same set the rest of the screen is narrowed
- * by: the grinder at the cabin is the one grinding this coffee, whatever is
- * sitting on the counter at home.
+ * Which grinder it is read off is now an answer rather than an accident. A
+ * kitchen with a hand grinder and an electric one has two right answers, and
+ * the difference between them is the whole number: a click is ten microns on
+ * one and forty on the other. Nobody having said is still the common case, and
+ * `chooseGrinderEquipment` - the same rule the API falls back to - settles it
+ * the same way on both sides of the wire.
  */
 export const useGrindGuidance = (
   method: BrewMethod | undefined,
   bag: CoffeeBag | null,
   equipmentSet: EquipmentSet | undefined,
+  chosenGrinderId: string | null,
 ): GrindGuidanceReading => {
   const equipment = useEquipmentList({ type: EQUIPMENT_TYPES.grinder, activeOnly: ACTIVE_ONLY });
   const owned = equipment.data?.items ?? NONE;
-  const inSet =
+  const candidates =
     equipmentSet === undefined
       ? owned
       : owned.filter((item: Equipment): boolean => equipmentSet.equipmentIds.includes(item.id));
   /**
-   * The first one linked to the catalogue, falling back to the first one they
-   * own. A grinder with no catalogue entry still means they have a grinder -
-   * "you own nothing to grind with" and "I do not know your grinder's scale"
-   * are different things to say, and the second one has a fix.
+   * What they picked, or what the shared rule picks for them.
+   *
+   * A pick that is no longer among the candidates - the set was switched after
+   * it was made - falls back rather than leaving the card blank: the choice
+   * belongs to a kitchen, and this is a different one.
    */
-  const linked = inSet.find((item: Equipment): boolean => item.catalogGrinderId !== null);
-  const chosen = linked ?? inSet[0];
-  const catalogue = useGrinder(linked?.catalogGrinderId ?? null);
+  const chosen =
+    candidates.find((item: Equipment): boolean => item.id === chosenGrinderId) ??
+    chooseGrinderEquipment(candidates);
+  const catalogue = useGrinder(chosen?.catalogGrinderId ?? null);
   const grinder = catalogue.data ?? null;
   const category = method?.category;
 
@@ -83,12 +101,15 @@ export const useGrindGuidance = (
 
   return {
     guidance,
+    candidates,
+    chosenId: chosen?.id ?? null,
     grinderName: grinder === null ? (chosen?.brand ?? null) : nameOf(grinder),
-    hasGrinder: chosen !== undefined,
+    hasGrinder: chosen !== null,
     /*
      * A disabled query never leaves `isPending`, so waiting on one would mean
      * waiting forever for somebody who has no catalogued grinder at all.
      */
-    isLoading: equipment.isPending || (linked !== undefined && catalogue.isPending),
+    isLoading:
+      equipment.isPending || ((chosen?.catalogGrinderId ?? null) !== null && catalogue.isPending),
   };
 };

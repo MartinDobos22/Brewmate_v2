@@ -1,5 +1,7 @@
 import {
   EQUIPMENT_TYPES,
+  chooseGrinderEquipment,
+  listGrinderEquipment,
   readBrewerParams,
   type BrewMethod,
   type CoffeeBag,
@@ -39,6 +41,13 @@ export interface BrewContextRequest {
   readonly bagId: string | null;
   readonly equipmentSetId: string | null;
   /**
+   * The grinder the drinker named, where they named one.
+   *
+   * Absent or null means nobody said, and the rule below picks. Named, it is
+   * checked against their own rows like every other id here.
+   */
+  readonly grinderEquipmentId?: string | null;
+  /**
    * The gear a recipe was written for, where one already exists.
    *
    * A conversation about a cup that has been drunk has to describe the brewer
@@ -52,6 +61,14 @@ export interface BrewContextRequest {
 export interface BrewContext {
   readonly bag: CoffeeBag | null;
   readonly set: EquipmentSet | null;
+  /**
+   * The gear this brew happens with, carrying exactly one grinder.
+   *
+   * A kitchen may hold two; a brew is ground on one of them. Handing both to
+   * the prompt described the second one against the first one's catalogue
+   * entry - a collar range belonging to a different machine - and storing both
+   * on the recipe left the conversation afterwards free to pick the other one.
+   */
   readonly equipment: readonly Equipment[];
   /** The catalogue entry behind their grinder, where there is one. */
   readonly grinder: Grinder | null;
@@ -144,16 +161,55 @@ export const createBrewContextResolver = ({
   const forThisMethod = (item: Equipment, method: BrewMethod): boolean =>
     item.type !== EQUIPMENT_TYPES.brewer || readBrewerParams(item.params).methodId === method.id;
 
-  const readGrinder = async (
-    userId: string,
+  /**
+   * Which of their grinders this brew is ground on.
+   *
+   * Named, it must be one of theirs, and one that is not answers with the same
+   * 404 as a bag or a set that is not - falling back to another grinder would
+   * be the quieter failure and much the worse one, because the app has already
+   * drawn a band and a click size off the collar they chose and the recipe
+   * would come back written for a different collar entirely.
+   *
+   * Unnamed, the choice is `chooseGrinderEquipment` from the contract - the
+   * same function the app ran to draw that band, so the two cannot disagree
+   * about a decision neither of them asked anybody to make.
+   */
+  const chooseGrinder = (
     equipment: readonly Equipment[],
-  ): Promise<Grinder | null> => {
-    const catalogId = equipment.find(
-      (item: Equipment): boolean =>
-        item.type === EQUIPMENT_TYPES.grinder && item.catalogGrinderId !== null,
-    )?.catalogGrinderId;
+    grinderEquipmentId: string | null,
+  ): Equipment | null => {
+    if (grinderEquipmentId === null) {
+      return chooseGrinderEquipment(equipment);
+    }
 
-    if (catalogId === undefined || catalogId === null) {
+    const named = listGrinderEquipment(equipment).find(
+      (item: Equipment): boolean => item.id === grinderEquipmentId,
+    );
+
+    if (named === undefined) {
+      throw notFoundError(ERROR_MESSAGES.equipmentNotFound);
+    }
+
+    return named;
+  };
+
+  /** Every other grinder drops out: this brew is ground on one of them. */
+  const withOneGrinder = (
+    equipment: readonly Equipment[],
+    grinderEquipment: Equipment | null,
+  ): readonly Equipment[] =>
+    equipment.filter(
+      (item: Equipment): boolean =>
+        item.type !== EQUIPMENT_TYPES.grinder || item.id === grinderEquipment?.id,
+    );
+
+  const readCatalogueEntry = async (
+    userId: string,
+    grinderEquipment: Equipment | null,
+  ): Promise<Grinder | null> => {
+    const catalogId = grinderEquipment?.catalogGrinderId ?? null;
+
+    if (catalogId === null) {
       return null;
     }
 
@@ -168,6 +224,7 @@ export const createBrewContextResolver = ({
       method,
       bagId,
       equipmentSetId,
+      grinderEquipmentId,
       equipmentIds,
     }): Promise<BrewContext> => {
       const [bag, set, profile] = await Promise.all([
@@ -176,9 +233,16 @@ export const createBrewContextResolver = ({
         tasteProfileService.get(userId),
       ]);
       const owned = await readEquipment(userId, set, equipmentIds);
-      const equipment = owned.filter((item: Equipment): boolean => forThisMethod(item, method));
+      const usable = owned.filter((item: Equipment): boolean => forThisMethod(item, method));
+      const grinderEquipment = chooseGrinder(usable, grinderEquipmentId ?? null);
 
-      return { bag, set, equipment, grinder: await readGrinder(userId, equipment), profile };
+      return {
+        bag,
+        set,
+        equipment: withOneGrinder(usable, grinderEquipment),
+        grinder: await readCatalogueEntry(userId, grinderEquipment),
+        profile,
+      };
     },
   };
 };

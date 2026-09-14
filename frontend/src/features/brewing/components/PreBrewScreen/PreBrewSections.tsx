@@ -43,7 +43,13 @@ export const PreBrewSections = ({ setup }: PreBrewSectionsProps): JSX.Element =>
         />
         <WaterTypePicker selected={setup.waterType} onSelect={setup.chooseWater} />
         <PreBrewAmountsSection control={setup} method={setup.method} warnings={setup.warnings} />
-        <PreBrewGrindSection method={setup.method} bag={setup.bag} equipmentSet={setup.activeSet} />
+        <PreBrewGrindSection
+          method={setup.method}
+          bag={setup.bag}
+          equipmentSet={setup.activeSet}
+          grinderEquipmentId={setup.grinderEquipmentId}
+          onChooseGrinder={setup.chooseGrinder}
+        />
         <ConfidenceNotice />
       </>
     )}

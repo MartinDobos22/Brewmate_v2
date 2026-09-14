@@ -102,6 +102,17 @@ export const SK_PRE_BREW = {
     'Rozsah je publikovaný pre tento mlynček; v ňom ťa posúvam podľa toho, čo je na balíčku. Je to štart, nie výsledok.',
   preBrewGrindIntroWindow:
     'Pre tento mlynček a túto prípravu nikto rozsah nezverejnil, tak vychádzam z bežného okna pre tento typ prípravy a z krivky mlynčeka. Hrubší odhad — po prvej šálke ho doladíme.',
+  /*
+   * Only drawn where there are two. The hint asks the question in the words
+   * somebody would use standing over the machines - which one is turning now -
+   * rather than naming a setting, and each option says which kind of answer it
+   * can give, because that is the real difference between them.
+   */
+  preBrewGrindPickerHint: 'Na ktorom melieš túto?',
+  preBrewGrindPickerNumber: 'Poznám jeho stupnicu - poviem ti číslo aj o koľko klikov hýbať.',
+  preBrewGrindPickerWords: 'Tento v katalógu nemám, takže hrubosť poviem len slovami.',
+  preBrewGrindUnnamed: 'Mlynček bez názvu',
+
   preBrewGrindOnCollar: 'Na mlynčeku {grinder}',
   preBrewGrindBand: '{target} (rozumné rozpätie {min} až {max})',
   preBrewGrindWords: 'Hrubosť',

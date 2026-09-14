@@ -21,13 +21,15 @@ import { COFFEE_DESCRIPTION_MAX_LENGTH } from './aiFieldLimits.js';
  * the taste profile, the brew history for this coffee and this method, and how
  * much any of it is worth are read off the caller's own rows, for the same
  * reason the shop verdict reads them: a profile a client could declare is a
- * profile anybody could declare. And nothing about the gear travels either,
- * beyond which set was chosen: the set names equipment the API can look up,
- * and a client that could describe a kettle could describe one it does not own.
+ * profile anybody could declare. And no gear is *described* here either: what
+ * travels is which set and which grinder, both as ids the API looks up against
+ * the caller's own rows, because a client that could describe a kettle could
+ * describe one it does not own.
  *
  * What does travel is everything the person decided on the screen before this
- * one: the dose, the water, the ratio between them, the water they are using
- * and what they are missing today. Those are answers, not suggestions.
+ * one: the dose, the water, the ratio between them, the water they are using,
+ * what they are missing today and which grinder is going to grind it. Those
+ * are answers, not suggestions.
  */
 export const generateRecipeRequestSchema = z
   .object({
@@ -38,6 +40,18 @@ export const generateRecipeRequestSchema = z
     coffeeDescription: z.string().max(COFFEE_DESCRIPTION_MAX_LENGTH).nullable().optional(),
     /** The set the brew is being made from; null means whatever is owned. */
     equipmentSetId: z.uuid().nullable().optional(),
+    /**
+     * The grinder this is being ground on, where the drinker chose one.
+     *
+     * Null is not "no grinder" - it is "nobody said", and the API then picks
+     * the same one the app drew its own grind guidance off, through the same
+     * function. It has to be askable because a kitchen with a hand grinder and
+     * an electric one has two right answers, and which of them is turning this
+     * morning changes the number on the collar and what one click of it is
+     * worth. Absent, that was decided by whichever row happened to come back
+     * first.
+     */
+    grinderEquipmentId: z.uuid().nullable().optional(),
     constraints: brewConstraintsSchema,
     waterType: z.enum(WATER_TYPES),
     doseGrams: z.number().min(DOSE_GRAMS_MIN).max(DOSE_GRAMS_MAX),
