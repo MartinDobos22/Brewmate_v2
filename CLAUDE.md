@@ -1091,9 +1091,10 @@ as a fact rather than asked for one.
   range.
 - **The method's window decides the ballpark, the bag decides where in it to
   stand, the grinder's own curve turns that into a number on a collar.** That is
-  the fallback path, for the 18% of grinder-and-method pairs nobody has
-  published a range for - most of them stepless collars, where a numbered range
-  is not a thing anybody can publish. Three inputs, each of which may be missing, and the
+  the fallback path, for the 26% of grinder-and-method pairs nobody has
+  published a range for - stepless collars, where a numbered range is not a
+  thing anybody can publish, and the shop-sourced entries, where nobody has
+  written down what any position grinds to. Three inputs, each of which may be missing, and the
   answer degrades one step at a time rather than disappearing: no bag facts is
   the middle of the window reported as exactly that, and no calibrated grinder
   is a grind in words and no number at all.
@@ -1400,6 +1401,13 @@ The first product screen: `/grinders`, reached from the inventory tab.
   `micronCalibration` is derived from those same positions. The first is what
   the guidance starts from; the second is what makes two grinders comparable and
   what says how far one click moves the cup.
+- **A sixth list comes from a shop, not a chart.** `shopGrinderSeeds.ts` is the
+  Czech and Slovak shelf: grinders people here actually buy that no grind-size
+  chart has ever covered. A shop listing states how many positions a collar has
+  and nothing else, so those entries carry a collar, a brand, a model and an
+  espresso-or-filter flag - no curve and no ranges. They answer "is my grinder
+  in here" and hand the guidance back to the method window. Every listing that
+  stated no position count was left out rather than given a plausible range.
 - **Its curves are derived, and the derivation is checked against something
   else.** The chart says where each brewing method sits on each collar; the
   file fits a line through those positions against `GRIND_MICRON_WINDOWS` and
