@@ -39,6 +39,14 @@ export interface BrewSetup extends BrewAmountsControl {
    */
   readonly hasChosenCoffee: boolean;
   readonly coffeeDescription: string;
+  /**
+   * The grinder this is being ground on, where they said which.
+   *
+   * Null is the ordinary state and means nobody said - the card below then
+   * reads the numbers off whichever grinder `chooseGrinderEquipment` picks,
+   * and the API falls back to the same one through the same function.
+   */
+  readonly grinderEquipmentId: string | null;
   readonly constraints: BrewConstraints;
   readonly waterType: WaterType;
   readonly warnings: readonly BrewAmountWarning[];
@@ -51,6 +59,7 @@ export interface BrewSetup extends BrewAmountsControl {
   /** Back to the coffee question, keeping every other answer on this screen. */
   readonly changeCoffee: () => void;
   readonly describeCoffee: (description: string) => void;
+  readonly chooseGrinder: (equipmentId: string) => void;
   readonly toggleConstraint: (name: keyof BrewConstraints, isSet: boolean) => void;
   readonly chooseWater: (waterType: WaterType) => void;
   readonly askForRecipe: (onWritten: (recipe: Recipe) => void) => void;
@@ -87,6 +96,7 @@ export const useBrewSetup = (initialBagId?: string): BrewSetup => {
   const [hasChosenCoffee, setHasChosenCoffee] = useState(false);
   const bags = useCoffeeBags().data?.items ?? NO_BAGS;
   const [coffeeDescription, setCoffeeDescription] = useState('');
+  const [grinderEquipmentId, setGrinderEquipmentId] = useState<string | null>(null);
   const [constraints, setConstraints] = useState<BrewConstraints>(NO_CONSTRAINTS);
   const [waterType, setWaterType] = useState<WaterType | null>(null);
   const generate = useGenerateRecipe();
@@ -141,6 +151,7 @@ export const useBrewSetup = (initialBagId?: string): BrewSetup => {
     bag,
     hasChosenCoffee,
     coffeeDescription,
+    grinderEquipmentId,
     constraints,
     waterType: waterType ?? user?.waterType ?? WATER_TYPES.unknown,
     warnings: checkBrewAmounts({ amounts: amounts.amounts, brewer, bag }),
@@ -148,9 +159,17 @@ export const useBrewSetup = (initialBagId?: string): BrewSetup => {
     isPending: generate.isPending,
     hasFailed: generate.isError,
 
+    /*
+     * A different place is a different counter. The method goes because the
+     * gear there may not make it, and the grinder goes with it for the same
+     * reason: a pick made about the kitchen at home is not an answer about the
+     * cabin, and carrying it over would have the card reading a band off a
+     * machine three hundred kilometres away.
+     */
     chooseSet: (nextId: string): void => {
       setChosenSetId(nextId);
       setMethod(undefined);
+      setGrinderEquipmentId(null);
     },
     chooseMethod: setMethod,
     chooseBag: (next: CoffeeBag | null): void => {
@@ -168,6 +187,7 @@ export const useBrewSetup = (initialBagId?: string): BrewSetup => {
       setHasChosenCoffee(false);
     },
     describeCoffee: setCoffeeDescription,
+    chooseGrinder: setGrinderEquipmentId,
     toggleConstraint: (name: keyof BrewConstraints, isSet: boolean): void => {
       setConstraints({ ...constraints, [name]: isSet });
     },
@@ -184,6 +204,7 @@ export const useBrewSetup = (initialBagId?: string): BrewSetup => {
           bagId: bag?.id ?? null,
           coffeeDescription: coffeeDescription === '' ? null : coffeeDescription,
           equipmentSetId: activeSet?.id ?? null,
+          grinderEquipmentId,
           constraints,
           waterType: waterType ?? user?.waterType ?? WATER_TYPES.unknown,
           doseGrams: amounts.amounts.doseGrams,

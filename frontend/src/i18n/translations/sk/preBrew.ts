@@ -48,6 +48,27 @@ export const SK_PRE_BREW = {
   preBrewMethodEmpty: 'V tejto sade nemáš zapísané nič, v čom sa dá variť.',
   preBrewMethodEmptyAction: 'Doplniť vybavenie',
 
+  /*
+   * The recipe this pair already has.
+   *
+   * Two titles because they are two different claims: a pinned recipe is the
+   * one this person decided was right, and the latest one is merely the most
+   * recent thing the app wrote. Calling the second "overený" would be the
+   * screen vouching for something nobody vouched for.
+   *
+   * The history line never says "uvaril si ju takto" about a recipe that was
+   * written and walked away from - being told about a morning that did not
+   * happen is how an app loses the benefit of the doubt on everything else it
+   * says.
+   */
+  preBrewPreviousPinnedTitle: 'Tvoj pripnutý recept',
+  preBrewPreviousTitle: 'Recept, ktorý už máš',
+  preBrewPreviousBrewed: 'Takto si ju varil {count}× - naposledy {date}.',
+  preBrewPreviousNeverBrewed:
+    'Tento recept ti už appka napísala, ale zatiaľ si podľa neho nevaril.',
+  preBrewPreviousBrewAgain: 'Uvariť znova',
+  preBrewPreviousTimeline: 'Ako sa k týmto číslam došlo',
+
   preBrewConstraintsTitle: 'Dnes nemám všetko',
   preBrewConstraintsClosed: 'Zaškrtni, čo ti dnes chýba - recept podľa toho prepíšem.',
   preBrewConstraintsCount: 'chýba ti {count}',
@@ -102,6 +123,17 @@ export const SK_PRE_BREW = {
     'Rozsah je publikovaný pre tento mlynček; v ňom ťa posúvam podľa toho, čo je na balíčku. Je to štart, nie výsledok.',
   preBrewGrindIntroWindow:
     'Pre tento mlynček a túto prípravu nikto rozsah nezverejnil, tak vychádzam z bežného okna pre tento typ prípravy a z krivky mlynčeka. Hrubší odhad — po prvej šálke ho doladíme.',
+  /*
+   * Only drawn where there are two. The hint asks the question in the words
+   * somebody would use standing over the machines - which one is turning now -
+   * rather than naming a setting, and each option says which kind of answer it
+   * can give, because that is the real difference between them.
+   */
+  preBrewGrindPickerHint: 'Na ktorom melieš túto?',
+  preBrewGrindPickerNumber: 'Poznám jeho stupnicu - poviem ti číslo aj o koľko klikov hýbať.',
+  preBrewGrindPickerWords: 'Tento v katalógu nemám, takže hrubosť poviem len slovami.',
+  preBrewGrindUnnamed: 'Mlynček bez názvu',
+
   preBrewGrindOnCollar: 'Na mlynčeku {grinder}',
   preBrewGrindBand: '{target} (rozumné rozpätie {min} až {max})',
   preBrewGrindWords: 'Hrubosť',

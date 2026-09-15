@@ -14,11 +14,15 @@ import { useGrindGuidance } from '../../hooks/useGrindGuidance';
 
 import { PreBrewGrindBody } from './PreBrewGrindBody';
 import { createPreBrewGrindSectionStyles } from './PreBrewGrindSection.styles';
+import { PreBrewGrinderPicker } from './PreBrewGrinderPicker';
 
 export interface PreBrewGrindSectionProps {
   readonly method: BrewMethod;
   readonly bag: CoffeeBag | null;
   readonly equipmentSet: EquipmentSet | undefined;
+  /** Null until somebody picks one, which is the usual state. */
+  readonly grinderEquipmentId: string | null;
+  readonly onChooseGrinder: (equipmentId: string) => void;
 }
 
 /**
@@ -36,15 +40,23 @@ export interface PreBrewGrindSectionProps {
  * obey or ignore; a number that names the roast and the days on the shelf is
  * something somebody can disagree with, and disagreeing with it correctly is
  * how they learn their own grinder.
+ *
+ * Which grinder is asked here rather than anywhere else, and only where there
+ * is more than one, because this is the card the answer changes. Put on the
+ * gear screen it would be a preference somebody set once and forgot; put here
+ * it sits directly above the number it decides, and picking the other machine
+ * redraws that number while they are still standing over it.
  */
 export const PreBrewGrindSection = ({
   method,
   bag,
   equipmentSet,
+  grinderEquipmentId,
+  onChooseGrinder,
 }: PreBrewGrindSectionProps): JSX.Element | null => {
   const styles = useThemedStyles(createPreBrewGrindSectionStyles);
   const { t } = useTranslation();
-  const reading = useGrindGuidance(method, bag, equipmentSet);
+  const reading = useGrindGuidance(method, bag, equipmentSet, grinderEquipmentId);
 
   if (reading.guidance === null) {
     return null;
@@ -53,6 +65,11 @@ export const PreBrewGrindSection = ({
   return (
     <Card>
       <Text variant="titleMedium">{t(TRANSLATION_KEYS.preBrewGrindSection)}</Text>
+      <PreBrewGrinderPicker
+        candidates={reading.candidates}
+        chosenId={reading.chosenId}
+        onChoose={onChooseGrinder}
+      />
       <View style={styles.rows}>
         <PreBrewGrindBody reading={reading} guidance={reading.guidance} />
       </View>

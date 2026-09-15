@@ -17,6 +17,7 @@ export {
   readScaleParams,
 } from './equipmentParamsSchema.js';
 export type { BrewerParams, KettleParams, ScaleParams } from './equipmentParamsSchema.js';
+export { chooseGrinderEquipment, listGrinderEquipment } from './chooseGrinderEquipment.js';
 export { equipmentSchema } from './equipmentSchema.js';
 export type { Equipment } from './equipmentSchema.js';
 export { createEquipmentRequestSchema } from './createEquipmentSchema.js';

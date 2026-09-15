@@ -1,6 +1,7 @@
 import {
   API_ROUTES,
   aiUsageLogSchema,
+  equipmentSchema,
   generateRecipeResponseSchema,
   grinderSchema,
   listResponseSchema,
@@ -70,6 +71,25 @@ const CLICKED_COLLAR: CreateGrinderRequest = {
   typicalUse: GRINDER_TYPICAL_USES.both,
 };
 
+/**
+ * A second collar, deliberately stopping at different places from the first.
+ *
+ * The model answers 22 whichever grinder it is asked about, so the only thing
+ * that can say which one the recipe was written for is where that 22 lands: 20
+ * on a collar that stops every five clicks, 21 on one that stops every three.
+ */
+const SECOND_COLLAR_STEP = 3;
+const SECOND_COLLAR_SNAPPED = 21;
+
+const SECOND_CLICKED_COLLAR: CreateGrinderRequest = {
+  ...CLICKED_COLLAR,
+  model: 'Po troch',
+  step: SECOND_COLLAR_STEP,
+};
+
+const UNOWNED_EQUIPMENT_ID = '33333333-3333-4333-8333-333333333333';
+const ONE_GRINDER = 1;
+
 const GRIND_SECTION_HEADING = 'Where to start the grind';
 const NOTHING_KNOWN_ABOUT_THE_COFFEE = 'nothing is known about this coffee';
 const COLLAR_HEADING = 'on their own collar';
@@ -94,6 +114,24 @@ describe('recipe generation', () => {
     generateRecipeResponseSchema.parse(
       (await api.post(API_ROUTES.aiGenerateRecipe, RETURNING_IDENTITY, body)).json(),
     );
+
+  /** Contributes a collar to the catalogue and owns one, answering with the equipment id. */
+  const ownGrinder = async (collar: CreateGrinderRequest): Promise<string> => {
+    const grinder: Grinder = grinderSchema.parse(
+      (await api.post(API_ROUTES.grinders, RETURNING_IDENTITY, collar)).json(),
+    );
+
+    return equipmentSchema.parse(
+      (
+        await api.post(API_ROUTES.equipment, RETURNING_IDENTITY, {
+          type: EQUIPMENT_TYPES.grinder,
+          catalogGrinderId: grinder.id,
+          brand: collar.brand,
+          model: collar.model,
+        })
+      ).json(),
+    ).id;
+  };
 
   beforeAll(async () => {
     context = await createTestContext();
@@ -266,16 +304,7 @@ describe('recipe generation', () => {
    * guess which of two neighbours was meant.
    */
   it('reads the starting point onto their own collar and stores a setting they can dial', async () => {
-    const grinder: Grinder = grinderSchema.parse(
-      (await api.post(API_ROUTES.grinders, RETURNING_IDENTITY, CLICKED_COLLAR)).json(),
-    );
-
-    await api.post(API_ROUTES.equipment, RETURNING_IDENTITY, {
-      type: EQUIPMENT_TYPES.grinder,
-      catalogGrinderId: grinder.id,
-      brand: CLICKED_COLLAR.brand,
-      model: CLICKED_COLLAR.model,
-    });
+    await ownGrinder(CLICKED_COLLAR);
 
     context.completionClient.answerWith(TEST_RECIPE_ANSWER);
 
@@ -283,6 +312,65 @@ describe('recipe generation', () => {
 
     expect(context.completionClient.calls[FIRST]?.prompt).toContain(COLLAR_HEADING);
     expect(recipe.params.grindSetting).toBe(SNAPPED_GRIND_SETTING);
+  });
+
+  /**
+   * Which of their grinders is turning this morning is an answer, not an
+   * accident.
+   *
+   * Both of these are catalogued, so the rule that settles it when nobody says
+   * would pick the first one - and it is the second one being named that has
+   * to win, because the app has already drawn a band and a click size off that
+   * collar and the recipe coming back for the other one would be the two
+   * screens disagreeing about the same brew.
+   */
+  it('writes the recipe for the grinder that was named rather than the default one', async () => {
+    await ownGrinder(CLICKED_COLLAR);
+    const second = await ownGrinder(SECOND_CLICKED_COLLAR);
+
+    context.completionClient.answerWith(TEST_RECIPE_ANSWER);
+
+    const { recipe } = await generate(request({ grinderEquipmentId: second }));
+
+    expect(recipe.params.grindSetting).toBe(SECOND_COLLAR_SNAPPED);
+  });
+
+  /**
+   * A kitchen may hold two grinders; a brew is ground on one of them. Storing
+   * both would leave the conversation afterwards free to reason about the
+   * machine this cup was not made on.
+   */
+  it('stores only the grinder the brew was ground on', async () => {
+    const first = await ownGrinder(CLICKED_COLLAR);
+    const second = await ownGrinder(SECOND_CLICKED_COLLAR);
+
+    context.completionClient.answerWith(TEST_RECIPE_ANSWER);
+
+    const { recipe } = await generate(request({ grinderEquipmentId: second }));
+
+    expect(recipe.equipmentIds).toHaveLength(ONE_GRINDER);
+    expect(recipe.equipmentIds).toContain(second);
+    expect(recipe.equipmentIds).not.toContain(first);
+  });
+
+  /**
+   * Falling back to another grinder would be the quieter failure and much the
+   * worse one: the screen has already printed a band off the collar they chose,
+   * and a recipe written for a different collar is a number they would dial.
+   */
+  it('refuses a grinder that does not belong to the caller', async () => {
+    await ownGrinder(CLICKED_COLLAR);
+
+    context.completionClient.answerWith(TEST_RECIPE_ANSWER);
+
+    const response = await api.post(
+      API_ROUTES.aiGenerateRecipe,
+      RETURNING_IDENTITY,
+      request({ grinderEquipmentId: UNOWNED_EQUIPMENT_ID }),
+    );
+
+    expect(response.statusCode).toBe(HTTP_STATUS.notFound);
+    expect(context.completionClient.calls).toHaveLength(NOTHING);
   });
 
   /** A retry is spent money, and a usage log that hides it disagrees with the invoice. */

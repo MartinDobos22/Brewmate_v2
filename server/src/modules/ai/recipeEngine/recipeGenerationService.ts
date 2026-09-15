@@ -141,6 +141,7 @@ export const createRecipeGenerationService = ({
         method,
         bagId,
         equipmentSetId: input.equipmentSetId ?? null,
+        grinderEquipmentId: input.grinderEquipmentId ?? null,
       });
       const history = await readHistory(userId, bagId, method.id);
       const now = new Date();

@@ -4,3 +4,5 @@ export { PreBrewGrindRow } from './PreBrewGrindRow';
 export type { PreBrewGrindRowProps } from './PreBrewGrindRow';
 export { PreBrewGrindBody } from './PreBrewGrindBody';
 export type { PreBrewGrindBodyProps } from './PreBrewGrindBody';
+export { PreBrewGrinderPicker } from './PreBrewGrinderPicker';
+export type { PreBrewGrinderPickerProps } from './PreBrewGrinderPicker';

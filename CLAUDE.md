@@ -841,6 +841,24 @@ leading to one.
   in this application branches on `key` - adding V60 Switch is an insert, not a
   release - and an icon table keyed by `key` would quietly break that by giving
   the next seeded method a blank square where every other one has a picture.
+- **The recipe this pair already has is offered before another one is
+  written.** The screen wrote a new one every single time, which on a pair
+  somebody had already dialled in paid a model to rediscover an answer sitting
+  in their own rows and handed back numbers slightly different from the ones
+  they had settled on. `usePreviousBrew` asks `/history/timeline` rather than
+  `/recipes`, because that endpoint already understands the pair the way the
+  rest of the product does: an absent bag is the quick-brew line rather than
+  "any coffee", and a flat recipe filter cannot say that without offering
+  somebody a recipe for a different bag. The pinned version wins over the
+  newest - pinning is what dialling something in was for, and a later version
+  exists precisely where somebody was still experimenting.
+- **It sits under the brewer, above every question it has already answered.**
+  The dose, the ratio and the grind are all on that card; offered after them it
+  would have saved nobody anything. It is an offer and not a default - writing
+  a new recipe is still the button at the bottom, because the reason to be on
+  this screen at all may be that the last cup was wrong. A recipe written and
+  never brewed is a real state and still worth offering, and says so rather
+  than claiming a morning that did not happen.
 - **The plan card is what turns five answers back into one decision.**
   Everything on it was chosen further up the screen, in cards somebody has
   already scrolled past; by the time they reached the button the dose was four
@@ -1133,6 +1151,31 @@ as a fact rather than asked for one.
   they read first. `PreBrewGrindSection` shows it above the recipe button, so
   somebody can grind while the recipe is still being written and can see what
   the recipe was built on rather than only what it concluded.
+- **Which grinder it is read off is an answer, not an accident.** A kitchen
+  with a hand grinder and an electric one has two right answers, and the
+  difference between them is the whole number - a click is ten microns on one
+  and forty on the other. `PreBrewGrindSection` asks, and only where there is
+  more than one: a picker with a single option is furniture on the screen
+  somebody opens with a kettle already boiling. Each option says which kind of
+  answer it can give, because a catalogued grinder answers with a setting on
+  its own collar and one the catalogue has never met answers in words, and
+  choosing between them is choosing between those two answers.
+- **Nobody having said is the common case, and `chooseGrinderEquipment`
+  settles it.** The catalogued grinder first, because it is the only one that
+  can answer with a number; failing that the first one owned, because owning an
+  uncatalogued grinder and owning none at all are different things to say. It
+  lives in `@brewmate/shared` because both sides ask it - the app to draw the
+  band before a token is spent, the API to write the recipe afterwards - and it
+  was written out separately on both sides until it was not. The pick travels
+  as `grinderEquipmentId`, an id the API checks against the caller's own rows
+  like every other id in that request; a named grinder that is not theirs is a
+  404 rather than a quiet fall back to another collar, because the screen has
+  already printed a band off the one they chose.
+- **A brew is ground on one grinder, so the context carries one.** Handing the
+  prompt both described the second against the first one's catalogue entry - a
+  collar range belonging to a different machine - and storing both on the
+  recipe left the conversation afterwards free to reason about the machine the
+  cup was not made on.
 - **What reaches the recipe is a setting the collar can be left at.**
   `toBrewParams` clamps the model's number to the grinder's ends and snaps it to
   its step. Nothing is overruled - the number it chose is kept and only rounded
@@ -2174,7 +2217,8 @@ Two kinds, and the split is deliberate.
 
 `shared` has unit tests, and only for the conversion module, the shot timeline,
 the taste axis fold, the coffee taste estimate, the match between a coffee and
-a drinker, and where a grind starts: pure functions over plain values, testable
+a drinker, where a grind starts and which grinder it starts on: pure functions
+over plain values, testable
 with no database, no model and no server. That is the whole reason the conversion lives there rather than
 in the API - arithmetic this consequential should be checkable in a second. The
 tests are written against the decisions rather than the implementation: that a
@@ -2213,7 +2257,12 @@ coarse one to make the same change. Since a published range outranks every
 derivation, it is also tested that a grinder carrying one reports that range
 rather than a band reconstructed through microns, that the bean still moves the
 target inside it and never outside it, and that a brew nobody published a range
-for falls back to the window without claiming it did anything else.
+for falls back to the window without claiming it did anything else. Which
+grinder the arithmetic runs on is tested for the same reason it lives in the
+contract at all - both sides of the wire run it and have to agree: that a
+catalogued grinder beats one that merely came first, that everything which is
+not a grinder is ignored, and that owning nothing to grind with stays a
+different answer from owning a grinder the catalogue has never met.
 
 Everything else is integration tests, running against the real Neon test branch
 through `app.inject()` - no mocked database, no testcontainers (everything is
@@ -2276,7 +2325,11 @@ stored, that a change the constraints make impossible is refused and the
 corrected one taken, that a patch's ratio follows the water it moved, that the
 chat's taste event carries the brew's own learning weight, and that a model
 which will not answer still leaves the conversation holding what the person
-said.
+said. The grinder is tested for the disagreement it exists to prevent: that a
+named grinder beats the one the fallback would have picked, that only the
+grinder a cup was ground on reaches the stored recipe, and that a grinder
+belonging to somebody else is refused rather than quietly swapped for one that
+does.
 
 The history, the allowance and the export are tested for the rules that would
 otherwise be quietly broken: that a report says nothing at all until there are
