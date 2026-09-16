@@ -58,3 +58,24 @@ export const BAG_PHOTO_FOLDER = 'bag-scans';
 export const BAG_PHOTO_EXTENSION = '.jpg';
 export const BAG_PHOTO_CONTENT_TYPE = 'image/jpeg';
 export const BAG_PHOTO_PATH_SEPARATOR = '/';
+
+/**
+ * Where a photograph stopped, when it stopped.
+ *
+ * Two failures wore one message for a long time, and they are not the same
+ * thing at all: bytes that never left the phone, and bytes that arrived and
+ * could not be turned into a label. The person in a shop needs to know which,
+ * because one of them is worth walking two steps towards the door for and the
+ * other is not - and so does whoever is reading the reports, because only one
+ * of the two leaves a trace on the API at all.
+ *
+ * The values double as the name each failure is reported under, so the label
+ * on the crash and the sentence on the screen cannot describe different
+ * failures.
+ */
+export const BAG_PHOTO_FAILURES = {
+  upload: 'bag-photo-upload',
+  read: 'bag-photo-read',
+} as const;
+
+export type BagPhotoFailure = (typeof BAG_PHOTO_FAILURES)[keyof typeof BAG_PHOTO_FAILURES];

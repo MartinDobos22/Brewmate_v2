@@ -2,8 +2,13 @@ import type { LabelPhotoIssue, ParsedBagFields } from '@brewmate/shared';
 import { useState } from 'react';
 
 import { isPhotoScanningConfigured } from '../../../config';
+import { getErrorTracker } from '../../../lib/errorTracking';
 import { useAuthSession } from '../../auth/context';
-import { BAG_CAPTURE_RESULTS } from '../constants/bagPhoto';
+import {
+  BAG_CAPTURE_RESULTS,
+  BAG_PHOTO_FAILURES,
+  type BagPhotoFailure,
+} from '../constants/bagPhoto';
 import { parseCoffeeBag } from '../services/coffeeBagAiApi';
 import { pickBagPhoto, type BagPhotoSource } from '../services/pickBagPhoto';
 import { uploadBagPhoto } from '../services/uploadBagPhoto';
@@ -19,7 +24,13 @@ export interface BagCapture {
 export interface BagPhoto {
   readonly isSupported: boolean;
   readonly isWorking: boolean;
-  readonly hasFailed: boolean;
+  /**
+   * Which half of the chain gave up, and null while neither has.
+   *
+   * Named rather than a flag, because the screen has a different sentence for
+   * each and only one of the two is worth trying again on the spot.
+   */
+  readonly failure: BagPhotoFailure | null;
   readonly imageUrl: string | null;
   /**
    * Why the last photograph was refused, empty when it was not.
@@ -60,13 +71,29 @@ const NO_ISSUES: readonly LabelPhotoIssue[] = [];
 export const useBagPhoto = (): BagPhoto => {
   const { user } = useAuthSession();
   const [isWorking, setWorking] = useState(false);
-  const [hasFailed, setFailed] = useState(false);
+  const [failure, setFailure] = useState<BagPhotoFailure | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [issues, setIssues] = useState<readonly LabelPhotoIssue[]>(NO_ISSUES);
 
+  /**
+   * Records a failure and reports it under its own name.
+   *
+   * The reporting is the point. Both of these used to be swallowed by a bare
+   * `catch`, which left the one screen that depends on three separate services
+   * - a picker, a bucket and the API - with no way to say which of them had
+   * let go, on either side of the wire. An upload that never happens leaves no
+   * trace on the API at all, so without this there is nothing anywhere to read.
+   */
+  const noteFailure = (stage: BagPhotoFailure, error: unknown): BagCapture => {
+    setFailure(stage);
+    getErrorTracker().capture(error, { action: stage });
+
+    return UNAVAILABLE;
+  };
+
   return {
     isWorking,
-    hasFailed,
+    failure,
     imageUrl,
     issues,
     isSupported: isPhotoScanningConfigured() && user !== null,
@@ -83,40 +110,47 @@ export const useBagPhoto = (): BagPhoto => {
       }
 
       setWorking(true);
-      setFailed(false);
+      setFailure(null);
       setIssues(NO_ISSUES);
 
       try {
-        const uploaded = await uploadBagPhoto(localUri, user.uid);
-        const { fields, photoIssues } = await parseCoffeeBag(uploaded);
+        let uploaded: string;
 
-        /*
-         * A photograph the API would not read is the one failure worth
-         * staying put for. It came back with reasons, every one of them a
-         * thing to do differently, and the camera is still in somebody's hand:
-         * moving them to an empty form here would throw that away and then ask
-         * them to type in the label they are pointing at.
-         */
-        if (photoIssues !== null && photoIssues.length > NOTHING) {
-          setIssues(photoIssues);
-
-          return REFUSED;
+        try {
+          uploaded = await uploadBagPhoto(localUri, user.uid);
+        } catch (error: unknown) {
+          return noteFailure(BAG_PHOTO_FAILURES.upload, error);
         }
 
-        setImageUrl(uploaded);
+        try {
+          const { fields, photoIssues } = await parseCoffeeBag(uploaded);
 
-        return { outcome: BAG_CAPTURE_RESULTS.read, fields };
-      } catch {
-        setFailed(true);
+          /*
+           * A photograph the API would not read is the one failure worth
+           * staying put for. It came back with reasons, every one of them a
+           * thing to do differently, and the camera is still in somebody's
+           * hand: moving them to an empty form here would throw that away and
+           * then ask them to type in the label they are pointing at.
+           */
+          if (photoIssues !== null && photoIssues.length > NOTHING) {
+            setIssues(photoIssues);
 
-        /*
-         * Nothing was read, which is not the same as having read nothing.
-         * Handing back a set of empty fields would have the caller overwrite
-         * whatever is already on the form with them - harmless while there is
-         * only one way to reach the camera, and a way to lose a label the
-         * moment there is a second.
-         */
-        return UNAVAILABLE;
+            return REFUSED;
+          }
+
+          setImageUrl(uploaded);
+
+          return { outcome: BAG_CAPTURE_RESULTS.read, fields };
+        } catch (error: unknown) {
+          /*
+           * Nothing was read, which is not the same as having read nothing.
+           * Handing back a set of empty fields would have the caller overwrite
+           * whatever is already on the form with them - harmless while there
+           * is only one way to reach the camera, and a way to lose a label the
+           * moment there is a second.
+           */
+          return noteFailure(BAG_PHOTO_FAILURES.read, error);
+        }
       } finally {
         setWorking(false);
       }
@@ -124,7 +158,7 @@ export const useBagPhoto = (): BagPhoto => {
 
     forget: (): void => {
       setImageUrl(null);
-      setFailed(false);
+      setFailure(null);
       setIssues(NO_ISSUES);
     },
   };

@@ -1,7 +1,9 @@
 import { useState } from 'react';
 
 import { isPhotoScanningConfigured } from '../../../config';
+import { getErrorTracker } from '../../../lib/errorTracking';
 import { useAuthSession } from '../../auth/context';
+import { BAG_PHOTO_FAILURES } from '../../bagEvaluations/constants';
 import { pickBagPhoto, uploadBagPhoto, type BagPhotoSource } from '../../bagEvaluations/services';
 import { RECIPE_PHOTO_FOLDER } from '../constants';
 
@@ -50,8 +52,16 @@ export const useRecipePhoto = (): RecipePhoto => {
 
       try {
         return await uploadBagPhoto(localUri, user.uid, RECIPE_PHOTO_FOLDER);
-      } catch {
+      } catch (error: unknown) {
         setFailed(true);
+
+        /*
+         * Reported rather than swallowed. An upload that never happens leaves
+         * no trace on the API, so a bare `catch` here means a picture that
+         * will not send is a failure nobody can see from either side of the
+         * wire - only a sentence on a screen saying that something went wrong.
+         */
+        getErrorTracker().capture(error, { action: BAG_PHOTO_FAILURES.upload });
 
         return null;
       } finally {

@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { Button, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
+import { BAG_PHOTO_FAILURE_KEYS } from '../../../bagEvaluations/constants';
 import { CoffeeBagFormFields } from '../../../inventory/components';
 import type { CoffeeSource } from '../../hooks/useCoffeeSource';
 
@@ -43,9 +44,9 @@ export const CoffeeSourceLabelForm = ({ source }: CoffeeSourceLabelFormProps): J
             : TRANSLATION_KEYS.preBrewSourceLabelHint,
         )}
       </Text>
-      {source.photo.hasFailed ? (
+      {source.photo.failure !== null ? (
         <Text variant="bodySmall" tone="error">
-          {t(TRANSLATION_KEYS.scanPhotoFailed)}
+          {t(BAG_PHOTO_FAILURE_KEYS[source.photo.failure])}
         </Text>
       ) : null}
       <CoffeeBagFormFields
