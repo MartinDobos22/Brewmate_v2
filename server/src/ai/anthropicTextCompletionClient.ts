@@ -11,6 +11,7 @@ const USER_ROLE = 'user';
 const IMAGE_BLOCK_TYPE = 'image';
 const BASE64_SOURCE_TYPE = 'base64';
 const REFUSAL_STOP_REASON = 'refusal';
+const TRUNCATED_STOP_REASON = 'max_tokens';
 const NO_TEXT = '';
 const NO_TOKENS = 0;
 
@@ -61,6 +62,10 @@ const toContent = ({ prompt, image }: AiCompletionRequest): Anthropic.ContentBlo
  * A refusal comes back as a successful response with nothing usable in it, so
  * it is turned into a failure here rather than being handed upward as an empty
  * answer that would then fail schema validation for the wrong reason.
+ *
+ * Running out of room is the same kind of trap and is reported rather than
+ * thrown: the text is real, it is simply cut off mid-object, and what to do
+ * about that is a decision for the layer that owns the retry.
  */
 export const createAnthropicTextCompletionClient = (config: AiConfig): TextCompletionClient => {
   const client = new Anthropic({ apiKey: config.anthropicApiKey });
@@ -82,6 +87,7 @@ export const createAnthropicTextCompletionClient = (config: AiConfig): TextCompl
       return {
         text: readText(response.content),
         model: response.model,
+        isTruncated: response.stop_reason === TRUNCATED_STOP_REASON,
         usage: {
           tokensIn: response.usage.input_tokens,
           cacheWriteTokens: response.usage.cache_creation_input_tokens ?? NO_TOKENS,

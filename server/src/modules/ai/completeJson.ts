@@ -134,6 +134,21 @@ export const completeJson = async <TValue>({
     usage = addAiTokenUsage(usage, completion.usage);
     model = completion.model;
 
+    /*
+     * An answer that ran out of room is not retried.
+     *
+     * Truncated JSON fails `safeParse` exactly like JSON from a model that
+     * slipped, which is how this failure spent two calls to arrive at "the
+     * model answered with something that is not the agreed shape" - a sentence
+     * that sent everybody looking at the prompt. The ceiling does not move
+     * between attempts and the correction only makes the prompt longer, so the
+     * second call is guaranteed to end the same way. It is billed, because it
+     * was made, and it says which of the two things happened.
+     */
+    if (completion.isTruncated) {
+      throw new AiCompletionFailure(AI_ERROR_MESSAGES.answerTruncated, spent());
+    }
+
     const parsed = schema.safeParse(readJsonPayload(completion.text));
 
     if (parsed.success) {

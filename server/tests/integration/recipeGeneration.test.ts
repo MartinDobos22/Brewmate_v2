@@ -39,6 +39,7 @@ import { createTestApi, type TestApi } from '../setup/testApi.js';
 const DOSE_GRAMS = 17;
 const WATER_GRAMS = 280;
 const CHOSEN_RATIO = 16.5;
+const ONE_CALL = 1;
 const TWO_CALLS = 2;
 const TWO_HINTS = 2;
 const TWO_STEPS = 2;
@@ -386,6 +387,30 @@ describe('recipe generation', () => {
     );
 
     expect(usage.items[FIRST]?.tokensIn).toBeGreaterThan(NOTHING);
+    expect(Number(usage.items[FIRST]?.costEstimate)).toBeGreaterThan(NOTHING);
+  });
+
+  /*
+   * The ceiling does not move between attempts, so a second call meets it
+   * again - and the correction only makes the prompt longer. Retrying spends a
+   * second call to be told the same thing, and arrives at "the answer is not
+   * the agreed shape", which is the sentence that sends everybody to read the
+   * prompt rather than the ceiling.
+   */
+  it('does not retry an answer that ran out of room, and bills the one call', async () => {
+    context.completionClient.answerWith(TEST_RECIPE_ANSWER);
+    context.completionClient.truncateAnswers();
+
+    const response = await api.post(API_ROUTES.aiGenerateRecipe, RETURNING_IDENTITY, request({}));
+
+    expect(response.statusCode).toBe(HTTP_STATUS.serviceUnavailable);
+    expect(context.completionClient.calls).toHaveLength(ONE_CALL);
+
+    const usage = listResponseSchema(aiUsageLogSchema).parse(
+      (await api.get(API_ROUTES.aiUsage, RETURNING_IDENTITY)).json(),
+    );
+
+    expect(usage.items).toHaveLength(ONE_CALL);
     expect(Number(usage.items[FIRST]?.costEstimate)).toBeGreaterThan(NOTHING);
   });
 });

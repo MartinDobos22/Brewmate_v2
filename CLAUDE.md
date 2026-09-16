@@ -996,6 +996,23 @@ leading to one.
   diffed and blamed. It is knowledge rather than rules: a model told _why_
   grind moves extraction can reason about a cup nobody anticipated, one told
   "if sour then two clicks finer" can only answer the cases somebody wrote down.
+- **The output ceiling is sized for the thinking as well as the answer.** The
+  ceilings here were set against the finished JSON, back when a model wrote
+  nothing else. The models this routes to now think adaptively by default, that
+  reasoning is output, and it is spent before the first character of the
+  answer - so a recipe at four thousand tokens was cut off mid-object often
+  enough to look like a broken feature. A ceiling is not a budget: only what is
+  generated is billed, so raising it costs nothing and buys that the shape of
+  the answer rather than the room left for it decides whether a call succeeds.
+- **An answer that ran out of room is never retried.** Truncated JSON fails
+  validation exactly like JSON from a model that slipped, which is how this
+  spent two calls to arrive at "the answer is not the agreed shape" - the one
+  sentence that sends everybody to read the prompt rather than the ceiling. The
+  ceiling does not move between attempts and the correction only makes the
+  prompt longer, so the second call is guaranteed to end the same way. The port
+  reports the truncation as a plain boolean rather than the provider's own stop
+  reason, because what to do about it is the retry layer's decision and not the
+  vendor's vocabulary.
 - **Every system prompt is cached.** The prompts here are long, unchanging and
   re-sent constantly, which is the shape caching exists for -
   `anthropicTextCompletionClient` marks the system block on every call. The

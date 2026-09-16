@@ -21,6 +21,15 @@ export interface RecordingCompletionClient extends TextCompletionClient {
    * never theirs.
    */
   readonly failWith: (error: Error) => void;
+  /**
+   * Makes every answer from now on report that it ran out of room.
+   *
+   * A separate control from `answerWith`, because truncation is not a property
+   * of the text: half an object and a whole object parse identically badly,
+   * and the thing worth testing is that the two are told apart and treated
+   * differently - one is worth a second attempt, the other is not.
+   */
+  readonly truncateAnswers: () => void;
   readonly reset: () => void;
 }
 
@@ -36,6 +45,7 @@ export interface RecordingCompletionClient extends TextCompletionClient {
 export const createFakeCompletionClient = (): RecordingCompletionClient => {
   let queue: string[] = [];
   let failure: Error | null = null;
+  let isTruncated = false;
   const calls: AiCompletionRequest[] = [];
 
   return {
@@ -46,6 +56,10 @@ export const createFakeCompletionClient = (): RecordingCompletionClient => {
       failure = null;
     },
 
+    truncateAnswers: (): void => {
+      isTruncated = true;
+    },
+
     failWith: (error: Error): void => {
       failure = error;
     },
@@ -53,6 +67,7 @@ export const createFakeCompletionClient = (): RecordingCompletionClient => {
     reset: (): void => {
       queue = [];
       failure = null;
+      isTruncated = false;
       calls.length = FIRST;
     },
 
@@ -68,6 +83,7 @@ export const createFakeCompletionClient = (): RecordingCompletionClient => {
       return Promise.resolve({
         text: answer,
         model: MODEL,
+        isTruncated,
         usage: {
           tokensIn: TOKENS_IN,
           cacheWriteTokens: NO_TOKENS,
