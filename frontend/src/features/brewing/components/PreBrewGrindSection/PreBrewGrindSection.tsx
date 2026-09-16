@@ -41,11 +41,13 @@ export interface PreBrewGrindSectionProps {
  * something somebody can disagree with, and disagreeing with it correctly is
  * how they learn their own grinder.
  *
- * Which grinder is asked here rather than anywhere else, and only where there
- * is more than one, because this is the card the answer changes. Put on the
- * gear screen it would be a preference somebody set once and forgot; put here
- * it sits directly above the number it decides, and picking the other machine
- * redraws that number while they are still standing over it.
+ * Which grinder is asked here rather than anywhere else, because this is the
+ * card the answer changes. Put on the gear screen it would be a preference
+ * somebody set once and forgot; put here it sits directly above the number it
+ * decides, and picking another machine redraws that number while they are
+ * still standing over it - a click is ten microns on one grinder and forty on
+ * another, so the band above is about a particular machine or it is about
+ * nothing.
  */
 export const PreBrewGrindSection = ({
   method,

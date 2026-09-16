@@ -53,6 +53,16 @@ export interface BrewSetup extends BrewAmountsControl {
   readonly isLoading: boolean;
   readonly isPending: boolean;
   readonly hasFailed: boolean;
+  /**
+   * What went wrong, where something did.
+   *
+   * Carried as well as the flag because "Recept sa nepodarilo napísať" is the
+   * same sentence whether the model is unreachable, the allowance is spent,
+   * the token expired or the request never left the kitchen - and those are
+   * four different things to do next. The screen reads the code and the
+   * request id off this rather than making somebody describe a red rectangle.
+   */
+  readonly error: unknown;
   readonly chooseSet: (setId: string) => void;
   readonly chooseMethod: (method: BrewMethod) => void;
   readonly chooseBag: (bag: CoffeeBag | null) => void;
@@ -158,6 +168,7 @@ export const useBrewSetup = (initialBagId?: string): BrewSetup => {
     isLoading: switcher.isLoading || available.isLoading,
     isPending: generate.isPending,
     hasFailed: generate.isError,
+    error: generate.error,
 
     /*
      * A different place is a different counter. The method goes because the

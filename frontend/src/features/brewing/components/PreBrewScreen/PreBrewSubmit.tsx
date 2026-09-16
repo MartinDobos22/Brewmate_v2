@@ -8,6 +8,7 @@ import { useIsOnline } from '../../../../hooks';
 import { useThemedStyles } from '../../../../theme';
 import type { BrewSetup } from '../../hooks/useBrewSetup';
 
+import { PreBrewFailureNotice } from './PreBrewFailureNotice';
 import { createPreBrewScreenStyles } from './PreBrewScreen.styles';
 
 export interface PreBrewSubmitProps {
@@ -35,11 +36,7 @@ export const PreBrewSubmit = ({ setup, onWritten }: PreBrewSubmitProps): JSX.Ele
           {t(TRANSLATION_KEYS.preBrewOffline)}
         </Text>
       )}
-      {setup.hasFailed ? (
-        <Text variant="bodySmall" tone="error">
-          {t(TRANSLATION_KEYS.preBrewError)}
-        </Text>
-      ) : null}
+      {setup.hasFailed ? <PreBrewFailureNotice error={setup.error} isOnline={isOnline} /> : null}
       {setup.method === undefined ? (
         <Text variant="bodySmall" tone="muted">
           {t(TRANSLATION_KEYS.preBrewMissingMethod)}

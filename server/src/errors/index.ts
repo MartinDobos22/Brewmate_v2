@@ -2,6 +2,7 @@ export { AppError, isAppError } from './appError.js';
 export { badRequestError } from './badRequestError.js';
 export { conflictError } from './conflictError.js';
 export { ERROR_MESSAGES } from './errorMessages.js';
+export { describeCauseChain } from './describeCauseChain.js';
 export { createErrorHandler } from './errorHandler.js';
 export { internalError } from './internalError.js';
 export { isClientError } from './isClientError.js';

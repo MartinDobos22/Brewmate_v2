@@ -22,5 +22,18 @@ export const createNumberStepperStyles = (theme: Theme): NumberStepperStyleMap =
     },
     pressed: { backgroundColor: theme.colors.surfaceContainer },
     disabled: { opacity: theme.opacity.disabled },
-    value: { flex: 1, alignItems: 'center' },
+    /**
+     * A real width, not only a flex weight. `flex: 1` alone contributes
+     * nothing to a row that is sizing itself to its content, so the number
+     * came out zero points wide - wrapped one character per line and clipped
+     * out of sight - and the control resized itself on every tap.
+     */
+    value: {
+      flexGrow: 1,
+      flexShrink: 1,
+      flexBasis: 'auto',
+      minWidth: theme.size.stepperValueMinWidth,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
   });

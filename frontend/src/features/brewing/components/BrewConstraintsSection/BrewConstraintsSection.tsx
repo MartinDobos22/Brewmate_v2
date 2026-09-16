@@ -1,14 +1,15 @@
 import type { BrewConstraints } from '@brewmate/shared';
 import { useState, type JSX } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
-import { Card, Text } from '../../../../components/ui';
+import { Card, Chip, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { BREW_CONSTRAINT_OPTIONS, type BrewConstraintOption } from '../../constants';
 import { countConstraints } from '../../services/countConstraints';
 
 import { BrewConstraintRow } from './BrewConstraintRow';
+import { BrewConstraintsHeader } from './BrewConstraintsHeader';
 import { createBrewConstraintsSectionStyles } from './BrewConstraintsSection.styles';
 
 export interface BrewConstraintsSectionProps {
@@ -20,6 +21,9 @@ export interface BrewConstraintsSectionProps {
 
 const NOTHING = 0;
 
+const isSet = (constraints: BrewConstraints, option: BrewConstraintOption): boolean =>
+  constraints[option.name] === true;
+
 /**
  * "Dnes nemám všetko", folded away until somebody opens it.
  *
@@ -28,8 +32,14 @@ const NOTHING = 0;
  * past. Open, it is the most consequential control here: what is ticked
  * changes the shape of the recipe rather than adding a footnote to it.
  *
- * The header counts what is set, so the state survives being folded away. A
- * collapsed section hiding three ticks nobody can see is worse than no section.
+ * What it was missing was any sign that it opened at all. A title over a grey
+ * sentence is the shape of every explanatory line on this screen, so the one
+ * row that was a control read as a caption and got found by accident. It now
+ * carries a chevron, and - the part that matters more - when it is closed it
+ * names what is ticked rather than only counting it. "chýba ti 2" is a number
+ * somebody has to open the section to understand; "Nemám váhu · Nemám stopky"
+ * is the answer itself, and most of the time seeing it is the whole reason
+ * anybody was going to open it.
  */
 export const BrewConstraintsSection = ({
   constraints,
@@ -39,27 +49,33 @@ export const BrewConstraintsSection = ({
   const styles = useThemedStyles(createBrewConstraintsSectionStyles);
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const count = countConstraints(constraints);
+  const missing = BREW_CONSTRAINT_OPTIONS.filter((option: BrewConstraintOption): boolean =>
+    isSet(constraints, option),
+  );
 
   return (
     <Card>
-      <Pressable
-        onPress={(): void => {
+      <BrewConstraintsHeader
+        isOpen={isOpen}
+        count={countConstraints(constraints)}
+        onToggle={(): void => {
           setIsOpen(!isOpen);
         }}
-        accessibilityRole="button"
-        accessibilityState={{ expanded: isOpen }}
-        accessibilityLabel={t(TRANSLATION_KEYS.preBrewConstraintsTitle)}
-      >
-        <View style={styles.header}>
-          <Text variant="titleMedium">{t(TRANSLATION_KEYS.preBrewConstraintsTitle)}</Text>
-          <Text variant="bodySmall" tone={count === NOTHING ? 'muted' : 'secondary'}>
-            {count === NOTHING
-              ? t(TRANSLATION_KEYS.preBrewConstraintsClosed)
-              : t(TRANSLATION_KEYS.preBrewConstraintsCount, { count })}
-          </Text>
+      />
+      {isOpen || missing.length === NOTHING ? null : (
+        <View style={styles.summary}>
+          {missing.map((option: BrewConstraintOption): JSX.Element => (
+            <Chip
+              key={option.name}
+              label={t(option.labelKey)}
+              selected
+              onPress={(): void => {
+                setIsOpen(true);
+              }}
+            />
+          ))}
         </View>
-      </Pressable>
+      )}
       {isOpen ? (
         <View style={styles.list}>
           {fromSet ? (
@@ -71,7 +87,7 @@ export const BrewConstraintsSection = ({
             <BrewConstraintRow
               key={option.name}
               option={option}
-              isSet={constraints[option.name] === true}
+              isSet={isSet(constraints, option)}
               onToggle={onToggle}
             />
           ))}

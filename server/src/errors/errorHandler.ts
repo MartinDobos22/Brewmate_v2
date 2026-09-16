@@ -10,6 +10,7 @@ import { LOG_MESSAGES } from '../logging/logMessages.js';
 import type { ErrorContext, ErrorTracker } from '../telemetry/errorTracker.js';
 
 import { isAppError } from './appError.js';
+import { describeCauseChain } from './describeCauseChain.js';
 import { ERROR_MESSAGES } from './errorMessages.js';
 import { isClientError } from './isClientError.js';
 import { statusToErrorCode } from './statusToErrorCode.js';
@@ -47,6 +48,13 @@ const toErrorContext = (request: FastifyRequest, statusCode: number): ErrorConte
  * calls an unhandled error: a broken response contract, an application error
  * that is not the caller's fault, and anything that reached here without being
  * recognised at all.
+ *
+ * Every log line carries the flattened `cause` chain beside the error itself.
+ * The message a client reads is deliberately not the reason - a provider's
+ * error text must never travel to a caller - so the reason exists only inside
+ * that chain, and a nested chain is the first thing a log viewer truncates. A
+ * plain array of strings is what makes "recept sa nepodarilo napísať"
+ * answerable from the log a day later.
  */
 export const createErrorHandler =
   (errorTracker: ErrorTracker) =>
@@ -69,7 +77,10 @@ export const createErrorHandler =
     }
 
     if (isResponseSerializationError(error)) {
-      request.log.error({ err: error }, LOG_MESSAGES.unhandledError);
+      request.log.error(
+        { err: error, causes: describeCauseChain(error) },
+        LOG_MESSAGES.unhandledError,
+      );
       errorTracker.capture(error, toErrorContext(request, HTTP_STATUS.internalServerError));
 
       return reply
@@ -84,7 +95,18 @@ export const createErrorHandler =
     }
 
     if (isAppError(error)) {
-      const logPayload = { err: error, code: error.code };
+      /*
+       * The chain, flattened, on every application error including the 4xx
+       * ones.
+       *
+       * A 503 from the recipe engine is the case this was written for: the
+       * client is told "the model is not answering", which is all it may be
+       * told, and the reason - a model id the provider does not recognise, a
+       * key without access to it, an answer that would not validate twice -
+       * exists only as `error.cause`. Logging the envelope without its chain
+       * is what made "it just says it failed" unanswerable.
+       */
+      const logPayload = { err: error, code: error.code, causes: describeCauseChain(error) };
 
       if (isClientError(error.statusCode)) {
         request.log.warn(logPayload, LOG_MESSAGES.requestFailed);
@@ -108,7 +130,10 @@ export const createErrorHandler =
         .send(toErrorResponse(statusToErrorCode(statusCode), error.message, requestId));
     }
 
-    request.log.error({ err: error }, LOG_MESSAGES.unhandledError);
+    request.log.error(
+      { err: error, causes: describeCauseChain(error) },
+      LOG_MESSAGES.unhandledError,
+    );
     errorTracker.capture(error, toErrorContext(request, HTTP_STATUS.internalServerError));
 
     return reply

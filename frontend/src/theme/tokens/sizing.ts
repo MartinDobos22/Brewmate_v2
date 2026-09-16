@@ -17,6 +17,18 @@ export const SIZE = {
   sliderTrackHeight: 4,
   sliderThumbSize: 24,
   stepperButtonSize: 40,
+  /**
+   * The floor under a stepper's value, and the reason the control stopped
+   * jumping.
+   *
+   * The value used to be nothing but `flex: 1` between the two buttons, which
+   * in a row that sizes itself to its content resolves to no width at all: the
+   * number wrapped one character per line, invisible behind its own clipping,
+   * and the card grew and shrank by a hundred points every time somebody
+   * tapped a plus. A floor wide enough for a four-digit weight and its unit
+   * means the two buttons sit in the same place whatever the number does.
+   */
+  stepperValueMinWidth: 96,
   swatchSize: 56,
   /** A bar in the taste profile chart: readable, but not a block of colour. */
   profileBarHeight: 10,

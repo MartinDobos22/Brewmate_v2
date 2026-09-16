@@ -1,7 +1,6 @@
 import type { JSX } from 'react';
 
 import { ConfidenceNotice } from '../../../tasteProfile/components';
-import { WaterTypePicker } from '../../../inventory/components';
 import type { BrewSetup } from '../../hooks/useBrewSetup';
 import { BrewConstraintsSection } from '../BrewConstraintsSection';
 import { PreBrewPreviousRecipe } from '../PreBrewPreviousRecipe';
@@ -9,6 +8,7 @@ import { PreBrewAmountsSection } from '../PreBrewAmountsSection';
 import { PreBrewCoffeeSection } from '../PreBrewCoffeeSection';
 import { PreBrewGrindSection } from '../PreBrewGrindSection';
 import { PreBrewMethodSection } from '../PreBrewMethodSection';
+import { PreBrewWaterSection } from '../PreBrewWaterSection';
 
 export interface PreBrewSectionsProps {
   readonly setup: BrewSetup;
@@ -53,7 +53,7 @@ export const PreBrewSections = ({ setup }: PreBrewSectionsProps): JSX.Element =>
           fromSet={setup.activeSet !== undefined}
           onToggle={setup.toggleConstraint}
         />
-        <WaterTypePicker selected={setup.waterType} onSelect={setup.chooseWater} />
+        <PreBrewWaterSection waterType={setup.waterType} onChoose={setup.chooseWater} />
         <PreBrewAmountsSection control={setup} method={setup.method} warnings={setup.warnings} />
         <PreBrewGrindSection
           method={setup.method}
