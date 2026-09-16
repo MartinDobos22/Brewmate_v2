@@ -3,6 +3,7 @@ import type { JSX } from 'react';
 import { Button, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { CoffeeBagFormFields } from '../../../inventory/components';
+import { BAG_PHOTO_FAILURE_KEYS } from '../../constants/bagPhotoFailures';
 import { BAG_SCAN_MODES } from '../../constants/bagScan';
 import type { BagScan } from '../../hooks/useBagScan';
 
@@ -38,9 +39,9 @@ export const BagLabelForm = ({ scan }: BagLabelFormProps): JSX.Element => {
             : TRANSLATION_KEYS.scanLabelTypeItIn,
         )}
       </Text>
-      {scan.photo.hasFailed ? (
+      {scan.photo.failure !== null ? (
         <Text variant="bodySmall" tone="error">
-          {t(TRANSLATION_KEYS.scanPhotoFailed)}
+          {t(BAG_PHOTO_FAILURE_KEYS[scan.photo.failure])}
         </Text>
       ) : null}
       <CoffeeBagFormFields

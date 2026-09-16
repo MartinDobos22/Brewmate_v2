@@ -1,6 +1,7 @@
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 import { getFirebaseStorage } from '../../../lib/firebase';
+
 import {
   BAG_PHOTO_CONTENT_TYPE,
   BAG_PHOTO_EXTENSION,
@@ -10,6 +11,8 @@ import {
   BAG_PHOTO_RETRY_FACTOR,
   BAG_PHOTO_UPLOAD_ATTEMPTS,
 } from '../constants/bagPhoto';
+
+import { readLocalPhotoBytes } from './readLocalPhotoBytes';
 
 const FIRST_ATTEMPT = 0;
 const LAST_ATTEMPT = BAG_PHOTO_UPLOAD_ATTEMPTS - 1;
@@ -25,12 +28,6 @@ const backoffFor = (attempt: number): number =>
 /** A path nobody else can collide with, and nothing can be guessed from. */
 const photoPath = (folder: string, userId: string, takenAt: number): string =>
   [folder, userId, `${String(takenAt)}${BAG_PHOTO_EXTENSION}`].join(BAG_PHOTO_PATH_SEPARATOR);
-
-const readLocalFile = async (localUri: string): Promise<Blob> => {
-  const response = await fetch(localUri);
-
-  return response.blob();
-};
 
 /**
  * Puts one photograph in the bucket and hands back its URL.
@@ -53,13 +50,13 @@ export const uploadBagPhoto = async (
   userId: string,
   folder: string = BAG_PHOTO_FOLDER,
 ): Promise<string> => {
-  const file = await readLocalFile(localUri);
+  const bytes = await readLocalPhotoBytes(localUri);
   const target = ref(getFirebaseStorage(), photoPath(folder, userId, Date.now()));
   let lastError: unknown = null;
 
   for (let attempt = FIRST_ATTEMPT; attempt < BAG_PHOTO_UPLOAD_ATTEMPTS; attempt += 1) {
     try {
-      await uploadBytes(target, file, { contentType: BAG_PHOTO_CONTENT_TYPE });
+      await uploadBytes(target, bytes, { contentType: BAG_PHOTO_CONTENT_TYPE });
 
       return await getDownloadURL(target);
     } catch (error: unknown) {

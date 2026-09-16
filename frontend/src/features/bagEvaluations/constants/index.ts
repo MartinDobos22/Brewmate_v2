@@ -20,7 +20,10 @@ export {
   BAG_PHOTO_CONTENT_TYPE,
   BAG_PHOTO_PATH_SEPARATOR,
   BAG_CAPTURE_RESULTS,
+  BAG_PHOTO_FAILURES,
 } from './bagPhoto';
+export type { BagPhotoFailure } from './bagPhoto';
+export { BAG_PHOTO_FAILURE_KEYS } from './bagPhotoFailures';
 export { BAG_PHOTO_ISSUE_KEYS } from './bagPhotoIssues';
 export { SCAN_ICONS } from './scanIcons';
 export { SCAN_OUTCOMES, SCAN_OUTCOME_LABEL_KEYS, SCAN_OUTCOME_TONES } from './scanOutcomes';

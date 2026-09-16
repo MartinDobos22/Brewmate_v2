@@ -10,6 +10,7 @@ export { parseCoffeeBag, evaluateCoffee } from './coffeeBagAiApi';
 export { pickBagPhoto, BAG_PHOTO_SOURCES } from './pickBagPhoto';
 export type { BagPhotoSource } from './pickBagPhoto';
 export { uploadBagPhoto } from './uploadBagPhoto';
+export { readLocalPhotoBytes } from './readLocalPhotoBytes';
 export { toBagVerdictView } from './bagVerdictView';
 export type { BagVerdictView, BagVerdictUncertainty } from './bagVerdictView';
 export type { BagVerdictPoint, BagUncertainty, BagVerdictParts } from './bagVerdictTypes';

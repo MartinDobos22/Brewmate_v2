@@ -25,8 +25,21 @@ export const SK_SCANNER = {
   scanPhotoSkip: 'Zadám to ručne',
   scanPhotoSkipCaption: 'Keď je etiketa nečitateľná alebo nechceš fotiť.',
   scanPhotoReading: 'Čítam etiketu...',
-  scanPhotoFailed:
-    'Fotku sa mi nepodarilo poslať alebo prečítať. Nevadí - prepíš mi z balíčka, čo vidíš.',
+
+  /*
+   * Two sentences, because these are two different mornings.
+   *
+   * The bytes never left the phone, or they arrived and nothing could be made
+   * of them. One of those is worth stepping towards a window and pressing the
+   * tile again for; the other is not, and the form underneath is already the
+   * answer. A single sentence naming both causes left the reader to work out
+   * which one had happened - on the one screen in this app used inside a
+   * building on one bar, which is precisely where they cannot.
+   */
+  scanPhotoUploadFailed:
+    'Fotku sa mi nepodarilo odoslať - spojenie to nedalo. Skús to o kúsok ďalej, alebo mi rovno prepíš z balíčka, čo vidíš.',
+  scanPhotoReadFailed:
+    'Fotku mám, ale etiketu som z nej neprečítal. Nevadí - prepíš mi z balíčka, čo vidíš.',
 
   /*
    * A refused photograph, and what to do about it.
