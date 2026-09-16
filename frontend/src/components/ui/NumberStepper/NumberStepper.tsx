@@ -57,7 +57,7 @@ export const NumberStepper = ({
           <Text variant="titleLarge">{STEPPER_SYMBOLS.decrease}</Text>
         </Pressable>
         <View style={styles.value}>
-          <Text variant="numericLarge" numeric>
+          <Text variant="numericLarge" numeric numberOfLines={1}>
             {unit === undefined ? formattedValue : `${formattedValue} ${unit}`}
           </Text>
         </View>

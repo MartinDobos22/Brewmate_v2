@@ -236,7 +236,7 @@ frontend/
     ├── i18n/           Slovak copy, split by domain under translations/sk/
     ├── components/
     │   ├── ui/         Button, Card, Tile, SectionHeading, Text, Input, Chip,
-    │   │               OptionCard, Sheet, ListItem, ChatBubble, Slider,
+    │   │               OptionCard, Dropdown, Sheet, ListItem, ChatBubble, Slider,
     │   │               NumberStepper, ProgressBar, EmptyState, LoadingState,
     │   │               ErrorState, QueryState, ValueDisplay - each its own folder
     │   └── layout/     Screen, TileRow, AppProviders, RootStack, TabsNavigator,
@@ -856,6 +856,22 @@ leading to one.
   is the most visual decision in the app: a V60 and a moka pot are different
   objects, not different words, and the family printed under each name is what
   tells somebody who has never met "Origami" what kind of coffee it makes.
+- **A catalogue is a dropdown; a question is a column of cards.** Those cards
+  were right about what a brewer looks like and wrong about how many of them a
+  screen can hold. Eighteen of them stacked above the dose, the ratio and the
+  grind put the three numbers this screen exists for four scrolls below the top
+  of it, and the water put five more in between. `Dropdown` is the same option
+  cards in a sheet behind one line that says what is currently answered - so
+  closed it costs a row, and open it is the list it always was. The line
+  between the two is what the control is for: the questionnaire asks somebody
+  something and gets a column of cards, the brewer catalogue and the water
+  types report an answer that is nearly always already right and get a field.
+- **The search box appears only where it earns its place.** Eighteen brewers
+  are searched; five kinds of water are not, because a keyboard opening over a
+  sheet holding five answers covers three of them. The match is every word of
+  the term somewhere in the option, in any order and without diacritics - the
+  rule the grinder catalogue already searches by, because "v60 hario" and
+  "hario v60" are the same request.
 - **The glyph comes from the method's category, never from its key.** Nothing
   in this application branches on `key` - adding V60 Switch is an insert, not a
   release - and an icon table keyed by `key` would quietly break that by giving
@@ -890,11 +906,17 @@ leading to one.
   missing is pre-ticked. `useAvailableBrewMethods` takes the set for exactly
   this reason. Without a set the answer is everything still owned - somebody
   who has never made one has not thereby lost their kettle.
-- **"Dnes nemám všetko" is folded away, and counts what is behind it.** Most
+- **"Dnes nemám všetko" is folded away, and names what is behind it.** Most
   mornings nothing is missing and nine unticked boxes above the thing somebody
-  came for is a section they scroll past. Collapsed, the header says how many
-  are set: a folded control hiding state nobody can see is worse than no
-  control.
+  came for is a section they scroll past. What it was missing was any sign that
+  it opened at all: a title over a grey sentence is the shape of every
+  explanatory line on this screen, so the one row that was a control read as a
+  caption and got found by accident. It now carries a chevron and the same row
+  geometry as a closed dropdown, because on this screen it is one of several
+  rows that open into something. Collapsed it lists what is ticked rather than
+  only counting it - "chýba ti 2" is a number somebody has to open the section
+  to understand, "Nemám váhu · Nemám stopky" is the answer itself, and seeing
+  it is most of the reason anybody was going to open it.
 - **Every constraint in the contract has a checkbox.** `BREW_CONSTRAINT_OPTIONS`
   is built from `BREW_CONSTRAINT_NAMES` rather than written out, because a set
   can carry any of them as its default and a flag with no box would be a state
@@ -908,6 +930,17 @@ leading to one.
   weigh the coffee again". The arithmetic lives in `@brewmate/shared`, so the
   number on the screen and the number in the database are rounded by one piece
   of code.
+- **A stepper has a width, not only a flex weight.** The value between the two
+  buttons was `flex: 1` and nothing else, which in a row that sizes itself to
+  its content resolves to no width at all: the number wrapped one character per
+  line and was clipped out of sight, so the control showed two buttons with a
+  gap between them and grew and shrank by a hundred points on every tap. The
+  two steppers also shared a wrapping row, which on a phone meant a 32-point
+  number, its unit and two 40-point buttons competing for about 150 points -
+  so the row wrapped and unwrapped as the digits changed and took the ratio
+  slider below it along for the ride. The value now carries a floor wide enough
+  for a four-digit weight and its unit, the steppers are stacked one per row,
+  and nothing on the card moves when a number does.
 - **Validation describes, it does not block.** The person holding the brewer
   knows things the app does not - that this V60 takes more than the box claims,
   that there is a second bag of the same coffee in the cupboard. Every warning
@@ -1173,12 +1206,35 @@ as a fact rather than asked for one.
 - **Which grinder it is read off is an answer, not an accident.** A kitchen
   with a hand grinder and an electric one has two right answers, and the
   difference between them is the whole number - a click is ten microns on one
-  and forty on the other. `PreBrewGrindSection` asks, and only where there is
-  more than one: a picker with a single option is furniture on the screen
-  somebody opens with a kettle already boiling. Each option says which kind of
-  answer it can give, because a catalogued grinder answers with a setting on
-  its own collar and one the catalogue has never met answers in words, and
-  choosing between them is choosing between those two answers.
+  and forty on the other. `PreBrewGrindSection` asks, as a field like every
+  other answer on the screen. Each option says which kind of answer it can
+  give, because a catalogued grinder answers with a setting on its own collar
+  and one the catalogue has never met answers in words, and choosing between
+  them is choosing between those two answers.
+- **It is asked even where there is nothing yet to choose between.** It used to
+  draw itself only where there were two, on the argument that a picker with one
+  option is furniture on a screen somebody opens with a kettle boiling. That
+  was right about the picker and wrong about the question: the accounts it hid
+  itself from were exactly the ones that owned nothing catalogued, so the card
+  answered them in words and told them to go and write a grinder down on some
+  other screen - which is the one instruction somebody standing over a grinder
+  will not follow. The catalogue now sits at the bottom of the same list, as
+  another answer to the same question, and what is picked there is written into
+  the cupboard and ground with immediately. That is not bookkeeping: a grinder
+  the account does not own carries no link to a catalogue entry, and the link
+  is the whole difference between "stredne jemné" and a number on the collar
+  with the clicks to move it by.
+- **One sheet with two views, not two sheets.** Two overlays whose visibility
+  flips in the same commit is the one arrangement iOS genuinely cannot present
+  - the second is asked to appear while the first is still dismissing - so the
+    owned grinders and the catalogue are two views of one panel with a title each.
+- **A set that names no grinder is not a claim that there is none.**
+  `resolveGrinderCandidates` narrows to the active set for the reason the
+  method list does, and stops short of emptying the list twice over: a set made
+  to say which brewer is where falls back to everything owned, and a grinder
+  picked on this screen stays visible even where the set has never heard of it.
+  Somebody who has just written down the machine in front of them is holding
+  better evidence about this morning than a set they saved in June.
 - **Nobody having said is the common case, and `chooseGrinderEquipment`
   settles it.** The catalogued grinder first, because it is the only one that
   can answer with a number; failing that the first one owned, because owning an
@@ -1427,6 +1483,20 @@ a limit legible rather than punitive.
 - **Being offline outranks whatever code came back.** A request that never left
   the phone failed for a reason the user can see out of the window; telling
   them the server had a problem would send them looking in the wrong place.
+- **A screen with its own failure sentence is a screen that stopped reading the
+  code.** The brewing screen printed "Recept sa nepodarilo napísať, skús to
+  prosím znova" for every failure there is - a spent model allowance, an
+  expired token, a retired brewing method, a body the contract rejected, a
+  provider that never answered - and "skús to znova" is actively wrong for
+  three of the five. The map above already owns that distinction; a screen that
+  writes its own sentence is a screen opting out of it.
+- **A failure prints its code and its request id underneath.** Nobody reads
+  them on a good day. On a bad one they are the only thing that turns "it did
+  not work" into a line in the server log, because the sentence above them is
+  deliberately not the reason - a provider's error text must never reach a
+  caller. Without them a bug report is a photograph of a red rectangle.
+  `readErrorReference` returns null for a failure that never reached the API:
+  being offline is answered by the sentence, and there is nothing to look up.
 - **`EmptyState` takes a list of actions rather than one.** An empty screen
   with nothing to press is a dead end, and the two or three ways forward are
   exactly what makes an empty screen useful.
@@ -2013,6 +2083,22 @@ tests nor a deployment without a DSN should have to.
 - **A malformed DSN is a warning, not a start-up failure.** Error reporting is a
   thing added on top of the log, and a typo in it must not be able to take the
   API down.
+- **Every log line carries the flattened `cause` chain.** The message a client
+  reads is deliberately not the reason, so the reason exists only inside that
+  chain - and a nested chain is the first thing a log viewer truncates,
+  flattens or drops depending on how it was configured that afternoon.
+  `describeCauseChain` walks five links at most and returns plain strings,
+  which survive all three. This is what makes a 503 from the recipe engine
+  answerable a day later: the client is told the model is not answering, which
+  is all it may be told, and the log says whether that was a model id the
+  provider does not recognise, a key without access to it, or an answer that
+  would not validate twice.
+- **Giving up on a model keeps the reason it gave up.** Two malformed answers
+  used to be thrown as a bare "the model answered with something that is not
+  the agreed shape", which is true of all eight routes and says nothing about
+  any of them. The validation error is the only thing that tells a bloom in an
+  espresso from a grind change suggested to somebody with a fixed grinder, and
+  it was being discarded exactly where it was needed most.
 
 ### Error shape
 

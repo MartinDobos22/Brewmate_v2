@@ -12,6 +12,7 @@ import {
 } from '@brewmate/shared';
 
 import { useEquipmentList, useGrinder } from '../../inventory/hooks';
+import { resolveGrinderCandidates } from '../services/resolveGrinderCandidates';
 
 const NONE: readonly Equipment[] = [];
 const ACTIVE_ONLY = true;
@@ -23,9 +24,10 @@ export interface GrindGuidanceReading {
    * Every grinder this brew could be ground on, which is what makes the
    * choice askable at all.
    *
-   * Narrowed to the active set for the same reason the method list is: the
-   * grinder at the cabin is the one grinding this coffee, whatever is sitting
-   * on the counter at home.
+   * Narrowed by `resolveGrinderCandidates`, which owns the two rules that stop
+   * the narrowing from emptying the list: a set naming no grinder is not a
+   * claim that there is nothing to grind with, and a grinder picked on this
+   * screen outranks a set saved months ago.
    */
   readonly candidates: readonly Equipment[];
   /** The one the numbers below were read off, chosen or defaulted to. */
@@ -69,10 +71,11 @@ export const useGrindGuidance = (
 ): GrindGuidanceReading => {
   const equipment = useEquipmentList({ type: EQUIPMENT_TYPES.grinder, activeOnly: ACTIVE_ONLY });
   const owned = equipment.data?.items ?? NONE;
-  const candidates =
-    equipmentSet === undefined
-      ? owned
-      : owned.filter((item: Equipment): boolean => equipmentSet.equipmentIds.includes(item.id));
+  const candidates = resolveGrinderCandidates({
+    owned,
+    equipmentSet,
+    chosenId: chosenGrinderId,
+  });
   /**
    * What they picked, or what the shared rule picks for them.
    *

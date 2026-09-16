@@ -10,7 +10,15 @@ export interface GrinderInventory {
   readonly owned: readonly Equipment[];
   readonly isLoading: boolean;
   readonly isPending: boolean;
-  readonly add: (grinder: Grinder) => void;
+  /**
+   * Writes a catalogue entry into the cupboard.
+   *
+   * The callback exists because the row that comes back is the only thing that
+   * can be pointed at afterwards: somebody adding a grinder from the brewing
+   * screen is adding it in order to grind with it now, and handing them back a
+   * list to find it in would be the app making them answer twice.
+   */
+  readonly add: (grinder: Grinder, onAdded?: (equipment: Equipment) => void) => void;
   readonly remove: (equipmentId: string) => void;
 }
 
@@ -32,13 +40,16 @@ export const useGrinderInventory = (): GrinderInventory => {
     isLoading: query.isPending,
     isPending: create.isPending || remove.isPending,
 
-    add: (grinder: Grinder): void => {
-      create.mutate({
-        type: EQUIPMENT_TYPES.grinder,
-        catalogGrinderId: grinder.id,
-        brand: grinder.brand,
-        model: grinder.model,
-      });
+    add: (grinder: Grinder, onAdded?: (equipment: Equipment) => void): void => {
+      create.mutate(
+        {
+          type: EQUIPMENT_TYPES.grinder,
+          catalogGrinderId: grinder.id,
+          brand: grinder.brand,
+          model: grinder.model,
+        },
+        { onSuccess: onAdded },
+      );
     },
 
     remove: (equipmentId: string): void => {

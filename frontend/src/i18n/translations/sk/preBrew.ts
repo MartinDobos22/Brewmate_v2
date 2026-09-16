@@ -43,8 +43,21 @@ export const SK_PRE_BREW = {
   preBrewCoffeeEmpty: 'V skrinke zatiaľ nič nemáš.',
   preBrewCoffeeRemaining: 'Zostáva',
 
+  /*
+   * The brewer, as one line that opens into the catalogue.
+   *
+   * The search placeholder names a brand and a family rather than giving an
+   * instruction, because that is what somebody types: half the name they
+   * remembered, or the kind of coffee they want out of it.
+   */
   preBrewMethodSection: 'Príprava',
+  preBrewMethodLabel: 'Metóda',
+  preBrewMethodPlaceholder: 'Vyber, v čom dnes varíš',
   preBrewMethodHint: 'Vyber, v čom dnes varíš.',
+  preBrewMethodSheetTitle: 'V čom dnes varíš?',
+  preBrewMethodSearchLabel: 'Hľadaj',
+  preBrewMethodSearchPlaceholder: 'Napríklad: v60, prelievaná, aeropress',
+  preBrewMethodSearchEmpty: 'Nič také tu nemám. Skús to napísať inak.',
   preBrewMethodEmpty: 'Katalóg metód sa nepodarilo načítať. Skús to o chvíľu znova.',
 
   /*
@@ -70,6 +83,7 @@ export const SK_PRE_BREW = {
 
   preBrewConstraintsTitle: 'Dnes nemám všetko',
   preBrewConstraintsClosed: 'Zaškrtni, čo ti dnes chýba - recept podľa toho prepíšem.',
+  preBrewConstraintsHint: 'Otvor a zaškrtni, čo ti dnes chýba.',
   preBrewConstraintsCount: 'chýba ti {count}',
   preBrewConstraintsFromSet: 'Predvyplnené podľa sady. Pre toto varenie to môžeš zmeniť.',
 
@@ -93,6 +107,7 @@ export const SK_PRE_BREW = {
   constraintLimitedTimeHint: 'Chcem to čo najkratšie, aj za cenu kompromisu.',
 
   preBrewWaterSection: 'Voda',
+  preBrewWaterTypeLabel: 'Typ vody',
   preBrewWaterHint: 'Predvyplnené z profilu. Pre toto varenie to môžeš zmeniť.',
 
   preBrewImportRecipe: 'Mám recept odinakiaľ',
@@ -113,7 +128,16 @@ export const SK_PRE_BREW = {
 
   preBrewSubmit: 'Napíš mi recept',
   preBrewSubmitting: 'Píšem recept...',
-  preBrewError: 'Recept sa nepodarilo napísať. Skús to prosím znova.',
+  /*
+   * What a failure prints under the sentence explaining it.
+   *
+   * Not for the person to understand - the sentence above it is what they read
+   * - but for the one case where nothing else helps: a code says which of nine
+   * things refused, and a request id finds the exact line in the server log.
+   * Without them a bug report is a photograph of a red rectangle.
+   */
+  preBrewErrorReference: 'Kód {code} · požiadavka {requestId}',
+  preBrewErrorCode: 'Kód {code}',
   preBrewOffline: 'Si offline. Recept ti napíšem, keď budeš mať signál.',
   preBrewMissingMethod: 'Najprv vyber prípravu.',
 
@@ -129,8 +153,21 @@ export const SK_PRE_BREW = {
    * can give, because that is the real difference between them.
    */
   preBrewGrindPickerHint: 'Na ktorom melieš túto?',
+  preBrewGrindPickerTitle: 'Na ktorom mlynčeku melieš?',
+  preBrewGrindPickerEmpty: 'Zatiaľ nemám zapísaný žiadny mlynček',
   preBrewGrindPickerNumber: 'Poznám jeho stupnicu - poviem ti číslo aj o koľko klikov hýbať.',
   preBrewGrindPickerWords: 'Tento v katalógu nemám, takže hrubosť poviem len slovami.',
+  /*
+   * The way out of "nemám žiadny zapísaný", in the same list as the answers.
+   *
+   * The note says what picking one buys, because that is the reason to bother:
+   * a catalogued grinder is the difference between "stredne jemné" and a
+   * number on the collar in front of you.
+   */
+  preBrewGrindPickerFromCatalogue: 'Vybrať mlynček z katalógu',
+  preBrewGrindPickerFromCatalogueNote:
+    'Zapíšem ti ho medzi vybavenie a poviem ti rovno číslo na jeho stupnici.',
+  preBrewGrindPickerCatalogueTitle: 'Katalóg mlynčekov',
   preBrewGrindUnnamed: 'Mlynček bez názvu',
 
   preBrewGrindOnCollar: 'Na mlynčeku {grinder}',

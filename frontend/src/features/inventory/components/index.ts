@@ -26,6 +26,8 @@ export { BrewMethodGroupSection } from './BrewMethodGroupSection';
 export type { BrewMethodGroupSectionProps } from './BrewMethodGroupSection';
 export { BrewerDetailsSheet } from './BrewerDetailsSheet';
 export type { BrewerDetailsSheetProps } from './BrewerDetailsSheet';
+export { WaterTypeDropdown } from './WaterTypeDropdown';
+export type { WaterTypeDropdownProps } from './WaterTypeDropdown';
 export { WaterTypePicker } from './WaterTypePicker';
 export type { WaterTypePickerProps } from './WaterTypePicker';
 export { EquipmentSetForm, EquipmentSetFormFields } from './EquipmentSetForm';

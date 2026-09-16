@@ -6,6 +6,13 @@ export { ChatBubble, CHAT_AUTHORS } from './ChatBubble';
 export type { ChatBubbleProps, ChatAuthor } from './ChatBubble';
 export { Chip } from './Chip';
 export type { ChipProps } from './Chip';
+export { Dropdown, DropdownTrigger, filterDropdownOptions } from './Dropdown';
+export type {
+  DropdownProps,
+  DropdownTriggerProps,
+  DropdownOption,
+  DropdownSearch,
+} from './Dropdown';
 export { EmptyState } from './EmptyState';
 export type { EmptyStateProps, EmptyStateAction } from './EmptyState';
 export { ErrorState } from './ErrorState';

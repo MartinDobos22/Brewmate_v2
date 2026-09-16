@@ -34,5 +34,7 @@ export {
   dropFirstPendingBrewLog,
 } from './pendingBrewLogs';
 export { isPermanentlyRejectedBrewLog } from './isPermanentlyRejectedBrewLog';
+export { resolveGrinderCandidates } from './resolveGrinderCandidates';
+export type { GrinderCandidateInput } from './resolveGrinderCandidates';
 export { resolveQuickBrewSteps } from './resolveQuickBrewSteps';
 export type { QuickBrewSteps } from './resolveQuickBrewSteps';

@@ -4,6 +4,7 @@ import { Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { ButtonsSection } from '../ButtonsSection';
 import { ColorSection } from '../ColorSection';
+import { DropdownSection } from '../DropdownSection';
 import { ElevationSection } from '../ElevationSection';
 import { FeedbackSection } from '../FeedbackSection';
 import { FormSection } from '../FormSection';
@@ -33,6 +34,7 @@ export const DesignSystemSections = (): JSX.Element => {
       <MotionSection />
       <ButtonsSection />
       <FormSection />
+      <DropdownSection />
       <SurfacesSection />
       <TilesSection />
       <ValuesSection />

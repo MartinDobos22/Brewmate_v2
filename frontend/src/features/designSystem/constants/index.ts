@@ -1,4 +1,6 @@
 export { PREVIEW_VALUES, GRIND_RANGE } from './previewValues';
+export { PREVIEW_DROPDOWN_OPTIONS } from './previewDropdown';
+export type { PreviewDropdownOption } from './previewDropdown';
 export {
   PREVIEW_COLOR_ROLES,
   PREVIEW_RADIUS_TOKENS,

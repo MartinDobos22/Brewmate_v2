@@ -98,6 +98,17 @@ export const completeJson = async <TValue>({
    */
   let model: string = modelId;
   let correction = '';
+  /**
+   * What was wrong with the last answer, kept so that giving up can say so.
+   *
+   * Two malformed answers used to be thrown as a bare "the model answered with
+   * something that is not the agreed shape", which is true of every one of the
+   * eight routes and says nothing about any of them. The validation error is
+   * the only thing that distinguishes a model that put a bloom in an espresso
+   * from one that suggested a grind change to somebody with a fixed grinder,
+   * and it was being discarded exactly where it was most needed.
+   */
+  let rejection: Error | undefined = undefined;
 
   const spent = (): SpentAiCall => ({ functionName, model, modelId, usage });
 
@@ -129,8 +140,9 @@ export const completeJson = async <TValue>({
       return { value: parsed.data, functionName, model, modelId, usage };
     }
 
+    rejection = parsed.error;
     correction = [CORRECTION_PREFIX, z.prettifyError(parsed.error)].join(LINE_BREAK);
   }
 
-  throw new AiCompletionFailure(AI_ERROR_MESSAGES.answerMalformed, spent());
+  throw new AiCompletionFailure(AI_ERROR_MESSAGES.answerMalformed, spent(), rejection);
 };
