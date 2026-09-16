@@ -62,19 +62,26 @@ export const BAG_PHOTO_PATH_SEPARATOR = '/';
 /**
  * Where a photograph stopped, when it stopped.
  *
- * Two failures wore one message for a long time, and they are not the same
- * thing at all: bytes that never left the phone, and bytes that arrived and
- * could not be turned into a label. The person in a shop needs to know which,
- * because one of them is worth walking two steps towards the door for and the
- * other is not - and so does whoever is reading the reports, because only one
- * of the two leaves a trace on the API at all.
+ * Four, because they ask four different things of the person reading them. The
+ * file never came off the phone; the bytes would not send; the bucket refused
+ * them; or they arrived and no label could be made of them. These used to be
+ * one message naming two causes, which on the one screen in this app used
+ * inside a building on one bar told nobody anything they could act on.
+ *
+ * `network` is the only one worth trying again on the spot. `storage` is this
+ * application being wrong about its own bucket, and saying "skús to o kúsok
+ * ďalej" about that would send somebody walking around a shop over a mistake
+ * of ours. `file` is neither - the picker handed back something that was not
+ * there by the time it was read, and picking again is the whole fix.
  *
  * The values double as the name each failure is reported under, so the label
- * on the crash and the sentence on the screen cannot describe different
+ * on the report and the sentence on the screen cannot describe different
  * failures.
  */
 export const BAG_PHOTO_FAILURES = {
-  upload: 'bag-photo-upload',
+  file: 'bag-photo-file',
+  network: 'bag-photo-network',
+  storage: 'bag-photo-storage',
   read: 'bag-photo-read',
 } as const;
 

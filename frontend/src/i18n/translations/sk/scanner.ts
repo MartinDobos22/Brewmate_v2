@@ -27,17 +27,26 @@ export const SK_SCANNER = {
   scanPhotoReading: 'Čítam etiketu...',
 
   /*
-   * Two sentences, because these are two different mornings.
+   * Four sentences, because these are four different mornings.
    *
-   * The bytes never left the phone, or they arrived and nothing could be made
-   * of them. One of those is worth stepping towards a window and pressing the
-   * tile again for; the other is not, and the form underneath is already the
-   * answer. A single sentence naming both causes left the reader to work out
-   * which one had happened - on the one screen in this app used inside a
-   * building on one bar, which is precisely where they cannot.
+   * A connection that gave out is the only one of them worth walking a few
+   * steps about. A bucket that refused the picture is our mistake and says so
+   * - sending somebody around a shop looking for a window over it would be the
+   * app blaming the building for something it got wrong itself. A file that
+   * was not there asks for one more tap and nothing else. And a label nothing
+   * could be read from needs no instruction at all: the form underneath is
+   * already the answer.
+   *
+   * All four end the same way on purpose. Whatever happened, typing the label
+   * in is right there, and nobody standing in a shop should have to work out
+   * that for themselves.
    */
   scanPhotoUploadFailed:
-    'Fotku sa mi nepodarilo odoslať - spojenie to nedalo. Skús to o kúsok ďalej, alebo mi rovno prepíš z balíčka, čo vidíš.',
+    'Fotku sa mi nepodarilo odoslať - spojenie to nedalo. Skús to o pár krokov ďalej, alebo mi rovno prepíš z balíčka, čo vidíš.',
+  scanPhotoStorageFailed:
+    'Fotku nemám kam uložiť - to je chyba na mojej strane, nie na tvojej. Prepíš mi z balíčka, čo vidíš, a ja to vybavím.',
+  scanPhotoFileFailed:
+    'K tej fotke som sa už nedostal. Skús ju vybrať ešte raz, alebo mi prepíš z balíčka, čo vidíš.',
   scanPhotoReadFailed:
     'Fotku mám, ale etiketu som z nej neprečítal. Nevadí - prepíš mi z balíčka, čo vidíš.',
 

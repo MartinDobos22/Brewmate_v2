@@ -3,8 +3,12 @@ import { useState } from 'react';
 import { isPhotoScanningConfigured } from '../../../config';
 import { getErrorTracker } from '../../../lib/errorTracking';
 import { useAuthSession } from '../../auth/context';
-import { BAG_PHOTO_FAILURES } from '../../bagEvaluations/constants';
-import { pickBagPhoto, uploadBagPhoto, type BagPhotoSource } from '../../bagEvaluations/services';
+import {
+  pickBagPhoto,
+  resolveUploadFailure,
+  uploadBagPhoto,
+  type BagPhotoSource,
+} from '../../bagEvaluations/services';
 import { RECIPE_PHOTO_FOLDER } from '../constants';
 
 export interface RecipePhoto {
@@ -61,7 +65,7 @@ export const useRecipePhoto = (): RecipePhoto => {
          * will not send is a failure nobody can see from either side of the
          * wire - only a sentence on a screen saying that something went wrong.
          */
-        getErrorTracker().capture(error, { action: BAG_PHOTO_FAILURES.upload });
+        getErrorTracker().capture(error, { action: resolveUploadFailure(error) });
 
         return null;
       } finally {

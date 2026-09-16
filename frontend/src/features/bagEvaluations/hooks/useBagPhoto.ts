@@ -11,6 +11,7 @@ import {
 } from '../constants/bagPhoto';
 import { parseCoffeeBag } from '../services/coffeeBagAiApi';
 import { pickBagPhoto, type BagPhotoSource } from '../services/pickBagPhoto';
+import { resolveUploadFailure } from '../services/resolveUploadFailure';
 import { uploadBagPhoto } from '../services/uploadBagPhoto';
 
 export type BagCaptureOutcome = (typeof BAG_CAPTURE_RESULTS)[keyof typeof BAG_CAPTURE_RESULTS];
@@ -119,7 +120,7 @@ export const useBagPhoto = (): BagPhoto => {
         try {
           uploaded = await uploadBagPhoto(localUri, user.uid);
         } catch (error: unknown) {
-          return noteFailure(BAG_PHOTO_FAILURES.upload, error);
+          return noteFailure(resolveUploadFailure(error), error);
         }
 
         try {

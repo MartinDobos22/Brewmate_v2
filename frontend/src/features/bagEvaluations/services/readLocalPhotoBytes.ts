@@ -5,6 +5,16 @@ const MISSING_PHOTO_MESSAGE = 'The picked photograph could not be read off local
 const EMPTY_PHOTO_MESSAGE = 'The picked photograph read back as zero bytes.';
 
 /**
+ * A photograph that never came off the phone.
+ *
+ * Its own class so the screen above can tell it from a bucket that refused the
+ * bytes and from a connection that dropped them. All three used to arrive as
+ * one unnamed failure, and they ask for three different things: pick again,
+ * go and fix the project, walk a few steps.
+ */
+export class LocalPhotoError extends Error {}
+
+/**
  * Reads a photograph the picker has already written to the phone's own disk.
  *
  * Through the file system rather than `fetch(file://...)`, which is what this
@@ -25,13 +35,13 @@ export const readLocalPhotoBytes = async (localUri: string): Promise<Uint8Array>
   const file = new File(localUri);
 
   if (!file.exists) {
-    throw new Error(MISSING_PHOTO_MESSAGE);
+    throw new LocalPhotoError(MISSING_PHOTO_MESSAGE);
   }
 
   const bytes = await file.bytes();
 
   if (bytes.length === EMPTY_FILE) {
-    throw new Error(EMPTY_PHOTO_MESSAGE);
+    throw new LocalPhotoError(EMPTY_PHOTO_MESSAGE);
   }
 
   return bytes;

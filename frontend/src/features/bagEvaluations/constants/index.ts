@@ -24,6 +24,7 @@ export {
 } from './bagPhoto';
 export type { BagPhotoFailure } from './bagPhoto';
 export { BAG_PHOTO_FAILURE_KEYS } from './bagPhotoFailures';
+export { STORAGE_RETRYABLE_ERROR_CODES, STORAGE_REFUSED_ERROR_CODES } from './storageErrorCodes';
 export { BAG_PHOTO_ISSUE_KEYS } from './bagPhotoIssues';
 export { SCAN_ICONS } from './scanIcons';
 export { SCAN_OUTCOMES, SCAN_OUTCOME_LABEL_KEYS, SCAN_OUTCOME_TONES } from './scanOutcomes';
