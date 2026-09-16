@@ -1270,13 +1270,17 @@ as a fact rather than asked for one.
   the account does not own carries no link to a catalogue entry, and the link
   is the whole difference between "stredne jemné" and a number on the collar
   with the clicks to move it by.
-- **A sheet holding a virtualised list takes its full height.** A `FlatList`
-  asks its parent how tall it may be, and a panel that sizes to its content has
-  no answer to give - so the list resolved to nothing and the catalogue opened
-  as a search box above an empty space. `Sheet` takes a `fill` prop for exactly
-  that, and only that: a short list of answers still sizes to itself, because a
-  sheet that fills the screen for three options looks broken in the other
-  direction.
+- **A sheet holding a virtualised list takes its full height, all the way
+  down.** A `FlatList` asks its parent how tall it may be, and a panel that
+  sizes to its content has no answer to give - so the list resolved to nothing
+  and the catalogue opened as a search box above an empty space. `Sheet` takes
+  a `fill` prop for exactly that, and it has to set a height on the panel _and_
+  let the content area grow into it: a height only reaches the list if every
+  view between them passes it on, and a content area still measuring itself
+  against its children reads a `flex: 1` child as nothing and collapses the
+  same way, now with a height nobody uses. A short list of answers still sizes
+  to itself, because a sheet that fills the screen for three options looks
+  broken in the other direction.
 - **One sheet with two views, not two sheets.** Two overlays whose visibility
   flips in the same commit is the one arrangement iOS genuinely cannot present
   - the second is asked to appear while the first is still dismissing - so the
