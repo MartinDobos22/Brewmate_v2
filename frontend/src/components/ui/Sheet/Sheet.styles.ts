@@ -2,7 +2,9 @@ import { StyleSheet } from 'react-native';
 
 import type { Theme, ViewStyles } from '../../../theme';
 
-type SheetStyleMap = ViewStyles<'backdrop' | 'scrim' | 'panel' | 'handle' | 'header' | 'content'>;
+type SheetStyleMap = ViewStyles<
+  'backdrop' | 'scrim' | 'panel' | 'filled' | 'handle' | 'header' | 'content'
+>;
 
 /**
  * The sheet is one of the three things in the app that genuinely floats, so it
@@ -28,6 +30,12 @@ export const createSheetStyles = (theme: Theme): SheetStyleMap =>
       shadowColor: theme.colors.shadow,
       ...theme.elevation.overlay,
     },
+    /**
+     * A definite height, which is the whole difference for a virtualised list:
+     * `maxHeight` alone leaves the panel sizing to its content, and a child
+     * asking "how tall may I be" gets no answer and collapses.
+     */
+    filled: { height: theme.relativeSize.sheetMaxHeight },
     handle: {
       width: theme.size.sheetHandleWidth,
       height: theme.size.sheetHandleHeight,

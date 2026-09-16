@@ -354,6 +354,17 @@ kind of element has the same radius everywhere.
 - `lib/apiClient` is the only thing that talks to the API. Paths come from
   `@brewmate/shared` and every response is validated against the shared schema -
   a body that violates the contract throws, it does not resolve.
+- **A model call is given far longer than a query, and the path decides which.**
+  Fifteen seconds is right for reading the cupboard and nowhere near enough for
+  a recipe: a few thousand tokens written against a system prompt of several
+  hundred lines routinely takes half a minute, and a host that hibernates
+  between requests spends the first few seconds waking up before any of it
+  starts. Aborting there saves nothing - the call is made and billed either way
+  - it only turns an answer that was coming into "server neodpovedal včas" and
+    a second attempt at the same price. `resolveRequestTimeout` reads it off
+    `AI_ROUTE_PREFIX`, the same way the API puts its allowance in front of
+    exactly those routes: one rule about the group, rather than a longer timeout
+    eight services have to remember to pass.
 - `lib/apiClient` takes an `AuthTokenProvider` and runs with the Firebase one:
   every request carries `Authorization: Bearer <id token>`, and a 401 is retried
   exactly once with a force-refreshed token before it reaches the caller.
@@ -941,6 +952,24 @@ leading to one.
   slider below it along for the ride. The value now carries a floor wide enough
   for a four-digit weight and its unit, the steppers are stacked one per row,
   and nothing on the card moves when a number does.
+- **Both weights can be typed, not only stepped.** Stepping is fine for a dose:
+  it moves half a gram at a time and starts near where it is going. It is not
+  fine for the water, which is the dose times the ratio and therefore lands on
+  229,6 - so every press of a button moves the ratio rather than the weight,
+  and somebody who wants 230 grams has to hunt for it through a number that
+  never stops anywhere round. While the field has focus it holds what was
+  typed rather than what the value rounds to, because reformatting mid-word is
+  how a field eats the comma somebody just pressed; and an emptied field
+  changes nothing until there are digits in it again, because deleting three
+  characters before typing the replacement does not mean a dose of nought.
+- **A typed weight is clamped like a derived one.** The calculator has always
+  clamped what it works out into the bounds the schema accepts; what somebody
+  entered never needed it while a stepper was the only way in. A keypad reaches
+  zero on the way to every figure whose first digit has not been pressed yet,
+  and a dose of nought is a ratio of infinity and a 422 on a screen that looked
+  perfectly well. `clampDoseGrams` and `clampWaterGrams` sit next to the rest of
+  the arithmetic in `@brewmate/shared`, so the bound and the schema that
+  enforces it are one decision.
 - **Validation describes, it does not block.** The person holding the brewer
   knows things the app does not - that this V60 takes more than the box claims,
   that there is a second bag of the same coffee in the cupboard. Every warning
@@ -1224,6 +1253,13 @@ as a fact rather than asked for one.
   the account does not own carries no link to a catalogue entry, and the link
   is the whole difference between "stredne jemné" and a number on the collar
   with the clicks to move it by.
+- **A sheet holding a virtualised list takes its full height.** A `FlatList`
+  asks its parent how tall it may be, and a panel that sizes to its content has
+  no answer to give - so the list resolved to nothing and the catalogue opened
+  as a search box above an empty space. `Sheet` takes a `fill` prop for exactly
+  that, and only that: a short list of answers still sizes to itself, because a
+  sheet that fills the screen for three options looks broken in the other
+  direction.
 - **One sheet with two views, not two sheets.** Two overlays whose visibility
   flips in the same commit is the one arrangement iOS genuinely cannot present
   - the second is asked to appear while the first is still dismissing - so the
@@ -2216,6 +2252,17 @@ knowing before changing anything:
   read, so correcting a roast level changes the answer immediately instead of
   leaving a stale row behind, which is the same discipline that keeps a taste
   profile a fold of its events rather than a patched row.
+- **A partial unique index has to be named as one by every upsert that infers
+  it.** Both cache tables key on `(roaster_key, name_key)` through an index
+  that is partial on purpose - several bags whose label could not be read are
+  several different bags - and Postgres will only match `ON CONFLICT (a, b)`
+  against a partial index when the inference carries the same `WHERE`. Without
+  it the statement does not fall back to a plain insert; it fails outright with
+  "there is no unique or exclusion constraint matching the ON CONFLICT
+  specification", which meant every first reading of a coffee died after the
+  model had already been called and billed. The predicate lives beside the
+  upsert with the index's name in the comment, because the two have to be
+  changed together or not at all.
 - **`coffee_bag_parses` belongs to nobody.** It caches what was read off a
   label, under two keys: the photograph's hash, and a partial unique index on
   the normalised `(roaster_key, name_key)` pair. There is no `user_id`, so the

@@ -29,6 +29,12 @@ export const SIZE = {
    * means the two buttons sit in the same place whatever the number does.
    */
   stepperValueMinWidth: 96,
+  /**
+   * The typed half of that, where the unit sits beside the number rather than
+   * inside it. Wide enough for a four-digit water weight and no wider: a field
+   * that reserves room it never uses reads as one somebody failed to fill in.
+   */
+  stepperFieldMinWidth: 64,
   swatchSize: 56,
   /** A bar in the taste profile chart: readable, but not a block of colour. */
   profileBarHeight: 10,

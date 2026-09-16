@@ -118,6 +118,17 @@ export const SK_PRE_BREW = {
   preBrewYieldLabel: 'Výtlačok',
   preBrewRatioLabel: 'Pomer',
   preBrewAmountsHint: 'Zmeň ktorékoľvek číslo a zvyšné sa dopočítajú.',
+  /*
+   * Which number moves which, said outright.
+   *
+   * The calculator is bidirectional and the direction is not guessable from
+   * looking at it: a dose keeps the ratio and moves the water, a water weight
+   * keeps the dose and moves the ratio. Somebody pressing plus on the water
+   * and watching the ratio change instead has every reason to think the
+   * control is broken.
+   */
+  preBrewAmountsTypeHint:
+    'Do čísel sa dá aj ťuknúť a prepísať ich. Dávka posúva vodu pri rovnakom pomere, voda posúva pomer.',
   preBrewSuggestionNote: 'Toto som ti predvyplnil ja. Posledné slovo máš ty.',
   preBrewSuggestionReason: 'Vychádzam zo stredu pomeru pre {method} a z toho, čo drží tvoj brewer.',
 

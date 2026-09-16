@@ -1,12 +1,12 @@
 import type { ZodType } from 'zod';
 
 import { HTTP_METHODS, HTTP_STATUS, type HttpMethod } from '../../constants/http';
-import { LIMITS } from '../../constants/limits';
 
 import { ApiClientError } from './ApiClientError';
 import { API_CLIENT_ERROR_CODES } from './apiClientErrorCodes';
 import { anonymousTokenProvider, type AuthTokenProvider } from './authTokenProvider';
 import { parseErrorResponse } from './parseErrorResponse';
+import { resolveRequestTimeout } from './resolveRequestTimeout';
 import { runAuthenticatedRequest } from './runAuthenticatedRequest';
 
 export interface ApiRequest<TResponse> {
@@ -48,7 +48,7 @@ export const createApiClient = ({
       url: `${baseUrl}${path}`,
       method,
       body,
-      timeoutMs: LIMITS.requestTimeoutMs,
+      timeoutMs: resolveRequestTimeout(path),
       getAuthToken,
     });
 

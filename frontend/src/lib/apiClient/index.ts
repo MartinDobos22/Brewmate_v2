@@ -4,6 +4,7 @@ export type { ApiClientErrorCode } from './apiClientErrorCodes';
 export { anonymousTokenProvider } from './authTokenProvider';
 export type { AuthTokenProvider } from './authTokenProvider';
 export { createApiClient } from './createApiClient';
+export { resolveRequestTimeout } from './resolveRequestTimeout';
 export type { ApiClient, ApiClientOptions, ApiRequest } from './createApiClient';
 export { getApiClient } from './getApiClient';
 export { runAuthenticatedRequest } from './runAuthenticatedRequest';
