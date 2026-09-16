@@ -45,3 +45,20 @@ export const resolveDoseGrams = (waterGrams: number, ratio: number): number =>
 
 export const resolveRatio = (doseGrams: number, waterGrams: number): number =>
   round(clamp(waterGrams / doseGrams, BREW_RATIO_MIN, BREW_RATIO_MAX), RATIO_DECIMALS);
+
+/**
+ * The same bounds applied to a weight somebody entered rather than one this
+ * module worked out.
+ *
+ * A derived number has always been clamped here; a typed one never was,
+ * because until the amounts could be typed there was nothing to clamp - a
+ * stepper starting from a proposal and moving half a gram at a time does not
+ * reach zero by accident. A keypad does, on the way to every number that
+ * begins with a digit somebody has not pressed yet, and a dose of nought is a
+ * ratio of infinity and a 422 from the API on a screen that had looked fine.
+ */
+export const clampDoseGrams = (doseGrams: number): number =>
+  round(clamp(doseGrams, DOSE_GRAMS_MIN, DOSE_GRAMS_MAX), GRAMS_DECIMALS);
+
+export const clampWaterGrams = (waterGrams: number): number =>
+  round(clamp(waterGrams, WATER_GRAMS_MIN, WATER_GRAMS_MAX), GRAMS_DECIMALS);

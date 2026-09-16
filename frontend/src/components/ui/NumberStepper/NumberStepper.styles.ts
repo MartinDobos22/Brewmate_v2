@@ -1,10 +1,11 @@
 import { StyleSheet } from 'react-native';
 
-import type { Theme, ViewStyles } from '../../../theme';
+import type { TextStyles, Theme, ViewStyles } from '../../../theme';
 
 type NumberStepperStyleMap = ViewStyles<
-  'wrapper' | 'row' | 'button' | 'pressed' | 'disabled' | 'value'
->;
+  'wrapper' | 'row' | 'button' | 'pressed' | 'disabled' | 'value' | 'editable'
+> &
+  TextStyles<'field'>;
 
 export const createNumberStepperStyles = (theme: Theme): NumberStepperStyleMap =>
   StyleSheet.create({
@@ -35,5 +36,26 @@ export const createNumberStepperStyles = (theme: Theme): NumberStepperStyleMap =
       minWidth: theme.size.stepperValueMinWidth,
       alignItems: 'center',
       justifyContent: 'center',
+    },
+    /** The typed number and its unit, kept on one baseline. */
+    editable: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      gap: theme.spacing.xs,
+    },
+    /**
+     * A field that does not look like one until it is touched.
+     *
+     * The border and the surface belong to `Input`, which is a question being
+     * asked. This is a value being reported that happens to be editable, and
+     * boxing it would put a third rectangle inside a row that already has two
+     * buttons in it.
+     */
+    field: {
+      ...theme.typography.numericLarge,
+      color: theme.colors.onSurface,
+      padding: theme.spacing.none,
+      minWidth: theme.size.stepperFieldMinWidth,
+      textAlign: 'right',
     },
   });

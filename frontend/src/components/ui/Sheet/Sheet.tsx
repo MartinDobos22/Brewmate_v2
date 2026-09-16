@@ -13,6 +13,18 @@ export interface SheetProps {
   readonly title: string;
   readonly closeLabel: string;
   readonly onClose: () => void;
+  /**
+   * Takes the sheet's full height rather than sizing to its content.
+   *
+   * For a panel holding a virtualised list. A `FlatList` asks its parent how
+   * tall it may be, and a panel that is as tall as its content has no answer
+   * to give - so the list resolves to nothing and the sheet opens showing a
+   * search box above an empty space, which is exactly what the grinder
+   * catalogue did. A short list of answers still sizes to itself, because a
+   * sheet that fills the screen for three options is a sheet that looks broken
+   * in the other direction.
+   */
+  readonly fill?: boolean;
   readonly children: ReactNode;
 }
 
@@ -24,6 +36,7 @@ export const Sheet = ({
   title,
   closeLabel,
   onClose,
+  fill = false,
   children,
 }: SheetProps): JSX.Element => {
   const styles = useThemedStyles(createSheetStyles);
@@ -46,7 +59,7 @@ export const Sheet = ({
             accessibilityLabel={closeLabel}
           />
         </Animated.View>
-        <Animated.View style={[styles.panel, panelStyle(translateY)]}>
+        <Animated.View style={[styles.panel, fill && styles.filled, panelStyle(translateY)]}>
           <View style={styles.handle} />
           <View style={styles.header}>
             <Text variant="titleLarge">{title}</Text>

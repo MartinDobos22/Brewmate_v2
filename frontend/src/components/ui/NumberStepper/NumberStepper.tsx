@@ -5,6 +5,7 @@ import { useThemedStyles } from '../../../theme';
 import { Text } from '../Text';
 
 import { createNumberStepperStyles } from './NumberStepper.styles';
+import { NumberStepperValue } from './NumberStepperValue';
 import { STEPPER_SYMBOLS } from './stepperSymbols';
 
 export interface NumberStepperProps {
@@ -18,6 +19,18 @@ export interface NumberStepperProps {
   readonly increaseLabel: string;
   readonly canDecrease?: boolean;
   readonly canIncrease?: boolean;
+  /**
+   * Lets the number be typed as well as stepped.
+   *
+   * Left out, the value is read-only text, which is right where the steps
+   * land on the figures somebody wants anyway. Supplied, the control also
+   * accepts a number straight from the keypad - the case for it is a water
+   * weight, which is a dose times a ratio and therefore almost never a round
+   * number a button can reach.
+   */
+  readonly onChangeValue?: (value: number) => void;
+  /** What the typed field is called to a screen reader. Required with `onChangeValue`. */
+  readonly editLabel?: string;
 }
 
 export const NumberStepper = ({
@@ -30,6 +43,8 @@ export const NumberStepper = ({
   increaseLabel,
   canDecrease = true,
   canIncrease = true,
+  onChangeValue,
+  editLabel = label,
 }: NumberStepperProps): JSX.Element => {
   const styles = useThemedStyles(createNumberStepperStyles);
 
@@ -57,9 +72,12 @@ export const NumberStepper = ({
           <Text variant="titleLarge">{STEPPER_SYMBOLS.decrease}</Text>
         </Pressable>
         <View style={styles.value}>
-          <Text variant="numericLarge" numeric numberOfLines={1}>
-            {unit === undefined ? formattedValue : `${formattedValue} ${unit}`}
-          </Text>
+          <NumberStepperValue
+            formattedValue={formattedValue}
+            unit={unit}
+            onChangeValue={onChangeValue}
+            editLabel={editLabel}
+          />
         </View>
         <Pressable
           style={resolveStyle(canIncrease)}

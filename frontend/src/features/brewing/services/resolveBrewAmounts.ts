@@ -1,5 +1,7 @@
 import {
   BREW_METHOD_CATEGORIES,
+  clampDoseGrams,
+  clampWaterGrams,
   resolveDoseGrams,
   resolveRatio,
   resolveWaterGrams,
@@ -31,19 +33,36 @@ export interface BrewAmounts {
  * The arithmetic itself lives in `@brewmate/shared`, so the number this screen
  * shows and the number the API stores are rounded by the same code.
  */
-export const setDose = (amounts: BrewAmounts, doseGrams: number): BrewAmounts => ({
-  doseGrams,
-  ratio: amounts.ratio,
-  waterGrams: resolveWaterGrams(doseGrams, amounts.ratio),
-  lastEdited: AMOUNT_FIELDS.dose,
-});
+/*
+ * Both weights are clamped on the way in, not only on the way out.
+ *
+ * The derived number always was; the entered one did not have to be while the
+ * only way to enter it was a stepper walking half a gram at a time away from a
+ * proposal. A keypad reaches zero on the way to every figure whose first digit
+ * has not been pressed yet, and a dose of nought is a ratio of infinity and a
+ * 422 from the API on a screen that looked perfectly well.
+ */
+export const setDose = (amounts: BrewAmounts, entered: number): BrewAmounts => {
+  const doseGrams = clampDoseGrams(entered);
 
-export const setWater = (amounts: BrewAmounts, waterGrams: number): BrewAmounts => ({
-  doseGrams: amounts.doseGrams,
-  waterGrams,
-  ratio: resolveRatio(amounts.doseGrams, waterGrams),
-  lastEdited: AMOUNT_FIELDS.water,
-});
+  return {
+    doseGrams,
+    ratio: amounts.ratio,
+    waterGrams: resolveWaterGrams(doseGrams, amounts.ratio),
+    lastEdited: AMOUNT_FIELDS.dose,
+  };
+};
+
+export const setWater = (amounts: BrewAmounts, entered: number): BrewAmounts => {
+  const waterGrams = clampWaterGrams(entered);
+
+  return {
+    doseGrams: amounts.doseGrams,
+    waterGrams,
+    ratio: resolveRatio(amounts.doseGrams, waterGrams),
+    lastEdited: AMOUNT_FIELDS.water,
+  };
+};
 
 export const setRatio = (amounts: BrewAmounts, ratio: number): BrewAmounts =>
   amounts.lastEdited === AMOUNT_FIELDS.water

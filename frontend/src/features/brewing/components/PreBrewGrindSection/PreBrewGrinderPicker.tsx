@@ -57,6 +57,8 @@ export const PreBrewGrinderPicker = ({
   const [view, setView] = useState<GrinderPickerView>(GRINDER_PICKER_VIEWS.closed);
   const chosen = candidates.find((item: Equipment): boolean => item.id === chosenId);
 
+  const isBrowsing = view === GRINDER_PICKER_VIEWS.catalogue;
+
   const close = (): void => {
     setView(GRINDER_PICKER_VIEWS.closed);
   };
@@ -75,14 +77,15 @@ export const PreBrewGrinderPicker = ({
       <Sheet
         visible={view !== GRINDER_PICKER_VIEWS.closed}
         title={t(
-          view === GRINDER_PICKER_VIEWS.catalogue
+          isBrowsing
             ? TRANSLATION_KEYS.preBrewGrindPickerCatalogueTitle
             : TRANSLATION_KEYS.preBrewGrindPickerTitle,
         )}
         closeLabel={t(TRANSLATION_KEYS.actionClose)}
+        fill={isBrowsing}
         onClose={close}
       >
-        {view === GRINDER_PICKER_VIEWS.catalogue ? (
+        {isBrowsing ? (
           <GrinderPicker
             onSelect={(grinder: Grinder): void => {
               close();

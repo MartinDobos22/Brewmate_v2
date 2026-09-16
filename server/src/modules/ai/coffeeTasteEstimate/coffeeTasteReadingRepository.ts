@@ -1,4 +1,4 @@
-import { and, eq, type SQL } from 'drizzle-orm';
+import { and, eq, isNotNull, type SQL } from 'drizzle-orm';
 
 import type { Database } from '../../../db/databaseTypes.js';
 import { firstRowOrNull } from '../../../db/rows/firstRowOrNull.js';
@@ -21,6 +21,20 @@ export interface CoffeeTasteReadingRepository {
   save(input: NewCoffeeTasteReadingRow): Promise<CoffeeTasteReadingRow>;
 }
 
+/**
+ * The index's own predicate, repeated where the upsert infers it.
+ *
+ * Postgres will only match `ON CONFLICT (a, b)` against a *partial* unique
+ * index when the inference carries the same `WHERE` - and the label index is
+ * partial on purpose, because several bags whose roaster or name could not be
+ * read are several different bags rather than one. Without it the insert never
+ * matched anything and every first reading of a coffee died on "there is no
+ * unique or exclusion constraint matching the ON CONFLICT specification",
+ * taking a model call that had already been paid for with it.
+ */
+const labelIndexPredicate = (): SQL | undefined =>
+  and(isNotNull(coffeeTasteReadingsTable.roasterKey), isNotNull(coffeeTasteReadingsTable.nameKey));
+
 const sameLabel = ({ roasterKey, nameKey }: LabelKey): SQL | undefined =>
   and(
     eq(coffeeTasteReadingsTable.roasterKey, roasterKey),
@@ -38,6 +52,7 @@ export const createCoffeeTasteReadingRepository = (db: Database): CoffeeTasteRea
         .values(input)
         .onConflictDoUpdate({
           target: [coffeeTasteReadingsTable.roasterKey, coffeeTasteReadingsTable.nameKey],
+          targetWhere: labelIndexPredicate(),
           set: { reading: input.reading, model: input.model },
         })
         .returning(),

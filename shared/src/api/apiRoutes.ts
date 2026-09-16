@@ -61,3 +61,14 @@ export const API_ROUTES = {
 } as const;
 
 export type ApiRoute = (typeof API_ROUTES)[keyof typeof API_ROUTES];
+
+/**
+ * What every route that asks a model anything has in common.
+ *
+ * Named once here because both sides of the wire reason about the group rather
+ * than about the eight members: the API puts its spending allowance in front
+ * of exactly these, and the app has to wait far longer for them than for a
+ * query. A rule about "the routes that cost money" written out eight times is
+ * a rule the ninth one is left out of.
+ */
+export const AI_ROUTE_PREFIX = '/ai/';

@@ -53,6 +53,8 @@ export const PreBrewAmountsSection = ({
           unit={t(TRANSLATION_KEYS.unitGrams)}
           decreaseLabel={t(TRANSLATION_KEYS.decrease)}
           increaseLabel={t(TRANSLATION_KEYS.increase)}
+          editLabel={t(TRANSLATION_KEYS.preBrewDoseLabel)}
+          onChangeValue={control.setDoseGrams}
           onDecrease={(): void => {
             control.setDoseGrams(amounts.doseGrams - AMOUNT_STEPS.dose);
           }}
@@ -68,6 +70,10 @@ export const PreBrewAmountsSection = ({
           unit={t(TRANSLATION_KEYS.unitGrams)}
           decreaseLabel={t(TRANSLATION_KEYS.decrease)}
           increaseLabel={t(TRANSLATION_KEYS.increase)}
+          editLabel={t(
+            isEspresso ? TRANSLATION_KEYS.preBrewYieldLabel : TRANSLATION_KEYS.preBrewWaterLabel,
+          )}
+          onChangeValue={control.setWaterGrams}
           onDecrease={(): void => {
             control.setWaterGrams(
               amounts.waterGrams - (isEspresso ? AMOUNT_STEPS.espressoYield : AMOUNT_STEPS.water),
@@ -88,6 +94,9 @@ export const PreBrewAmountsSection = ({
         onChange={control.setRatioValue}
       />
       <View style={styles.notes}>
+        <Text variant="bodySmall" tone="muted">
+          {t(TRANSLATION_KEYS.preBrewAmountsTypeHint)}
+        </Text>
         <Text variant="bodySmall" tone="muted">
           {t(TRANSLATION_KEYS.preBrewSuggestionNote)}
         </Text>

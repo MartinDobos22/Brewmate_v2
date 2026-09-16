@@ -42,4 +42,5 @@ export {
 } from './brewConstraintsSchema.js';
 export type { BrewConstraints, BrewConstraintName } from './brewConstraintsSchema.js';
 export { resolveRatio, resolveWaterGrams, resolveDoseGrams } from './ratioCalculator.js';
+export { clampDoseGrams, clampWaterGrams } from './ratioCalculator.js';
 export { RATIO_DECIMALS, GRAMS_DECIMALS } from './ratioCalculator.js';
