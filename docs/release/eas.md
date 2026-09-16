@@ -63,8 +63,8 @@ update that is not ready by then can be ready for the next launch instead.
 ## Environment in a build
 
 `eas.json` sets `EXPO_PUBLIC_API_BASE_URL` per profile. Everything else public
-(the Firebase client configuration, the Google client IDs, the storage bucket,
-the Sentry DSN and the release name) belongs in EAS environment variables
+(the Firebase client configuration, the Google client IDs, the Sentry DSN and
+the release name) belongs in EAS environment variables
 rather than in this file, because the file is committed. None of them are
 secrets - they identify rather than authorise - but a repository is still the
 wrong place to write down which Firebase project a build points at.

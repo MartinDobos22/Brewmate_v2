@@ -27,24 +27,19 @@ export const SK_SCANNER = {
   scanPhotoReading: 'Čítam etiketu...',
 
   /*
-   * Four sentences, because these are four different mornings.
+   * Three sentences, because these are three different mornings.
    *
-   * A connection that gave out is the only one of them worth walking a few
-   * steps about. A bucket that refused the picture is our mistake and says so
-   * - sending somebody around a shop looking for a window over it would be the
-   * app blaming the building for something it got wrong itself. A file that
-   * was not there asks for one more tap and nothing else. And a label nothing
-   * could be read from needs no instruction at all: the form underneath is
-   * already the answer.
+   * A connection that gave out is the only one worth walking a few steps
+   * about. A file that was not there asks for one more tap and nothing else.
+   * And a label nothing could be read from needs no instruction at all: the
+   * form underneath is already the answer.
    *
-   * All four end the same way on purpose. Whatever happened, typing the label
-   * in is right there, and nobody standing in a shop should have to work out
-   * that for themselves.
+   * All three end the same way on purpose. Whatever happened, typing the label
+   * in is right there, and nobody standing in a shop should have to work that
+   * out for themselves.
    */
-  scanPhotoUploadFailed:
-    'Fotku sa mi nepodarilo odoslať - spojenie to nedalo. Skús to o pár krokov ďalej, alebo mi rovno prepíš z balíčka, čo vidíš.',
-  scanPhotoStorageFailed:
-    'Fotku nemám kam uložiť - to je chyba na mojej strane, nie na tvojej. Prepíš mi z balíčka, čo vidíš, a ja to vybavím.',
+  scanPhotoSendFailed:
+    'Fotka sa ku mne nedostala - spojenie to nedalo. Skús to o pár krokov ďalej, alebo mi rovno prepíš z balíčka, čo vidíš.',
   scanPhotoFileFailed:
     'K tej fotke som sa už nedostal. Skús ju vybrať ešte raz, alebo mi prepíš z balíčka, čo vidíš.',
   scanPhotoReadFailed:

@@ -55,7 +55,6 @@ export const coffeeBagsTable = pgTable(
       .default(NO_TASTING_NOTES),
     weightGrams: real('weight_grams'),
     remainingGrams: real('remaining_grams'),
-    imageUrl: text('image_url'),
     isArchived: boolean('is_archived').notNull().default(NOT_ARCHIVED),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

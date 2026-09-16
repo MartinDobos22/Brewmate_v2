@@ -7,6 +7,7 @@ import {
   parseCoffeeBagResponseSchema,
   PARSED_CONFIDENCE_LOW_THRESHOLD,
   type ParseCoffeeBagResponse,
+  type Photo,
 } from '@brewmate/shared';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
@@ -14,10 +15,10 @@ import type { VerifiedToken } from '../../src/auth/verifiedToken.js';
 import { HTTP_STATUS } from '../../src/constants/httpStatus.js';
 import {
   MALFORMED_ANSWER,
-  OTHER_IMAGE_URL,
+  OTHER_PHOTO,
   OTHER_PHOTO_ANSWER,
-  TEST_IMAGE_URL,
   TEST_LABEL_ANSWER,
+  TEST_PHOTO,
 } from '../fixtures/testAiAnswers.js';
 import { RETURNING_IDENTITY, SECOND_IDENTITY } from '../fixtures/testIdentities.js';
 import { createTestContext, type TestContext } from '../setup/createTestContext.js';
@@ -43,12 +44,9 @@ describe('coffee bag scanning', () => {
   let context: TestContext;
   let api: TestApi;
 
-  const parse = async (
-    identity: VerifiedToken,
-    imageUrl: string,
-  ): Promise<ParseCoffeeBagResponse> =>
+  const parse = async (identity: VerifiedToken, photo: Photo): Promise<ParseCoffeeBagResponse> =>
     parseCoffeeBagResponseSchema.parse(
-      (await api.post(API_ROUTES.aiParseCoffeeBag, identity, { imageUrl })).json(),
+      (await api.post(API_ROUTES.aiParseCoffeeBag, identity, { photo })).json(),
     );
 
   beforeAll(async () => {
@@ -67,7 +65,7 @@ describe('coffee bag scanning', () => {
   it('reads a label into the fields a bag is stored with', async () => {
     context.completionClient.answerWith(TEST_LABEL_ANSWER);
 
-    const { fields, fromCache } = await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+    const { fields, fromCache } = await parse(RETURNING_IDENTITY, TEST_PHOTO);
 
     expect(fromCache).toBe(false);
     expect(fields.name.value).toBe('Kiamugumo AA');
@@ -82,7 +80,7 @@ describe('coffee bag scanning', () => {
   it('marks the fields that were read too uncertainly to trust', async () => {
     context.completionClient.answerWith(TEST_LABEL_ANSWER);
 
-    const { fields } = await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+    const { fields } = await parse(RETURNING_IDENTITY, TEST_PHOTO);
 
     expect(lowConfidenceFieldNames(fields)).toEqual(['roastLevel']);
     expect(fields.name.confidence).toBeGreaterThanOrEqual(PARSED_CONFIDENCE_LOW_THRESHOLD);
@@ -92,8 +90,8 @@ describe('coffee bag scanning', () => {
   it('reads the same photograph once, however often it is sent', async () => {
     context.completionClient.answerWith(TEST_LABEL_ANSWER);
 
-    await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
-    const again = await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+    await parse(RETURNING_IDENTITY, TEST_PHOTO);
+    const again = await parse(RETURNING_IDENTITY, TEST_PHOTO);
 
     expect(again.fromCache).toBe(true);
     expect(context.completionClient.calls).toHaveLength(ONE_CALL);
@@ -108,8 +106,8 @@ describe('coffee bag scanning', () => {
   it('answers a coffee it has read before from the stored reading', async () => {
     context.completionClient.answerWith(TEST_LABEL_ANSWER, OTHER_PHOTO_ANSWER);
 
-    const first = await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
-    const second = await parse(SECOND_IDENTITY, OTHER_IMAGE_URL);
+    const first = await parse(RETURNING_IDENTITY, TEST_PHOTO);
+    const second = await parse(SECOND_IDENTITY, OTHER_PHOTO);
 
     expect(context.completionClient.calls).toHaveLength(TWO_CALLS);
     expect(second.fromCache).toBe(true);
@@ -123,7 +121,7 @@ describe('coffee bag scanning', () => {
   it('retries a malformed answer exactly once, then gives up', async () => {
     context.completionClient.answerWith(MALFORMED_ANSWER, TEST_LABEL_ANSWER);
 
-    const recovered = await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+    const recovered = await parse(RETURNING_IDENTITY, TEST_PHOTO);
 
     expect(recovered.fields.name.value).toBe('Kiamugumo AA');
     expect(context.completionClient.calls).toHaveLength(TWO_CALLS);
@@ -132,7 +130,7 @@ describe('coffee bag scanning', () => {
     context.completionClient.answerWith(MALFORMED_ANSWER);
 
     const refused = await api.post(API_ROUTES.aiParseCoffeeBag, RETURNING_IDENTITY, {
-      imageUrl: OTHER_IMAGE_URL,
+      photo: OTHER_PHOTO,
     });
 
     expect(refused.statusCode).toBe(HTTP_STATUS.badRequest);
@@ -149,7 +147,7 @@ describe('coffee bag scanning', () => {
     context.completionClient.answerWith(TEST_LABEL_ANSWER);
     context.labelTextReader.answerWith(UNREADABLE_PHOTO);
 
-    const refused = await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+    const refused = await parse(RETURNING_IDENTITY, TEST_PHOTO);
 
     expect(refused.photoIssues).toEqual([LABEL_PHOTO_ISSUES.noText, LABEL_PHOTO_ISSUES.tooDark]);
     expect(refused.fields.name.value).toBeNull();
@@ -164,10 +162,10 @@ describe('coffee bag scanning', () => {
   it('does not remember a photograph it refused', async () => {
     context.completionClient.answerWith(TEST_LABEL_ANSWER);
     context.labelTextReader.answerWith(UNREADABLE_PHOTO);
-    await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+    await parse(RETURNING_IDENTITY, TEST_PHOTO);
 
     context.labelTextReader.reset();
-    const read = await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+    const read = await parse(RETURNING_IDENTITY, TEST_PHOTO);
 
     expect(read.photoIssues).toEqual([]);
     expect(read.fields.name.value).toBe('Kiamugumo AA');
@@ -182,7 +180,7 @@ describe('coffee bag scanning', () => {
     context.completionClient.answerWith(TEST_LABEL_ANSWER);
     context.labelTextReader.failWith(new Error('vision is down'));
 
-    const read = await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+    const read = await parse(RETURNING_IDENTITY, TEST_PHOTO);
 
     expect(read.photoIssues).toBeNull();
     expect(read.fields.name.value).toBe('Kiamugumo AA');
@@ -193,7 +191,7 @@ describe('coffee bag scanning', () => {
     context.completionClient.answerWith(TEST_LABEL_ANSWER);
     context.labelTextReader.answerWith({ text: 'Praženo 2025-01-04', issues: [] });
 
-    await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+    await parse(RETURNING_IDENTITY, TEST_PHOTO);
 
     expect(context.completionClient.calls[NOTHING]?.prompt).toContain('Praženo 2025-01-04');
   });
@@ -202,8 +200,8 @@ describe('coffee bag scanning', () => {
   it('does not inspect a photograph it has already read', async () => {
     context.completionClient.answerWith(TEST_LABEL_ANSWER);
 
-    await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
-    await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+    await parse(RETURNING_IDENTITY, TEST_PHOTO);
+    await parse(RETURNING_IDENTITY, TEST_PHOTO);
 
     expect(context.labelTextReader.calls).toHaveLength(ONE_CALL);
   });
@@ -211,7 +209,7 @@ describe('coffee bag scanning', () => {
   it('records what the reading cost, retry included', async () => {
     context.completionClient.answerWith(MALFORMED_ANSWER, TEST_LABEL_ANSWER);
 
-    await parse(RETURNING_IDENTITY, TEST_IMAGE_URL);
+    await parse(RETURNING_IDENTITY, TEST_PHOTO);
 
     const usage = listResponseSchema(aiUsageLogSchema).parse(
       (await api.get(API_ROUTES.aiUsage, RETURNING_IDENTITY)).json(),
@@ -235,7 +233,7 @@ describe('coffee bag scanning', () => {
     context.completionClient.answerWith(MALFORMED_ANSWER);
 
     const refused = await api.post(API_ROUTES.aiParseCoffeeBag, RETURNING_IDENTITY, {
-      imageUrl: TEST_IMAGE_URL,
+      photo: TEST_PHOTO,
     });
 
     expect(refused.statusCode).toBe(HTTP_STATUS.badRequest);
@@ -262,7 +260,7 @@ describe('coffee bag scanning', () => {
     context.completionClient.failWith(new Error('the provider is down'));
 
     const failed = await api.post(API_ROUTES.aiParseCoffeeBag, RETURNING_IDENTITY, {
-      imageUrl: TEST_IMAGE_URL,
+      photo: TEST_PHOTO,
     });
 
     expect(failed.statusCode).toBe(HTTP_STATUS.serviceUnavailable);

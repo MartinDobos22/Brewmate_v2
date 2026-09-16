@@ -14,6 +14,13 @@ export {
   labelPhotoIssueSchema,
 } from './labelPhotoIssues.js';
 export type { LabelPhotoIssue } from './labelPhotoIssues.js';
+export {
+  photoSchema,
+  PHOTO_MEDIA_TYPES,
+  PHOTO_MEDIA_TYPE_VALUES,
+  PHOTO_BASE64_MAX_LENGTH,
+} from './photoSchema.js';
+export type { Photo, PhotoMediaType } from './photoSchema.js';
 export { parsedFieldSchema } from './parsedFieldSchema.js';
 export type { ParsedField } from './parsedFieldSchema.js';
 export { parsedBagFieldsSchema, PARSED_BAG_FIELD_NAMES } from './parsedBagFieldsSchema.js';

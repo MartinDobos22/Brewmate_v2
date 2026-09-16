@@ -62,17 +62,14 @@ export const BAG_PHOTO_PATH_SEPARATOR = '/';
 /**
  * Where a photograph stopped, when it stopped.
  *
- * Four, because they ask four different things of the person reading them. The
- * file never came off the phone; the bytes would not send; the bucket refused
- * them; or they arrived and no label could be made of them. These used to be
- * one message naming two causes, which on the one screen in this app used
- * inside a building on one bar told nobody anything they could act on.
+ * Three, because they ask three different things of the person reading them.
+ * The picture never came off the phone; it never reached the API; or it
+ * arrived and no label could be made of it. These used to be one message
+ * naming two causes, which on the one screen in this app used inside a
+ * building on one bar told nobody anything they could act on.
  *
- * `network` is the only one worth trying again on the spot. `storage` is this
- * application being wrong about its own bucket, and saying "skús to o kúsok
- * ďalej" about that would send somebody walking around a shop over a mistake
- * of ours. `file` is neither - the picker handed back something that was not
- * there by the time it was read, and picking again is the whole fix.
+ * There is no fourth for a bucket that refused the bytes, because there is no
+ * bucket: the photograph travels in the request now.
  *
  * The values double as the name each failure is reported under, so the label
  * on the report and the sentence on the screen cannot describe different
@@ -81,7 +78,6 @@ export const BAG_PHOTO_PATH_SEPARATOR = '/';
 export const BAG_PHOTO_FAILURES = {
   file: 'bag-photo-file',
   network: 'bag-photo-network',
-  storage: 'bag-photo-storage',
   read: 'bag-photo-read',
 } as const;
 

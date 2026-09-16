@@ -5,6 +5,7 @@ import {
   type EvaluateCoffeeRequest,
   type EvaluateCoffeeResponse,
   type ParseCoffeeBagResponse,
+  type Photo,
 } from '@brewmate/shared';
 
 import { HTTP_METHODS } from '../../../constants/http';
@@ -13,15 +14,16 @@ import { getApiClient } from '../../../lib/apiClient';
 /**
  * Reads a photographed label.
  *
- * Only the URL travels: the picture is already in storage, which is what keeps
- * this request small enough to survive a shop's signal and makes a retry cost
- * one short call rather than a second upload.
+ * The picture travels with the request. It used to go to a storage bucket
+ * first and only its URL came here, which meant the same bytes crossed the
+ * network twice - the API has to hold them either way, to hash them for the
+ * cache and to hand the provider base-64 at the end.
  */
-export const parseCoffeeBag = async (imageUrl: string): Promise<ParseCoffeeBagResponse> =>
+export const parseCoffeeBag = async (photo: Photo): Promise<ParseCoffeeBagResponse> =>
   getApiClient().request({
     path: API_ROUTES.aiParseCoffeeBag,
     method: HTTP_METHODS.post,
-    body: { imageUrl },
+    body: { photo },
     schema: parseCoffeeBagResponseSchema,
   });
 

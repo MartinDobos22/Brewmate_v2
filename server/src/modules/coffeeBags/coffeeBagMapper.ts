@@ -19,7 +19,6 @@ export const toCoffeeBag = (row: CoffeeBagRow): CoffeeBag => ({
   tastingNotes: [...row.tastingNotes],
   weightGrams: row.weightGrams,
   remainingGrams: row.remainingGrams,
-  imageUrl: row.imageUrl,
   isArchived: row.isArchived,
   createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),

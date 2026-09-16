@@ -4,12 +4,13 @@ import {
   type LabelPhotoIssue,
   type ParseCoffeeBagResponse,
   type ParsedBagFields,
+  type Photo,
 } from '@brewmate/shared';
 
 import { AI_ERROR_MESSAGES } from '../../../ai/aiErrorMessages.js';
 import type { AiImage } from '../../../ai/aiImage.js';
 import { AI_EFFORT_LEVELS, AI_PARSE_MAX_TOKENS } from '../../../ai/constants/aiModels.js';
-import type { ImageFetcher } from '../../../ai/imageFetcher.js';
+import { readInlinePhoto } from '../../../ai/readInlinePhoto.js';
 import type { LabelPhotoReading, LabelTextReader } from '../../../ai/labelTextReader.js';
 import type { TextCompletionClient } from '../../../ai/textCompletionClient.js';
 import { badRequestError } from '../../../errors/badRequestError.js';
@@ -47,7 +48,6 @@ interface LabelReading {
 
 export interface CoffeeBagParseDependencies {
   readonly repository: CoffeeBagParseRepository;
-  readonly imageFetcher: ImageFetcher;
   /** Null wherever none is configured; the photograph then goes unaccompanied. */
   readonly labelTextReader: LabelTextReader | null;
   readonly completionClient: TextCompletionClient;
@@ -55,7 +55,7 @@ export interface CoffeeBagParseDependencies {
 }
 
 export interface CoffeeBagParseService {
-  parse(userId: string, imageUrl: string): Promise<ParseCoffeeBagResponse>;
+  parse(userId: string, photo: Photo): Promise<ParseCoffeeBagResponse>;
 }
 
 /**
@@ -74,14 +74,13 @@ export interface CoffeeBagParseService {
  */
 export const createCoffeeBagParseService = ({
   repository,
-  imageFetcher,
   labelTextReader,
   completionClient,
   aiUsageService,
 }: CoffeeBagParseDependencies): CoffeeBagParseService => {
-  const fetchImage = async (imageUrl: string): Promise<AiImage> => {
+  const readPhoto = (photo: Photo): AiImage => {
     try {
-      return await imageFetcher.fetch(imageUrl);
+      return readInlinePhoto(photo);
     } catch (cause: unknown) {
       throw badRequestError(ERROR_MESSAGES.bagPhotoUnreadable, cause);
     }
@@ -131,8 +130,8 @@ export const createCoffeeBagParseService = ({
   };
 
   return {
-    parse: async (userId, imageUrl): Promise<ParseCoffeeBagResponse> => {
-      const image = await fetchImage(imageUrl);
+    parse: async (userId, photo): Promise<ParseCoffeeBagResponse> => {
+      const image = readPhoto(photo);
       const byImage = await repository.findByImageHash(image.hash);
 
       /*

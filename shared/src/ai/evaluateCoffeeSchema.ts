@@ -2,12 +2,17 @@ import { z } from 'zod';
 
 import { bagEvaluationSchema } from '../bagEvaluations/bagEvaluationSchema.js';
 import { parsedBagDataSchema } from '../bagEvaluations/parsedBagDataSchema.js';
-import { IMAGE_URL_MAX_LENGTH } from '../coffeeBags/coffeeBagFieldLimits.js';
 
 /**
  * Body of `POST /ai/evaluate-coffee`.
  *
- * Only the coffee is sent. The taste profile, its confidence, the brew count
+ * Only the coffee is sent - not the photograph it was read off. The verdict
+ * never looked at the picture; it only carried it through to be stored beside
+ * the evaluation, and with no bucket behind it there is nothing to store and
+ * nothing to show. Sending a megabyte of base-64 to be written nowhere would
+ * be the worst of both designs.
+ *
+ * The taste profile, its confidence, the brew count
  * and the history of everything this account has already been advised about
  * are read by the server off the caller's own rows - a profile a client could
  * declare would be a profile anybody could declare, and the whole point of the
@@ -16,7 +21,6 @@ import { IMAGE_URL_MAX_LENGTH } from '../coffeeBags/coffeeBagFieldLimits.js';
 export const evaluateCoffeeRequestSchema = z
   .object({
     parsedData: parsedBagDataSchema,
-    imageUrl: z.url().max(IMAGE_URL_MAX_LENGTH).nullable().optional(),
   })
   .strict();
 

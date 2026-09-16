@@ -1,21 +1,19 @@
 import { z } from 'zod';
 
-import { IMAGE_URL_MAX_LENGTH } from '../coffeeBags/coffeeBagFieldLimits.js';
-
 import { labelPhotoIssueSchema } from './labelPhotoIssues.js';
 import { parsedBagFieldsSchema } from './parsedBagFieldsSchema.js';
+import { photoSchema } from './photoSchema.js';
 
 /**
  * Body of `POST /ai/parse-coffee-bag`.
  *
- * The app uploads the photograph to storage and sends the URL; the image bytes
- * never travel through this API. That keeps a request small enough to survive
- * a shop's signal, and it is what lets a retry cost one short request rather
- * than a second upload.
+ * The photograph itself, in the body. It used to be a link into a storage
+ * bucket the app had uploaded to first, which sent the same bytes across the
+ * network twice: the server has to hold them either way, both to hash them for
+ * the cache and to hand the provider base-64 at the end. See `photoSchema` for
+ * what that bucket cost and what it bought.
  */
-export const parseCoffeeBagRequestSchema = z
-  .object({ imageUrl: z.url().max(IMAGE_URL_MAX_LENGTH) })
-  .strict();
+export const parseCoffeeBagRequestSchema = z.object({ photo: photoSchema }).strict();
 
 export type ParseCoffeeBagRequest = z.infer<typeof parseCoffeeBagRequestSchema>;
 

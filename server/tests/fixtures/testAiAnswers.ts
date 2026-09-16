@@ -1,4 +1,10 @@
-import { EMPTY_PARSED_BAG_FIELDS, ROAST_LEVELS, type ParsedBagFields } from '@brewmate/shared';
+import {
+  EMPTY_PARSED_BAG_FIELDS,
+  PHOTO_MEDIA_TYPES,
+  ROAST_LEVELS,
+  type ParsedBagFields,
+  type Photo,
+} from '@brewmate/shared';
 
 const SURE = 0.95;
 const UNSURE = 0.4;
@@ -74,19 +80,24 @@ export const TEST_SUGGESTION_ANSWER = JSON.stringify({
 });
 
 /**
- * Photograph URLs, assembled rather than written out.
+ * Two photographs, which are now genuinely two different sets of bytes.
  *
- * An absolute URL may not be a literal anywhere in this repository, and these
- * two are not an exception worth carving: the test only needs two strings that
- * parse as URLs and differ from each other.
+ * They used to be two URLs a fake fetcher hashed instead of downloading, which
+ * gave the cache tests the property they needed - same URL, same photograph -
+ * by agreement rather than by arithmetic. The bytes travel in the request now,
+ * so the hash the service computes is the real one and the tests prove the
+ * real thing. Neither is a valid JPEG and neither needs to be: nothing in a
+ * test run decodes them, because the model answering is a stub.
  */
-const SCHEME = 'https:';
-const STORAGE_HOST = '//storage.test/bags/';
+const ENCODING = 'base64';
 
-const photoUrl = (name: string): string => `${SCHEME}${STORAGE_HOST}${name}`;
+const photo = (marker: string): Photo => ({
+  mediaType: PHOTO_MEDIA_TYPES.jpeg,
+  data: Buffer.from(marker).toString(ENCODING),
+});
 
-export const TEST_IMAGE_URL = photoUrl('first.jpg');
-export const OTHER_IMAGE_URL = photoUrl('second.jpg');
+export const TEST_PHOTO = photo('first');
+export const OTHER_PHOTO = photo('second');
 
 const GRIND_SETTING = 22;
 const WATER_TEMP_C = 94;

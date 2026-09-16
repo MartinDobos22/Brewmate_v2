@@ -1,8 +1,9 @@
 import { z } from 'zod';
 
-import { IMAGE_URL_MAX_LENGTH } from '../coffeeBags/coffeeBagFieldLimits.js';
 import { SOURCE_RECIPE_TEXT_MAX_LENGTH } from '../conversion/conversionFieldLimits.js';
 import { sourceRecipeSchema } from '../conversion/sourceRecipeSchema.js';
+
+import { photoSchema, type Photo } from './photoSchema.js';
 
 /**
  * Body of `POST /ai/parse-recipe`.
@@ -12,19 +13,19 @@ import { sourceRecipeSchema } from '../conversion/sourceRecipeSchema.js';
  * to be there - a request with neither is asking to be told what is in an
  * empty room.
  *
- * The photograph travels as a URL for the same reason a coffee bag's does: the
- * app uploads it to storage and sends the link, so a retry costs one short
- * request rather than a second upload.
+ * The photograph travels in the body for the same reason a coffee bag's does:
+ * the bytes have to reach this API regardless, so a bucket in between was the
+ * same picture sent twice.
  */
 export const parseRecipeRequestSchema = z
   .object({
     text: z.string().min(1).max(SOURCE_RECIPE_TEXT_MAX_LENGTH).nullable().optional(),
-    imageUrl: z.url().max(IMAGE_URL_MAX_LENGTH).nullable().optional(),
+    photo: photoSchema.nullable().optional(),
   })
   .strict()
   .refine(
-    (body: { text?: string | null; imageUrl?: string | null }): boolean =>
-      (body.text ?? null) !== null || (body.imageUrl ?? null) !== null,
+    (body: { text?: string | null; photo?: Photo | null }): boolean =>
+      (body.text ?? null) !== null || (body.photo ?? null) !== null,
   );
 
 export type ParseRecipeRequest = z.infer<typeof parseRecipeRequestSchema>;

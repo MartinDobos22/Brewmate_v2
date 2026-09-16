@@ -16,7 +16,6 @@ export {
 export type { RecordingCompletionClient } from './fakeCompletionClient.js';
 export { createFakeErrorTracker } from './fakeErrorTracker.js';
 export type { RecordingErrorTracker, CapturedError } from './fakeErrorTracker.js';
-export { createFakeImageFetcher } from './fakeImageFetcher.js';
 export { loadTestEnv } from './loadTestEnv.js';
 export { createTestIdToken, decodeTestIdToken } from './testIdToken.js';
 export { truncateTables } from './truncateTables.js';

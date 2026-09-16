@@ -12,16 +12,16 @@ wrong one as a misrepresentation rather than as a mistake.
 
 ## 1. Data the app collects
 
-| App Store category    | Collected | Linked to identity | Used for tracking | Purpose           | Where it lives                                                                                 |
-| --------------------- | --------- | ------------------ | ----------------- | ----------------- | ---------------------------------------------------------------------------------------------- |
-| Email Address         | Yes       | Yes                | No                | App Functionality | `users.email`, written by `provisionFromIdentity` from the Firebase token                      |
-| User ID               | Yes       | Yes                | No                | App Functionality | `users.id`, `users.firebase_uid`                                                               |
-| Name                  | Yes       | Yes                | No                | App Functionality | `users.display_name`, only when a provider supplies one                                        |
-| Photos                | Yes       | Yes                | No                | App Functionality | Bag photographs uploaded to Cloud Storage; the URL is stored on `coffee_bags.image_url`        |
-| Other User Content    | Yes       | Yes                | No                | App Functionality | `recipe_chat_messages.content` - what somebody writes about a cup                              |
-| Product Interaction   | Yes       | Yes                | No                | Analytics         | `analytics_events`, the named flow steps in `ANALYTICS_EVENT_NAMES`                            |
-| Crash Data            | Yes       | **No**             | No                | App Functionality | The error tracker sends the error, the platform, the release and a screen name. No account id. |
-| Other Diagnostic Data | Yes       | **No**             | No                | App Functionality | The same reports: release name and platform                                                    |
+| App Store category    | Collected | Linked to identity | Used for tracking | Purpose           | Where it lives                                                                                                                                                                  |
+| --------------------- | --------- | ------------------ | ----------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Email Address         | Yes       | Yes                | No                | App Functionality | `users.email`, written by `provisionFromIdentity` from the Firebase token                                                                                                       |
+| User ID               | Yes       | Yes                | No                | App Functionality | `users.id`, `users.firebase_uid`                                                                                                                                                |
+| Name                  | Yes       | Yes                | No                | App Functionality | `users.display_name`, only when a provider supplies one                                                                                                                         |
+| Photos                | Yes       | Yes                | No                | App Functionality | Sent to the API with the scan and read there. Nothing retains it - no bucket, no row, no column - but it travels under the caller's own token, so it is answered for as linked. |
+| Other User Content    | Yes       | Yes                | No                | App Functionality | `recipe_chat_messages.content` - what somebody writes about a cup                                                                                                               |
+| Product Interaction   | Yes       | Yes                | No                | Analytics         | `analytics_events`, the named flow steps in `ANALYTICS_EVENT_NAMES`                                                                                                             |
+| Crash Data            | Yes       | **No**             | No                | App Functionality | The error tracker sends the error, the platform, the release and a screen name. No account id.                                                                                  |
+| Other Diagnostic Data | Yes       | **No**             | No                | App Functionality | The same reports: release name and platform                                                                                                                                     |
 
 **Nothing is used for tracking.** `NSPrivacyTracking` is `false` and
 `NSPrivacyTrackingDomains` is empty, which is only honest because there is no
@@ -64,7 +64,6 @@ app like this to have and are worth pre-empting.
 | Recipient                           | What reaches it                                                                                  | Why                                                                            |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
 | Google Firebase (Auth)              | Email, provider identity                                                                         | Signing in                                                                     |
-| Google Firebase (Cloud Storage)     | Bag photographs                                                                                  | The photo the scanner reads                                                    |
 | Neon (PostgreSQL)                   | Everything the API stores                                                                        | It is the database                                                             |
 | Anthropic                           | The bag photograph, the coffee's fields, the brew's numbers, and what somebody wrote about a cup | Reading a label, writing a verdict, writing a recipe, answering a chat message |
 | Google Cloud Vision (optional)      | The bag photograph                                                                               | Transcribing the label, and judging whether the picture is worth reading       |
@@ -78,7 +77,7 @@ providers" would not be describing that to anybody who could recognise it.
 Google Cloud Vision receives the same photograph Anthropic does and nothing
 else: no account id, no email, nothing about the person holding the bag. It is
 sent by the API rather than by the app, so a photograph never travels from a
-phone to anyone but Cloud Storage. Absent unless `GOOGLE_VISION_API_KEY` and
+phone to anyone but this API. Absent unless `GOOGLE_VISION_API_KEY` and
 `GOOGLE_VISION_ENDPOINT` are both set on the API, and this row comes off the
 list in a deployment without them. It is worth naming in the privacy policy
 for the same reason Anthropic is: a photograph reaching a second model

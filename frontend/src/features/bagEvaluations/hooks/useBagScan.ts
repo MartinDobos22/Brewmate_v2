@@ -144,7 +144,7 @@ export const useBagScan = (initialMode?: BagScanMode): BagScan => {
        * shared cache a moment after the sentence that needed it.
        */
       void prefetchTaste(coffee).then((): void => {
-        void verdict.ask(coffee, photo.imageUrl);
+        void verdict.ask(coffee);
       });
     },
 

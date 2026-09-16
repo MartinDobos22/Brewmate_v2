@@ -11,7 +11,6 @@ import {
 } from './fakeCompletionClient.js';
 import { createFakeErrorTracker, type RecordingErrorTracker } from './fakeErrorTracker.js';
 import { createFakeIdentityDeleter, type RecordingIdentityDeleter } from './fakeIdentityDeleter.js';
-import { createFakeImageFetcher } from './fakeImageFetcher.js';
 import { createFakeLabelTextReader, type RecordingLabelTextReader } from './fakeLabelTextReader.js';
 import { createFakeTokenVerifier } from './fakeTokenVerifier.js';
 import { truncateTables } from './truncateTables.js';
@@ -48,7 +47,7 @@ export const createTestContext = async (): Promise<TestContext> => {
     tokenVerifier: createFakeTokenVerifier(),
     identityDeleter,
     errorTracker,
-    ai: { completionClient, imageFetcher: createFakeImageFetcher(), labelTextReader },
+    ai: { completionClient, labelTextReader },
   });
 
   await app.ready();

@@ -32,7 +32,7 @@ One process. Everything with state in it is already somebody else's problem:
 | --------------------- | ---------------------------- | ---------------------------------------------- |
 | The database          | Neon                         | `DATABASE_URL`, pooled + a direct endpoint     |
 | Identities and tokens | Firebase Authentication      | verified by Firebase Admin inside the API      |
-| Photographed labels   | Firebase Cloud Storage       | uploaded by the app, read by URL from the API  |
+| Photographed labels   | nowhere - they are not kept  | sent with the scan, read, and let go           |
 | The model             | Anthropic, behind an API key | every call goes through the API, never the app |
 | Crash reports         | Sentry, or nothing           | optional, absent by default                    |
 
@@ -240,8 +240,11 @@ anywhere.
   account, so the exposure is a signed-in user hammering their own rows. If that
   becomes real, `@fastify/rate-limit` in `buildApp` is the place, not a rule
   copied into each route.
-- **The body limit is 1 MB** and no photograph passes through the API - the app
-  uploads to Cloud Storage and sends a URL.
+- **The body limit is 1 MB everywhere except the two routes that carry a
+  photograph**, which accept twelve. Raising it globally so that two endpoints
+  can take a picture would mean the whole API accepts twelve megabytes of
+  anything; the picture is refused on the phone before it is sent, and this is
+  the backstop for whatever else finds the endpoint.
 
 ## Logs
 

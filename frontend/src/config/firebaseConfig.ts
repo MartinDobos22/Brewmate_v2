@@ -1,6 +1,5 @@
 import { ENVIRONMENT_KEYS } from './environmentKeys';
 import { requireEnvironmentVariable } from './requireEnvironmentVariable';
-import { readStorageBucket } from './storageConfig';
 
 /** The public Firebase client configuration. See ENVIRONMENT_KEYS for why it is public. */
 export interface FirebaseConfig {
@@ -8,8 +7,6 @@ export interface FirebaseConfig {
   readonly authDomain: string;
   readonly projectId: string;
   readonly appId: string;
-  /** Undefined in a build that does not offer photo scanning. */
-  readonly storageBucket: string | undefined;
 }
 
 export const readFirebaseConfig = (): FirebaseConfig => ({
@@ -17,5 +14,4 @@ export const readFirebaseConfig = (): FirebaseConfig => ({
   authDomain: requireEnvironmentVariable(ENVIRONMENT_KEYS.firebaseAuthDomain),
   projectId: requireEnvironmentVariable(ENVIRONMENT_KEYS.firebaseProjectId),
   appId: requireEnvironmentVariable(ENVIRONMENT_KEYS.firebaseAppId),
-  storageBucket: readStorageBucket(),
 });

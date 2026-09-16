@@ -19,7 +19,7 @@ export interface BagVerdict {
   readonly evaluationId: string | null;
   readonly isPending: boolean;
   readonly hasFailed: boolean;
-  readonly ask: (coffee: ParsedBagData, imageUrl: string | null) => Promise<void>;
+  readonly ask: (coffee: ParsedBagData) => Promise<void>;
   readonly forget: () => void;
 }
 
@@ -106,11 +106,10 @@ export const useBagVerdict = (): BagVerdict => {
     isPending: evaluate.isPending || createEvaluation.isPending,
     hasFailed: createEvaluation.isError,
 
-    ask: async (coffee: ParsedBagData, imageUrl: string | null): Promise<void> => {
+    ask: async (coffee: ParsedBagData): Promise<void> => {
       try {
         const answer: EvaluateCoffeeResponse = await evaluate.mutateAsync({
           parsedData: coffee,
-          imageUrl,
         });
 
         setView(

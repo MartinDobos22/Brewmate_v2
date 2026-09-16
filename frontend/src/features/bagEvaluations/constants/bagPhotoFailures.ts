@@ -3,7 +3,7 @@ import { TRANSLATION_KEYS, type TranslationKey } from '../../../i18n';
 import { BAG_PHOTO_FAILURES, type BagPhotoFailure } from './bagPhoto';
 
 /**
- * What to say about each of the four ways a photograph can fail.
+ * What to say about each of the three ways a photograph can fail.
  *
  * One sentence per failure rather than the single "poslať alebo prečítať" they
  * all used to share. That sentence was written to cover everything and
@@ -15,7 +15,6 @@ import { BAG_PHOTO_FAILURES, type BagPhotoFailure } from './bagPhoto';
  */
 export const BAG_PHOTO_FAILURE_KEYS: Record<BagPhotoFailure, TranslationKey> = {
   [BAG_PHOTO_FAILURES.file]: TRANSLATION_KEYS.scanPhotoFileFailed,
-  [BAG_PHOTO_FAILURES.network]: TRANSLATION_KEYS.scanPhotoUploadFailed,
-  [BAG_PHOTO_FAILURES.storage]: TRANSLATION_KEYS.scanPhotoStorageFailed,
+  [BAG_PHOTO_FAILURES.network]: TRANSLATION_KEYS.scanPhotoSendFailed,
   [BAG_PHOTO_FAILURES.read]: TRANSLATION_KEYS.scanPhotoReadFailed,
 };

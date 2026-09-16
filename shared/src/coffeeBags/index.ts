@@ -13,7 +13,6 @@ export {
   BAG_WEIGHT_GRAMS_MIN,
   BAG_WEIGHT_GRAMS_MAX,
   BAG_REMAINING_GRAMS_MIN,
-  IMAGE_URL_MAX_LENGTH,
 } from './coffeeBagFieldLimits.js';
 export { coffeeBagSchema } from './coffeeBagSchema.js';
 export type { CoffeeBag } from './coffeeBagSchema.js';
