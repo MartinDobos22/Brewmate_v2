@@ -23,7 +23,7 @@ account has been known to sit in review for a week.
 | Google Play Console     | 25 USD once             | Play, including internal testing               |
 | Expo (EAS)              | free tier, then monthly | Builds and over-the-air updates                |
 | Neon                    | free tier is real       | The production database branch                 |
-| Firebase                | free tier is real       | Authentication and the Cloud Storage bucket    |
+| Firebase                | free tier is real       | Authentication, and nothing else               |
 | Anthropic               | usage                   | Everything the app asks a model                |
 | A host for the API      | ~7 USD / month          | Render, from GitHub - see `backend-hosting.md` |
 | A domain                | ~10 USD / year          | `api.brewmate.app`, and a privacy policy URL   |
@@ -39,9 +39,11 @@ projects, so this is the last comfortable moment to decide.
 - [ ] Authentication → Sign-in method: **Email/Password**, **Google**, **Apple**
       all enabled. Apple needs a Services ID and a key from the Apple Developer
       portal, and it is the one that fails silently until a real device tries it.
-- [ ] Cloud Storage bucket created, and its rules written so a signed-in user
-      can upload. Without a bucket the app hides the camera and the scanner
-      falls back to the form, which works but is not the product.
+- [ ] No Cloud Storage bucket is needed, and deliberately so. A photographed
+      label travels in the scan request and is read there; the bucket it used
+      to pass through cost a paid plan, a second service to configure and a
+      whole class of failure between the camera and the label, for a URL
+      nothing in the app ever displayed.
 - [ ] A service account key generated for the API (Project settings → Service
       accounts). This is the private key that goes into the host's secrets and
       nowhere else.
@@ -79,7 +81,7 @@ dashboard:
 
 - [ ] `EAS_PROJECT_ID` and `EAS_OWNER` exported, `eas init` run once.
 - [ ] The production profile's environment variables set in EAS - the Firebase
-      client configuration, the storage bucket, the Google client IDs,
+      client configuration, the Google client IDs,
       `EXPO_PUBLIC_SENTRY_DSN` and `EXPO_PUBLIC_RELEASE`. They are not in the
       repository on purpose; `eas.md` says why.
 - [ ] `ascAppId` and `appleTeamId` filled into `eas.json` (both are placeholders

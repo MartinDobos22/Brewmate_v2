@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-import { IMAGE_URL_MAX_LENGTH } from '../coffeeBags/coffeeBagFieldLimits.js';
 import { CONFIDENCE_MAX, CONFIDENCE_MIN } from '../tasteProfiles/tasteProfileFieldLimits.js';
 
 import { VERDICT_TEXT_MAX_LENGTH } from './bagEvaluationFieldLimits.js';
@@ -23,7 +22,6 @@ import { parsedBagDataSchema } from './parsedBagDataSchema.js';
 export const bagEvaluationSchema = z.object({
   id: z.uuid(),
   userId: z.uuid(),
-  imageUrl: z.url().max(IMAGE_URL_MAX_LENGTH).nullable(),
   parsedData: parsedBagDataSchema,
   verdictText: z.string().max(VERDICT_TEXT_MAX_LENGTH).nullable(),
   reasoning: evaluationReasoningSchema,

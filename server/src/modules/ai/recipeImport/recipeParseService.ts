@@ -2,12 +2,13 @@ import {
   sourceRecipeSchema,
   type ParseRecipeRequest,
   type ParseRecipeResponse,
+  type Photo,
 } from '@brewmate/shared';
 
 import { AI_ERROR_MESSAGES } from '../../../ai/aiErrorMessages.js';
 import type { AiImage } from '../../../ai/aiImage.js';
 import { AI_EFFORT_LEVELS, AI_PARSE_MAX_TOKENS } from '../../../ai/constants/aiModels.js';
-import type { ImageFetcher } from '../../../ai/imageFetcher.js';
+import { readInlinePhoto } from '../../../ai/readInlinePhoto.js';
 import type { TextCompletionClient } from '../../../ai/textCompletionClient.js';
 import { badRequestError } from '../../../errors/badRequestError.js';
 import { ERROR_MESSAGES } from '../../../errors/errorMessages.js';
@@ -32,7 +33,6 @@ const NAME_SEPARATOR = ' ';
 
 export interface RecipeParseDependencies {
   readonly completionClient: TextCompletionClient;
-  readonly imageFetcher: ImageFetcher;
   readonly grinderRepository: GrinderRepository;
   readonly aiUsageService: AiUsageService;
 }
@@ -57,13 +57,12 @@ export interface RecipeParseService {
  */
 export const createRecipeParseService = ({
   completionClient,
-  imageFetcher,
   grinderRepository,
   aiUsageService,
 }: RecipeParseDependencies): RecipeParseService => {
-  const fetchImage = async (imageUrl: string): Promise<AiImage> => {
+  const readPhoto = (photo: Photo): AiImage => {
     try {
-      return await imageFetcher.fetch(imageUrl);
+      return readInlinePhoto(photo);
     } catch (cause: unknown) {
       throw badRequestError(ERROR_MESSAGES.recipePhotoUnreadable, cause);
     }
@@ -104,8 +103,8 @@ export const createRecipeParseService = ({
     input: ParseRecipeRequest,
   ): Promise<ParsedSourceRecipe> => {
     const text = input.text ?? null;
-    const imageUrl = input.imageUrl ?? null;
-    const image = imageUrl === null ? undefined : await fetchImage(imageUrl);
+    const photo = input.photo ?? null;
+    const image = photo === null ? undefined : readPhoto(photo);
     const sections = [
       image === undefined ? SOURCE_RECIPE_TEXT_INSTRUCTION : SOURCE_RECIPE_IMAGE_INSTRUCTION,
       ...(text === null ? [] : [text]),

@@ -22,6 +22,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 
 import { requireCurrentUser } from '../../auth/requireCurrentUser.js';
 import { HTTP_STATUS } from '../../constants/httpStatus.js';
+import { PHOTO_BODY_LIMIT_BYTES } from '../../constants/serverDefaults.js';
 import { ERROR_MESSAGES } from '../../errors/errorMessages.js';
 import { serviceUnavailableError } from '../../errors/serviceUnavailableError.js';
 import type { AiUsageService } from '../aiUsage/aiUsageService.js';
@@ -89,6 +90,7 @@ export const aiRoutes: FastifyPluginAsyncZod<AiRoutesOptions> = async (app, opti
     API_ROUTES.aiParseCoffeeBag,
     {
       onRequest: app.authenticate,
+      bodyLimit: PHOTO_BODY_LIMIT_BYTES,
       schema: {
         body: parseCoffeeBagRequestSchema,
         response: {
@@ -103,7 +105,7 @@ export const aiRoutes: FastifyPluginAsyncZod<AiRoutesOptions> = async (app, opti
     async (request) =>
       requireService(options.coffeeBagParseService).parse(
         requireCurrentUser(request).id,
-        request.body.imageUrl,
+        request.body.photo,
       ),
   );
 
@@ -218,6 +220,7 @@ export const aiRoutes: FastifyPluginAsyncZod<AiRoutesOptions> = async (app, opti
     API_ROUTES.aiParseRecipe,
     {
       onRequest: app.authenticate,
+      bodyLimit: PHOTO_BODY_LIMIT_BYTES,
       schema: {
         body: parseRecipeRequestSchema,
         response: {

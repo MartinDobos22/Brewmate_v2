@@ -23,5 +23,3 @@ export const TASTING_NOTES_MAX = 20;
 export const BAG_WEIGHT_GRAMS_MIN = 1;
 export const BAG_WEIGHT_GRAMS_MAX = 50000;
 export const BAG_REMAINING_GRAMS_MIN = 0;
-
-export const IMAGE_URL_MAX_LENGTH = 2048;

@@ -475,10 +475,15 @@ The first thing in Brewmate that asks a model anything, and the reason
 
 - **Every model call goes through the server.** Everything in an Expo bundle is
   readable by anybody who installs the app, so `ANTHROPIC_API_KEY` lives in
-  `server/.env` and nowhere else. The app uploads the photograph and sends a
-  URL; the bytes never travel through the Brewmate API, which keeps a request
-  small enough to survive a shop's signal and makes a retry cost one short call
-  rather than a second upload.
+  `server/.env` and nowhere else. The photograph travels in the request body.
+  It used to go to a Firebase Storage bucket first and reach the API as a URL,
+  on the argument that this kept the request small - which it did not: the
+  bytes have to reach the API either way, because the hash that makes a
+  repeated scan free can only be taken from them and the provider is handed
+  base-64 at the end regardless. So the same picture crossed the network
+  twice, for a URL nothing in the app ever displayed, and what it bought was a
+  paid storage plan, a second service to configure and a whole class of
+  failure between the camera and the label.
 - **Every field carries its own confidence, and anything unreadable is null.**
   Those two rules are the same rule. An invented roast date becomes a resting
   window, which becomes a recommendation, which becomes a bad cup nobody can
@@ -509,10 +514,16 @@ The first thing in Brewmate that asks a model anything, and the reason
   twice, and the entry that has been standing long enough for somebody to have
   corrected it is the better of the two.
 - **Reading the bytes is the server's job, not the provider's.** The hash that
-  makes a repeated scan free can only be taken from the bytes, and a storage
-  URL that needs credentials is then this server's problem rather than a silent
-  failure somewhere else. The URL comes from a client, so the size, the format
-  and the time it may take are limits rather than expectations.
+  makes a repeated scan free can only be taken from the bytes, so the API holds
+  them whatever route they arrive by. They arrive in the body, which is why
+  `/ai/parse-coffee-bag` and `/ai/parse-recipe` carry a body limit of their own
+  - twelve megabytes on those two routes and one everywhere else, because
+    raising it globally so that two endpoints can take a picture would mean the
+    whole API accepts twelve megabytes of anything. The size and the format come
+    from a client, so both are limits rather than expectations: the contract
+    bounds the base-64 so a phone refuses an oversized picture before spending a
+    shop's signal on it, and `readInlinePhoto` checks the decoded bytes for
+    whatever else finds the endpoint.
 - **An optical reader looks at the photograph first, and it is allowed to be
   missing.** `LabelTextReader` is a port like every other third party here, with
   a Google Vision implementation behind `GOOGLE_VISION_API_KEY` and
@@ -765,8 +776,9 @@ where the two meet.
   far. Stacked as the third of three buttons it read as the thing you fall back
   to once the two above have failed you, which is the opposite of what it is.
   The library sits underneath and quieter: it is neither path, it is the same
-  photograph taken earlier. A build with no storage bucket hides the camera
-  rather than failing when it is pressed.
+  photograph taken earlier. There is nothing left to configure for any of it -
+  the camera needs what every other screen needs, somebody signed in and an
+  API to ask.
 - **The flow says how far through it you are.** This is the one thing in the
   app somebody works through standing in a shop, one-handed, with a bag in the
   other, and "how much more of this is there" is a fair question there. The
@@ -775,10 +787,19 @@ where the two meet.
   `resolveScanSteps` builds the list for the scan actually happening. The final
   screen is outside the count - it is what happened, not a step to get
   through.
-- **The upload is retried with a widening wait.** The failure this is built for
-  is a signal that comes and goes: inside a shop an upload fails, and a few
-  seconds later it does not. Three attempts with doubling waits span several
-  seconds of walking rather than three tries in one dead spot.
+- **The scan is retried with a widening wait, and only where retrying is
+  honest.** The failure this is built for is a signal that comes and goes:
+  inside a shop a request fails, and a few seconds later it does not. Three
+  attempts with doubling waits span several seconds of walking rather than
+  three tries in one dead spot. It used to wrap the upload to the storage
+  bucket; with the bucket gone it wraps the request that carries the
+  photograph, which is the same walk through the same shop. What it will not
+  repeat is an answer: this route costs money and counts against a daily
+  allowance, so sending the picture again because the API said "no model
+  configured", "you are out of calls" or "I could not read this label" would
+  spend somebody's allowance three times to be told the same thing three
+  times. A request that never arrived was never billed and never counted,
+  which is exactly what makes it the one worth repeating.
 - **Buying a bag writes it into the cupboard.** Somebody who has just decided to
   buy a coffee should not then be asked to type its label a second time, and
   everything needed is already on the screen. The bag opens full: its remaining
@@ -817,8 +838,6 @@ the cupboard.
 - **"Nemám ju zapísanú" is still a first-class answer**, quieter and underneath,
   and it still gets a recipe. Nobody has to fill in a database before they are
   allowed to make coffee.
-- **A build with no storage bucket hides the camera tile** rather than failing
-  when it is pressed, as everywhere else.
 - **The brewing form then reports the coffee rather than offering it again.**
   The bag list used to live in both places, and two places that set one value
   are two places that eventually disagree about it. The card says what was
@@ -1881,10 +1900,12 @@ never touches Fastify's request or reply.
 `createAppDependencies`; integration tests pass a stub verifier, a recording
 deleter and a recording model. Nothing in `src/` reaches for a global singleton.
 
-`ai` is `{ completionClient, imageFetcher }` or null - one nullable field rather
-than two, because a model with no way to fetch the photograph and a photograph
-with nothing to read it are both half a feature, and two fields that must agree
-are two fields that eventually will not. Null is a working state: a deployment
+`ai` is `{ completionClient, labelTextReader }` or null. It used to carry an
+image fetcher beside the model, as a pair that had to be present or absent
+together: the app put a photograph in a bucket and this server went and got it,
+which is a third party and therefore a port. The bytes arrive in the request
+now, so reading one is arithmetic - `readInlinePhoto`, a function rather than a
+seam that could only ever be implemented once. Null is a working state: a deployment
 without `ANTHROPIC_API_KEY` serves every screen that asks no model anything, and
 the AI routes answer 503, which the app shows as "zadaj to ručne".
 
@@ -2366,8 +2387,7 @@ filled-in `.env`, a service account JSON or a connection string with a password.
   rather than a constant because Google serves that API from several regional
   hosts, and only the deployment knows which one its photographs may travel to.
 - `frontend/.env` - `EXPO_PUBLIC_*` only (see Rule 6): the API base URL, the
-  public Firebase _client_ configuration, the storage bucket and the Google
-  OAuth client IDs. None of those are secrets; all of them identify rather than
+  public Firebase _client_ configuration and the Google OAuth client IDs. None of those are secrets; all of them identify rather than
   authorise. The model provider's key is not among them and never will be:
   every model call goes through the API, which is the whole reason
   `/ai/parse-coffee-bag` and `/ai/evaluate-coffee` exist.
@@ -2437,8 +2457,9 @@ docs/
 ### Hosting the API
 
 The API is a stateless Node process and everything with state in it is hosted
-elsewhere - the database on Neon, the identities in Firebase, the photographs in
-Cloud Storage, the model behind an API key. It keeps nothing, writes nothing to
+elsewhere - the database on Neon, the identities in Firebase, the model behind
+an API key. A photographed label is state it deliberately does not have: it is
+read and let go, never written anywhere. It keeps nothing, writes nothing to
 disk and can be replaced mid-request, which is what makes hosting it a service
 somebody else runs rather than a machine somebody has to own.
 

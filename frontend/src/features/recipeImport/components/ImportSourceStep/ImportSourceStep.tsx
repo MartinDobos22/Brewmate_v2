@@ -36,7 +36,7 @@ export const ImportSourceStep = ({ recipeImport }: ImportSourceStepProps): JSX.E
         onChangeText={source.write}
         disabled={source.isReading}
       />
-      {source.photo.hasFailed ? (
+      {source.camera.hasFailed ? (
         <Text variant="bodySmall" tone="error">
           {t(TRANSLATION_KEYS.importSourcePhotoError)}
         </Text>
@@ -47,7 +47,7 @@ export const ImportSourceStep = ({ recipeImport }: ImportSourceStepProps): JSX.E
         </Text>
       ) : null}
       <View style={styles.actions}>
-        {source.photo.isSupported ? (
+        {source.camera.isSupported ? (
           <View style={styles.photoRow}>
             <Button
               label={t(TRANSLATION_KEYS.importSourcePhoto)}

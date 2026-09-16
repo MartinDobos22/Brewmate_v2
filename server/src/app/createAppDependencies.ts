@@ -2,7 +2,6 @@ import { pino } from 'pino';
 
 import { createAnthropicTextCompletionClient } from '../ai/anthropicTextCompletionClient.js';
 import { createGoogleVisionLabelTextReader } from '../ai/googleVisionLabelTextReader.js';
-import { createHttpImageFetcher } from '../ai/httpImageFetcher.js';
 import { createFirebaseIdentityDeleter } from '../auth/firebaseIdentityDeleter.js';
 import { createFirebaseTokenVerifier } from '../auth/firebaseTokenVerifier.js';
 import type { AppConfig } from '../config/appConfig.js';
@@ -34,7 +33,6 @@ const resolveAiDependencies = (config: AppConfig): AiDependencies | null =>
     ? null
     : {
         completionClient: createAnthropicTextCompletionClient(config.ai),
-        imageFetcher: createHttpImageFetcher(),
         labelTextReader:
           config.vision === null ? null : createGoogleVisionLabelTextReader(config.vision),
       };

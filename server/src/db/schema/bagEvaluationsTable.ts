@@ -28,7 +28,6 @@ export const bagEvaluationsTable = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => usersTable.id, { onDelete: 'cascade' }),
-    imageUrl: text('image_url'),
     parsedData: jsonb('parsed_data').$type<ParsedBagData>().notNull().default(NO_PARSED_DATA),
     verdictText: text('verdict_text'),
     reasoning: jsonb('reasoning').$type<EvaluationReasoning>().notNull().default(NO_REASONING),

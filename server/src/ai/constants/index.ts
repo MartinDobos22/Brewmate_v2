@@ -12,14 +12,7 @@ export {
   AI_VALIDATION_ATTEMPTS,
 } from './aiModels.js';
 export type { AiEffort, AiModelId, AiModelPricing } from './aiModels.js';
-export {
-  AI_IMAGE_MEDIA_TYPES,
-  AI_IMAGE_MEDIA_TYPE_VALUES,
-  AI_IMAGE_MAX_BYTES,
-  AI_IMAGE_FETCH_TIMEOUT_MS,
-  AI_IMAGE_ENCODING,
-} from './aiImageLimits.js';
-export type { AiImageMediaType } from './aiImageLimits.js';
+export { AI_IMAGE_MAX_BYTES, AI_IMAGE_ENCODING } from './aiImageLimits.js';
 export {
   LABEL_TEXT_MIN_CHARACTERS,
   LABEL_TEXT_MIN_CONFIDENCE,

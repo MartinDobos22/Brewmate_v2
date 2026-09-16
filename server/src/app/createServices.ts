@@ -256,7 +256,6 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
         ? null
         : createCoffeeBagParseService({
             repository: createCoffeeBagParseRepository(db),
-            imageFetcher: ai.imageFetcher,
             labelTextReader: ai.labelTextReader,
             completionClient: ai.completionClient,
             aiUsageService,
@@ -297,7 +296,6 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
         ? null
         : createRecipeParseService({
             completionClient: ai.completionClient,
-            imageFetcher: ai.imageFetcher,
             grinderRepository,
             aiUsageService,
           }),

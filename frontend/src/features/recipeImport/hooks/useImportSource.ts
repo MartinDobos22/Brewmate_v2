@@ -1,4 +1,4 @@
-import { EMPTY_SOURCE_RECIPE, type SourceRecipe } from '@brewmate/shared';
+import { EMPTY_SOURCE_RECIPE, type Photo, type SourceRecipe } from '@brewmate/shared';
 import { useState } from 'react';
 
 import type { BagPhotoSource } from '../../bagEvaluations/services';
@@ -11,8 +11,8 @@ const EMPTY = '';
 
 export interface ImportSource {
   readonly text: string;
-  readonly imageUrl: string | null;
-  readonly photo: RecipePhoto;
+  readonly photo: Photo | null;
+  readonly camera: RecipePhoto;
   readonly isReading: boolean;
   readonly hasFailed: boolean;
   /** Whether there is anything to read at all. */
@@ -27,36 +27,36 @@ export interface ImportSource {
  * Whatever form somebody has the recipe in, turned into fields.
  *
  * The photograph is an offer, not a gate - exactly as it is on the scanner.
- * Pasting text works with no camera permission, no storage bucket and no
- * signal for an upload, and typing the recipe in works with none of it at all.
+ * Pasting text works with no camera permission at all, and typing the recipe
+ * in works without even that.
  * Every failure along the way lands on the same form rather than on a message
  * telling somebody to try again later.
  */
 export const useImportSource = (): ImportSource => {
-  const photo = useRecipePhoto();
+  const camera = useRecipePhoto();
   const parse = useParseRecipe();
   const [text, setText] = useState(EMPTY);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<Photo | null>(null);
 
   return {
     text,
-    imageUrl,
     photo,
-    isReading: parse.isPending || photo.isWorking,
-    hasFailed: parse.isError || photo.hasFailed,
-    canRead: text.trim() !== EMPTY || imageUrl !== null,
+    camera,
+    isReading: parse.isPending || camera.isWorking,
+    hasFailed: parse.isError || camera.hasFailed,
+    canRead: text.trim() !== EMPTY || photo !== null,
 
     write: setText,
 
     addPhoto: (from: BagPhotoSource): void => {
-      void photo.capture(from).then(setImageUrl);
+      void camera.capture(from).then(setPhoto);
     },
 
     read: (onRead): void => {
       parse.mutate(
         {
           text: text.trim() === EMPTY ? null : text.trim(),
-          imageUrl,
+          photo,
         },
         {
           onSuccess: ({ source }): void => {

@@ -17,14 +17,16 @@ export const BAG_PHOTO_QUALITY = 0.6;
 export const BAG_PHOTO_MEDIA_TYPES = ['images'] as const;
 
 /**
- * How many times an upload is attempted before the app stops and offers the
- * form instead.
+ * How many times a scan is sent before the app stops and offers the form
+ * instead.
  *
  * Three, because the failure this is built for is a signal that comes and goes
  * rather than one that is gone: a shop's dead spot is often over by the time
- * the second backoff has elapsed.
+ * the second backoff has elapsed. It used to sit around the upload to the
+ * storage bucket; with the bucket gone it belongs around the request that
+ * carries the photograph, which is the same walk through the same shop.
  */
-export const BAG_PHOTO_UPLOAD_ATTEMPTS = 3;
+export const BAG_PHOTO_SEND_ATTEMPTS = 3;
 
 /** The first wait between attempts; each one after it doubles. */
 export const BAG_PHOTO_RETRY_BASE_MS = 800;
@@ -62,19 +64,22 @@ export const BAG_PHOTO_PATH_SEPARATOR = '/';
 /**
  * Where a photograph stopped, when it stopped.
  *
- * Two failures wore one message for a long time, and they are not the same
- * thing at all: bytes that never left the phone, and bytes that arrived and
- * could not be turned into a label. The person in a shop needs to know which,
- * because one of them is worth walking two steps towards the door for and the
- * other is not - and so does whoever is reading the reports, because only one
- * of the two leaves a trace on the API at all.
+ * Three, because they ask three different things of the person reading them.
+ * The picture never came off the phone; it never reached the API; or it
+ * arrived and no label could be made of it. These used to be one message
+ * naming two causes, which on the one screen in this app used inside a
+ * building on one bar told nobody anything they could act on.
+ *
+ * There is no fourth for a bucket that refused the bytes, because there is no
+ * bucket: the photograph travels in the request now.
  *
  * The values double as the name each failure is reported under, so the label
- * on the crash and the sentence on the screen cannot describe different
+ * on the report and the sentence on the screen cannot describe different
  * failures.
  */
 export const BAG_PHOTO_FAILURES = {
-  upload: 'bag-photo-upload',
+  file: 'bag-photo-file',
+  network: 'bag-photo-network',
   read: 'bag-photo-read',
 } as const;
 

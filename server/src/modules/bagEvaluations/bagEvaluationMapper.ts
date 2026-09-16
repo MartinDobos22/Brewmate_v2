@@ -6,7 +6,6 @@ import type { BagEvaluationRow } from '../../db/schema/bagEvaluationsTable.js';
 export const toBagEvaluation = (row: BagEvaluationRow): BagEvaluation => ({
   id: row.id,
   userId: row.userId,
-  imageUrl: row.imageUrl,
   parsedData: row.parsedData,
   verdictText: row.verdictText,
   reasoning: row.reasoning,

@@ -186,7 +186,6 @@ export const createCoffeeEvaluationService = ({
 
       return {
         evaluation: await bagEvaluationService.create(userId, {
-          imageUrl: input.imageUrl ?? null,
           parsedData: input.parsedData,
           verdictText: verdict.verdictText,
           reasoning: { points: verdict.reasoning },

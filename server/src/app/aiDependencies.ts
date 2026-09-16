@@ -1,13 +1,14 @@
-import type { ImageFetcher } from '../ai/imageFetcher.js';
 import type { LabelTextReader } from '../ai/labelTextReader.js';
 import type { TextCompletionClient } from '../ai/textCompletionClient.js';
 
 /**
- * Everything the AI routes need, present or absent as a pair.
+ * Everything the AI routes need.
  *
- * One nullable field rather than two, because a model with no way to fetch the
- * photograph and a photograph with nothing to read it are both half a feature -
- * and two fields that must agree are two fields that eventually will not.
+ * It used to carry an image fetcher beside the model, as a pair that had to be
+ * present or absent together: the app put a photograph in a bucket and this
+ * server went and got it, which is a third party and therefore a port. The
+ * bytes arrive in the request now, so reading one is arithmetic and there is
+ * nothing left to inject.
  *
  * The optical reader is the exception, and nullable inside the pair, because
  * it is genuinely a third thing: reading a label has always been the model's
@@ -17,6 +18,5 @@ import type { TextCompletionClient } from '../ai/textCompletionClient.js';
  */
 export interface AiDependencies {
   readonly completionClient: TextCompletionClient;
-  readonly imageFetcher: ImageFetcher;
   readonly labelTextReader: LabelTextReader | null;
 }

@@ -27,17 +27,21 @@ export const SK_SCANNER = {
   scanPhotoReading: 'Čítam etiketu...',
 
   /*
-   * Two sentences, because these are two different mornings.
+   * Three sentences, because these are three different mornings.
    *
-   * The bytes never left the phone, or they arrived and nothing could be made
-   * of them. One of those is worth stepping towards a window and pressing the
-   * tile again for; the other is not, and the form underneath is already the
-   * answer. A single sentence naming both causes left the reader to work out
-   * which one had happened - on the one screen in this app used inside a
-   * building on one bar, which is precisely where they cannot.
+   * A connection that gave out is the only one worth walking a few steps
+   * about. A file that was not there asks for one more tap and nothing else.
+   * And a label nothing could be read from needs no instruction at all: the
+   * form underneath is already the answer.
+   *
+   * All three end the same way on purpose. Whatever happened, typing the label
+   * in is right there, and nobody standing in a shop should have to work that
+   * out for themselves.
    */
-  scanPhotoUploadFailed:
-    'Fotku sa mi nepodarilo odoslať - spojenie to nedalo. Skús to o kúsok ďalej, alebo mi rovno prepíš z balíčka, čo vidíš.',
+  scanPhotoSendFailed:
+    'Fotka sa ku mne nedostala - spojenie to nedalo. Skús to o pár krokov ďalej, alebo mi rovno prepíš z balíčka, čo vidíš.',
+  scanPhotoFileFailed:
+    'K tej fotke som sa už nedostal. Skús ju vybrať ešte raz, alebo mi prepíš z balíčka, čo vidíš.',
   scanPhotoReadFailed:
     'Fotku mám, ale etiketu som z nej neprečítal. Nevadí - prepíš mi z balíčka, čo vidíš.',
 
