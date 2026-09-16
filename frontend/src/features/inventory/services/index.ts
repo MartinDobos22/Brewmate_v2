@@ -33,7 +33,7 @@ export {
 } from './grinderFormValues';
 export type { GrinderFormValues, GrinderFormErrors } from './grinderFormValues';
 export { equipmentDisplayName } from './equipmentDisplayName';
-export { readBrewerMethodId, findBrewerForMethod, filterBrewableMethods } from './readOwnedBrewers';
+export { readBrewerMethodId, findBrewerForMethod } from './readOwnedBrewers';
 export {
   NO_BREWER_DETAILS_ERRORS,
   readBrewerDetailsValues,

@@ -1,10 +1,8 @@
 import type { BrewMethod } from '@brewmate/shared';
-import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, OptionCard, Text } from '../../../../components/ui';
-import { ROUTES } from '../../../../constants/routes';
+import { Card, OptionCard, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { BREW_METHOD_CATEGORY_ICONS, BREW_METHOD_CATEGORY_LABEL_KEYS } from '../../constants';
@@ -20,12 +18,11 @@ export interface PreBrewMethodSectionProps {
 const NOTHING = 0;
 
 /**
- * What this is being brewed in - and only what it can be brewed in.
+ * What this is being brewed in.
  *
- * The list is already narrowed to the active set, which is the point of
- * switching sets at all: at the cabin the dripper is at home, so the dripper
- * is not on this list. Offering a method somebody cannot carry out is not
- * advice, it is a shopping list they did not ask for.
+ * Every method in the catalogue, not only the ones the cupboard vouches for.
+ * Hiding the rest made an unfilled inventory look like an empty one, and left
+ * somebody holding a dripper with cupping as their only option.
  *
  * Cards with a glyph rather than a row of chips. This is the most visual
  * decision in the app - a V60 and a moka pot are different objects, not
@@ -41,7 +38,6 @@ export const PreBrewMethodSection = ({
 }: PreBrewMethodSectionProps): JSX.Element => {
   const styles = useThemedStyles(createPreBrewMethodSectionStyles);
   const { t } = useTranslation();
-  const router = useRouter();
 
   return (
     <Card>
@@ -51,14 +47,6 @@ export const PreBrewMethodSection = ({
           <Text variant="bodySmall" tone="muted">
             {t(TRANSLATION_KEYS.preBrewMethodEmpty)}
           </Text>
-          <Button
-            label={t(TRANSLATION_KEYS.preBrewMethodEmptyAction)}
-            variant="secondary"
-            fullWidth
-            onPress={(): void => {
-              router.push(ROUTES.inventory);
-            }}
-          />
         </View>
       ) : (
         <>

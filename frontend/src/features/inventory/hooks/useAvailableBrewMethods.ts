@@ -5,8 +5,6 @@ import {
   type EquipmentSet,
 } from '@brewmate/shared';
 
-import { filterBrewableMethods } from '../services/readOwnedBrewers';
-
 import { useBrewMethodCatalog } from './useBrewMethodCatalog';
 import { useEquipmentList } from './useEquipmentList';
 
@@ -14,6 +12,7 @@ const NONE: readonly Equipment[] = [];
 const ACTIVE_ONLY = true;
 
 export interface AvailableBrewMethods {
+  /** The whole active catalogue, whatever the cupboard holds. */
   readonly methods: readonly BrewMethod[];
   readonly brewers: readonly Equipment[];
   readonly isLoading: boolean;
@@ -24,16 +23,18 @@ export interface AvailableBrewMethods {
 }
 
 /**
- * The methods this user can be offered.
+ * The methods this user can be offered - which is all of them.
  *
- * The whole point of writing down the cupboard: a recommendation for gear
- * somebody does not own is not advice, it is a shopping list they did not ask
- * for.
+ * Brewmate used to hide any method nothing in the cupboard pointed at. That
+ * reads as helpful and behaves as a trap: a cupboard nobody has filled in is
+ * indistinguishable from a cupboard with nothing in it, so the one person who
+ * most needs a suggestion is shown a single method and no way to reach the
+ * rest. Somebody standing over a dripper knows they own it better than the
+ * inventory does.
  *
- * Narrowed to one set where a set is given, because that is what switching to
- * "Chata" means: the dripper is at home, so the methods it makes possible are
- * at home too. Without a set the answer is everything still owned - somebody
- * who has never made a set has not thereby lost their kettle.
+ * The cupboard still decides the *figures*: `brewers`, narrowed to the active
+ * set, is where a capacity or a basket size comes from. Not owning the brewer
+ * costs those numbers, not the method.
  */
 export const useAvailableBrewMethods = (equipmentSet?: EquipmentSet): AvailableBrewMethods => {
   const catalog = useBrewMethodCatalog();
@@ -46,7 +47,7 @@ export const useAvailableBrewMethods = (equipmentSet?: EquipmentSet): AvailableB
 
   return {
     brewers,
-    methods: filterBrewableMethods(catalog.methods, brewers),
+    methods: catalog.methods,
     isLoading: catalog.isLoading || equipment.isPending,
     isError: catalog.isError || equipment.isError,
     error: equipment.error ?? catalog.error,

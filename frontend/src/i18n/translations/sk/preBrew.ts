@@ -44,9 +44,8 @@ export const SK_PRE_BREW = {
   preBrewCoffeeRemaining: 'Zostáva',
 
   preBrewMethodSection: 'Príprava',
-  preBrewMethodHint: 'Ponúkam len to, na čo máš v tejto sade vybavenie.',
-  preBrewMethodEmpty: 'V tejto sade nemáš zapísané nič, v čom sa dá variť.',
-  preBrewMethodEmptyAction: 'Doplniť vybavenie',
+  preBrewMethodHint: 'Vyber, v čom dnes varíš.',
+  preBrewMethodEmpty: 'Katalóg metód sa nepodarilo načítať. Skús to o chvíľu znova.',
 
   /*
    * The recipe this pair already has.
