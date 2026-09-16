@@ -17,14 +17,16 @@ export const BAG_PHOTO_QUALITY = 0.6;
 export const BAG_PHOTO_MEDIA_TYPES = ['images'] as const;
 
 /**
- * How many times an upload is attempted before the app stops and offers the
- * form instead.
+ * How many times a scan is sent before the app stops and offers the form
+ * instead.
  *
  * Three, because the failure this is built for is a signal that comes and goes
  * rather than one that is gone: a shop's dead spot is often over by the time
- * the second backoff has elapsed.
+ * the second backoff has elapsed. It used to sit around the upload to the
+ * storage bucket; with the bucket gone it belongs around the request that
+ * carries the photograph, which is the same walk through the same shop.
  */
-export const BAG_PHOTO_UPLOAD_ATTEMPTS = 3;
+export const BAG_PHOTO_SEND_ATTEMPTS = 3;
 
 /** The first wait between attempts; each one after it doubles. */
 export const BAG_PHOTO_RETRY_BASE_MS = 800;

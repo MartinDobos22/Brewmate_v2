@@ -1,4 +1,4 @@
-import type { LabelPhotoIssue, ParsedBagFields } from '@brewmate/shared';
+import type { LabelPhotoIssue, ParseCoffeeBagResponse, ParsedBagFields } from '@brewmate/shared';
 import { useState } from 'react';
 
 import { getErrorTracker } from '../../../lib/errorTracking';
@@ -8,6 +8,7 @@ import { parseCoffeeBag } from '../services/coffeeBagAiApi';
 import { pickBagPhoto, type BagPhotoSource } from '../services/pickBagPhoto';
 import { readLocalPhoto } from '../services/readLocalPhoto';
 import { resolvePhotoFailure } from '../services/resolvePhotoFailure';
+import { sendWithRetry } from '../services/sendWithRetry';
 
 export type BagCaptureOutcome = (typeof BAG_CAPTURE_RESULTS)[keyof typeof BAG_CAPTURE_RESULTS];
 
@@ -107,7 +108,9 @@ export const useBagPhoto = (): BagPhoto => {
 
       try {
         const photo = await readLocalPhoto(localUri);
-        const { fields, photoIssues } = await parseCoffeeBag(photo);
+        const { fields, photoIssues } = await sendWithRetry(
+          async (): Promise<ParseCoffeeBagResponse> => parseCoffeeBag(photo),
+        );
 
         /*
          * A photograph the API would not read is the one failure worth

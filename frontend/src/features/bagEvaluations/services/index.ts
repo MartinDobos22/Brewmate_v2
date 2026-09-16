@@ -11,6 +11,7 @@ export { pickBagPhoto, BAG_PHOTO_SOURCES } from './pickBagPhoto';
 export type { BagPhotoSource } from './pickBagPhoto';
 export { readLocalPhoto, LocalPhotoError } from './readLocalPhoto';
 export { resolvePhotoFailure } from './resolvePhotoFailure';
+export { sendWithRetry } from './sendWithRetry';
 export { toBagVerdictView } from './bagVerdictView';
 export type { BagVerdictView, BagVerdictUncertainty } from './bagVerdictView';
 export type { BagVerdictPoint, BagUncertainty, BagVerdictParts } from './bagVerdictTypes';

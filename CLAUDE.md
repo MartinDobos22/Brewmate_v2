@@ -787,10 +787,19 @@ where the two meet.
   `resolveScanSteps` builds the list for the scan actually happening. The final
   screen is outside the count - it is what happened, not a step to get
   through.
-- **The upload is retried with a widening wait.** The failure this is built for
-  is a signal that comes and goes: inside a shop an upload fails, and a few
-  seconds later it does not. Three attempts with doubling waits span several
-  seconds of walking rather than three tries in one dead spot.
+- **The scan is retried with a widening wait, and only where retrying is
+  honest.** The failure this is built for is a signal that comes and goes:
+  inside a shop a request fails, and a few seconds later it does not. Three
+  attempts with doubling waits span several seconds of walking rather than
+  three tries in one dead spot. It used to wrap the upload to the storage
+  bucket; with the bucket gone it wraps the request that carries the
+  photograph, which is the same walk through the same shop. What it will not
+  repeat is an answer: this route costs money and counts against a daily
+  allowance, so sending the picture again because the API said "no model
+  configured", "you are out of calls" or "I could not read this label" would
+  spend somebody's allowance three times to be told the same thing three
+  times. A request that never arrived was never billed and never counted,
+  which is exactly what makes it the one worth repeating.
 - **Buying a bag writes it into the cupboard.** Somebody who has just decided to
   buy a coffee should not then be asked to type its label a second time, and
   everything needed is already on the screen. The bag opens full: its remaining
