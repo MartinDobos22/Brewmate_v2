@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import type { Theme, ViewStyles } from '../../../theme';
 
 type SheetStyleMap = ViewStyles<
-  'backdrop' | 'scrim' | 'panel' | 'filled' | 'handle' | 'header' | 'content'
+  'backdrop' | 'scrim' | 'panel' | 'filled' | 'handle' | 'header' | 'content' | 'contentFilled'
 >;
 
 /**
@@ -52,4 +52,15 @@ export const createSheetStyles = (theme: Theme): SheetStyleMap =>
       /** Lets tall content scroll inside the panel instead of past its edge. */
       flexShrink: 1,
     },
+    /**
+     * The other half of `fill`, and the half that was missing.
+     *
+     * Giving the panel a height achieves nothing on its own while the content
+     * area still sizes itself to its children: a child asking for `flex: 1`
+     * contributes nothing to that measurement, so the content resolved to no
+     * height, the list inside it to no height, and a sheet built to hold a
+     * catalogue opened showing a search box and empty space. The panel's
+     * height only reaches the list if every view between them passes it on.
+     */
+    contentFilled: { flexGrow: 1 },
   });

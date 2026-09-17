@@ -35,12 +35,27 @@ export type AiEffort = (typeof AI_EFFORT_LEVELS)[keyof typeof AI_EFFORT_LEVELS];
  * A recipe is the longest of them - a pour schedule, a rationale and a hint per
  * missing piece of gear. A chat answer is shorter but may carry a patch, so it
  * gets room for both. An explanation is a paragraph and nothing else.
+ *
+ * They are several times what the answers themselves need, and that is the
+ * correction rather than an oversight. These ceilings were sized against the
+ * finished JSON back when a model wrote nothing else; the models here now
+ * think adaptively by default, that reasoning is output, and it is spent
+ * before the first character of the answer. A recipe at four thousand was
+ * therefore truncated mid-object often enough to look like a broken feature -
+ * and truncated JSON fails validation exactly like a model that slipped, so
+ * the failure arrived as "the answer is not the agreed shape" and sent
+ * everybody to read the prompt.
+ *
+ * Raising them costs nothing on its own: a ceiling is not a budget, and only
+ * tokens actually generated are billed. What it buys is that the shape of the
+ * answer, rather than the room left for it, is what decides whether a call
+ * succeeds.
  */
-export const AI_PARSE_MAX_TOKENS = 2048;
-export const AI_VERDICT_MAX_TOKENS = 2048;
-export const AI_RECIPE_MAX_TOKENS = 4096;
-export const AI_CHAT_MAX_TOKENS = 3072;
-export const AI_EXPLANATION_MAX_TOKENS = 1024;
+export const AI_PARSE_MAX_TOKENS = 8192;
+export const AI_VERDICT_MAX_TOKENS = 8192;
+export const AI_RECIPE_MAX_TOKENS = 16000;
+export const AI_CHAT_MAX_TOKENS = 12000;
+export const AI_EXPLANATION_MAX_TOKENS = 4096;
 
 /**
  * List price per million tokens, in the provider's billing currency, for each

@@ -20,9 +20,17 @@ export interface SheetProps {
    * tall it may be, and a panel that is as tall as its content has no answer
    * to give - so the list resolves to nothing and the sheet opens showing a
    * search box above an empty space, which is exactly what the grinder
-   * catalogue did. A short list of answers still sizes to itself, because a
-   * sheet that fills the screen for three options is a sheet that looks broken
-   * in the other direction.
+   * catalogue did.
+   *
+   * It sets a height on the panel *and* lets the content area grow into it,
+   * because a height only reaches the list if every view between them passes
+   * it on: a content area that still sizes itself to its children measures a
+   * `flex: 1` child as nothing, and the sheet collapses exactly as it did
+   * before, now with a height nobody uses.
+   *
+   * A short list of answers still sizes to itself, because a sheet that fills
+   * the screen for three options is a sheet that looks broken in the other
+   * direction.
    */
   readonly fill?: boolean;
   readonly children: ReactNode;
@@ -64,7 +72,7 @@ export const Sheet = ({
           <View style={styles.header}>
             <Text variant="titleLarge">{title}</Text>
           </View>
-          <View style={styles.content}>{children}</View>
+          <View style={[styles.content, fill && styles.contentFilled]}>{children}</View>
         </Animated.View>
       </View>
     </Modal>

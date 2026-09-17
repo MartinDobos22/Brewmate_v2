@@ -30,4 +30,16 @@ export interface AiCompletion {
   readonly text: string;
   readonly model: string;
   readonly usage: AiTokenUsage;
+  /**
+   * Whether the answer stopped because it ran out of room rather than because
+   * it had finished.
+   *
+   * A boolean rather than the provider's own stop reason, because this is the
+   * one thing the layer above has to act on differently and a port should not
+   * leak a vendor's enum to make that point. Truncated JSON parses exactly
+   * like JSON from a model that slipped, and the two want opposite treatment:
+   * one is worth a second attempt, the other is guaranteed to end the same way
+   * because the ceiling has not moved.
+   */
+  readonly isTruncated: boolean;
 }

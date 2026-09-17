@@ -11,6 +11,8 @@ export const AI_ERROR_MESSAGES = {
   imageTooLarge: 'The uploaded photograph is larger than the accepted maximum.',
   imageTypeUnsupported: 'The uploaded file is not an image format the model accepts.',
   answerMalformed: 'The model answered with something that is not the agreed shape.',
+  answerTruncated:
+    'The model ran out of output tokens before it finished the answer. Raise the ceiling for this function rather than retrying: the second attempt meets the same limit.',
   labelReaderRefused: 'The optical reader would not annotate the photographed label.',
   labelReaderMalformed: 'The optical reader answered in a shape this application does not know.',
 } as const;
