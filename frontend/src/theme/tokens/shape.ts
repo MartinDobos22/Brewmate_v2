@@ -22,6 +22,25 @@ export const SHAPE = {
   progressRing: RADIUS.full,
   /** The one pill in the app: a badge carrying a number. */
   counterBadge: RADIUS.full,
+  /**
+   * The A2 redesign's own structures. Each is a kind of element rather than a
+   * new size of one above it, so it is named here rather than read off
+   * `RADIUS` at a call site.
+   */
+  softCard: RADIUS.lgPlus,
+  /** A block inset within an espresso header. */
+  insetBlock: RADIUS.lgPlus,
+  /** The one card on a screen that carries the answer the screen exists for. */
+  heroCard: RADIUS.xxl,
+  /** The espresso header itself: square at the top, rounded where it ends. */
+  headerBlock: RADIUS.xxxl,
+  /**
+   * Anything whose radius is half its own height - a pill button, an
+   * attribute chip, a circular icon button. Stated as a kind rather than as a
+   * number, because the number is different on every one of them and wrong
+   * the moment the height changes.
+   */
+  pill: RADIUS.full,
 } as const;
 
 export type ShapeToken = keyof typeof SHAPE;

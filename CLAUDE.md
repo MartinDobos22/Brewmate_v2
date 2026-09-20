@@ -308,10 +308,18 @@ file, so it is still not written inside the JSX.
 
 A deliberate deviation from Material Design 3: MD3 gives buttons and chips a
 pill shape; Brewmate does not. `RADIUS` is the raw scale
-(`xs 4, sm 8, md 12, lg 16, xl 24, full`) and `SHAPE` maps each kind of element
-onto one of them (`SHAPE.button = md`, `SHAPE.card = lg`, `SHAPE.sheet = xl`,
-`SHAPE.avatar = full`). Components read `SHAPE`, never `RADIUS`, so the same
-kind of element has the same radius everywhere.
+(`xxs 2, xs 4, sm 8, md 12, lg 16, lgPlus 20, xl 24, xxl 28, xxxl 32, full`) and
+`SHAPE` maps each kind of element onto one of them (`SHAPE.button = md`,
+`SHAPE.card = lg`, `SHAPE.sheet = xl`, `SHAPE.avatar = full`). Components read
+`SHAPE`, never `RADIUS`, so the same kind of element has the same radius
+everywhere.
+
+The steps above `lg` and the `pill` kind belong to the A2 redesign, and nothing
+below them moved: a card that has always been 16 is still 16, and a screen opts
+into the softer geometry by naming it (`SHAPE.softCard`, `SHAPE.heroCard`,
+`SHAPE.headerBlock`, `SHAPE.insetBlock`, `SHAPE.pill`). `pill` is a kind rather
+than a number because the number is different on every element it applies to -
+half the height, whatever the height is - and wrong the moment that changes.
 
 ### Getting out of a screen
 

@@ -1,5 +1,5 @@
-export { LIGHT_COLORS, DARK_COLORS } from './colors';
-export type { ColorPalette } from './colors';
+export { LIGHT_COLORS, DARK_COLORS, ESPRESSO, BREW_GROUND } from './colors';
+export type { ColorPalette, EspressoRoles, BrewGroundRoles } from './colors';
 export { SPACING, LAYOUT_SPACING } from './spacing';
 export type { SpacingToken, LayoutSpacingToken } from './spacing';
 export { RADIUS } from './radius';
