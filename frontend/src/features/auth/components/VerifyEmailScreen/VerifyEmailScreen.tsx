@@ -1,8 +1,7 @@
-import { useRouter } from 'expo-router';
 import { useCallback, useState, type JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, Text } from '../../../../components/ui';
+import { Text } from '../../../../components/ui';
 import { ROUTES } from '../../../../constants';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
@@ -11,6 +10,9 @@ import { useAuthAction } from '../../hooks';
 import { refreshEmailVerification, resendVerificationEmail } from '../../services';
 import { AuthErrorMessage } from '../AuthErrorMessage';
 import { AuthScreenLayout } from '../AuthScreenLayout';
+import { AuthNavigationLink } from '../AuthNavigationLink';
+import { AuthSubmitButton } from '../AuthSubmitButton';
+import { VerifyEmailAction } from './VerifyEmailAction';
 
 import { createVerifyEmailScreenStyles } from './VerifyEmailScreen.styles';
 
@@ -22,7 +24,6 @@ import { createVerifyEmailScreenStyles } from './VerifyEmailScreen.styles';
 export const VerifyEmailScreen = (): JSX.Element => {
   const styles = useThemedStyles(createVerifyEmailScreenStyles);
   const { t } = useTranslation();
-  const router = useRouter();
   const { user } = useAuthSession();
   const [isVerified, setIsVerified] = useState(user?.emailVerified ?? false);
   const resend = useAuthAction(resendVerificationEmail);
@@ -37,45 +38,39 @@ export const VerifyEmailScreen = (): JSX.Element => {
       title={t(TRANSLATION_KEYS.authVerifyTitle)}
       subtitle={t(TRANSLATION_KEYS.authVerifyBody)}
     >
-      <Card>
-        <Text variant="titleMedium">
+      <View style={styles.account}>
+        <Text variant="rowTitle" tone="onEspresso">
           {user?.email ?? t(TRANSLATION_KEYS.authAccountEmailUnknown)}
         </Text>
-        <Text variant="bodySmall" tone={isVerified ? 'secondary' : 'muted'}>
+        <Text variant="bodyMuted" tone={isVerified ? 'positiveOnEspresso' : 'onEspressoMuted'}>
           {t(
             isVerified
               ? TRANSLATION_KEYS.authVerifiedNotice
               : TRANSLATION_KEYS.authVerifyPendingNotice,
           )}
         </Text>
-      </Card>
+      </View>
       <View style={styles.actions}>
         {resend.isSuccess ? (
-          <Text variant="bodySmall" tone="secondary">
+          <Text variant="bodyMuted" tone="positiveOnEspresso">
             {t(TRANSLATION_KEYS.authVerifySentNotice)}
           </Text>
         ) : null}
         <AuthErrorMessage errorKey={resend.errorKey ?? check.errorKey} />
-        <Button
+        <AuthSubmitButton
           label={t(TRANSLATION_KEYS.authVerifyCheckAction)}
           onPress={check.run}
-          loading={check.isPending}
-          fullWidth
+          isPending={check.isPending}
         />
-        <Button
+        <VerifyEmailAction
           label={t(TRANSLATION_KEYS.authVerifyResendAction)}
           onPress={resend.run}
-          variant="tertiary"
-          loading={resend.isPending}
-          fullWidth
+          isPending={resend.isPending}
         />
-        <Button
-          label={t(TRANSLATION_KEYS.authVerifyContinueAction)}
-          onPress={(): void => {
-            router.replace(ROUTES.home);
-          }}
-          variant="secondary"
-          fullWidth
+        <AuthNavigationLink
+          action={t(TRANSLATION_KEYS.authVerifyContinueAction)}
+          href={ROUTES.home}
+          replaces
         />
       </View>
     </AuthScreenLayout>

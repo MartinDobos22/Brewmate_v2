@@ -1,16 +1,19 @@
 import { useState, type JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Input, Text } from '../../../../components/ui';
+import { Text } from '../../../../components/ui';
 import { ROUTES } from '../../../../constants';
 import { useIsOnline } from '../../../../hooks';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
+import { AUTH_ICONS } from '../../constants';
 import { useAuthMutation } from '../../hooks';
 import { sendPasswordReset, validateEmailAddress } from '../../services';
 import { AuthErrorMessage } from '../AuthErrorMessage';
 import { AuthNavigationLink } from '../AuthNavigationLink';
+import { AuthField } from '../AuthField';
 import { AuthScreenLayout } from '../AuthScreenLayout';
+import { AuthSubmitButton } from '../AuthSubmitButton';
 
 import { createForgotPasswordScreenStyles } from './ForgotPasswordScreen.styles';
 
@@ -44,30 +47,29 @@ export const ForgotPasswordScreen = (): JSX.Element => {
       subtitle={t(TRANSLATION_KEYS.authResetBody)}
     >
       <View style={styles.form}>
-        <Input
+        <AuthField
           label={t(TRANSLATION_KEYS.authEmailLabel)}
+          icon={AUTH_ICONS.email}
           placeholder={t(TRANSLATION_KEYS.authEmailPlaceholder)}
           value={email}
           onChangeText={setEmail}
           errorText={emailError === null ? undefined : t(emailError)}
           keyboardType="email-address"
-          autoCapitalize="none"
           autoComplete="email"
           textContentType="emailAddress"
           disabled={isPending}
         />
         <AuthErrorMessage errorKey={errorKey} />
         {isSuccess ? (
-          <Text variant="bodySmall" tone="secondary">
+          <Text variant="bodyMuted" tone="positiveOnEspresso">
             {t(TRANSLATION_KEYS.authResetSent)}
           </Text>
         ) : null}
-        <Button
+        <AuthSubmitButton
           label={t(TRANSLATION_KEYS.authResetAction)}
           onPress={submit}
-          loading={isPending}
+          isPending={isPending}
           disabled={!isOnline}
-          fullWidth
         />
       </View>
       <AuthNavigationLink action={t(TRANSLATION_KEYS.authResetBackAction)} href={ROUTES.signIn} />

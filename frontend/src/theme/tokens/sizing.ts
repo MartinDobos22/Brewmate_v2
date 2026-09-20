@@ -253,8 +253,15 @@ export const SIZE = {
    * scheme their phone is set to, and a raster icon would be right in one of
    * the two and wrong in the other from the day it was added.
    */
-  brandMarkSize: 64,
+  brandMarkSize: 72,
   brandMarkInner: 34,
+  /** The ring set hanging off the top of a signed-out screen, behind the mark. */
+  authRingsSize: 380,
+  /** A field on the signed-out screens, which are the only dark forms in the app. */
+  authFieldHeight: 52,
+  /** The one button those screens most want pressed, and the two beside it. */
+  authSubmitHeight: 54,
+  authProviderHeight: 52,
 } as const;
 
 /** Dimensions expressed as a share of the parent. */

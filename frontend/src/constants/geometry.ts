@@ -27,4 +27,12 @@ export const CIRCLE = {
 export const RINGS = {
   radii: [0.487, 0.367, 0.247],
   bleed: 0.43,
+  /**
+   * How far the centred set hangs off the top edge.
+   *
+   * Much less than a corner's bleed, because only one edge clips it: pushed
+   * out by the same share it would be in a corner, a centred set would be
+   * three arcs across the top rather than a mark the screen is built around.
+   */
+  topBleed: 0.16,
 } as const;

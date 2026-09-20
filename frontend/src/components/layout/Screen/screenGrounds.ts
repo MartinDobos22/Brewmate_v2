@@ -7,6 +7,7 @@
  * somebody whose phone happens to be set to light is the case it is drawn
  * against.
  *
+ *
  * A closed set rather than a colour, so a screen names the ground it belongs
  * on and never picks one - and so the safe area above the notch is painted the
  * same as the content under it, which is the part a screen that painted its

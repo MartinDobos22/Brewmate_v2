@@ -1,9 +1,9 @@
 import { useState, type JSX, type ReactNode } from 'react';
 import { View } from 'react-native';
 
-import { Button, Input } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
+import { AUTH_ICONS } from '../../constants';
 import {
   hasCredentialError,
   validateCredentials,
@@ -11,6 +11,8 @@ import {
   type EmailCredentials,
 } from '../../services';
 import { AuthErrorMessage } from '../AuthErrorMessage';
+import { AuthField } from '../AuthField';
+import { AuthSubmitButton } from '../AuthSubmitButton';
 
 import { NO_CREDENTIAL_ERRORS } from './credentialErrorState';
 import { createEmailPasswordFormStyles } from './EmailPasswordForm.styles';
@@ -60,37 +62,36 @@ export const EmailPasswordForm = ({
 
   return (
     <View style={styles.form}>
-      <Input
+      <AuthField
         label={t(TRANSLATION_KEYS.authEmailLabel)}
+        icon={AUTH_ICONS.email}
         placeholder={t(TRANSLATION_KEYS.authEmailPlaceholder)}
         value={email}
         onChangeText={setEmail}
         errorText={fieldErrors.email === null ? undefined : t(fieldErrors.email)}
         keyboardType="email-address"
-        autoCapitalize="none"
         autoComplete="email"
         textContentType="emailAddress"
         disabled={isPending}
       />
-      <Input
+      <AuthField
         label={t(TRANSLATION_KEYS.authPasswordLabel)}
+        icon={AUTH_ICONS.password}
         placeholder={t(TRANSLATION_KEYS.authPasswordPlaceholder)}
         value={password}
         onChangeText={setPassword}
         errorText={fieldErrors.password === null ? undefined : t(fieldErrors.password)}
-        secureTextEntry
-        autoCapitalize="none"
+        secret
         autoComplete="password"
         textContentType="password"
         disabled={isPending}
       />
       <AuthErrorMessage errorKey={errorKey} />
-      <Button
+      <AuthSubmitButton
         label={submitLabel}
         onPress={submit}
-        loading={isPending}
+        isPending={isPending}
         disabled={disabled}
-        fullWidth
       />
       {footer === undefined ? null : <View style={styles.footer}>{footer}</View>}
     </View>

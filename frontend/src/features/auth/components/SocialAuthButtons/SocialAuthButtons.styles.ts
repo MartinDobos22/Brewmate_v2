@@ -8,9 +8,10 @@ export const createSocialAuthButtonsStyles = (theme: Theme): SocialAuthButtonsSt
   StyleSheet.create({
     wrapper: { gap: theme.spacing.md },
     divider: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md },
+    /** The line the espresso block draws everywhere else, doing the same job. */
     rule: {
       flex: 1,
       height: theme.borderWidth.thin,
-      backgroundColor: theme.colors.outlineVariant,
+      backgroundColor: theme.colors.espressoLine,
     },
   });

@@ -17,7 +17,7 @@ export const AuthErrorMessage = ({ errorKey }: AuthErrorMessageProps): JSX.Eleme
   }
 
   return (
-    <Text variant="bodySmall" tone="error" accessibilityLabel={t(errorKey)}>
+    <Text variant="bodyMuted" tone="error" accessibilityLabel={t(errorKey)}>
       {t(errorKey)}
     </Text>
   );
