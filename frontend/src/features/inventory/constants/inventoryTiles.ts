@@ -11,6 +11,15 @@ export const INVENTORY_TILE_ICONS = {
   brew: 'coffee-outline',
 } as const satisfies Record<string, TileGlyph>;
 
+/** The glyph of the thing an empty cupboard has none of. */
+export const EMPTY_CUPBOARD_ICON = 'package-variant-closed' satisfies TileGlyph;
+
+/**
+ * The third way out of an empty cupboard: somebody with no coffee at home at
+ * all, who the scanner can help in a shop this afternoon.
+ */
+export const SHOP_HELP_ICON = 'storefront-outline' satisfies TileGlyph;
+
 /**
  * The heading over each band of the cupboard, and the line under it.
  *

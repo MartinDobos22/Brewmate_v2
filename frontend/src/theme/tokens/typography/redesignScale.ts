@@ -22,6 +22,20 @@ export const REDESIGN_SCALE = {
     lineHeight: 36,
     letterSpacing: -0.6,
   },
+  /** A headline that answers rather than names - an empty state, a coffee. */
+  displayCompact: {
+    fontFamily: FONT_FAMILIES.displayMedium,
+    fontSize: 22,
+    lineHeight: 28,
+    letterSpacing: -0.4,
+  },
+  /** The redesign's body text, a hair tighter than Material's. */
+  bodyText: {
+    fontFamily: FONT_FAMILIES.bodyRegular,
+    fontSize: 14,
+    lineHeight: 20,
+    letterSpacing: 0.1,
+  },
   /** The label over the one thing an espresso block holds. */
   eyebrowEspresso: {
     fontFamily: FONT_FAMILIES.bodySemiBold,
@@ -54,8 +68,76 @@ export const REDESIGN_SCALE = {
     lineHeight: 26,
     letterSpacing: -0.3,
   },
-  /** The word under an icon inside a circular control. */
-  controlLabel: {
+  /** The label over a group of cards. */
+  sectionHeading: {
+    fontFamily: FONT_FAMILIES.bodySemiBold,
+    fontSize: 17,
+    lineHeight: 22,
+    letterSpacing: -0.25,
+  },
+  /** What a card is about - a coffee's name, a version's number. */
+  itemTitle: {
+    fontFamily: FONT_FAMILIES.bodySemiBold,
+    fontSize: 18,
+    lineHeight: 24,
+    letterSpacing: -0.3,
+  },
+  /** The title of a row that leads somewhere. */
+  rowTitle: {
+    fontFamily: FONT_FAMILIES.bodySemiBold,
+    fontSize: 15,
+    lineHeight: 20,
+    letterSpacing: -0.1,
+  },
+  /** The label on a pill. */
+  actionLabel: {
+    fontFamily: FONT_FAMILIES.bodySemiBold,
+    fontSize: 14,
+    lineHeight: 20,
+    letterSpacing: -0.1,
+  },
+  /** A state said in words beside the colour and the glyph saying it. */
+  statusLabel: {
+    fontFamily: FONT_FAMILIES.bodyMedium,
+    fontSize: 12,
+    lineHeight: 16,
+    letterSpacing: 0.2,
+  },
+  /** A fact printed on an attribute chip. */
+  chipLabel: {
+    fontFamily: FONT_FAMILIES.bodyMedium,
+    fontSize: 11,
+    lineHeight: 15,
+    letterSpacing: 0.2,
+  },
+  /** The label over a figure, and the only upper-cased text on a light ground. */
+  eyebrow: {
+    fontFamily: FONT_FAMILIES.bodySemiBold,
+    fontSize: 10,
+    lineHeight: 14,
+    letterSpacing: 1.1,
+    textTransform: 'uppercase',
+  },
+  /** A second line under a row's title, read after it rather than with it. */
+  caption: {
+    fontFamily: FONT_FAMILIES.bodyRegular,
+    fontSize: 12,
+    lineHeight: 16,
+    letterSpacing: 0.2,
+  },
+  /** The smallest thing on a card that is still a sentence. */
+  captionSmall: {
+    fontFamily: FONT_FAMILIES.bodyRegular,
+    fontSize: 11,
+    lineHeight: 15,
+    letterSpacing: 0.3,
+  },
+  /**
+   * The word under an icon inside a circular control, and the unit under a
+   * figure inside a dial. The smallest type in the app: it names something
+   * already drawn rather than saying anything on its own.
+   */
+  microLabel: {
     fontFamily: FONT_FAMILIES.bodyMedium,
     fontSize: 9,
     lineHeight: 12,

@@ -25,9 +25,9 @@ export const SectionHeading = ({ title, caption }: SectionHeadingProps): JSX.Ele
 
   return (
     <View style={styles.wrapper} accessibilityRole="header">
-      <Text variant="titleMedium">{title}</Text>
+      <Text variant="sectionHeading">{title}</Text>
       {caption === undefined ? null : (
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodyMuted" tone="muted">
           {caption}
         </Text>
       )}

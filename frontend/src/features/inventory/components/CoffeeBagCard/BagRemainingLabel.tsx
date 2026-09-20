@@ -21,7 +21,7 @@ export const BagRemainingLabel = ({ bag }: BagRemainingLabelProps): JSX.Element 
 
   if (bag.remainingGrams === null) {
     return (
-      <Text variant="labelMedium" tone="muted">
+      <Text variant="caption" tone="muted">
         {t(TRANSLATION_KEYS.inventoryRemainingUnknown)}
       </Text>
     );
@@ -30,7 +30,7 @@ export const BagRemainingLabel = ({ bag }: BagRemainingLabelProps): JSX.Element 
   const remaining = `${formatGrams(bag.remainingGrams)} ${t(TRANSLATION_KEYS.unitGrams)}`;
 
   return (
-    <Text variant="labelMedium" numeric>
+    <Text variant="numericInline" numeric>
       {remaining}
     </Text>
   );

@@ -1,7 +1,9 @@
 export { CoffeeBagCard } from './CoffeeBagCard';
 export type { CoffeeBagCardProps } from './CoffeeBagCard';
-export { BagFreshnessLabel } from './BagFreshnessLabel';
-export type { BagFreshnessLabelProps } from './BagFreshnessLabel';
+export { BagFreshnessDial } from './BagFreshnessDial';
+export type { BagFreshnessDialProps } from './BagFreshnessDial';
+export { BagFreshnessStatus } from './BagFreshnessStatus';
+export type { BagFreshnessStatusProps } from './BagFreshnessStatus';
 export { BagRemainingLabel } from './BagRemainingLabel';
 export type { BagRemainingLabelProps } from './BagRemainingLabel';
 export { BagRemainingBar } from './BagRemainingBar';

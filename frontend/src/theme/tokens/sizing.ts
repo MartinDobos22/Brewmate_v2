@@ -7,6 +7,11 @@ export const SIZE = {
   buttonHeightMedium: 48,
   inputHeight: 48,
   chipHeight: 32,
+  /**
+   * A chip that states a fact rather than offering a choice. Smaller than a
+   * control, because nothing about it is a touch target.
+   */
+  attributeChipHeight: 26,
   listItemMinHeight: 56,
   tabBarHeight: 56,
   iconSmall: 16,
@@ -61,6 +66,36 @@ export const SIZE = {
   legendSwatchBorder: 2,
   /** The onboarding progress bar, thinner than a slider track is tall. */
   progressBarHeight: 6,
+  /** A bar that measures a quantity rather than counting steps through a flow. */
+  measureBarHeight: 8,
+  /**
+   * A dial: a ring with a figure inside it.
+   *
+   * Two sizes and no more. The large one carries a bag's freshness on the
+   * cupboard, the small one the profile's confidence - and they are the same
+   * object at two sizes rather than two objects, because both answer the same
+   * shape of question: how far through something are we.
+   */
+  dialLarge: 76,
+  dialLargeStroke: 7,
+  dialSmall: 58,
+  dialSmallStroke: 6,
+  /** The two pills under a bag on the cupboard. */
+  bagActionHeight: 46,
+  /** A round icon button in a screen's title row. */
+  headerButtonSize: 44,
+  /** The hairline between two figures in a summary row. */
+  summaryRuleHeight: 36,
+  /**
+   * The mark on an empty screen: two dashed rings round the glyph of the thing
+   * that is not there yet. The app's own ring motif with nothing in it, which
+   * is what an absence looks like without a screen having to say so.
+   */
+  emptyMarkOuter: 104,
+  emptyMarkInner: 70,
+  emptyMarkGlyph: 38,
+  /** How wide an empty state's sentence may run before it is hard to read. */
+  emptyBodyMaxWidth: 300,
   /** A questionnaire answer card. Big enough to tap without aiming. */
   optionCardMinHeight: 72,
   /** Height of a boxed preview on the design system screen. */

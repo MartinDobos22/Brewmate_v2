@@ -47,11 +47,32 @@ export const NUMERIC_SCALE = {
     lineHeight: 20,
     letterSpacing: 0,
   },
+  /** Three figures across the top of a screen, summing up what is below. */
+  numericSummary: {
+    fontFamily: FONT_FAMILIES.numericMedium,
+    fontSize: 34,
+    lineHeight: 38,
+    letterSpacing: -1.5,
+  },
+  /** The figure inside a dial, sized to the hole the ring leaves it. */
+  numericDial: {
+    fontFamily: FONT_FAMILIES.numericMedium,
+    fontSize: 21,
+    lineHeight: 23,
+    letterSpacing: -0.6,
+  },
   /** A measured value inside a chip or beside a label. */
   numericValue: {
     fontFamily: FONT_FAMILIES.numericMedium,
     fontSize: 18,
     lineHeight: 22,
+    letterSpacing: -0.4,
+  },
+  /** A measured value set in a line of text rather than given a column. */
+  numericInline: {
+    fontFamily: FONT_FAMILIES.numericMedium,
+    fontSize: 16,
+    lineHeight: 20,
     letterSpacing: -0.4,
   },
   /** A figure read after the one above it - a total under a countdown. */

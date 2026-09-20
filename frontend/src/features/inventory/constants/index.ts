@@ -17,9 +17,16 @@ export {
   EQUIPMENT_SET_NAME_SUGGESTION_KEYS,
 } from './equipmentSetDefaults';
 export { TASTING_NOTES_SEPARATOR, TASTING_NOTES_JOIN, DAYS_SINCE_ROAST } from './coffeeBagForm';
-export { BAG_FRESHNESS_LABEL_KEYS, BAG_FRESHNESS_TONES } from './bagFreshnessLabels';
+export {
+  BAG_FRESHNESS_LABEL_KEYS,
+  BAG_FRESHNESS_TONES,
+  BAG_FRESHNESS_ICONS,
+  BAG_FRESHNESS_DIAL_COLORS,
+} from './bagFreshnessLabels';
 export {
   INVENTORY_TILE_ICONS,
+  EMPTY_CUPBOARD_ICON,
+  SHOP_HELP_ICON,
   BAG_GROUP_TITLE_KEYS,
   BAG_GROUP_CAPTION_KEYS,
 } from './inventoryTiles';

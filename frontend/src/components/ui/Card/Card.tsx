@@ -5,7 +5,8 @@ import { useThemedStyles } from '../../../theme';
 
 import { createCardStyles } from './Card.styles';
 
-export type CardVariant = 'surface' | 'container' | 'containerHigh' | 'outlined';
+export type CardVariant =
+  'surface' | 'container' | 'containerHigh' | 'outlined' | 'soft' | 'softEmphasis';
 
 const DEFAULT_CARD_VARIANT: CardVariant = 'outlined';
 
@@ -14,7 +15,10 @@ export interface CardProps {
   readonly variant?: CardVariant;
 }
 
-/** A grouped block of content. Radius 16, padding 16, no shadow. */
+/**
+ * A grouped block of content. Radius 16 and no shadow by default; the `soft`
+ * variants are the redesign's, where depth replaced the outline.
+ */
 export const Card = ({ children, variant = DEFAULT_CARD_VARIANT }: CardProps): JSX.Element => {
   const styles = useThemedStyles(createCardStyles);
 

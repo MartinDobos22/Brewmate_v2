@@ -36,10 +36,16 @@ export { EquipmentSetList } from './EquipmentSetList';
 export { EquipmentSetSwitcher } from './EquipmentSetSwitcher';
 export { CoffeeBagFormFields } from './CoffeeBagFormFields';
 export type { CoffeeBagFormFieldsProps } from './CoffeeBagFormFields';
-export { CoffeeBagCard, BagFreshnessLabel, BagRemainingLabel } from './CoffeeBagCard';
+export {
+  CoffeeBagCard,
+  BagFreshnessDial,
+  BagFreshnessStatus,
+  BagRemainingLabel,
+} from './CoffeeBagCard';
 export type {
   CoffeeBagCardProps,
-  BagFreshnessLabelProps,
+  BagFreshnessDialProps,
+  BagFreshnessStatusProps,
   BagRemainingLabelProps,
 } from './CoffeeBagCard';
 export {
@@ -54,6 +60,6 @@ export type {
 } from './CoffeeBagDetailScreen';
 export { AddCoffeeBagSheet, AddCoffeeBagForm } from './AddCoffeeBagSheet';
 export type { AddCoffeeBagSheetProps, AddCoffeeBagFormProps } from './AddCoffeeBagSheet';
+export { InventoryHeader } from './InventoryHeader';
 export { InventorySummaryStrip } from './InventorySummaryStrip';
-export { InventoryActionTiles } from './InventoryActionTiles';
 export { CoffeeBagGroups } from './CoffeeBagGroups';

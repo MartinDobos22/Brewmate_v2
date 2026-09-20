@@ -5,9 +5,14 @@ export type TextVariant = TypographyToken;
 
 /** Which colour role the text carries. */
 /**
- * The last five are for text drawn on an espresso block or on brew mode's
+ * Five of these are for text drawn on an espresso block or on brew mode's
  * ground - surfaces that are dark in both colour schemes, so the text on them
  * cannot take its colour from the active one.
+ *
+ * `fresh` and `caution` are the last two, and they are states rather than
+ * palettes: a bag at its best and a bag running out of time. Deliberately not
+ * `secondary` and `tertiary`, which are roles a component picks for weight -
+ * these two are picked because of what is true of the thing they describe.
  */
 export type TextTone =
   | 'default'
@@ -23,7 +28,9 @@ export type TextTone =
   | 'onEspressoMuted'
   | 'accent'
   | 'accentSoft'
-  | 'onCream';
+  | 'onCream'
+  | 'fresh'
+  | 'caution';
 
 export type TextAlign = 'left' | 'center' | 'right';
 

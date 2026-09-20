@@ -49,7 +49,7 @@ export const BrewControlButton = ({
         color={isPrimary ? theme.colors.onCream : theme.colors.onEspressoVariant}
       />
       <Text
-        variant={isPrimary ? 'actionLarge' : 'controlLabel'}
+        variant={isPrimary ? 'actionLarge' : 'microLabel'}
         tone={isPrimary ? 'onCream' : 'onEspressoMuted'}
         align="center"
         numberOfLines={1}

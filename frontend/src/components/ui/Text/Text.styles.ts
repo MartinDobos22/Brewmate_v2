@@ -30,6 +30,8 @@ export const createTextStyles = (theme: Theme): TextStyleMap =>
     accent: { color: theme.colors.accentOnEspresso },
     accentSoft: { color: theme.colors.accentSoft },
     onCream: { color: theme.colors.onCream },
+    fresh: { color: theme.colors.onFresh },
+    caution: { color: theme.colors.onCaution },
     left: { textAlign: 'left' },
     center: { textAlign: 'center' },
     right: { textAlign: 'right' },

@@ -59,6 +59,7 @@ export {
 } from './coffeeBagForm';
 export type { CoffeeBagFormValues } from './coffeeBagForm';
 export { coffeeBagSummary } from './coffeeBagSummary';
+export { bagAttributes } from './bagAttributes';
 export { parsedBagToForm } from './parsedBagToForm';
 export { BAG_FRESHNESS, resolveBagFreshness } from './resolveBagFreshness';
 export type { BagFreshness, BagAge } from './resolveBagFreshness';

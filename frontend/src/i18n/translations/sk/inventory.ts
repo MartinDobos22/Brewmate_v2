@@ -23,6 +23,21 @@ export const SK_INVENTORY = {
   inventoryBagOpen: 'Otvoriť',
   inventoryBagArchive: 'Dopil som ju',
   inventoryRemainingUnknown: 'Neviem, koľko ti jej ostáva',
+  /** Beside how much is left, so the figure above it has something to be a share of. */
+  inventoryBagCapacity: 'z {grams} g',
+  inventoryDialLabel: 'Koľko dní je od praženia',
+  /**
+   * What the dial prints where a bag carries no roast date. Not a nought:
+   * nobody knowing how old a coffee is and a coffee roasted today are
+   * different facts, and only one of them is a number.
+   */
+  inventoryDialUnknown: '?',
+  /**
+   * New copy for the empty cupboard. The screen already says an empty shelf is
+   * normal; this says why, which is the part that makes it believable.
+   */
+  inventoryEmptyNote:
+    'Prázdna skrinka nie je chyba. Väčšina ľudí kávu doma má, len si ju nikdy nikam nezapísala.',
 
   inventoryFreshnessUnknown: 'Dátum praženia neviem',
   inventoryFreshnessResting: 'Ešte odpočíva',
