@@ -1,11 +1,13 @@
 import type { JSX, ReactNode } from 'react';
 import { ScrollView, View } from 'react-native';
 
-import { Button, Text } from '../../../../components/ui';
+import { Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
-import type { OnboardingStep } from '../../constants/onboardingSteps';
+import type { OnboardingStep } from '../../constants';
 import type { OnboardingFlow } from '../../hooks/useOnboardingFlow';
+import type { StepProgress } from '../../services/onboardingSteps';
+import { OnboardingHeader } from '../OnboardingHeader';
 import { OnboardingProgress } from '../OnboardingProgress';
 
 import { createOnboardingStepLayoutStyles } from './OnboardingStepLayout.styles';
@@ -19,8 +21,8 @@ export interface OnboardingStepLayoutProps {
   readonly canGoBack?: boolean;
   /** A step that scrolls its own content - a long list - turns this off. */
   readonly scrollable?: boolean;
-  /** What this step counts inside itself, printed under the flow's own bar. */
-  readonly note?: string;
+  /** What this step counts inside itself, shown instead of the flow's position. */
+  readonly note?: StepProgress;
 }
 
 /**
@@ -46,26 +48,14 @@ export const OnboardingStepLayout = ({
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.header}>
-        {backEnabled ? (
-          <Button
-            label={t(TRANSLATION_KEYS.actionBack)}
-            variant="tertiary"
-            size="small"
-            onPress={onBack ?? flow.goBack}
-          />
-        ) : (
-          <View />
+      <OnboardingHeader
+        canGoBack={backEnabled}
+        onBack={onBack ?? flow.goBack}
+        leaveLabel={t(
+          flow.isSingleStep ? TRANSLATION_KEYS.actionDone : TRANSLATION_KEYS.onboardingSkipAll,
         )}
-        <Button
-          label={t(
-            flow.isSingleStep ? TRANSLATION_KEYS.actionDone : TRANSLATION_KEYS.onboardingSkipAll,
-          )}
-          variant="tertiary"
-          size="small"
-          onPress={flow.leave}
-        />
-      </View>
+        onLeave={flow.leave}
+      />
       {flow.progress === null && note === undefined ? null : (
         <OnboardingProgress step={step} progress={flow.progress} note={note} />
       )}
@@ -77,7 +67,7 @@ export const OnboardingStepLayout = ({
         <View style={[styles.scroll, styles.content]}>{children}</View>
       )}
       {flow.hasFailed ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="bodyMuted" tone="error">
           {t(TRANSLATION_KEYS.onboardingSaveError)}
         </Text>
       ) : null}

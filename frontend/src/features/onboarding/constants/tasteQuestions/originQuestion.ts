@@ -28,6 +28,7 @@ export const ORIGIN_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'ethiopia',
+      icon: 'flower-outline',
       labelKey: TRANSLATION_KEYS.tqOriginEthiopia,
       noteKey: TRANSLATION_KEYS.tqOriginEthiopiaNote,
       effect: {
@@ -41,6 +42,7 @@ export const ORIGIN_QUESTION: TasteQuestion = {
     },
     {
       id: 'kenya',
+      icon: 'fruit-cherries',
       labelKey: TRANSLATION_KEYS.tqOriginKenya,
       noteKey: TRANSLATION_KEYS.tqOriginKenyaNote,
       effect: {
@@ -50,6 +52,7 @@ export const ORIGIN_QUESTION: TasteQuestion = {
     },
     {
       id: 'colombia',
+      icon: 'scale-balance',
       labelKey: TRANSLATION_KEYS.tqOriginColombia,
       noteKey: TRANSLATION_KEYS.tqOriginColombiaNote,
       effect: {
@@ -59,6 +62,7 @@ export const ORIGIN_QUESTION: TasteQuestion = {
     },
     {
       id: 'brazil',
+      icon: 'peanut-outline',
       labelKey: TRANSLATION_KEYS.tqOriginBrazil,
       noteKey: TRANSLATION_KEYS.tqOriginBrazilNote,
       effect: {
@@ -68,6 +72,7 @@ export const ORIGIN_QUESTION: TasteQuestion = {
     },
     {
       id: 'indonesia',
+      icon: 'pine-tree',
       labelKey: TRANSLATION_KEYS.tqOriginIndonesia,
       noteKey: TRANSLATION_KEYS.tqOriginIndonesiaNote,
       effect: {
@@ -75,6 +80,6 @@ export const ORIGIN_QUESTION: TasteQuestion = {
         flavorAffinities: { [FLAVOR_TAGS.spice]: 0.7, [FLAVOR_TAGS.herbal]: 0.5 },
       },
     },
-    { id: 'noFavourite', labelKey: TRANSLATION_KEYS.tqOriginNone, effect: {} },
+    { id: 'noFavourite', icon: 'earth', labelKey: TRANSLATION_KEYS.tqOriginNone, effect: {} },
   ],
 };

@@ -5,7 +5,6 @@ import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { ONBOARDING_STEPS } from '../../constants/onboardingSteps';
 import { useTasteQuestionnaire } from '../../hooks/useTasteQuestionnaire';
 import type { OnboardingFlow } from '../../hooks/useOnboardingFlow';
-import type { QuestionnaireProgress } from '../../services/questionnaireProgress';
 import type { TasteQuestionOption } from '../../services/tasteQuestionTypes';
 import { OnboardingStepLayout } from '../OnboardingStepLayout';
 import { TasteLevelPicker } from '../TasteLevelPicker';
@@ -14,17 +13,6 @@ import { TasteSavedPanel } from '../TasteSavedPanel';
 export interface TasteStepProps {
   readonly flow: OnboardingFlow;
 }
-
-type Translate = ReturnType<typeof useTranslation>['t'];
-
-/** Nothing is printed on the screens where there is nothing to count. */
-const readProgressNote = (
-  t: Translate,
-  progress: QuestionnaireProgress | null,
-): string | undefined =>
-  progress === null
-    ? undefined
-    : t(TRANSLATION_KEYS.tqProgress, { current: progress.current, total: progress.total });
 
 /**
  * One question per screen, the first of which is which questions to ask.
@@ -50,7 +38,7 @@ export const TasteStep = ({ flow }: TasteStepProps): JSX.Element => {
       flow={flow}
       canGoBack={questionnaire.canGoBack}
       onBack={questionnaire.goBack}
-      note={readProgressNote(t, questionnaire.progress)}
+      note={questionnaire.progress ?? undefined}
     >
       {questionnaire.isSaved ? (
         <TasteSavedPanel isSingleStep={flow.isSingleStep} onContinue={questionnaire.finish} />
@@ -63,14 +51,15 @@ export const TasteStep = ({ flow }: TasteStepProps): JSX.Element => {
       ) : null}
       {questionnaire.question === null ? null : (
         <>
-          <Text variant="headlineSmall">{t(questionnaire.question.promptKey)}</Text>
-          <Text variant="bodyMedium" tone="muted">
+          <Text variant="displayTitle">{t(questionnaire.question.promptKey)}</Text>
+          <Text variant="bodyText" tone="muted">
             {t(questionnaire.question.helpKey)}
           </Text>
           {questionnaire.question.options.map((option: TasteQuestionOption): JSX.Element => (
             <OptionCard
               key={option.id}
               label={t(option.labelKey)}
+              icon={option.icon}
               note={option.noteKey === undefined ? undefined : t(option.noteKey)}
               selected={option.id === questionnaire.selectedOptionId}
               disabled={questionnaire.isSubmitting}
@@ -84,7 +73,7 @@ export const TasteStep = ({ flow }: TasteStepProps): JSX.Element => {
       {questionnaire.isSubmitting ? <LoadingState label={t(TRANSLATION_KEYS.tqSaving)} /> : null}
       {questionnaire.hasFailed ? (
         <>
-          <Text variant="bodySmall" tone="error">
+          <Text variant="bodyMuted" tone="error">
             {t(TRANSLATION_KEYS.tqSaveFailed)}
           </Text>
           <Button

@@ -176,6 +176,11 @@ export const SIZE = {
   outcomeButtonHeight: 54,
   /** A questionnaire answer card. Big enough to tap without aiming. */
   optionCardMinHeight: 72,
+  /** The disc its glyph sits in, which is what makes a column of them scannable. */
+  optionBadgeSize: 40,
+  /** The round way back and the pill out of a step of onboarding. */
+  onboardingBackSize: 42,
+  onboardingSkipHeight: 38,
   /** Height of a boxed preview on the design system screen. */
   previewBoxHeight: 180,
   motionTrackHeight: 8,

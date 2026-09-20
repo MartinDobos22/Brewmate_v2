@@ -14,18 +14,21 @@ export const ACIDITY_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'high',
+      icon: 'fruit-citrus',
       labelKey: TRANSLATION_KEYS.tqAcidityHigh,
       noteKey: TRANSLATION_KEYS.tqAcidityHighNote,
       effect: { axes: { acidity: 9 } },
     },
     {
       id: 'mild',
+      icon: 'scale-balance',
       labelKey: TRANSLATION_KEYS.tqAcidityMild,
       noteKey: TRANSLATION_KEYS.tqAcidityMildNote,
       effect: { axes: { acidity: 6 } },
     },
     {
       id: 'low',
+      icon: 'cloud-outline',
       labelKey: TRANSLATION_KEYS.tqAcidityLow,
       noteKey: TRANSLATION_KEYS.tqAcidityLowNote,
       effect: { axes: { acidity: 2 } },

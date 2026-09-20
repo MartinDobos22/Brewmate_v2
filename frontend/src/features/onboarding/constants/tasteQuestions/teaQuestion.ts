@@ -19,6 +19,7 @@ export const TEA_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'fruit',
+      icon: 'fruit-cherries',
       labelKey: TRANSLATION_KEYS.tqTeaFruit,
       effect: {
         axes: { acidity: 8 },
@@ -31,6 +32,7 @@ export const TEA_QUESTION: TasteQuestion = {
     },
     {
       id: 'black',
+      icon: 'tea-outline',
       labelKey: TRANSLATION_KEYS.tqTeaBlack,
       effect: {
         axes: { acidity: 4, body: 6.5, bitterness: 6 },
@@ -39,6 +41,7 @@ export const TEA_QUESTION: TasteQuestion = {
     },
     {
       id: 'green',
+      icon: 'leaf',
       labelKey: TRANSLATION_KEYS.tqTeaGreen,
       effect: {
         axes: { acidity: 6.5, body: 3.5 },
@@ -49,6 +52,6 @@ export const TEA_QUESTION: TasteQuestion = {
         },
       },
     },
-    { id: 'none', labelKey: TRANSLATION_KEYS.tqTeaNone, effect: {} },
+    { id: 'none', icon: 'close-circle-outline', labelKey: TRANSLATION_KEYS.tqTeaNone, effect: {} },
   ],
 };

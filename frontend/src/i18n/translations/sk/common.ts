@@ -16,6 +16,14 @@ export const SK_COMMON = {
   unitMillimetres: 'mm',
   listSeparator: ' · ',
   stepCount: 'Krok {current} z {total}',
+  /*
+   * The same count where it shares a line with something else.
+   *
+   * Set in mono beside the name of the step, so the digits do not shift as the
+   * flow moves. The long form stays: it is what a screen reader is given,
+   * because "dva lomka osem" is not how anybody says it out loud.
+   */
+  stepCountShort: '{current}/{total}',
   stepProgressLabel: 'Ako ďaleko si',
   stateLoading: 'Načítava sa…',
   stateEmptyTitle: 'Zatiaľ nič',

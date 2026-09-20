@@ -14,18 +14,21 @@ export const BODY_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'light',
+      icon: 'feather',
       labelKey: TRANSLATION_KEYS.tqBodyLight,
       noteKey: TRANSLATION_KEYS.tqBodyLightNote,
       effect: { axes: { body: 2.5, intensity: 4 } },
     },
     {
       id: 'balanced',
+      icon: 'scale-balance',
       labelKey: TRANSLATION_KEYS.tqBodyBalanced,
       noteKey: TRANSLATION_KEYS.tqBodyBalancedNote,
       effect: { axes: { body: 5.5 } },
     },
     {
       id: 'heavy',
+      icon: 'weight',
       labelKey: TRANSLATION_KEYS.tqBodyHeavy,
       noteKey: TRANSLATION_KEYS.tqBodyHeavyNote,
       effect: { axes: { body: 8.5, intensity: 7.5 } },

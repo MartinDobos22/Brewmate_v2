@@ -1,5 +1,6 @@
 import type { FlavorAffinities, MilkUsage, PartialTasteAxes, RoastLevel } from '@brewmate/shared';
 
+import type { TileGlyph } from '../../../components/ui';
 import type { TranslationKey } from '../../../i18n';
 import type { TasteExperienceLevel } from '../constants/tasteExperienceLevels';
 
@@ -23,6 +24,16 @@ export interface TasteQuestionOption {
   readonly id: string;
   readonly labelKey: TranslationKey;
   readonly noteKey?: TranslationKey;
+  /**
+   * The answer, drawn.
+   *
+   * Required rather than optional, so a question added without one is a type
+   * error here instead of a card with a hole where every other card has a
+   * mark. A column of four is read by shape before it is read by word, which
+   * is most of what makes a questionnaire of eight screens answerable in
+   * three minutes.
+   */
+  readonly icon: TileGlyph;
   readonly effect: TasteAnswerEffect;
 }
 
