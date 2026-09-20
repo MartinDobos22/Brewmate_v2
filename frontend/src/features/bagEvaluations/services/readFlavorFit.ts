@@ -59,10 +59,22 @@ export const readFlavorFit = (
   return {
     points: [
       ...(liked.length > NOTHING
-        ? [{ key: TRANSLATION_KEYS.scanPointFlavorLiked, isAgainst: false }]
+        ? [
+            {
+              key: TRANSLATION_KEYS.scanPointFlavorLiked,
+              field: BAG_SCAN_FIELDS.tastingNotes,
+              isAgainst: false,
+            },
+          ]
         : []),
       ...(disliked.length > NOTHING
-        ? [{ key: TRANSLATION_KEYS.scanPointFlavorDisliked, isAgainst: true }]
+        ? [
+            {
+              key: TRANSLATION_KEYS.scanPointFlavorDisliked,
+              field: BAG_SCAN_FIELDS.tastingNotes,
+              isAgainst: true,
+            },
+          ]
         : []),
     ],
     uncertainties: [],

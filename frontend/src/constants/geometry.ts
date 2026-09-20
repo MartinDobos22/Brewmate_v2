@@ -15,3 +15,16 @@ export const CIRCLE = {
    */
   startAngle: -90,
 } as const;
+
+/**
+ * The app's own mark, as shares of the square it is drawn in.
+ *
+ * Three concentric circles, and how far the set is pushed out of the corner
+ * that clips it. Shares rather than points, so the same mark at 250 and at 300
+ * is clipped by the same amount of itself rather than by a fixed number of
+ * points that would swallow the small one.
+ */
+export const RINGS = {
+  radii: [0.487, 0.367, 0.247],
+  bleed: 0.43,
+} as const;

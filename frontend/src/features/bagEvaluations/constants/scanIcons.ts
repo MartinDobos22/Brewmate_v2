@@ -16,4 +16,17 @@ export const SCAN_ICONS = {
    */
   reason: 'circle-medium',
   gap: 'help-circle-outline',
+  scan: 'barcode-scan',
+} as const satisfies Record<string, TileGlyph>;
+
+/**
+ * What happened to the bag afterwards.
+ *
+ * A basket and a cross, which is what the two answers are - not a tick and a
+ * cross, because leaving a coffee on the shelf is not a failure and the screen
+ * must not read as though it were.
+ */
+export const OUTCOME_ICONS = {
+  bought: 'basket-check-outline',
+  left: 'close',
 } as const satisfies Record<string, TileGlyph>;

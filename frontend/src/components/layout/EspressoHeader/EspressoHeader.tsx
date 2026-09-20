@@ -4,8 +4,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTheme, useThemedStyles } from '../../../theme';
 
+import { DriftingRings } from '../../ui';
+
 import { createEspressoHeaderStyles, headerInset } from './EspressoHeader.styles';
-import { HeaderRings } from './HeaderRings';
 
 export interface EspressoHeaderProps {
   /** The one thing this screen most wants read, and nothing else. */
@@ -32,7 +33,7 @@ export const EspressoHeader = ({ children }: EspressoHeaderProps): JSX.Element =
 
   return (
     <View style={[styles.block, headerInset(theme, insets.top)]}>
-      <HeaderRings />
+      <DriftingRings size={theme.size.headerRingsSize} color={theme.colors.espressoLine} />
       <View style={styles.content}>{children}</View>
     </View>
   );

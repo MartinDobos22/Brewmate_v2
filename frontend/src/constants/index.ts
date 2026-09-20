@@ -1,7 +1,7 @@
 export { ANALYTICS_QUEUE_MAX, ANALYTICS_FLUSH_INTERVAL_MS } from './analytics';
 export { APP_CONFIG } from './config';
 export { FINGERPRINT, FINGERPRINT_SEPARATORS } from './fingerprint';
-export { CIRCLE } from './geometry';
+export { CIRCLE, RINGS } from './geometry';
 export { INTERPOLATION } from './interpolation';
 export type { AppConfig } from './config';
 export {

@@ -6,6 +6,7 @@ export {
   BAG_VERDICT_TITLE_KEYS,
   BAG_VERDICT_BODY_KEYS,
 } from './bagScan';
+export type { BagScanField } from './bagScan';
 export type { BagScanMode, BagScanStage, BagVerdictLevel } from './bagScan';
 export { ROAST_LEVEL_NEAR_DISTANCE } from './bagScan';
 export { FLAVOR_LEXICON } from './flavorLexicon';
@@ -25,6 +26,14 @@ export {
 export type { BagPhotoFailure } from './bagPhoto';
 export { BAG_PHOTO_FAILURE_KEYS } from './bagPhotoFailures';
 export { BAG_PHOTO_ISSUE_KEYS } from './bagPhotoIssues';
-export { SCAN_ICONS } from './scanIcons';
+export { SCAN_ICONS, OUTCOME_ICONS } from './scanIcons';
+export {
+  VERDICT_REASON_ICONS,
+  VERDICT_GAP_ICONS,
+  VERDICT_REASON_COLORS,
+  VERDICT_GROUP_ICONS,
+  VERDICT_UNTYPED_ICON,
+  PROVENANCE_ICONS,
+} from './verdictIcons';
 export { SCAN_OUTCOMES, SCAN_OUTCOME_LABEL_KEYS, SCAN_OUTCOME_TONES } from './scanOutcomes';
 export type { ScanOutcome } from './scanOutcomes';

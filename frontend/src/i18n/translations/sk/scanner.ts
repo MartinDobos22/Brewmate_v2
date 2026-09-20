@@ -133,7 +133,9 @@ export const SK_SCANNER = {
   scanOutcomeTitle: 'Kúpil si ju?',
   scanOutcomeBody: 'Podľa toho sa naučím, kedy ti moje rady sadli a kedy nie.',
   scanOutcomeBought: 'Áno, kúpil',
-  scanOutcomeSkipped: 'Nie, nechal som ju tam',
+  scanOutcomeSkipped: 'Nechal tam',
+  /** The way out of a verdict that is not an answer to it. */
+  scanAnother: 'Pozrieť ďalšiu',
   scanSavedTitle: 'Zapísané',
   scanSavedBody: 'Kávu som ti pridal do inventára aj s tým, čo o nej viem.',
   scanSkippedTitle: 'Dobre',

@@ -47,6 +47,8 @@ export { ActionRow } from './ActionRow';
 export type { ActionRowProps, ActionRowTone } from './ActionRow';
 export { InfoNote } from './InfoNote';
 export type { InfoNoteProps, InfoNoteTone } from './InfoNote';
+export { DriftingRings } from './DriftingRings';
+export type { DriftingRingsProps, RingPlacement } from './DriftingRings';
 export { Dial } from './Dial';
 export type { DialProps } from './Dial';
 export { ValueDisplay } from './ValueDisplay';

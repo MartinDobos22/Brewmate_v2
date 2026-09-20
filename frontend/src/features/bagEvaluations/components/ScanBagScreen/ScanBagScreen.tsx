@@ -1,13 +1,16 @@
 import type { JSX } from 'react';
+import { View } from 'react-native';
 
 import { Screen } from '../../../../components/layout';
 import { StepProgress, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { useThemedStyles } from '../../../../theme';
 import { BAG_SCAN_STAGES, type BagScanMode } from '../../constants/bagScan';
 import { useBagScan } from '../../hooks/useBagScan';
 import { resolveScanSteps } from '../../services';
 import { ScanHistoryList } from '../ScanHistoryList';
 
+import { createScanBagScreenStyles } from './ScanBagScreen.styles';
 import { ScanStageContent } from './ScanStageContent';
 
 export interface ScanBagScreenProps {
@@ -25,21 +28,29 @@ export interface ScanBagScreenProps {
  * sits on the home screen rather than three taps inside the inventory.
  *
  * The step strip is there because this is the one flow in the app somebody
- * works through standing in a shop, one-handed, with a bag in the other. The
- * screen changed under them four times and nothing said whether they were
- * nearly finished or had just started.
+ * works through standing in a shop, one-handed, with a bag in the other. It
+ * stops at the verdict: by then the flow has arrived, and the answer is the
+ * screen rather than a step towards one.
  */
 export const ScanBagScreen = ({ initialMode }: ScanBagScreenProps): JSX.Element => {
+  const styles = useThemedStyles(createScanBagScreenStyles);
   const { t } = useTranslation();
   const scan = useBagScan(initialMode);
   const steps = resolveScanSteps(scan.stage, scan.mode, initialMode === undefined);
+  const isVerdict = scan.stage === BAG_SCAN_STAGES.verdict;
 
   return (
-    <Screen scrollable>
-      <Text variant="headlineSmall">{t(TRANSLATION_KEYS.scanTitle)}</Text>
-      <StepProgress current={steps.current} total={steps.total} />
-      <ScanStageContent scan={scan} />
-      {scan.stage === BAG_SCAN_STAGES.mode ? <ScanHistoryList /> : null}
+    <Screen scrollable padded={false}>
+      <View style={styles.content}>
+        {isVerdict ? null : (
+          <>
+            <Text variant="displayTitle">{t(TRANSLATION_KEYS.scanTitle)}</Text>
+            <StepProgress current={steps.current} total={steps.total} />
+          </>
+        )}
+        <ScanStageContent scan={scan} />
+        {scan.stage === BAG_SCAN_STAGES.mode ? <ScanHistoryList /> : null}
+      </View>
     </Screen>
   );
 };

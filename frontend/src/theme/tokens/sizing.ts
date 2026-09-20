@@ -110,12 +110,9 @@ export const SIZE = {
    * same stroke as every other decoration here - this app ships no artwork.
    */
   headerRingsSize: 300,
-  headerRingsTop: -130,
-  headerRingsLeft: -96,
-  headerRingStroke: 2,
-  headerRingOuter: 146,
-  headerRingMid: 110,
-  headerRingInner: 74,
+  /** The same mark on a card, which is smaller than a header block. */
+  cardRingsSize: 250,
+  ringStroke: 2,
   /** The circle a glyph sits in inside an espresso header's own row. */
   headerBadgeSize: 38,
   /** A brewer's own glyph, which is the most visual decision on its screen. */
@@ -127,6 +124,8 @@ export const SIZE = {
   /** A pill in an espresso header, and the one in a foot bar. */
   headerPillHeight: 48,
   footBarPillHeight: 52,
+  /** The two answers to what happened to a bag in a shop. */
+  outcomeButtonHeight: 54,
   /** A questionnaire answer card. Big enough to tap without aiming. */
   optionCardMinHeight: 72,
   /** Height of a boxed preview on the design system screen. */

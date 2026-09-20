@@ -36,15 +36,3 @@ export const createEspressoHeaderStyles = (theme: Theme): EspressoHeaderStyleMap
 export const headerInset = (theme: Theme, inset: number): ViewStyle => ({
   paddingTop: inset + theme.spacing.lg,
 });
-
-/** The rings sit behind everything and take no touches. */
-export const HEADER_RINGS_STYLES = StyleSheet.create({
-  rings: { position: 'absolute' },
-});
-
-export const headerRingsBox = (theme: Theme): ViewStyle => ({
-  top: theme.size.headerRingsTop,
-  left: theme.size.headerRingsLeft,
-  width: theme.size.headerRingsSize,
-  height: theme.size.headerRingsSize,
-});

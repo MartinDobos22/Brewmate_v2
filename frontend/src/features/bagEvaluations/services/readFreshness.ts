@@ -27,20 +27,38 @@ export const readFreshness = (roastDate: string | null | undefined, now: Date): 
 
   if (days < RESTING_DAYS.min) {
     return {
-      points: [{ key: TRANSLATION_KEYS.scanPointTooFresh, isAgainst: false }],
+      points: [
+        {
+          key: TRANSLATION_KEYS.scanPointTooFresh,
+          field: BAG_SCAN_FIELDS.roastDate,
+          isAgainst: false,
+        },
+      ],
       uncertainties: [],
     };
   }
 
   if (days > RESTING_DAYS.max) {
     return {
-      points: [{ key: TRANSLATION_KEYS.scanPointOld, isAgainst: true }],
+      points: [
+        {
+          key: TRANSLATION_KEYS.scanPointOld,
+          field: BAG_SCAN_FIELDS.roastDate,
+          isAgainst: true,
+        },
+      ],
       uncertainties: [],
     };
   }
 
   return {
-    points: [{ key: TRANSLATION_KEYS.scanPointRested, isAgainst: false }],
+    points: [
+      {
+        key: TRANSLATION_KEYS.scanPointRested,
+        field: BAG_SCAN_FIELDS.roastDate,
+        isAgainst: false,
+      },
+    ],
     uncertainties: [],
   };
 };

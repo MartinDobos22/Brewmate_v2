@@ -22,6 +22,13 @@ export const REDESIGN_SCALE = {
     lineHeight: 36,
     letterSpacing: -0.6,
   },
+  /** The sentence a screen exists to produce. Larger than anything around it. */
+  displayAnswer: {
+    fontFamily: FONT_FAMILIES.displayMedium,
+    fontSize: 28,
+    lineHeight: 34,
+    letterSpacing: -0.5,
+  },
   /** A headline that answers rather than names - an empty state, a coffee. */
   displayCompact: {
     fontFamily: FONT_FAMILIES.displayMedium,
@@ -49,6 +56,13 @@ export const REDESIGN_SCALE = {
     fontFamily: FONT_FAMILIES.bodyRegular,
     fontSize: 15,
     lineHeight: 22,
+    letterSpacing: 0.1,
+  },
+  /** The qualifier under an answer, set to be read rather than glanced at. */
+  bodyAnswer: {
+    fontFamily: FONT_FAMILIES.bodyRegular,
+    fontSize: 16,
+    lineHeight: 24,
     letterSpacing: 0.1,
   },
   /** A second line under something, read after it rather than with it. */

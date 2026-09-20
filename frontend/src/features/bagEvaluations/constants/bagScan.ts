@@ -54,13 +54,18 @@ export const BAG_VERDICT_BODY_KEYS: Record<BagVerdictLevel, TranslationKey> = {
   [BAG_VERDICT_LEVELS.unknown]: TRANSLATION_KEYS.scanVerdictUnknownBody,
 };
 
-/** The parts of a label a verdict can be missing, as stored uncertainties. */
+/**
+ * The facts a verdict argues from - and, where one is missing, the facts it
+ * has to say it could not see.
+ */
 export const BAG_SCAN_FIELDS = {
   roastLevel: 'roastLevel',
   tastingNotes: 'tastingNotes',
   roastDate: 'roastDate',
   tasteProfile: 'tasteProfile',
 } as const;
+
+export type BagScanField = (typeof BAG_SCAN_FIELDS)[keyof typeof BAG_SCAN_FIELDS];
 
 /**
  * How far apart two roast levels may be before they stop being the same
