@@ -25,8 +25,13 @@ export const createTasteRadarChartStyles = (theme: Theme): TasteRadarChartStyleM
 export const createTasteRadarLabelsStyles = (theme: Theme): TasteRadarLabelsStyleMap =>
   StyleSheet.create({
     layer: { position: 'absolute', top: EDGE, left: EDGE, right: EDGE, bottom: EDGE },
+    /** The mark and the name on one line, centred on the axis they belong to. */
     label: {
       position: 'absolute',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: theme.spacing.xs,
       width: theme.size.radarLabelWidth,
       marginLeft: -theme.size.radarLabelWidth / RADAR_GEOMETRY.half,
     },

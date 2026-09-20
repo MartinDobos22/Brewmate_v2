@@ -1,11 +1,12 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { TasteProfile } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { Dial, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { useThemedStyles } from '../../../../theme';
-import { CONFIDENCE_LABEL_KEYS } from '../../constants';
+import { useTheme, useThemedStyles } from '../../../../theme';
+import { CONFIDENCE_ICON, CONFIDENCE_LABEL_KEYS } from '../../constants';
 import { resolveConfidenceLevel } from '../../services';
 
 import { createConfidenceIndicatorStyles } from './ConfidenceIndicator.styles';
@@ -14,39 +15,41 @@ export interface ConfidenceIndicatorProps {
   readonly profile: TasteProfile;
 }
 
-/**
- * How much of the profile above is actually earned.
- *
- * The brew count sits next to the word because it is the honest half: a
- * confidence of "celkom slušne" built from a questionnaire and no brews means
- * something different from the same word after twenty cups, and the reader can
- * see which one they are looking at.
- */
+/** How far the app has got at knowing somebody, drawn as well as said. */
 export const ConfidenceIndicator = ({ profile }: ConfidenceIndicatorProps): JSX.Element => {
   const styles = useThemedStyles(createConfidenceIndicatorStyles);
+  const theme = useTheme();
   const { t } = useTranslation();
 
   return (
-    <View style={styles.wrapper}>
-      <View style={styles.row}>
-        <Text variant="labelMedium" tone="muted">
-          {t(TRANSLATION_KEYS.profileConfidenceTitle)}
-        </Text>
-        <Text variant="titleMedium">
-          {t(CONFIDENCE_LABEL_KEYS[resolveConfidenceLevel(profile.confidenceLevel)])}
-        </Text>
-      </View>
-      <View style={styles.row}>
-        <Text variant="bodySmall" tone="muted">
-          {t(TRANSLATION_KEYS.profileConfidenceBrewsLabel)}
-        </Text>
-        <Text variant="numericSmall" numeric>
+    <View style={styles.row}>
+      <Dial
+        progress={profile.confidenceLevel}
+        size={theme.size.dialSmall}
+        strokeWidth={theme.size.dialSmallStroke}
+        color={theme.colors.onEspressoPositive}
+        trackColor={theme.colors.espressoLine}
+        accessibilityLabel={t(TRANSLATION_KEYS.profileConfidenceTitle)}
+      >
+        <Text variant="numericValue" tone="onEspresso" numeric>
           {String(profile.brewCount)}
         </Text>
+      </Dial>
+      <View style={styles.body}>
+        <View style={styles.title}>
+          <MaterialCommunityIcons
+            name={CONFIDENCE_ICON}
+            size={theme.size.iconSmall}
+            color={theme.colors.onEspressoPositive}
+          />
+          <Text variant="cardTitle" tone="onEspresso">
+            {t(CONFIDENCE_LABEL_KEYS[resolveConfidenceLevel(profile.confidenceLevel)])}
+          </Text>
+        </View>
+        <Text variant="caption" tone="onEspressoMuted">
+          {t(TRANSLATION_KEYS.profileConfidenceHint)}
+        </Text>
       </View>
-      <Text variant="bodySmall" tone="muted">
-        {t(TRANSLATION_KEYS.profileConfidenceHint)}
-      </Text>
     </View>
   );
 };

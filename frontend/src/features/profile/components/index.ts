@@ -5,6 +5,7 @@ export type { TastePreferenceRowsProps } from './TasteProfileSection';
 export { TasteTuningSheet } from './TasteTuningSheet';
 export type { TasteTuningSheetProps } from './TasteTuningSheet';
 export { EquipmentSection } from './EquipmentSection';
+export { GearScreen } from './GearScreen';
 export { WaterSection } from './WaterSection';
 export { SetsSection } from './SetsSection';
 export { AiUsageWindowCard } from './AiUsageWindowCard';

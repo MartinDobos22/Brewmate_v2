@@ -18,6 +18,7 @@ export const ROUTES = {
   scan: '/scan',
   coffeeBags: '/coffee-bags',
   profile: '/profile',
+  gear: '/gear',
   onboarding: '/onboarding',
   chat: '/chat',
   insights: '/insights',

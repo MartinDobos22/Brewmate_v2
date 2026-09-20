@@ -30,6 +30,8 @@ export const SHAPE = {
   softCard: RADIUS.lgPlus,
   /** A block inset within an espresso header. */
   insetBlock: RADIUS.lgPlus,
+  /** A card that groups an act rather than a report - the correction card. */
+  xlCard: RADIUS.xl,
   /** The one card on a screen that carries the answer the screen exists for. */
   heroCard: RADIUS.xxl,
   /** The espresso header itself: square at the top, rounded where it ends. */

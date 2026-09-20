@@ -2,7 +2,19 @@ import type { JSX } from 'react';
 import { Circle, G, Line, Polygon } from 'react-native-svg';
 
 import type { Theme } from '../../../../theme';
-import { RADAR_CHART, UNKNOWN_AXIS_MARKER_OPACITY } from '../../constants';
+import {
+  DEFAULT_RADAR_GROUND,
+  RADAR_CHART,
+  RADAR_EDGE_COLORS,
+  RADAR_GUIDE_COLORS,
+  RADAR_OVERLAY_COLORS,
+  RADAR_SHAPE_COLORS,
+  RADAR_UNKNOWN_FILL_COLORS,
+  RADAR_UNKNOWN_RING_COLORS,
+  RADAR_VERTEX_COLORS,
+  UNKNOWN_AXIS_MARKER_OPACITY,
+  type RadarGround,
+} from '../../constants';
 import {
   radarPoint,
   radarRings,
@@ -21,6 +33,7 @@ export interface TasteRadarWebProps {
   /** A second shape to hold this one up against, drawn dashed and unfilled. */
   readonly overlay?: readonly TasteAxisReading[];
   readonly theme: Theme;
+  readonly ground?: RadarGround;
 }
 
 const shapePoints = (frame: RadarFrame, readings: readonly TasteAxisReading[]): string =>
@@ -42,6 +55,7 @@ export const TasteRadarWeb = ({
   readings,
   overlay,
   theme,
+  ground = DEFAULT_RADAR_GROUND,
 }: TasteRadarWebProps): JSX.Element => (
   <G>
     {radarRings(frame, RADAR_CHART.ringCount).map(
@@ -50,7 +64,11 @@ export const TasteRadarWeb = ({
           key={toPolygonPoints(ring)}
           points={toPolygonPoints(ring)}
           fill="none"
-          stroke={index === OUTER_RING ? theme.colors.outline : theme.colors.outlineVariant}
+          stroke={
+            theme.colors[
+              index === OUTER_RING ? RADAR_EDGE_COLORS[ground] : RADAR_GUIDE_COLORS[ground]
+            ]
+          }
           strokeWidth={RADAR_CHART.ringStrokeWidth}
         />
       ),
@@ -65,7 +83,7 @@ export const TasteRadarWeb = ({
           y1={frame.center}
           x2={outer.x}
           y2={outer.y}
-          stroke={theme.colors.outlineVariant}
+          stroke={theme.colors[RADAR_GUIDE_COLORS[ground]]}
           strokeWidth={RADAR_CHART.spokeStrokeWidth}
           opacity={RADAR_CHART.spokeOpacity}
         />
@@ -77,9 +95,9 @@ export const TasteRadarWeb = ({
           radarPoint(frame, index, frame.radius * reading.share),
         ),
       )}
-      fill={theme.colors.primary}
+      fill={theme.colors[RADAR_SHAPE_COLORS[ground]]}
       fillOpacity={RADAR_CHART.shapeFillOpacity}
-      stroke={theme.colors.primary}
+      stroke={theme.colors[RADAR_SHAPE_COLORS[ground]]}
       strokeWidth={RADAR_CHART.shapeStrokeWidth}
       strokeLinejoin="round"
     />
@@ -92,7 +110,7 @@ export const TasteRadarWeb = ({
       <Polygon
         points={shapePoints(frame, overlay)}
         fill="none"
-        stroke={theme.colors.tertiary}
+        stroke={theme.colors[RADAR_OVERLAY_COLORS[ground]]}
         strokeWidth={RADAR_CHART.overlayStrokeWidth}
         strokeDasharray={RADAR_CHART.overlayDash}
         strokeLinejoin="round"
@@ -115,7 +133,7 @@ export const TasteRadarWeb = ({
           cx={point.x}
           cy={point.y}
           r={RADAR_CHART.vertexRadius}
-          fill={theme.colors.primary}
+          fill={theme.colors[RADAR_VERTEX_COLORS[ground]]}
         />
       ) : (
         <Circle
@@ -123,8 +141,8 @@ export const TasteRadarWeb = ({
           cx={point.x}
           cy={point.y}
           r={RADAR_CHART.unknownVertexRadius}
-          fill={theme.colors.surface}
-          stroke={theme.colors.onSurfaceVariant}
+          fill={theme.colors[RADAR_UNKNOWN_FILL_COLORS[ground]]}
+          stroke={theme.colors[RADAR_UNKNOWN_RING_COLORS[ground]]}
           strokeWidth={RADAR_CHART.unknownVertexStrokeWidth}
           opacity={UNKNOWN_AXIS_MARKER_OPACITY}
         />

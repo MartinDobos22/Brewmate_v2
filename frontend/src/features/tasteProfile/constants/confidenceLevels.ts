@@ -17,3 +17,6 @@ export const CONFIDENCE_LABEL_KEYS: Record<ConfidenceLevel, TranslationKey> = {
   [CONFIDENCE_LEVELS.medium]: TRANSLATION_KEYS.profileConfidenceMedium,
   [CONFIDENCE_LEVELS.high]: TRANSLATION_KEYS.profileConfidenceHigh,
 };
+
+/** The mark beside how well the app claims to know somebody. */
+export const CONFIDENCE_ICON = 'brain';

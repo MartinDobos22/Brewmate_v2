@@ -1,75 +1,65 @@
 import type { JSX } from 'react';
+import { View } from 'react-native';
 
 import { Screen } from '../../../../components/layout';
 import { SectionHeading } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { useThemedStyles } from '../../../../theme';
 import { AccountCard, DeleteAccountCard } from '../../../auth';
 import { AccountDataCard } from '../AccountDataCard';
 import { AppearanceCard } from '../AppearanceCard';
 import { DeveloperTile } from '../DeveloperTile';
-import { EquipmentSection } from '../EquipmentSection';
-import { ProfileHeader } from '../ProfileHeader';
 import { ProfileToolTiles } from '../ProfileToolTiles';
-import { SetsSection } from '../SetsSection';
 import { TasteCorrectionCard } from '../TasteCorrectionCard';
 import { TasteProfileSection } from '../TasteProfileSection';
-import { WaterSection } from '../WaterSection';
+
+import { createProfileScreenStyles } from './ProfileScreen.styles';
+import { ProfileTasteHeader } from './ProfileTasteHeader';
 
 /**
  * Everything the app believes about this person, and every way to change it.
  *
- * Four questions, in the order somebody comes here to ask them: what do you
- * know about me, what have you got written down about my kit, what is the app
- * itself doing, and what is my account. Before they were labelled this was
- * eight cards of identical weight in one column, and finding any one of them
- * meant reading all eight titles.
+ * The header answers the first question - what do you know about me - and
+ * answers it as a picture, because that is the one thing somebody opens this
+ * screen for. What follows is what can be done about it: the same five axes in
+ * words, the flavours, the two ways to disagree, and then the app and the
+ * account.
  *
- * Each group is a heading and the cards under it - the heading has no surface
- * of its own, because a label that looks like the content it labels is not a
- * label. The two navigational destinations are tiles, the same ones the home
- * screen is built from: both are places to go rather than things to read.
+ * The kit left for a screen of its own behind the cog. What somebody brews
+ * with is a different question from what they like, and answering both in one
+ * column meant finding either by reading both.
  *
  * The export sits directly above the deletion. The two answer the same
  * question about what this account is, and somebody deciding whether to leave
  * is entitled to see what leaving takes with it.
  */
 export const ProfileScreen = (): JSX.Element => {
+  const styles = useThemedStyles(createProfileScreenStyles);
   const { t } = useTranslation();
 
   return (
-    <Screen scrollable>
-      <ProfileHeader />
+    <Screen scrollable padded={false}>
+      <ProfileTasteHeader />
+      <View style={styles.content}>
+        <TasteProfileSection />
+        <TasteCorrectionCard />
 
-      <SectionHeading
-        title={t(TRANSLATION_KEYS.profileSectionTasteTitle)}
-        caption={t(TRANSLATION_KEYS.profileSectionTasteCaption)}
-      />
-      <TasteProfileSection />
-      <TasteCorrectionCard />
+        <SectionHeading
+          title={t(TRANSLATION_KEYS.profileSectionAppTitle)}
+          caption={t(TRANSLATION_KEYS.profileSectionAppCaption)}
+        />
+        <ProfileToolTiles />
+        <AppearanceCard />
+        <DeveloperTile />
 
-      <SectionHeading
-        title={t(TRANSLATION_KEYS.profileSectionGearTitle)}
-        caption={t(TRANSLATION_KEYS.profileSectionGearCaption)}
-      />
-      <EquipmentSection />
-      <WaterSection />
-      <SetsSection />
-
-      <SectionHeading
-        title={t(TRANSLATION_KEYS.profileSectionAppTitle)}
-        caption={t(TRANSLATION_KEYS.profileSectionAppCaption)}
-      />
-      <ProfileToolTiles />
-      <AppearanceCard />
-      <DeveloperTile />
-
-      <SectionHeading
-        title={t(TRANSLATION_KEYS.profileSectionAccountTitle)}
-        caption={t(TRANSLATION_KEYS.profileSectionAccountCaption)}
-      />
-      <AccountCard />
-      <AccountDataCard />
-      <DeleteAccountCard />
+        <SectionHeading
+          title={t(TRANSLATION_KEYS.profileSectionAccountTitle)}
+          caption={t(TRANSLATION_KEYS.profileSectionAccountCaption)}
+        />
+        <AccountCard />
+        <AccountDataCard />
+        <DeleteAccountCard />
+      </View>
     </Screen>
   );
 };

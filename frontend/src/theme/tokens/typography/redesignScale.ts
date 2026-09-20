@@ -29,6 +29,13 @@ export const REDESIGN_SCALE = {
     lineHeight: 34,
     letterSpacing: -0.5,
   },
+  /** Whose screen this is, beside their own avatar. */
+  displayIdentity: {
+    fontFamily: FONT_FAMILIES.displayMedium,
+    fontSize: 24,
+    lineHeight: 30,
+    letterSpacing: -0.5,
+  },
   /** A headline that answers rather than names - an empty state, a coffee. */
   displayCompact: {
     fontFamily: FONT_FAMILIES.displayMedium,
