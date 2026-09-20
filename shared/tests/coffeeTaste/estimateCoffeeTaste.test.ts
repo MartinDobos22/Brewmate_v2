@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   COFFEE_ESTIMATE_SOURCES,
   COFFEE_SIGNAL_SOURCES,
+  MODEL_READING_WEIGHT,
   ROAST_LEVELS,
   SIGNAL_WEIGHTS,
   TASTE_AXIS_NEUTRAL,
@@ -17,6 +18,7 @@ const BRIGHT_ACIDITY = 8;
 const FULL_WEIGHT = 1;
 const HIGH_ALTITUDE = 2000;
 const LOW_ALTITUDE = 700;
+const VERY_BRIGHT = 10;
 
 const estimate = (coffee: CoffeeLabelFacts): CoffeeTasteEstimate =>
   estimateCoffeeTaste(readCoffeeSignals(coffee));
@@ -183,5 +185,45 @@ describe('estimating what a coffee tastes like', () => {
     ]);
 
     expect(withModel.source).toBe(COFFEE_ESTIMATE_SOURCES.model);
+  });
+
+  /**
+   * What is printed about this lot outranks what a model read into it.
+   *
+   * The model is looking at the same label the tables are, so on a
+   * disagreement the print is the better evidence - and it is also the one
+   * signal here that can be confidently wrong about a bag nobody has met. The
+   * assertion is deliberately about which side the fold lands nearer, because
+   * that is the part a weight actually decides: at the 0.9 this used to carry,
+   * a model shouting the opposite of the roast landed the axis exactly
+   * halfway between them, which is the model getting an equal vote.
+   */
+  it('lets what is printed outweigh what a model read into it', () => {
+    const printed = estimate({ roastLevel: ROAST_LEVELS.dark }).axes.acidity;
+    const disputed = estimateCoffeeTaste([
+      ...readCoffeeSignals({ roastLevel: ROAST_LEVELS.dark }),
+      {
+        source: COFFEE_SIGNAL_SOURCES.modelReading,
+        axes: { acidity: VERY_BRIGHT },
+        weight: MODEL_READING_WEIGHT * FULL_WEIGHT,
+      },
+    ]).axes.acidity;
+
+    expect(Math.abs(disputed - printed)).toBeLessThan(Math.abs(disputed - VERY_BRIGHT));
+  });
+
+  /**
+   * The ordering the weight table rests on, pinned so it cannot drift back.
+   *
+   * Below everything printed about this specific lot, above every
+   * generalisation about a population it happens to belong to.
+   */
+  it('ranks a model reading under the print and over the priors', () => {
+    expect(MODEL_READING_WEIGHT).toBeLessThan(SIGNAL_WEIGHTS.tastingNotes);
+    expect(MODEL_READING_WEIGHT).toBeLessThan(SIGNAL_WEIGHTS.process);
+    expect(MODEL_READING_WEIGHT).toBeLessThan(SIGNAL_WEIGHTS.roastLevel);
+    expect(MODEL_READING_WEIGHT).toBeGreaterThan(SIGNAL_WEIGHTS.origin);
+    expect(MODEL_READING_WEIGHT).toBeGreaterThan(SIGNAL_WEIGHTS.variety);
+    expect(MODEL_READING_WEIGHT).toBeGreaterThan(SIGNAL_WEIGHTS.altitude);
   });
 });

@@ -62,3 +62,25 @@ export const MATCH_FIT_POOR = 0.42;
  * is the same thing it does for a person nobody has measured.
  */
 export const MIN_MATCH_COVERAGE = 0.4;
+
+/**
+ * How many different kinds of evidence about the coffee a comparison needs
+ * before it may call itself one.
+ *
+ * The coverage floor above counts axes, and that turns out to be a different
+ * question from the one worth asking. A single fact about a bag moves several
+ * axes at once - `ROAST_SIGNALS` states a value for all five, because roasting
+ * really does drive acidity, body, bitterness, sweetness and intensity
+ * together - so a label saying nothing but "tmavé praženie" comes back with
+ * real confidence on every one of them, clears two-of-five with room to spare,
+ * and produces a verdict arguing from five axes that are one word read five
+ * times. The floor was guarding against thin evidence and letting correlated
+ * evidence walk straight through it.
+ *
+ * Distinct signal sources are what close that. Two notes printed by the same
+ * roaster count once here, because they are one person describing one lot; a
+ * roast level and an origin count twice. Below this the match reports
+ * `unknown` and the verdict falls back to what is true of the coffee for
+ * anybody - exactly what it already does for a person nobody has measured.
+ */
+export const MIN_INDEPENDENT_SIGNALS = 2;

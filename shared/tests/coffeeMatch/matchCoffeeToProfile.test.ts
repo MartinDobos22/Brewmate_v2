@@ -2,12 +2,19 @@ import { describe, expect, it } from 'vitest';
 
 import {
   COFFEE_ESTIMATE_SOURCES,
+  COFFEE_SIGNAL_SOURCES,
   MATCH_BANDS,
   MATCH_DIRECTIONS,
   MILK_USAGE_LEVELS,
+  MIN_INDEPENDENT_SIGNALS,
+  MIN_MATCH_COVERAGE,
+  ROAST_LEVELS,
   TASTE_AXIS_NEUTRAL,
+  estimateCoffeeTaste,
   matchCoffeeToProfile,
+  readCoffeeSignals,
   type AxisMatch,
+  type CoffeeSignalSource,
   type CoffeeTasteEstimate,
   type DrinkerTaste,
   type TasteAxes,
@@ -52,13 +59,25 @@ const confidence = (overrides: Partial<TasteAxisConfidence> = {}): TasteAxisConf
   ...overrides,
 });
 
+/**
+ * Two different kinds of evidence, which is the least a comparison may rest
+ * on. Spelled out as a default rather than left empty because every test below
+ * that expects a band at all needs the coffee to have been read more than
+ * once - and the ones that care about the floor itself say so by overriding it.
+ */
+const TWO_KINDS: readonly CoffeeSignalSource[] = [
+  COFFEE_SIGNAL_SOURCES.roastLevel,
+  COFFEE_SIGNAL_SOURCES.origin,
+];
+
 const coffee = (
   values: Partial<TasteAxes>,
   known: Partial<TasteAxisConfidence>,
+  signals: readonly CoffeeSignalSource[] = TWO_KINDS,
 ): CoffeeTasteEstimate => ({
   axes: axes(values),
   axisConfidence: confidence(known),
-  signals: [],
+  signals: [...signals],
   source: COFFEE_ESTIMATE_SOURCES.label,
 });
 
@@ -250,5 +269,73 @@ describe('holding a coffee up against the person drinking it', () => {
 
     expect(match.axes).toHaveLength(EVERY_AXIS);
     expect(match.coverage).toBe(NOTHING);
+  });
+
+  /**
+   * The hole the signal floor exists to close, written as the bag that fell
+   * through it.
+   *
+   * "Tmavé praženie" is one word, and `ROAST_SIGNALS` states a value for all
+   * five axes because roasting genuinely moves all five. Against a person who
+   * has been measured, that clears the two-of-five coverage floor without
+   * trouble - so the comparison passed, and the verdict then argued from three
+   * axes that were one fact read three times. Both halves are asserted here:
+   * the axes really are comparable, and the match declines to call that a
+   * comparison anyway.
+   */
+  it('does not let one fact about the label argue as though it were several', () => {
+    const wellKnown = { acidity: KNOWN, body: KNOWN, bitterness: KNOWN };
+    const roastOnly = estimateCoffeeTaste(readCoffeeSignals({ roastLevel: ROAST_LEVELS.dark }));
+
+    const match = matchCoffeeToProfile(
+      roastOnly,
+      drinker({ acidity: BRIGHT, body: THIN_BODY, bitterness: NOT_BITTER }, wellKnown),
+    );
+
+    expect(roastOnly.signals).toHaveLength(1);
+    expect(match.comparable.length).toBeGreaterThan(1);
+    expect(match.coverage).toBeGreaterThanOrEqual(MIN_MATCH_COVERAGE);
+    expect(match.band).toBe(MATCH_BANDS.unknown);
+  });
+
+  /**
+   * And the same bag once the label has said a second, separate thing. The
+   * floor is about how much was read, not about how confident the reading
+   * came out - so a country beside the roast is enough to let the comparison
+   * speak.
+   */
+  it('compares a label that said more than one thing', () => {
+    const wellKnown = { acidity: KNOWN, body: KNOWN, bitterness: KNOWN };
+    const roastAndOrigin = estimateCoffeeTaste(
+      readCoffeeSignals({ roastLevel: ROAST_LEVELS.dark, originCountry: 'Brazília' }),
+    );
+
+    const match = matchCoffeeToProfile(
+      roastAndOrigin,
+      drinker({ acidity: BRIGHT, body: THIN_BODY, bitterness: NOT_BITTER }, wellKnown),
+    );
+
+    expect(roastAndOrigin.signals.length).toBeGreaterThanOrEqual(MIN_INDEPENDENT_SIGNALS);
+    expect(match.band).not.toBe(MATCH_BANDS.unknown);
+  });
+
+  /**
+   * Several notes off one bag are one roaster describing one lot, so they are
+   * one kind of evidence here however many of them there are. Counting them
+   * separately would reopen the hole above through the other door.
+   */
+  it('counts a shelf of tasting notes as one kind of evidence', () => {
+    const wellKnown = { acidity: KNOWN, body: KNOWN, bitterness: KNOWN };
+    const notesOnly = estimateCoffeeTaste(
+      readCoffeeSignals({ tastingNotes: ['horká čokoláda', 'tabak', 'orech'] }),
+    );
+
+    const match = matchCoffeeToProfile(
+      notesOnly,
+      drinker({ acidity: BRIGHT, body: THIN_BODY, bitterness: NOT_BITTER }, wellKnown),
+    );
+
+    expect(notesOnly.signals).toHaveLength(1);
+    expect(match.band).toBe(MATCH_BANDS.unknown);
   });
 });

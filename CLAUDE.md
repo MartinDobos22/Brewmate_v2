@@ -619,6 +619,16 @@ against each other without either being translated first.
   actually for is the part no table can do: a note nobody wrote a rule for,
   what Yirgacheffe or Nyeri implies, a label in a language the lexicon does not
   cover.
+- **Its weight sits under everything printed about this lot and over every
+  prior about a population.** Under the roast level, the process and the
+  roaster's own notes; over the origin, the variety and the altitude. The model
+  is reading the same label the tables read, so on a disagreement the print is
+  the better evidence - and it is the one signal here that can be confidently
+  wrong about a bag nobody has met. `MODEL_READING_WEIGHT` carried 0.9 while
+  its own comment claimed it sat below the process at 0.85, which put a model
+  shouting the opposite of the roast exactly level with it: the axis landed
+  precisely halfway between the two, which is a model with an equal vote. The
+  number was the wrong one of the two.
 - **A reading is cached per coffee, not per person**, in `coffee_taste_readings`
   - user-less like `coffee_bag_parses`, and for the same reason: the same bag
     tastes the same for everybody, so the second person to scan a popular one
@@ -658,6 +668,18 @@ where the two meet.
   they will enjoy drinking it. Below that the match reports `unknown` and the
   verdict falls back to what is true of the coffee for anybody, which is the
   same thing it does for a person nobody has measured.
+- **And two kinds of evidence about the coffee, because the axes are not
+  independent of each other.** Counting axes was guarding against thin evidence
+  and letting correlated evidence walk through: one roast level states a value
+  for all five axes - roasting genuinely moves all five - so a bag whose label
+  said nothing but "tmavé praženie" came back with real confidence everywhere,
+  cleared two-of-five comfortably, and was answered with a confident
+  `mismatch` argued from three axes that were one word read three times.
+  `MIN_INDEPENDENT_SIGNALS` counts distinct signal sources instead. Several
+  notes off one bag are one kind, because they are one roaster describing one
+  lot; a roast level and a country are two. Axes are how the comparison is
+  expressed, signals are how much was actually read, and only the second says
+  whether there was anything to compare.
 - **The coffee is adjusted for how this person takes their milk first.** A
   label can only ever describe a coffee brewed black, and a profile always
   describes the cup somebody puts to their mouth - the questionnaire asks about
@@ -2411,13 +2433,18 @@ that it arrives marked as one. The coffee estimate is tested for what it has to
 do with almost nothing: that a bag naming only a country still produces a
 shape, that a bag naming nothing produces five middles carrying no confidence
 at all, that the roast outweighs the origin, that a label whose signals
-contradict each other comes back less certain rather than averaged, and that a
-country reads the same however the bag spells it. The match is tested for the
+contradict each other comes back less certain rather than averaged, that a
+country reads the same however the bag spells it, and that what is printed
+about a lot outweighs what a model read into it - asserted as which side the
+fold lands nearer, because that is the part a weight decides and the part that
+was wrong. The match is tested for the
 rules that decide whether it may speak at all: that an axis either side is
 blank about is never compared, that one comparable axis is not a comparison,
 that a difference nobody could taste is not a mismatch, that the cup a milk
-drinker will actually pour is what gets compared, and that the argument leads
-with the axis that says the most. The grind guidance is tested for the
+drinker will actually pour is what gets compared, that the argument leads with
+the axis that says the most, and that one fact about a label cannot argue as
+though it were several - a roast-only bag is shown clearing the axis floor and
+being refused anyway, and a shelf of tasting notes is shown counting once. The grind guidance is tested for the
 promises it makes about honesty and about arithmetic: that a coffee nobody has
 written anything down about lands in the middle of the method's window with no
 reasons attached, that a dark roast starts coarser than a light one and a
