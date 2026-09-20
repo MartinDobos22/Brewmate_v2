@@ -22,6 +22,7 @@ import {
   MATCH_FIT_POOR,
   MAX_MEANINGFUL_GAP,
   MIN_COMPARABLE_WEIGHT,
+  MIN_INDEPENDENT_SIGNALS,
   MIN_MATCH_COVERAGE,
 } from './constants/matchLimits.js';
 
@@ -123,8 +124,17 @@ const weightedFit = (comparable: readonly AxisMatch[]): number | null => {
   );
 };
 
-const resolveBand = (fit: number | null, coverage: number): MatchBand => {
-  if (fit === null || coverage < MIN_MATCH_COVERAGE) {
+/**
+ * Two independent floors, and they refuse different things.
+ *
+ * Coverage refuses a comparison drawn from too little of the person; the
+ * signal count refuses one drawn from too little of the coffee. They are not
+ * interchangeable, because a single label fact speaks to every axis at once -
+ * which is exactly how a bag saying only "tmavé praženie" used to clear a
+ * floor meant to stop it.
+ */
+const resolveBand = (fit: number | null, coverage: number, signals: number): MatchBand => {
+  if (fit === null || coverage < MIN_MATCH_COVERAGE || signals < MIN_INDEPENDENT_SIGNALS) {
     return MATCH_BANDS.unknown;
   }
 
@@ -143,12 +153,18 @@ const resolveBand = (fit: number | null, coverage: number): MatchBand => {
  * coffee is folded onto the same five with a confidence each; and this is
  * where the two meet, axis by axis, weighted by what both sides actually know.
  *
- * Three rules carry the whole thing:
+ * Four rules carry the whole thing:
  *
  * An axis is only compared where both sides know it. Every other way of
  * handling a blank - treating it as neutral, averaging the confidences,
  * filling it in from the other side - ends with the app inventing a reason,
  * and an invented reason in front of a shelf is worse than saying nothing.
+ *
+ * And a comparison needs more than one kind of evidence about the coffee,
+ * because the axes are not independent of each other. One roast level states a
+ * value for all five of them, so counting comparable axes alone let a bag
+ * whose label said one word argue as though it had said five things. Axes are
+ * how the comparison is expressed; signals are how much was actually read.
  *
  * The coffee is adjusted for how this person drinks it before anything is
  * compared, because a label describes a coffee brewed black and a profile
@@ -183,6 +199,6 @@ export const matchCoffeeToProfile = (
     comparable,
     coverage,
     fit,
-    band: resolveBand(fit, coverage),
+    band: resolveBand(fit, coverage, coffee.signals.length),
   };
 };
