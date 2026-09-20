@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Screen } from '../../../../components/layout';
+import { HEADER_SCREEN_EDGES, Screen } from '../../../../components/layout';
 import { SectionHeading } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
@@ -38,7 +38,7 @@ export const ProfileScreen = (): JSX.Element => {
   const { t } = useTranslation();
 
   return (
-    <Screen scrollable padded={false}>
+    <Screen scrollable padded={false} edges={HEADER_SCREEN_EDGES}>
       <ProfileTasteHeader />
       <View style={styles.content}>
         <TasteProfileSection />

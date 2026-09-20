@@ -20,6 +20,13 @@ export interface TextProps {
   readonly align?: TextAlign;
   /** Renders with tabular numerals so a changing value never shifts layout. */
   readonly numeric?: boolean;
+  /**
+   * Strikes the value through: this is what something used to be.
+   *
+   * Only ever drawn beside what replaced it. A struck value on its own says
+   * nothing except that somebody crossed something out.
+   */
+  readonly replaced?: boolean;
   readonly numberOfLines?: number;
   readonly accessibilityLabel?: string;
 }
@@ -31,6 +38,7 @@ export const Text = ({
   tone = DEFAULT_TEXT_TONE,
   align = DEFAULT_TEXT_ALIGN,
   numeric = false,
+  replaced = false,
   numberOfLines,
   accessibilityLabel,
 }: TextProps): JSX.Element => {
@@ -38,7 +46,13 @@ export const Text = ({
 
   return (
     <RNText
-      style={[styles[variant], styles[tone], styles[align], numeric && styles.numeric]}
+      style={[
+        styles[variant],
+        styles[tone],
+        styles[align],
+        numeric && styles.numeric,
+        replaced && styles.replaced,
+      ]}
       numberOfLines={numberOfLines}
       accessibilityLabel={accessibilityLabel}
     >

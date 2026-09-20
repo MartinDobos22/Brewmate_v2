@@ -1,9 +1,10 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { JSX } from 'react';
-import { View } from 'react-native';
+import { Pressable, ScrollView, type StyleProp, type ViewStyle } from 'react-native';
 
-import { Chip } from '../../../../components/ui';
+import { Text } from '../../../../components/ui';
 import { useTranslation } from '../../../../i18n';
-import { useThemedStyles } from '../../../../theme';
+import { useTheme, useThemedStyles } from '../../../../theme';
 import { CHAT_QUICK_CHIPS, type ChatQuickChip } from '../../constants';
 
 import { createChatQuickChipsStyles } from './ChatQuickChips.styles';
@@ -25,20 +26,48 @@ export interface ChatQuickChipsProps {
  */
 export const ChatQuickChips = ({ disabled, onPick }: ChatQuickChipsProps): JSX.Element => {
   const styles = useThemedStyles(createChatQuickChipsStyles);
+  const theme = useTheme();
   const { t } = useTranslation();
 
+  const chipStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
+    styles.chip,
+    pressed && !disabled && styles.pressed,
+    disabled && styles.disabled,
+  ];
+
   return (
-    <View style={styles.row}>
-      {CHAT_QUICK_CHIPS.map((chip: ChatQuickChip): JSX.Element => (
-        <Chip
-          key={chip.labelKey}
-          label={t(chip.labelKey)}
-          disabled={disabled}
-          onPress={(): void => {
-            onPick(t(chip.messageKey));
-          }}
-        />
-      ))}
-    </View>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={styles.row}
+    >
+      {CHAT_QUICK_CHIPS.map((chip: ChatQuickChip): JSX.Element => {
+        const label = t(chip.labelKey);
+
+        return (
+          <Pressable
+            key={chip.labelKey}
+            style={chipStyle}
+            disabled={disabled}
+            onPress={(): void => {
+              onPick(t(chip.messageKey));
+            }}
+            accessibilityRole="button"
+            accessibilityState={{ disabled }}
+            accessibilityLabel={label}
+          >
+            <MaterialCommunityIcons
+              name={chip.icon}
+              size={theme.size.iconTiny}
+              color={theme.colors.onSurfaceVariant}
+            />
+            <Text variant="statusLabel" tone="muted">
+              {label}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </ScrollView>
   );
 };

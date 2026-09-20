@@ -1,6 +1,7 @@
 import type { BrewParams, RecipePatch } from '@brewmate/shared';
 
 import { TRANSLATION_KEYS, type TranslationKey } from '../../../i18n';
+import { PATCH_ROW_ICONS, type PatchRowIcon } from '../constants';
 import {
   formatDuration,
   formatGrams,
@@ -12,6 +13,7 @@ const NOT_SET = '—';
 
 export interface RecipePatchRow {
   readonly labelKey: TranslationKey;
+  readonly icon: PatchRowIcon;
   readonly before: string;
   readonly after: string;
 }
@@ -50,6 +52,7 @@ export const describeRecipePatch = (
   if (changed.doseGrams !== undefined) {
     rows.push({
       labelKey: TRANSLATION_KEYS.recipePatchDose,
+      icon: PATCH_ROW_ICONS.dose,
       before: grams(current.doseGrams),
       after: grams(changed.doseGrams),
     });
@@ -58,6 +61,7 @@ export const describeRecipePatch = (
   if (changed.waterGrams !== undefined) {
     rows.push({
       labelKey: TRANSLATION_KEYS.recipePatchWater,
+      icon: PATCH_ROW_ICONS.water,
       before: grams(current.waterGrams),
       after: grams(changed.waterGrams),
     });
@@ -66,6 +70,7 @@ export const describeRecipePatch = (
   if (changed.ratio !== undefined) {
     rows.push({
       labelKey: TRANSLATION_KEYS.recipePatchRatio,
+      icon: PATCH_ROW_ICONS.ratio,
       before: formatRatio(current.ratio),
       after: formatRatio(changed.ratio),
     });
@@ -74,6 +79,7 @@ export const describeRecipePatch = (
   if (changed.grindSetting !== undefined) {
     rows.push({
       labelKey: TRANSLATION_KEYS.recipePatchGrind,
+      icon: PATCH_ROW_ICONS.grind,
       before: number(current.grindSetting),
       after: number(changed.grindSetting),
     });
@@ -82,6 +88,7 @@ export const describeRecipePatch = (
   if (changed.grindLabel !== undefined) {
     rows.push({
       labelKey: TRANSLATION_KEYS.recipePatchGrindLabel,
+      icon: PATCH_ROW_ICONS.grindLabel,
       before: text(current.grindLabel),
       after: text(changed.grindLabel),
     });
@@ -90,6 +97,7 @@ export const describeRecipePatch = (
   if (changed.waterTempC !== undefined) {
     rows.push({
       labelKey: TRANSLATION_KEYS.recipePatchTemperature,
+      icon: PATCH_ROW_ICONS.temperature,
       before: current.waterTempC === null ? NOT_SET : formatTemperature(current.waterTempC),
       after: changed.waterTempC === null ? NOT_SET : formatTemperature(changed.waterTempC),
     });
@@ -98,6 +106,7 @@ export const describeRecipePatch = (
   if (changed.totalTimeSeconds !== undefined) {
     rows.push({
       labelKey: TRANSLATION_KEYS.recipePatchTotalTime,
+      icon: PATCH_ROW_ICONS.totalTime,
       before: seconds(current.totalTimeSeconds),
       after: seconds(changed.totalTimeSeconds),
     });

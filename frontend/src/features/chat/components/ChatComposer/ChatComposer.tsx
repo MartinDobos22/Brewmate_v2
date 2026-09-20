@@ -1,10 +1,12 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useState, type JSX } from 'react';
-import { View } from 'react-native';
+import { Pressable, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
 
-import { Button, Input, Text } from '../../../../components/ui';
+import { Text } from '../../../../components/ui';
 import { useIsOnline } from '../../../../hooks';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { useThemedStyles } from '../../../../theme';
+import { useTheme, useThemedStyles } from '../../../../theme';
+import { CHAT_COMPOSER_ICONS } from '../../constants';
 import { ChatQuickChips } from '../ChatQuickChips';
 
 import { createChatComposerStyles } from './ChatComposer.styles';
@@ -35,12 +37,14 @@ export const ChatComposer = ({
   onSend,
 }: ChatComposerProps): JSX.Element => {
   const styles = useThemedStyles(createChatComposerStyles);
+  const theme = useTheme();
   const { t } = useTranslation();
   const isOnline = useIsOnline();
   const [draft, setDraft] = useState(EMPTY);
+  const canSend = draft.trim() !== EMPTY && isOnline && !isAnswering;
 
   const send = (): void => {
-    if (draft.trim() === EMPTY) {
+    if (!canSend) {
       return;
     }
 
@@ -48,35 +52,62 @@ export const ChatComposer = ({
     setDraft(EMPTY);
   };
 
+  const sendStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
+    styles.send,
+    canSend && styles.sendActive,
+    pressed && canSend && styles.pressed,
+  ];
+
   return (
-    <View style={styles.wrapper}>
-      <ChatQuickChips disabled={isAnswering} onPick={setDraft} />
-      <Input
-        label={t(TRANSLATION_KEYS.recipeChatInputLabel)}
-        placeholder={t(TRANSLATION_KEYS.recipeChatPlaceholder)}
-        value={draft}
-        onChangeText={setDraft}
-        disabled={isAnswering}
-      />
-      {isOnline ? null : (
-        <Text variant="bodySmall" tone="tertiary">
-          {t(TRANSLATION_KEYS.recipeChatOffline)}
-        </Text>
+    <View style={styles.bar}>
+      {isOnline && !hasFailed ? null : (
+        <View style={styles.notices}>
+          {isOnline ? null : (
+            <Text variant="bodyMuted" tone="caution">
+              {t(TRANSLATION_KEYS.recipeChatOffline)}
+            </Text>
+          )}
+          {hasFailed ? (
+            <Text variant="bodyMuted" tone="error">
+              {t(TRANSLATION_KEYS.recipeChatError)}
+            </Text>
+          ) : null}
+        </View>
       )}
-      {hasFailed ? (
-        <Text variant="bodySmall" tone="error">
-          {t(TRANSLATION_KEYS.recipeChatError)}
-        </Text>
-      ) : null}
-      <Button
-        label={t(
-          isAnswering ? TRANSLATION_KEYS.recipeChatSending : TRANSLATION_KEYS.recipeChatSend,
-        )}
-        fullWidth
-        loading={isAnswering}
-        disabled={draft.trim() === EMPTY || !isOnline}
-        onPress={send}
-      />
+      <ChatQuickChips disabled={isAnswering} onPick={setDraft} />
+      <View style={styles.row}>
+        <View style={styles.field}>
+          <TextInput
+            style={styles.input}
+            value={draft}
+            onChangeText={setDraft}
+            placeholder={t(
+              isAnswering
+                ? TRANSLATION_KEYS.recipeChatSending
+                : TRANSLATION_KEYS.recipeChatPlaceholder,
+            )}
+            placeholderTextColor={theme.colors.onDisabled}
+            editable={!isAnswering}
+            returnKeyType="send"
+            onSubmitEditing={send}
+            accessibilityLabel={t(TRANSLATION_KEYS.recipeChatInputLabel)}
+          />
+        </View>
+        <Pressable
+          style={sendStyle}
+          disabled={!canSend}
+          onPress={send}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: !canSend }}
+          accessibilityLabel={t(TRANSLATION_KEYS.recipeChatSend)}
+        >
+          <MaterialCommunityIcons
+            name={CHAT_COMPOSER_ICONS.send}
+            size={theme.size.iconLarge}
+            color={canSend ? theme.colors.cream : theme.colors.onSurfaceVariant}
+          />
+        </Pressable>
+      </View>
     </View>
   );
 };

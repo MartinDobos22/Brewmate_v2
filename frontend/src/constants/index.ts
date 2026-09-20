@@ -3,6 +3,7 @@ export { APP_CONFIG } from './config';
 export { FINGERPRINT, FINGERPRINT_SEPARATORS } from './fingerprint';
 export { CIRCLE, RINGS } from './geometry';
 export { INTERPOLATION } from './interpolation';
+export { KEYBOARD_AVOIDING_BEHAVIOR } from './keyboard';
 export type { AppConfig } from './config';
 export {
   HTTP_METHODS,

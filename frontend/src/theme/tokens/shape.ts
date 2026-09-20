@@ -28,6 +28,15 @@ export const SHAPE = {
    * `RADIUS` at a call site.
    */
   softCard: RADIUS.lgPlus,
+  /**
+   * A chat bubble, and the one corner of it that is tightened.
+   *
+   * Three corners keep the soft radius and the fourth is pulled in towards
+   * whoever is speaking, which is what gives a conversation its direction
+   * without anybody having to draw a tail on it.
+   */
+  bubble: RADIUS.lgPlus,
+  bubbleTail: RADIUS.xs,
   /** A block inset within an espresso header. */
   insetBlock: RADIUS.lgPlus,
   /** A card that groups an act rather than a report - the correction card. */

@@ -4,7 +4,7 @@ import type { TextStyles, Theme } from '../../../theme';
 
 import type { TextAlign, TextTone, TextVariant } from './textVariants';
 
-type TextStyleMap = TextStyles<TextVariant | TextTone | TextAlign | 'numeric'>;
+type TextStyleMap = TextStyles<TextVariant | TextTone | TextAlign | 'numeric' | 'replaced'>;
 
 const TABULAR_NUMERALS = 'tabular-nums';
 
@@ -16,6 +16,7 @@ export const createTextStyles = (theme: Theme): TextStyleMap =>
   StyleSheet.create({
     ...theme.typography,
     numeric: { fontVariant: [TABULAR_NUMERALS] },
+    replaced: { textDecorationLine: 'line-through' },
     default: { color: theme.colors.onSurface },
     muted: { color: theme.colors.onSurfaceVariant },
     primary: { color: theme.colors.primary },

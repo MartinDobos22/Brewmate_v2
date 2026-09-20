@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { EspressoHeader, Screen } from '../../../../components/layout';
+import { EspressoHeader, HEADER_SCREEN_EDGES, Screen } from '../../../../components/layout';
 import { Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
@@ -27,7 +27,7 @@ export const GearScreen = (): JSX.Element => {
   const { t } = useTranslation();
 
   return (
-    <Screen scrollable padded={false}>
+    <Screen scrollable padded={false} edges={HEADER_SCREEN_EDGES}>
       <EspressoHeader>
         <Text variant="displayTitle" tone="onEspresso">
           {t(TRANSLATION_KEYS.profileGearTitle)}

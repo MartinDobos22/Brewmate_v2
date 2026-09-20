@@ -4,7 +4,7 @@ import type { JSX } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { PRE_BREW_SCREEN_EDGES } from './preBrewScreenEdges';
+import { HEADER_SCREEN_EDGES } from '../../../../components/layout';
 import { InfoNote } from '../../../../components/ui';
 import { buildBrewModeRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
@@ -59,7 +59,7 @@ export const PreBrewScreen = ({ initialBagId }: PreBrewScreenProps): JSX.Element
   }
 
   return (
-    <SafeAreaView style={styles.root} edges={PRE_BREW_SCREEN_EDGES}>
+    <SafeAreaView style={styles.root} edges={HEADER_SCREEN_EDGES}>
       <ScrollView style={styles.scroll}>
         <PreBrewHeader
           bag={setup.bag}

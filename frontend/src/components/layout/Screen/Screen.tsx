@@ -6,7 +6,7 @@ import { useThemedStyles } from '../../../theme';
 import { BottomNavBar, useShowsBottomNav } from '../BottomNavBar';
 
 import { createScreenStyles } from './Screen.styles';
-import { TAB_SCREEN_EDGES } from './screenEdges';
+import { TAB_SCREEN_EDGES, withoutBottomEdge } from './screenEdges';
 import { DEFAULT_SCREEN_GROUND, type ScreenGround } from './screenGrounds';
 
 export interface ScreenProps {
@@ -34,6 +34,11 @@ export interface ScreenProps {
  * inset for itself: the gesture bar's height belongs to whatever is actually
  * against the bottom edge, and a screen that claimed it as well would leave a
  * strip of background under the bar.
+ *
+ * That is subtracted from whatever the screen asked for rather than replacing
+ * it, because the two insets are separate questions. A screen led by an
+ * espresso block has already given the top away to the block, and a bar
+ * appearing at the other end is no reason to take it back.
  */
 export const Screen = ({
   children,
@@ -48,7 +53,7 @@ export const Screen = ({
   return (
     <SafeAreaView
       style={[styles.root, styles[ground]]}
-      edges={showsBottomNav ? TAB_SCREEN_EDGES : edges}
+      edges={showsBottomNav ? withoutBottomEdge(edges) : edges}
     >
       {scrollable ? (
         <ScrollView

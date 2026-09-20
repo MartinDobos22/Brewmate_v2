@@ -64,6 +64,17 @@ export const NUMERIC_SCALE = {
     lineHeight: 38,
     letterSpacing: -1.5,
   },
+  /**
+   * Three figures across an espresso header, summing up what the screen below
+   * is about. Smaller than the summary strip on a light ground: the header
+   * already has the whole width and the contrast to be read without it.
+   */
+  numericHeader: {
+    fontFamily: FONT_FAMILIES.numericMedium,
+    fontSize: 26,
+    lineHeight: 30,
+    letterSpacing: -1,
+  },
   /** The figure inside a dial, sized to the hole the ring leaves it. */
   numericDial: {
     fontFamily: FONT_FAMILIES.numericMedium,
@@ -91,6 +102,13 @@ export const NUMERIC_SCALE = {
     fontSize: 16,
     lineHeight: 20,
     letterSpacing: -0.4,
+  },
+  /** The value a row of a table settles on, beside the one it replaced. */
+  numericRow: {
+    fontFamily: FONT_FAMILIES.numericMedium,
+    fontSize: 15,
+    lineHeight: 20,
+    letterSpacing: 0,
   },
   /** A figure read after the one above it - a total under a countdown. */
   numericCaption: {

@@ -1,14 +1,17 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { BrewParams, RecipePatch } from '@brewmate/shared';
-import type { JSX } from 'react';
-import { View } from 'react-native';
+import { Fragment, type JSX } from 'react';
+import { Pressable, View, type StyleProp, type ViewStyle } from 'react-native';
 
-import { Button, Card, Text } from '../../../../components/ui';
+import { Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { useThemedStyles } from '../../../../theme';
+import { useTheme, useThemedStyles } from '../../../../theme';
+import { CHAT_PATCH_ICONS, PATCH_ROW_ICONS } from '../../constants';
 import { describeRecipePatch, patchRewritesSteps } from '../../services/describeRecipePatch';
 import type { RecipePatchRow } from '../../services/describeRecipePatch';
 
 import { createRecipePatchCardStyles } from './RecipePatchCard.styles';
+import { RecipePatchRowView } from './RecipePatchRowView';
 
 export interface RecipePatchCardProps {
   readonly patch: RecipePatch;
@@ -19,16 +22,19 @@ export interface RecipePatchCardProps {
   readonly onApply: () => void;
 }
 
+const FIRST = 0;
+const NOTHING = 0;
+
 /**
  * What would change, old value beside new one.
  *
- * A diff rather than a new recipe card, because the question in front of
- * somebody is not "is this a good recipe" - they have already agreed it might
- * be - it is "what exactly are you changing". Two columns answer that in a
- * glance; a second full recipe would make them compare two cards line by line.
- *
  * The explanation sits above the table rather than under it. The reason is
  * what somebody decides on; the numbers are what they check afterwards.
+ *
+ * The pour schedule is the one row with no before and after. A schedule does
+ * not fit on a card next to another schedule, and what decides whether to
+ * accept it - what changes about the taste - is in the sentence above rather
+ * than in any table.
  */
 export const RecipePatchCard = ({
   patch,
@@ -39,64 +45,89 @@ export const RecipePatchCard = ({
   onApply,
 }: RecipePatchCardProps): JSX.Element => {
   const styles = useThemedStyles(createRecipePatchCardStyles);
+  const theme = useTheme();
   const { t } = useTranslation();
   const rows = describeRecipePatch(patch, current);
+  const rewritesSteps = patchRewritesSteps(patch);
+
+  const applyStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
+    styles.apply,
+    pressed && styles.pressed,
+  ];
 
   return (
-    <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.recipePatchTitle)}</Text>
+    <View style={styles.card}>
+      <View style={styles.heading}>
+        <MaterialCommunityIcons
+          name={CHAT_PATCH_ICONS.heading}
+          size={theme.size.iconRow}
+          color={theme.colors.primary}
+        />
+        <View style={styles.title}>
+          <Text variant="cardTitle">{t(TRANSLATION_KEYS.recipePatchTitle)}</Text>
+        </View>
+      </View>
       {patch.rationale === null || patch.rationale === undefined ? null : (
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodyMuted" tone="muted">
           {patch.rationale}
         </Text>
       )}
       <View style={styles.rows}>
-        {rows.map((row: RecipePatchRow): JSX.Element => (
-          <View key={row.labelKey} style={styles.row}>
-            <Text variant="labelMedium" tone="muted">
-              {t(row.labelKey)}
-            </Text>
-            <View style={styles.values}>
-              <Text variant="bodyMedium" tone="muted" numeric>
-                {row.before}
-              </Text>
-              <Text variant="bodyMedium" tone="muted">
-                {t(TRANSLATION_KEYS.recipePatchArrow)}
-              </Text>
-              <Text variant="bodyMedium" numeric>
-                {row.after}
-              </Text>
-            </View>
-          </View>
+        {rows.map((row: RecipePatchRow, index: number): JSX.Element => (
+          <Fragment key={row.labelKey}>
+            {index === FIRST ? null : <View style={styles.divider} />}
+            <RecipePatchRowView row={row} />
+          </Fragment>
         ))}
-        {patchRewritesSteps(patch) ? (
-          <View style={styles.row}>
-            <Text variant="labelMedium" tone="muted">
-              {t(TRANSLATION_KEYS.recipePatchSteps)}
-            </Text>
-            <Text variant="bodyMedium">{t(TRANSLATION_KEYS.recipePatchStepsChanged)}</Text>
-          </View>
+        {rewritesSteps ? (
+          <>
+            {rows.length === NOTHING ? null : <View style={styles.divider} />}
+            <View style={styles.row}>
+              <MaterialCommunityIcons
+                name={PATCH_ROW_ICONS.steps}
+                size={theme.size.iconRow}
+                color={theme.colors.onSurfaceVariant}
+              />
+              <View style={styles.label}>
+                <Text variant="eyebrow" tone="muted">
+                  {t(TRANSLATION_KEYS.recipePatchSteps)}
+                </Text>
+              </View>
+              <Text variant="bodyMuted">{t(TRANSLATION_KEYS.recipePatchStepsChanged)}</Text>
+            </View>
+          </>
         ) : null}
       </View>
       {hasFailed ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="bodyMuted" tone="error">
           {t(TRANSLATION_KEYS.recipePatchError)}
         </Text>
       ) : null}
       {isApplied ? (
-        <Text variant="bodySmall" tone="secondary">
+        <Text variant="bodyMuted" tone="fresh">
           {t(TRANSLATION_KEYS.recipePatchApplied)}
         </Text>
       ) : (
-        <Button
-          label={t(
-            isApplying ? TRANSLATION_KEYS.recipePatchApplying : TRANSLATION_KEYS.recipePatchApply,
-          )}
-          fullWidth
-          loading={isApplying}
+        <Pressable
+          style={applyStyle}
+          disabled={isApplying}
           onPress={onApply}
-        />
+          accessibilityRole="button"
+          accessibilityState={{ disabled: isApplying }}
+          accessibilityLabel={t(TRANSLATION_KEYS.recipePatchApply)}
+        >
+          <MaterialCommunityIcons
+            name={CHAT_PATCH_ICONS.apply}
+            size={theme.size.iconLarge}
+            color={theme.colors.cream}
+          />
+          <Text variant="rowTitle" tone="onCream">
+            {t(
+              isApplying ? TRANSLATION_KEYS.recipePatchApplying : TRANSLATION_KEYS.recipePatchApply,
+            )}
+          </Text>
+        </Pressable>
       )}
-    </Card>
+    </View>
   );
 };

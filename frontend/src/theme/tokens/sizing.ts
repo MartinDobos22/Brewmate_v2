@@ -17,6 +17,13 @@ export const SIZE = {
   iconTiny: 13,
   iconSmall: 16,
   iconMedium: 24,
+  /**
+   * The two steps the redesign needed between `iconSmall` and `iconMedium`: a
+   * glyph that leads a row of a table, and one on a control that is pressed
+   * rather than read.
+   */
+  iconRow: 18,
+  iconLarge: 20,
   avatarMedium: 40,
   sheetHandleWidth: 32,
   sheetHandleHeight: 4,
@@ -99,6 +106,19 @@ export const SIZE = {
   dialSmallStroke: 6,
   /** The two pills under a bag on the cupboard. */
   bagActionHeight: 46,
+  /**
+   * The conversation after the cup.
+   *
+   * The avatar marks who is speaking rather than showing anybody a face, so
+   * it is small; the send button is the ordinary field height, so the two sit
+   * on one line without either having to be measured against the other.
+   */
+  chatAvatarSize: 30,
+  chatSendSize: 48,
+  /** The pill that accepts a proposal, under the table describing it. */
+  acceptPillHeight: 50,
+  /** The hairline between two figures inside an espresso header's own row. */
+  headerRuleHeight: 28,
   /** A round icon button in a screen's title row. */
   headerButtonSize: 44,
   /** The hairline between two figures in a summary row. */
