@@ -32,8 +32,17 @@ export const BREW_METHOD_CATEGORY_LABEL_KEYS: Record<BrewMethodCategory, Transla
   [BREW_METHOD_CATEGORIES.batch]: TRANSLATION_KEYS.preBrewMethodCategoryBatch,
 };
 
-/** The glyph beside a coffee, and beside the answer that there is not one. */
+/**
+ * The glyphs on the row that reports which coffee is being brewed.
+ *
+ * A bean rather than a bag for the coffee itself: the row is about what is
+ * being brewed, not about the packet it came in - and the packet is what marks
+ * the case where there is no coffee written down at all.
+ */
 export const PRE_BREW_COFFEE_ICONS = {
-  bag: 'package-variant-closed',
-  unknown: 'help-circle-outline',
+  bag: 'seed-outline',
+  unknown: 'package-variant-closed',
+  remaining: 'scale-bathroom',
+  change: 'swap-horizontal',
+  photo: 'camera',
 } as const satisfies Record<string, TileGlyph>;

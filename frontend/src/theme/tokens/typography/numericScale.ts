@@ -47,6 +47,16 @@ export const NUMERIC_SCALE = {
     lineHeight: 20,
     letterSpacing: 0,
   },
+  /**
+   * The figure somebody is adjusting, which is the largest thing on its
+   * screen because it is the thing the screen is for.
+   */
+  numericCalculator: {
+    fontFamily: FONT_FAMILIES.numericMedium,
+    fontSize: 46,
+    lineHeight: 50,
+    letterSpacing: -2,
+  },
   /** Three figures across the top of a screen, summing up what is below. */
   numericSummary: {
     fontFamily: FONT_FAMILIES.numericMedium,
@@ -67,6 +77,13 @@ export const NUMERIC_SCALE = {
     fontSize: 18,
     lineHeight: 22,
     letterSpacing: -0.4,
+  },
+  /** The plan on a foot bar, which must fit on one line whatever it says. */
+  numericFoot: {
+    fontFamily: FONT_FAMILIES.numericMedium,
+    fontSize: 14,
+    lineHeight: 20,
+    letterSpacing: 0,
   },
   /** A measured value set in a line of text rather than given a column. */
   numericInline: {

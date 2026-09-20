@@ -6,7 +6,7 @@ import { Button, EmptyState, QueryState, Text } from '../../../../components/ui'
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { useCoffeeBags } from '../../../inventory/hooks';
-import { PreBrewBagOption } from '../PreBrewCoffeeSection';
+import { PreBrewBagOption } from '../PreBrewBagOption';
 
 import { createBrewCoffeeSourceStyles } from './BrewCoffeeSourceScreen.styles';
 

@@ -14,13 +14,19 @@ export const SIZE = {
   attributeChipHeight: 26,
   listItemMinHeight: 56,
   tabBarHeight: 56,
+  iconTiny: 13,
   iconSmall: 16,
   iconMedium: 24,
   avatarMedium: 40,
   sheetHandleWidth: 32,
   sheetHandleHeight: 4,
-  sliderTrackHeight: 4,
-  sliderThumbSize: 24,
+  sliderTrackHeight: 6,
+  /**
+   * Big enough to take hold of with a thumb rather than aim at with a
+   * fingertip. It carries a ring of the surface under it, so it needs the
+   * extra points to still read as a circle once that is subtracted.
+   */
+  sliderThumbSize: 30,
   stepperButtonSize: 40,
   /**
    * The floor under a stepper's value, and the reason the control stopped
@@ -96,6 +102,31 @@ export const SIZE = {
   emptyMarkGlyph: 38,
   /** How wide an empty state's sentence may run before it is hard to read. */
   emptyBodyMaxWidth: 300,
+  /**
+   * The concentric rings behind an espresso header.
+   *
+   * Pushed off the top left corner and clipped by the block they sit in, which
+   * is what makes them read as depth rather than as a diagram. Drawn from the
+   * same stroke as every other decoration here - this app ships no artwork.
+   */
+  headerRingsSize: 300,
+  headerRingsTop: -130,
+  headerRingsLeft: -96,
+  headerRingStroke: 2,
+  headerRingOuter: 146,
+  headerRingMid: 110,
+  headerRingInner: 74,
+  /** The circle a glyph sits in inside an espresso header's own row. */
+  headerBadgeSize: 38,
+  /** A brewer's own glyph, which is the most visual decision on its screen. */
+  methodGlyphSize: 27,
+  /** A round button inside a calculator row. */
+  calculatorButtonSize: 42,
+  /** The dot between two facts on a meta line. */
+  metaDotSize: 3,
+  /** A pill in an espresso header, and the one in a foot bar. */
+  headerPillHeight: 48,
+  footBarPillHeight: 52,
   /** A questionnaire answer card. Big enough to tap without aiming. */
   optionCardMinHeight: 72,
   /** Height of a boxed preview on the design system screen. */

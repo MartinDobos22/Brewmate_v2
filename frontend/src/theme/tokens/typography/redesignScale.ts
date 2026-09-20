@@ -82,6 +82,13 @@ export const REDESIGN_SCALE = {
     lineHeight: 24,
     letterSpacing: -0.3,
   },
+  /** What a small card or an inset row is about. */
+  cardTitle: {
+    fontFamily: FONT_FAMILIES.bodySemiBold,
+    fontSize: 14,
+    lineHeight: 20,
+    letterSpacing: -0.05,
+  },
   /** The title of a row that leads somewhere. */
   rowTitle: {
     fontFamily: FONT_FAMILIES.bodySemiBold,
@@ -102,6 +109,13 @@ export const REDESIGN_SCALE = {
     fontSize: 12,
     lineHeight: 16,
     letterSpacing: 0.2,
+  },
+  /** The unit beside a calculator's figure, on its baseline. */
+  unitLarge: {
+    fontFamily: FONT_FAMILIES.bodyMedium,
+    fontSize: 14,
+    lineHeight: 20,
+    letterSpacing: 0,
   },
   /** A fact printed on an attribute chip. */
   chipLabel: {

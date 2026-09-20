@@ -17,7 +17,7 @@ export type { UpdateBrewLogVariables } from './useUpdateBrewLog';
 export { useDeleteBrewLog } from './useDeleteBrewLog';
 
 export { useBrewSetup } from './useBrewSetup';
-export type { BrewSetup } from './useBrewSetup';
+export type { BrewSetup } from './brewSetup';
 export { useBrewAmounts } from './useBrewAmounts';
 export type { BrewAmountsControl } from './useBrewAmounts';
 export { useGenerateRecipe } from './useGenerateRecipe';

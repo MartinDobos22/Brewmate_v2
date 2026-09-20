@@ -19,3 +19,22 @@ export const AMOUNT_STEPS = {
   water: 5,
   espressoYield: 1,
 } as const;
+
+/**
+ * The glyphs on the calculator card.
+ *
+ * Each names the thing its figure measures rather than the operation: a bean
+ * for the dose, water for the water, a balance for the ratio between them.
+ */
+export const CALCULATOR_ICONS = {
+  section: 'calculator-variant-outline',
+  dose: 'coffee-outline',
+  water: 'water-outline',
+  ratio: 'scale-balance',
+} as const;
+
+/** The two glyphs on the foot bar: what is being weighed, and what happens next. */
+export const FOOT_BAR_ICONS = {
+  amounts: 'scale',
+  submit: 'arrow-right',
+} as const;

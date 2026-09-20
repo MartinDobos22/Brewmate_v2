@@ -3,9 +3,21 @@ import { StyleSheet } from 'react-native';
 import type { TextStyles, Theme, ViewStyles } from '../../../theme';
 
 type NumberStepperStyleMap = ViewStyles<
-  'wrapper' | 'row' | 'button' | 'pressed' | 'disabled' | 'value' | 'editable'
+  | 'wrapper'
+  | 'row'
+  | 'button'
+  | 'pressed'
+  | 'disabled'
+  | 'value'
+  | 'editable'
+  | 'calculatorRow'
+  | 'calculatorButton'
+  | 'calculatorDecrease'
+  | 'calculatorIncrease'
+  | 'calculatorValue'
+  | 'calculatorLabel'
 > &
-  TextStyles<'field'>;
+  TextStyles<'field' | 'calculatorField'>;
 
 export const createNumberStepperStyles = (theme: Theme): NumberStepperStyleMap =>
   StyleSheet.create({
@@ -57,5 +69,39 @@ export const createNumberStepperStyles = (theme: Theme): NumberStepperStyleMap =
       padding: theme.spacing.none,
       minWidth: theme.size.stepperFieldMinWidth,
       textAlign: 'right',
+    },
+
+    /**
+     * The calculator arrangement: two round buttons with the figure between
+     * them and its name underneath.
+     *
+     * The label moved below the number because on this screen the number is
+     * the largest thing on the page and a caption above it read as a heading
+     * for the whole card. The minus is quiet and the plus is not, which is the
+     * honest asymmetry: more coffee is the ordinary direction to move in.
+     */
+    calculatorRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: theme.spacing.md,
+    },
+    calculatorButton: {
+      width: theme.size.calculatorButtonSize,
+      height: theme.size.calculatorButtonSize,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: theme.shape.pill,
+    },
+    calculatorDecrease: { backgroundColor: theme.colors.surfaceVariant },
+    calculatorIncrease: { backgroundColor: theme.colors.espresso },
+    calculatorValue: { flex: 1, alignItems: 'center' },
+    calculatorLabel: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xs },
+    calculatorField: {
+      ...theme.typography.numericCalculator,
+      color: theme.colors.onSurface,
+      padding: theme.spacing.none,
+      minWidth: theme.size.stepperFieldMinWidth,
+      textAlign: 'center',
     },
   });

@@ -7,7 +7,7 @@ import { Button } from '../../../../components/ui';
 import { ROUTES, buildDialInRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
-import type { BrewSetup } from '../../hooks/useBrewSetup';
+import type { BrewSetup } from '../../hooks/brewSetup';
 
 import { createPreBrewScreenStyles } from './PreBrewScreen.styles';
 
