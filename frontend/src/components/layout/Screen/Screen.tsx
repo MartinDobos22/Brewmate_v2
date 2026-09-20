@@ -7,6 +7,7 @@ import { BottomNavBar, useShowsBottomNav } from '../BottomNavBar';
 
 import { createScreenStyles } from './Screen.styles';
 import { TAB_SCREEN_EDGES } from './screenEdges';
+import { DEFAULT_SCREEN_GROUND, type ScreenGround } from './screenGrounds';
 
 export interface ScreenProps {
   readonly children: ReactNode;
@@ -14,6 +15,11 @@ export interface ScreenProps {
   readonly edges?: readonly Edge[];
   readonly scrollable?: boolean;
   readonly padded?: boolean;
+  /**
+   * Which ground this screen is painted on. Only brew mode asks for anything
+   * but the default, and it asks because it is dark in both colour schemes.
+   */
+  readonly ground?: ScreenGround;
 }
 
 /**
@@ -34,12 +40,16 @@ export const Screen = ({
   edges = TAB_SCREEN_EDGES,
   scrollable = false,
   padded = true,
+  ground = DEFAULT_SCREEN_GROUND,
 }: ScreenProps): JSX.Element => {
   const styles = useThemedStyles(createScreenStyles);
   const showsBottomNav = useShowsBottomNav();
 
   return (
-    <SafeAreaView style={styles.root} edges={showsBottomNav ? TAB_SCREEN_EDGES : edges}>
+    <SafeAreaView
+      style={[styles.root, styles[ground]]}
+      edges={showsBottomNav ? TAB_SCREEN_EDGES : edges}
+    >
       {scrollable ? (
         <ScrollView
           style={styles.content}

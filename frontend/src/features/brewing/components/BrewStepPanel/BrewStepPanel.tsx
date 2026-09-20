@@ -3,10 +3,8 @@ import { View } from 'react-native';
 
 import { Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { formatGrams } from '../../../../lib/formatters';
 import { useThemedStyles } from '../../../../theme';
 import type { BrewTimelineStep } from '../../services/resolveBrewTimeline';
-import { BrewStepProgress } from '../BrewStepProgress';
 
 import { createBrewStepPanelStyles } from './BrewStepPanel.styles';
 
@@ -14,55 +12,36 @@ export interface BrewStepPanelProps {
   readonly current: BrewTimelineStep;
   readonly stepNumber: number;
   readonly total: number;
-  readonly next: BrewTimelineStep | undefined;
 }
 
 /**
- * What to do right now, and the one thing coming after it.
+ * What to do right now, in three lines and no more.
  *
- * The target weight is given the same weight as the instruction, because it is
- * the instruction: on a dripper the whole of "what do I do" is a number on the
- * scale. The next step is shown small - enough to know a bloom is coming, not
- * enough to be read instead of the current one.
+ * The eyebrow says where in the brew this is, the title names the pour, and
+ * the sentence under it is the instruction. Everything that used to sit here
+ * as well has gone where it is actually looked at: the target weight into the
+ * ring beside the countdown, the next step into the pill under it. A panel
+ * that answered five questions at once was one where the answer to "what do I
+ * do now" had to be found among them.
  */
-export const BrewStepPanel = ({
-  current,
-  stepNumber,
-  total,
-  next,
-}: BrewStepPanelProps): JSX.Element => {
+export const BrewStepPanel = ({ current, stepNumber, total }: BrewStepPanelProps): JSX.Element => {
   const styles = useThemedStyles(createBrewStepPanelStyles);
   const { t } = useTranslation();
 
   return (
     <View style={styles.wrapper}>
-      <BrewStepProgress stepNumber={stepNumber} total={total} />
-      <Text variant="labelMedium" tone="muted" align="center">
+      <Text variant="eyebrowEspresso" tone="accent" align="center">
         {t(TRANSLATION_KEYS.brewModeStepOf, { current: stepNumber, total })}
       </Text>
-      <Text variant="headlineLarge" align="center">
+      <Text variant="displayTitle" tone="onEspresso" align="center">
         {current.step.label}
       </Text>
-      {current.step.waterGrams === null ? null : (
-        <Text variant="numericHero" align="center" numeric>
-          {t(TRANSLATION_KEYS.brewModeTargetWeight, {
-            grams: formatGrams(current.step.waterGrams),
-          })}
-        </Text>
-      )}
       {current.step.note === null ? null : (
-        <Text variant="bodyLarge" tone="muted" align="center">
-          {current.step.note}
-        </Text>
-      )}
-      {next === undefined ? (
-        <Text variant="bodySmall" tone="muted" align="center">
-          {t(TRANSLATION_KEYS.brewModeLastStep)}
-        </Text>
-      ) : (
-        <Text variant="bodySmall" tone="muted" align="center">
-          {t(TRANSLATION_KEYS.brewModeNextStep, { label: next.step.label })}
-        </Text>
+        <View style={styles.instruction}>
+          <Text variant="bodyLead" tone="onEspressoMuted" align="center">
+            {current.step.note}
+          </Text>
+        </View>
       )}
     </View>
   );

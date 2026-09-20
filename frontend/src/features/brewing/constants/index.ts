@@ -8,6 +8,13 @@ export type { AmountField } from './preBrew';
 export { BREW_RUN_STATES, BREW_TICK_MS, BREW_CUE_LEAD_SECONDS } from './brewMode';
 export type { BrewRunState } from './brewMode';
 export {
+  POUR_RING,
+  BREW_WARM_LIGHT,
+  BREW_SCALE_CHIP,
+  BREW_NEXT_PILL,
+  BREW_CONTROL_ICONS,
+} from './brewModeGeometry';
+export {
   BREW_METHOD_CATEGORY_ICONS,
   BREW_METHOD_CATEGORY_LABEL_KEYS,
   PRE_BREW_COFFEE_ICONS,

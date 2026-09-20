@@ -4,6 +4,11 @@ import type { TypographyToken } from '../../../theme';
 export type TextVariant = TypographyToken;
 
 /** Which colour role the text carries. */
+/**
+ * The last five are for text drawn on an espresso block or on brew mode's
+ * ground - surfaces that are dark in both colour schemes, so the text on them
+ * cannot take its colour from the active one.
+ */
 export type TextTone =
   | 'default'
   | 'muted'
@@ -13,7 +18,12 @@ export type TextTone =
   | 'tertiary'
   | 'error'
   | 'inverse'
-  | 'disabled';
+  | 'disabled'
+  | 'onEspresso'
+  | 'onEspressoMuted'
+  | 'accent'
+  | 'accentSoft'
+  | 'onCream';
 
 export type TextAlign = 'left' | 'center' | 'right';
 

@@ -6,6 +6,13 @@ export const SPACING = {
   sm: 8,
   md: 12,
   lg: 16,
+  /**
+   * The redesign's screen edge, and the gap between its sections. The step
+   * between `lg` and `xl` the scale never had: sixteen round a screen whose
+   * cards carry no borders left them reading as if they had been pushed
+   * against the glass, and twenty-four cost a column of the numbers.
+   */
+  lgPlus: 20,
   xl: 24,
   xxl: 32,
   xxxl: 48,

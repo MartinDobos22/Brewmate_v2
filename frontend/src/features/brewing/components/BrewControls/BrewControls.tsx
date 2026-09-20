@@ -1,12 +1,15 @@
-import type { JSX } from 'react';
-import { Pressable, View } from 'react-native';
+import type { ComponentProps, JSX } from 'react';
+import type MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
-import { BREW_RUN_STATES, type BrewRunState } from '../../constants';
+import { BREW_CONTROL_ICONS, BREW_RUN_STATES, type BrewRunState } from '../../constants';
 
+import { BrewControlButton } from './BrewControlButton';
 import { createBrewControlsStyles } from './BrewControls.styles';
+
+type GlyphName = ComponentProps<typeof MaterialCommunityIcons>['name'];
 
 export interface BrewControlsProps {
   readonly state: BrewRunState;
@@ -18,17 +21,19 @@ export interface BrewControlsProps {
   readonly onRestart: () => void;
 }
 
+interface PrimaryControl {
+  readonly labelKey: TranslationKey;
+  readonly icon: GlyphName;
+  readonly onPress: () => void;
+}
+
 /**
- * Three buttons, all of them enormous.
+ * Restart, the one thing to press, and skip - in that order, always.
  *
- * Sized well past the smallest target any guideline allows, because the finger
- * pressing them is wet, in a hurry, and aiming at a phone leant against a
- * kettle. Nothing here is disabled either: a control that greys out is one
- * somebody presses twice before realising, and every one of these is
- * meaningful in every state the brew can be in.
- *
- * The primary control is the one in the middle and the biggest of the three,
- * so it can be hit without aiming.
+ * The middle button changes what it does and never where it is. A control that
+ * moved between states is one somebody has to look at before pressing, and
+ * looking at the phone is the thing this screen is designed to let them stop
+ * doing.
  */
 export const BrewControls = ({
   state,
@@ -41,67 +46,51 @@ export const BrewControls = ({
 }: BrewControlsProps): JSX.Element => {
   const styles = useThemedStyles(createBrewControlsStyles);
   const { t } = useTranslation();
-  const isRunning = state === BREW_RUN_STATES.running;
-  const hasStarted = state !== BREW_RUN_STATES.ready;
 
-  const primaryLabel = ((): TranslationKey => {
-    if (!hasStarted) {
-      return TRANSLATION_KEYS.brewModeStart;
+  const primary = ((): PrimaryControl => {
+    if (state === BREW_RUN_STATES.ready) {
+      return {
+        labelKey: TRANSLATION_KEYS.brewModeStart,
+        icon: BREW_CONTROL_ICONS.start,
+        onPress: onStart,
+      };
     }
 
-    return isRunning ? TRANSLATION_KEYS.brewModePause : TRANSLATION_KEYS.brewModeResume;
+    if (state === BREW_RUN_STATES.running) {
+      return {
+        labelKey: TRANSLATION_KEYS.brewModePause,
+        icon: BREW_CONTROL_ICONS.pause,
+        onPress: onPause,
+      };
+    }
+
+    return {
+      labelKey: TRANSLATION_KEYS.brewModeResume,
+      icon: BREW_CONTROL_ICONS.resume,
+      onPress: onResume,
+    };
   })();
 
-  const onPrimary = (): void => {
-    if (!hasStarted) {
-      onStart();
-
-      return;
-    }
-
-    if (isRunning) {
-      onPause();
-
-      return;
-    }
-
-    onResume();
-  };
+  const skipKey = isLastStep ? TRANSLATION_KEYS.brewModeFinish : TRANSLATION_KEYS.brewModeSkip;
 
   return (
     <View style={styles.row}>
-      <Pressable
-        style={styles.secondary}
+      <BrewControlButton
+        icon={BREW_CONTROL_ICONS.restart}
+        label={t(TRANSLATION_KEYS.brewModeRestart)}
         onPress={onRestart}
-        accessibilityRole="button"
-        accessibilityLabel={t(TRANSLATION_KEYS.brewModeRestart)}
-      >
-        <Text variant="labelMedium" align="center">
-          {t(TRANSLATION_KEYS.brewModeRestart)}
-        </Text>
-      </Pressable>
-      <Pressable
-        style={styles.primary}
-        onPress={onPrimary}
-        accessibilityRole="button"
-        accessibilityLabel={t(primaryLabel)}
-      >
-        <Text variant="titleMedium" tone="onPrimary" align="center">
-          {t(primaryLabel)}
-        </Text>
-      </Pressable>
-      <Pressable
-        style={styles.secondary}
+      />
+      <BrewControlButton
+        icon={primary.icon}
+        label={t(primary.labelKey)}
+        isPrimary
+        onPress={primary.onPress}
+      />
+      <BrewControlButton
+        icon={isLastStep ? BREW_CONTROL_ICONS.finish : BREW_CONTROL_ICONS.skip}
+        label={t(skipKey)}
         onPress={onSkip}
-        accessibilityRole="button"
-        accessibilityLabel={t(
-          isLastStep ? TRANSLATION_KEYS.brewModeFinish : TRANSLATION_KEYS.brewModeSkip,
-        )}
-      >
-        <Text variant="labelMedium" align="center">
-          {t(isLastStep ? TRANSLATION_KEYS.brewModeFinish : TRANSLATION_KEYS.brewModeSkip)}
-        </Text>
-      </Pressable>
+      />
     </View>
   );
 };

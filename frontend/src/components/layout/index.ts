@@ -1,5 +1,11 @@
-export { Screen, TAB_SCREEN_EDGES, STACK_SCREEN_EDGES } from './Screen';
-export type { ScreenProps } from './Screen';
+export {
+  Screen,
+  TAB_SCREEN_EDGES,
+  STACK_SCREEN_EDGES,
+  SCREEN_GROUNDS,
+  DEFAULT_SCREEN_GROUND,
+} from './Screen';
+export type { ScreenProps, ScreenGround } from './Screen';
 export { AppProviders } from './AppProviders';
 export type { AppProvidersProps } from './AppProviders';
 export { RootStack } from './RootStack';

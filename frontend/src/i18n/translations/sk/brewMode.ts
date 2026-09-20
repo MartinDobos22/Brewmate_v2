@@ -19,11 +19,25 @@ export const SK_BREW_MODE = {
   brewModeLeave: 'Ukončiť',
 
   brewModeStepOf: 'Krok {current} z {total}',
+  /**
+   * The same count beside the step bar, where it is read as a figure rather
+   * than as a sentence - the words are already directly underneath it.
+   */
+  brewModeStepCount: '{current}/{total}',
   brewModeStepProgressLabel: 'Ako ďaleko si vo varení',
   brewModeTargetWeight: 'Na váhe {grams} g',
+  /** The unit beside the target on the scale chip, where the number is set alone. */
+  brewModeScaleUnit: 'g na váhe',
   brewModeElapsed: 'Celkovo {time}',
   brewModeNoTimeStep: 'Bez času - pokračuj, keď to uvidíš',
   brewModeNextStep: 'Ďalej: {label}',
+  /**
+   * The same thing as `brewModeNextStep`, split because the pill under the
+   * ring sets the word and the step in two different weights. One word rather
+   * than half a sentence, so there is still nothing here a translator has to
+   * assemble.
+   */
+  brewModeNextPrefix: 'Ďalej',
   brewModeLastStep: 'Posledný krok',
   brewModeOvertime: 'Máš to o {seconds} s dlhšie',
 

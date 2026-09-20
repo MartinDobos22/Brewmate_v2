@@ -75,11 +75,28 @@ export const SIZE = {
    * rules. A control is a third bigger than the smallest a guideline allows,
    * and the countdown is set at a size that carries across a kitchen.
    */
-  brewControlSize: 64,
-  brewPrimaryControlSize: 88,
+  brewControlSize: 66,
+  brewPrimaryControlSize: 90,
   /** The dot that says which step of the brew is running. */
   brewStepDotSize: 10,
-  brewProgressHeight: 12,
+  /**
+   * The step bar above the pour, which is thin on purpose.
+   *
+   * It used to be thick, on the argument that everything on this screen is
+   * read from half a metre away. That was right about the countdown and wrong
+   * about this: how far through a brew is is glanced at between pours, and a
+   * heavy bar across the top competes with the one number the screen exists
+   * for. The count beside it is what gets read; the bar is the shape of it.
+   */
+  brewProgressHeight: 4,
+  /**
+   * How wide a brew instruction is allowed to run.
+   *
+   * An instruction is read in one go, so it is held to a width that breaks
+   * into two or three even lines rather than one that runs the full width of
+   * the phone and has to be tracked back across with wet hands.
+   */
+  brewInstructionMaxWidth: 300,
 
   /**
    * The home screen is a grid of tiles rather than a column of cards, so a

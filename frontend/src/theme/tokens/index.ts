@@ -12,10 +12,11 @@ export { DURATION, EASING } from './motion';
 export type { DurationToken, EasingToken, EasingCurve } from './motion';
 export { SIZE, RELATIVE_SIZE } from './sizing';
 export type { SizeToken, RelativeSizeToken } from './sizing';
-export { FONT_FAMILIES, TYPE_SCALE, NUMERIC_SCALE, TYPOGRAPHY } from './typography';
+export { FONT_FAMILIES, TYPE_SCALE, REDESIGN_SCALE, NUMERIC_SCALE, TYPOGRAPHY } from './typography';
 export type {
   FontFamilyToken,
   TypeScaleToken,
+  RedesignScaleToken,
   NumericScaleToken,
   TypographyStyle,
   TypographyToken,

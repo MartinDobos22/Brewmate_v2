@@ -12,12 +12,16 @@ export const NUMERIC_SCALE = {
    * Sized to be read from half a metre away by somebody whose hands are wet
    * and whose glasses are in the other room. Larger than any heading in the
    * app on purpose: for the length of a brew this one number is the screen.
+   *
+   * It sits inside the pour ring rather than above it now, so it is set to the
+   * width the ring leaves it - and tracked in hard, because four mono digits
+   * at this size are mostly the space between them.
    */
   numericDisplay: {
     fontFamily: FONT_FAMILIES.numericMedium,
-    fontSize: 88,
-    lineHeight: 96,
-    letterSpacing: -2,
+    fontSize: 76,
+    lineHeight: 78,
+    letterSpacing: -3,
   },
   numericHero: {
     fontFamily: FONT_FAMILIES.numericMedium,
@@ -42,6 +46,27 @@ export const NUMERIC_SCALE = {
     fontSize: 14,
     lineHeight: 20,
     letterSpacing: 0,
+  },
+  /** A measured value inside a chip or beside a label. */
+  numericValue: {
+    fontFamily: FONT_FAMILIES.numericMedium,
+    fontSize: 18,
+    lineHeight: 22,
+    letterSpacing: -0.4,
+  },
+  /** A figure read after the one above it - a total under a countdown. */
+  numericCaption: {
+    fontFamily: FONT_FAMILIES.numericRegular,
+    fontSize: 13,
+    lineHeight: 18,
+    letterSpacing: 0.1,
+  },
+  /** A count beside a progress bar, at the size of a label rather than a value. */
+  numericLabel: {
+    fontFamily: FONT_FAMILIES.numericMedium,
+    fontSize: 11,
+    lineHeight: 16,
+    letterSpacing: 0.4,
   },
 } as const satisfies Record<string, TypographyStyle>;
 

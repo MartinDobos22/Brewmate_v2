@@ -7,6 +7,7 @@ import { BREW_CUE_LEAD_SECONDS, BREW_RUN_STATES, type BrewRunState } from '../co
 import {
   resolveBrewTimeline,
   resolveStepIndex,
+  resolveStepProgress,
   type BrewTimelineStep,
 } from '../services/resolveBrewTimeline';
 
@@ -25,6 +26,12 @@ export interface BrewRun {
   readonly elapsedSeconds: number;
   /** Seconds left in this step, or null where it ends on a sight. */
   readonly remainingSeconds: number | null;
+  /**
+   * How far through this step, between nought and one - null where it ends on
+   * a sight. Derived from the same clock as everything else here, so the arc
+   * the screen draws and the number under it cannot disagree.
+   */
+  readonly stepProgress: number | null;
   readonly isLastStep: boolean;
   readonly start: () => void;
   readonly pause: () => void;
@@ -65,6 +72,7 @@ export const useBrewRun = (params: BrewParams): BrewRun => {
   const remainingSeconds =
     endsAt === null ? null : Math.max(endsAt - clock.elapsedSeconds, NO_TIME);
   const isLastStep = stepIndex >= timeline.length - NEXT;
+  const stepProgress = resolveStepProgress(timeline, stepIndex, clock.elapsedSeconds);
 
   /**
    * Catching up on the clock, and telling the person about it.
@@ -124,6 +132,7 @@ export const useBrewRun = (params: BrewParams): BrewRun => {
     timeline,
     current,
     remainingSeconds,
+    stepProgress,
     isLastStep,
     state: resolveState(),
     stepNumber: stepIndex + NEXT,

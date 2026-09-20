@@ -6,10 +6,5 @@ type BrewTimerDisplayStyleMap = ViewStyles<'wrapper'>;
 
 export const createBrewTimerDisplayStyles = (theme: Theme): BrewTimerDisplayStyleMap =>
   StyleSheet.create({
-    wrapper: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: theme.spacing.sm,
-      paddingVertical: theme.spacing.xl,
-    },
+    wrapper: { alignItems: 'center', justifyContent: 'center', gap: theme.spacing.xxs },
   });
