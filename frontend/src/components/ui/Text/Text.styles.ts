@@ -28,6 +28,7 @@ export const createTextStyles = (theme: Theme): TextStyleMap =>
     disabled: { color: theme.colors.onDisabled },
     onEspresso: { color: theme.colors.onEspresso },
     onEspressoMuted: { color: theme.colors.onEspressoVariant },
+    positiveOnEspresso: { color: theme.colors.onEspressoPositive },
     accent: { color: theme.colors.accentOnEspresso },
     accentSoft: { color: theme.colors.accentSoft },
     onCream: { color: theme.colors.onCream },

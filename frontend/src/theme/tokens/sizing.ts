@@ -152,6 +152,23 @@ export const SIZE = {
   calculatorButtonSize: 42,
   /** The dot between two facts on a meta line. */
   metaDotSize: 3,
+  /**
+   * The home screen's own row of actions, inside the espresso block.
+   *
+   * Bigger than a foot bar's pill because this is the one control on the
+   * screen somebody reaches for without reading anything first, and the two
+   * round buttons beside it are the same height so the row reads as three
+   * ways to start rather than as a button with decorations.
+   */
+  homeActionSize: 56,
+  /** One of the three segments counting the first steps off. */
+  startSegmentHeight: 5,
+  /** The coloured spine down the left of a bag's row, saying what state it is in. */
+  bagSpineWidth: 4,
+  bagSpineHeight: 40,
+  /** The glyph and the one button on a card reporting that nothing is there yet. */
+  emptyRowBadge: 44,
+  emptyRowAction: 40,
   /** A pill in an espresso header, and the one in a foot bar. */
   headerPillHeight: 48,
   footBarPillHeight: 52,

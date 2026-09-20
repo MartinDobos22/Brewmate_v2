@@ -65,6 +65,27 @@ export const NUMERIC_SCALE = {
     letterSpacing: -1.5,
   },
   /**
+   * The pair a home screen leads with: two weights at hero size and the ratio
+   * that divides them beside them, smaller.
+   *
+   * Larger than the header trio, because on that screen the figures are what
+   * the block is about rather than a summary of what is under it - they are
+   * the recipe, ready to be poured, and the sentence above them only says
+   * which coffee they belong to.
+   */
+  numericLead: {
+    fontFamily: FONT_FAMILIES.numericMedium,
+    fontSize: 44,
+    lineHeight: 46,
+    letterSpacing: -2,
+  },
+  numericLeadMinor: {
+    fontFamily: FONT_FAMILIES.numericMedium,
+    fontSize: 22,
+    lineHeight: 26,
+    letterSpacing: -0.4,
+  },
+  /**
    * Three figures across an espresso header, summing up what the screen below
    * is about. Smaller than the summary strip on a light ground: the header
    * already has the whole width and the contrast to be read without it.

@@ -9,7 +9,6 @@
 export const SK_HOME = {
   homeStartTitle: 'Začni tu',
   homeStartBody: 'Tri kroky a budem ti vedieť poradiť ako niekto, kto ťa pozná.',
-  homeStartProgressLabel: 'Priebeh prvých krokov',
   homeStartCountSeparator: ' / ',
 
   homeStartStepTaste: 'Povedz mi, čo ti chutí',
@@ -18,9 +17,14 @@ export const SK_HOME = {
   homeStartStepCoffeeNote: 'Stačí jedno z toho.',
   homeStartStepBrew: 'Uvar prvú kávu',
   homeStartStepBrewNote: 'Nemusíš ju mať zapísanú v inventári.',
-  homeStartStepDone: 'Hotovo',
-  homeStartHide: 'Skryť tieto kroky',
-
-  homeScanBody:
-    'Poviem ti, či ti tá káva sadne. Netreba na to nič, čo by si už nemal - stačí dotazník.',
+  /*
+   * The same two actions, at the size the espresso block draws them.
+   *
+   * "Poďme na to" opens whichever step is next rather than scrolling to a
+   * list already on screen, so it says something the rows do not. "Skryť" is
+   * short because it sits beside a button that takes the width - and refusing
+   * a checklist should not need a sentence.
+   */
+  homeStartBegin: 'Poďme na to',
+  homeStartHideShort: 'Skryť',
 } as const;

@@ -19,6 +19,7 @@ import {
 
 const BADGE_STYLES = {
   espresso: 'badgeEspresso',
+  espressoInset: 'badgeEspressoInset',
   surface: 'badgeSurface',
   fresh: 'badgeFresh',
 } as const satisfies Record<ActionRowTone, string>;

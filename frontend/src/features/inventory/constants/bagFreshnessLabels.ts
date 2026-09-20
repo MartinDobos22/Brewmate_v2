@@ -28,6 +28,22 @@ export const BAG_FRESHNESS_TONES = {
 } as const;
 
 /**
+ * The same bands as they read inside an espresso block.
+ *
+ * A separate map rather than a translation of the one above, because the light
+ * scheme's green and ochre are chosen against a warm white and both disappear
+ * on brown. The distinction the reader needs is the same one - at its best,
+ * running out of time, or nothing to go on - and only the paint differs.
+ */
+export const BAG_FRESHNESS_ESPRESSO_TONES = {
+  [BAG_FRESHNESS.unknown]: 'onEspressoMuted',
+  [BAG_FRESHNESS.resting]: 'onEspressoMuted',
+  [BAG_FRESHNESS.ideal]: 'positiveOnEspresso',
+  [BAG_FRESHNESS.pastPeak]: 'accent',
+  [BAG_FRESHNESS.aging]: 'accent',
+} as const;
+
+/**
  * A glyph beside the words, because colour alone is not a statement.
  *
  * Somebody who cannot tell the green from the ochre still has to be able to

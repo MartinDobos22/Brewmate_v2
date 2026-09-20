@@ -6,3 +6,5 @@ export { summariseBrewWeek } from './summariseBrewWeek';
 export type { BrewWeek } from './summariseBrewWeek';
 export { resolveHomeHint } from './resolveHomeHint';
 export type { HomeHint, HomeHintInput } from './resolveHomeHint';
+export { resolveSuggestedBag } from './resolveSuggestedBag';
+export type { SuggestedBag } from './resolveSuggestedBag';

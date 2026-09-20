@@ -1,1 +1,0 @@
-export { GettingStartedCard } from './GettingStartedCard';

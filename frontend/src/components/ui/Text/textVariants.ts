@@ -5,9 +5,11 @@ export type TextVariant = TypographyToken;
 
 /** Which colour role the text carries. */
 /**
- * Five of these are for text drawn on an espresso block or on brew mode's
+ * Six of these are for text drawn on an espresso block or on brew mode's
  * ground - surfaces that are dark in both colour schemes, so the text on them
- * cannot take its colour from the active one.
+ * cannot take its colour from the active one. `positiveOnEspresso` is the
+ * `fresh` of that set: a bag at its best, said on brown, where the green that
+ * reads on a light screen would be unreadable.
  *
  * `fresh` and `caution` are the last two, and they are states rather than
  * palettes: a bag at its best and a bag running out of time. Deliberately not
@@ -26,6 +28,7 @@ export type TextTone =
   | 'disabled'
   | 'onEspresso'
   | 'onEspressoMuted'
+  | 'positiveOnEspresso'
   | 'accent'
   | 'accentSoft'
   | 'onCream'

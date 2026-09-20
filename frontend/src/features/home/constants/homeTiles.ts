@@ -1,10 +1,10 @@
 import type { TileGlyph } from '../../../components/ui';
 
 /**
- * The glyph on each tile.
+ * The glyph on each thing the home screen offers.
  *
- * Named after what the tile is for rather than after the shape it draws, so
- * swapping an icon is one edit here and never a hunt through the screen.
+ * Named after what it is for rather than after the shape it draws, so swapping
+ * an icon is one edit here and never a hunt through the screen.
  */
 export const HOME_TILE_ICONS = {
   scan: 'barcode-scan',
@@ -14,15 +14,19 @@ export const HOME_TILE_ICONS = {
   inventory: 'package-variant-closed',
   stats: 'chart-timeline-variant',
   hint: 'lightbulb-on-outline',
+  start: 'clipboard-text-outline',
+  go: 'arrow-right',
+  add: 'plus',
 } as const satisfies Record<string, TileGlyph>;
 
 /**
- * How many of the cupboard's bags the freshness strip draws.
+ * What the screen reads to work out what to offer brewing.
  *
- * A strip is a glance, not a list: past half a dozen pips nobody counts them,
- * and the caption beside it carries the real number anyway.
+ * One recipe, because the API returns pinned ones first and the screen prints
+ * exactly one set of numbers. Asking for a page of them so as to pick the
+ * first would be reading a list to answer a question about its head.
  */
-export const HOME_FRESHNESS_PIP_MAX = 6;
+export const HOME_SUGGESTION = { recipePage: 1 } as const;
 
 /** How much of the brewing history the home screen reads. */
 export const HOME_STATS = {
@@ -35,3 +39,13 @@ export const HOME_STATS = {
   /** After this long without a cup, the hint says so. */
   idleDays: 7,
 } as const;
+
+/**
+ * How much of the shelf the home screen prints.
+ *
+ * Three, because this is a summary with a tab of its own one tap below it -
+ * a home screen that listed a whole cupboard would be the cupboard with a
+ * greeting on top. Three is also what fits above the fold on the phone this
+ * was drawn for, and the ordering means they are the three worth seeing.
+ */
+export const HOME_CUPBOARD = { rows: 3 } as const;

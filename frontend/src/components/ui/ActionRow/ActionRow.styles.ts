@@ -11,6 +11,7 @@ type ActionRowStyleMap = ViewStyles<
   | 'pressed'
   | ActionRowTone
   | 'badgeEspresso'
+  | 'badgeEspressoInset'
   | 'badgeSurface'
   | 'badgeFresh'
 >;
@@ -42,6 +43,11 @@ export const createActionRowStyles = (theme: Theme): ActionRowStyleMap =>
       shadowColor: theme.colors.espresso,
       ...theme.elevation.card,
     },
+    /**
+     * Inside an espresso block, where a shadow would fall on a surface the
+     * same colour as itself and be seen by nobody.
+     */
+    espressoInset: { backgroundColor: theme.colors.espressoDeep },
     fresh: { backgroundColor: theme.colors.freshContainer },
     badge: {
       width: theme.size.headerButtonSize,
@@ -51,6 +57,7 @@ export const createActionRowStyles = (theme: Theme): ActionRowStyleMap =>
       borderRadius: theme.shape.pill,
     },
     badgeEspresso: { backgroundColor: theme.colors.espressoDeep },
+    badgeEspressoInset: { backgroundColor: theme.colors.espressoLift },
     badgeSurface: { backgroundColor: theme.colors.surfaceVariant },
     badgeFresh: { backgroundColor: theme.colors.background },
     body: { flex: 1, minWidth: 0, gap: theme.spacing.xxs },
