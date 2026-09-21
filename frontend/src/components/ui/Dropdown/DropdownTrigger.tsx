@@ -5,7 +5,7 @@ import { Pressable, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme, useThemedStyles } from '../../../theme';
 import { Text } from '../Text';
 
-import { createDropdownStyles } from './Dropdown.styles';
+import { createDropdownStyles, dropdownField } from './Dropdown.styles';
 import { DROPDOWN_ICONS } from './dropdownIcons';
 import type { DropdownOption } from './dropdownOption';
 
@@ -37,14 +37,14 @@ export const DropdownTrigger = ({
   const theme = useTheme();
 
   const resolveStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
-    styles.field,
+    dropdownField(theme),
     pressed && !disabled && styles.pressed,
     disabled && styles.disabled,
   ];
 
   return (
     <View style={styles.wrapper}>
-      <Text variant="labelMedium" tone="muted">
+      <Text variant="eyebrow" tone="muted">
         {label}
       </Text>
       <Pressable

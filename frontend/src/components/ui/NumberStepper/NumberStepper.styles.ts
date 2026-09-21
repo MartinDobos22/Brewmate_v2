@@ -23,15 +23,20 @@ export const createNumberStepperStyles = (theme: Theme): NumberStepperStyleMap =
   StyleSheet.create({
     wrapper: { gap: theme.spacing.xs, alignSelf: 'stretch' },
     row: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md },
+    /**
+     * A round filled control, like every other small button in the app.
+     *
+     * It used to be an outlined square, which was the one thing left on this
+     * row still drawing a hairline - so a form holding a stepper and a field
+     * showed two different ideas of what a control looks like, an inch apart.
+     */
     button: {
       width: theme.size.stepperButtonSize,
       height: theme.size.stepperButtonSize,
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: theme.shape.smallButton,
-      borderWidth: theme.borderWidth.thin,
-      borderColor: theme.colors.outlineVariant,
-      backgroundColor: theme.colors.surface,
+      borderRadius: theme.shape.pill,
+      backgroundColor: theme.colors.surfaceVariant,
     },
     pressed: { backgroundColor: theme.colors.surfaceContainer },
     disabled: { opacity: theme.opacity.disabled },

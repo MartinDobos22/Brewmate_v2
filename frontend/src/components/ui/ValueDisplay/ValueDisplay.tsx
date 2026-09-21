@@ -44,7 +44,7 @@ export const ValueDisplay = ({
 
   return (
     <View style={styles.wrapper} accessibilityLabel={label}>
-      <Text variant="labelMedium" tone={LABEL_TONES[ground]}>
+      <Text variant="eyebrow" tone={LABEL_TONES[ground]}>
         {label}
       </Text>
       <View style={styles.row}>

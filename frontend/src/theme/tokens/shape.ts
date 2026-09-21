@@ -10,7 +10,6 @@ export const SHAPE = {
   checkbox: RADIUS.xs,
   badge: RADIUS.xs,
   chip: RADIUS.sm,
-  smallButton: RADIUS.sm,
   button: RADIUS.md,
   listItem: RADIUS.md,
   card: RADIUS.lg,

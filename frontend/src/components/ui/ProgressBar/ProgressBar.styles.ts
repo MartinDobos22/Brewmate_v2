@@ -15,7 +15,7 @@ export const createProgressBarStyles = (theme: Theme): ProgressBarStyleMap =>
     track: {
       flexDirection: 'row',
       height: theme.size.measureBarHeight,
-      borderRadius: theme.radius.xs,
+      borderRadius: theme.shape.pill,
       backgroundColor: theme.colors.surfaceDim,
       overflow: 'hidden',
     },

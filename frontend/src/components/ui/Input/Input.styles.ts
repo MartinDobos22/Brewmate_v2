@@ -28,15 +28,20 @@ export const createInputStyles = (theme: Theme): InputStyleMap =>
   });
 
 /**
- * The box itself, built at runtime because its fill and its ring both depend
- * on what the field is standing on and on which of four things is true of it.
+ * What makes a box a field: the fill, the radius and the ring.
+ *
+ * Exported because a closed dropdown is a field holding one answer and has to
+ * be built to the same metrics - two places deciding separately what a field
+ * looks like is two fields on the brewing screen that disagree. The height is
+ * deliberately not here: a dropdown grows for a second line and a text field
+ * does not.
  *
  * The ring is drawn in the fill's own colour when there is nothing to say,
  * rather than left off: a border that appears on focus and was not there
  * before moves the value it surrounds by two points on the frame the keyboard
  * opens.
  */
-export const inputBox = (
+export const fieldSurface = (
   theme: Theme,
   ground: InputGround,
   ring: keyof ColorPalette | null,
@@ -44,12 +49,21 @@ export const inputBox = (
   flexDirection: 'row',
   alignItems: 'center',
   gap: theme.spacing.sm,
-  height: theme.size.inputHeight,
   paddingHorizontal: theme.spacing.lg,
   borderRadius: theme.shape.input,
   borderWidth: theme.borderWidth.thick,
   borderColor: theme.colors[ring ?? INPUT_FILLS[ground]],
   backgroundColor: theme.colors[INPUT_FILLS[ground]],
+});
+
+/** That surface at the one height every text field in the app shares. */
+export const inputBox = (
+  theme: Theme,
+  ground: InputGround,
+  ring: keyof ColorPalette | null,
+): ViewStyle => ({
+  ...fieldSurface(theme, ground, ring),
+  height: theme.size.inputHeight,
   opacity: theme.opacity.full,
 });
 

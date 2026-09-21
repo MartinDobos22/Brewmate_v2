@@ -19,12 +19,12 @@ export const createSliderStyles = (theme: Theme): SliderStyleMap =>
     touchArea: { height: theme.size.minTouchTarget, justifyContent: 'center' },
     track: {
       height: theme.size.sliderTrackHeight,
-      borderRadius: theme.radius.xs,
+      borderRadius: theme.shape.pill,
       backgroundColor: theme.colors.surfaceDim,
     },
     fill: {
       height: theme.size.sliderTrackHeight,
-      borderRadius: theme.radius.xs,
+      borderRadius: theme.shape.pill,
       backgroundColor: theme.colors.primary,
     },
     thumb: {
@@ -33,7 +33,13 @@ export const createSliderStyles = (theme: Theme): SliderStyleMap =>
       height: theme.size.sliderThumbSize,
       borderRadius: theme.shape.pill,
       backgroundColor: theme.colors.espresso,
-      borderWidth: theme.borderWidth.thick,
+      /**
+       * A ring of the surface it sits on, thick enough to separate the thumb
+       * from the fill behind it: at a hairline the two browns meet and the
+       * control reads as a bulge in the track rather than as something to
+       * take hold of.
+       */
+      borderWidth: theme.borderWidth.ring,
       borderColor: theme.colors.surface,
       shadowColor: theme.colors.espresso,
       ...theme.elevation.card,

@@ -116,6 +116,12 @@ export const BORDER_WIDTH = {
   none: 0,
   thin: 1,
   thick: 2,
+  /**
+   * A ring drawn round a control to lift it off what it overlaps - the
+   * slider's thumb on its own fill. Thicker than a border, because it is
+   * separating two things rather than outlining one.
+   */
+  ring: 3,
 } as const;
 
 export type BorderWidthToken = keyof typeof BORDER_WIDTH;
