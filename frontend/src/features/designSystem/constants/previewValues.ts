@@ -1,4 +1,4 @@
-import type { StateGround, TileGlyph } from '../../../components/ui';
+import type { InputGround, StateGround, TileGlyph } from '../../../components/ui';
 import { BREW_RATIO, DOSE_GRAMS, GRIND_SETTING, WATER_TEMPERATURE_C } from '../../../constants';
 
 /** Sample values used to demonstrate the components. Never shown in production. */
@@ -27,3 +27,6 @@ export const DS_EMPTY_STATE_ICON = 'tray-remove' satisfies TileGlyph;
 
 /** The dark ground brew mode and the signed-out screens are drawn on. */
 export const DS_STATE_GROUND: StateGround = 'espresso';
+
+/** The dark ground a field is shown against, beside its ordinary one. */
+export const DS_INPUT_GROUND: InputGround = 'espresso';

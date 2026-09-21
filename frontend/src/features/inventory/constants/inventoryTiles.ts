@@ -59,3 +59,6 @@ export const BAG_GROUP_CAPTION_KEYS: Record<BagFreshness, TranslationKey> = {
   [BAG_FRESHNESS.resting]: TRANSLATION_KEYS.inventoryGroupRestingCaption,
   [BAG_FRESHNESS.unknown]: TRANSLATION_KEYS.inventoryGroupUnknownCaption,
 };
+
+/** The magnifier over the catalogue's own search box. */
+export const GRINDER_SEARCH_ICON = 'magnify' satisfies TileGlyph;

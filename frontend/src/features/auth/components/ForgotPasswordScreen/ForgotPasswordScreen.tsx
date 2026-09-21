@@ -1,17 +1,16 @@
 import { useState, type JSX } from 'react';
 import { View } from 'react-native';
 
-import { PillButton, Text } from '../../../../components/ui';
+import { Input, PillButton, Text } from '../../../../components/ui';
 import { ROUTES } from '../../../../constants';
 import { useIsOnline } from '../../../../hooks';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
-import { AUTH_ICONS } from '../../constants';
+import { AUTH_ICONS, AUTH_INPUT_GROUND } from '../../constants';
 import { useAuthMutation } from '../../hooks';
 import { sendPasswordReset, validateEmailAddress } from '../../services';
 import { AuthErrorMessage } from '../AuthErrorMessage';
 import { AuthNavigationLink } from '../AuthNavigationLink';
-import { AuthField } from '../AuthField';
 import { AuthScreenLayout } from '../AuthScreenLayout';
 
 import { createForgotPasswordScreenStyles } from './ForgotPasswordScreen.styles';
@@ -46,9 +45,11 @@ export const ForgotPasswordScreen = (): JSX.Element => {
       subtitle={t(TRANSLATION_KEYS.authResetBody)}
     >
       <View style={styles.form}>
-        <AuthField
+        <Input
           label={t(TRANSLATION_KEYS.authEmailLabel)}
           icon={AUTH_ICONS.email}
+          ground={AUTH_INPUT_GROUND}
+          autoCapitalize="none"
           placeholder={t(TRANSLATION_KEYS.authEmailPlaceholder)}
           value={email}
           onChangeText={setEmail}

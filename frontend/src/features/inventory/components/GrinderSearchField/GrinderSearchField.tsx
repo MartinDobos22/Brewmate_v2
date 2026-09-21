@@ -2,6 +2,7 @@ import type { JSX } from 'react';
 
 import { Input } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { GRINDER_SEARCH_ICON } from '../../constants';
 
 export interface GrinderSearchFieldProps {
   readonly value: string;
@@ -15,6 +16,7 @@ export const GrinderSearchField = ({ value, onChange }: GrinderSearchFieldProps)
   return (
     <Input
       label={t(TRANSLATION_KEYS.grinderSearchLabel)}
+      icon={GRINDER_SEARCH_ICON}
       placeholder={t(TRANSLATION_KEYS.grinderSearchPlaceholder)}
       value={value}
       onChangeText={onChange}

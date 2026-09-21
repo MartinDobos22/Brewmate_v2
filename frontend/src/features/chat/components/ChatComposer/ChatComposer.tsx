@@ -88,7 +88,7 @@ export const ChatComposer = ({
         </View>
         <PillButton
           tone={canSend ? 'espresso' : 'faint'}
-          size="small"
+          size="medium"
           icon={CHAT_COMPOSER_ICONS.send}
           spokenLabel={t(TRANSLATION_KEYS.recipeChatSend)}
           disabled={!canSend}

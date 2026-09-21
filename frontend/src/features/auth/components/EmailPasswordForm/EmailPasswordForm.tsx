@@ -1,10 +1,10 @@
 import { useState, type JSX, type ReactNode } from 'react';
 import { View } from 'react-native';
 
-import { PillButton } from '../../../../components/ui';
+import { Input, PillButton } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
-import { AUTH_ICONS } from '../../constants';
+import { AUTH_ICONS, AUTH_INPUT_GROUND } from '../../constants';
 import {
   hasCredentialError,
   validateCredentials,
@@ -12,7 +12,6 @@ import {
   type EmailCredentials,
 } from '../../services';
 import { AuthErrorMessage } from '../AuthErrorMessage';
-import { AuthField } from '../AuthField';
 
 import { NO_CREDENTIAL_ERRORS } from './credentialErrorState';
 import { createEmailPasswordFormStyles } from './EmailPasswordForm.styles';
@@ -62,9 +61,11 @@ export const EmailPasswordForm = ({
 
   return (
     <View style={styles.form}>
-      <AuthField
+      <Input
         label={t(TRANSLATION_KEYS.authEmailLabel)}
         icon={AUTH_ICONS.email}
+        ground={AUTH_INPUT_GROUND}
+        autoCapitalize="none"
         placeholder={t(TRANSLATION_KEYS.authEmailPlaceholder)}
         value={email}
         onChangeText={setEmail}
@@ -74,9 +75,11 @@ export const EmailPasswordForm = ({
         textContentType="emailAddress"
         disabled={isPending}
       />
-      <AuthField
+      <Input
         label={t(TRANSLATION_KEYS.authPasswordLabel)}
         icon={AUTH_ICONS.password}
+        ground={AUTH_INPUT_GROUND}
+        autoCapitalize="none"
         placeholder={t(TRANSLATION_KEYS.authPasswordPlaceholder)}
         value={password}
         onChangeText={setPassword}

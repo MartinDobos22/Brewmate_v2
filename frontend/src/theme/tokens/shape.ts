@@ -10,11 +10,17 @@ export const SHAPE = {
   checkbox: RADIUS.xs,
   badge: RADIUS.xs,
   chip: RADIUS.sm,
-  input: RADIUS.sm,
   smallButton: RADIUS.sm,
   button: RADIUS.md,
   listItem: RADIUS.md,
   card: RADIUS.lg,
+  /**
+   * A field is card-shaped rather than chip-shaped. It used to be 8, which
+   * was right for an outlined box a line and a half high and wrong for the
+   * filled box that replaced it: a fill needs a radius somebody can see, and
+   * the field sits inside cards carrying this one.
+   */
+  input: RADIUS.lg,
   sheet: RADIUS.xl,
   modal: RADIUS.xl,
   /** Avatar and circular progress only. Nothing else is a circle. */

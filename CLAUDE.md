@@ -235,12 +235,12 @@ frontend/
     │                   brewing, http, time, interpolation
     ├── i18n/           Slovak copy, split by domain under translations/sk/
     ├── components/
-    │   ├── ui/         Button, PillButton, Card, Tile, ActionRow, InfoNote,
+    │   ├── ui/         PillButton, Card, Tile, ActionRow, InfoNote,
     │   │               SectionHeading, Text, Input, Chip, OptionCard, Dropdown,
     │   │               Sheet, ListItem, ChatBubble, Slider, NumberStepper,
     │   │               ProgressBar, StepProgress, Dial, FigureRow, DriftingRings,
-    │   │               EmptyState, LoadingState, ErrorState, QueryState,
-    │   │               ValueDisplay - each its own folder
+    │   │               StateMark, EmptyState, LoadingState, ErrorState,
+    │   │               QueryState, ValueDisplay - each its own folder
     │   └── layout/     Screen, EspressoHeader, TileRow, AppProviders, RootStack,
     │                   TabsNavigator, TabBarIcon, BottomNavBar
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
@@ -329,6 +329,11 @@ Every button in this app shaped like a pill is `PillButton`, and every trio of
 recipe figures is `FigureRow`. Both exist because the screens had grown their
 own.
 
+- **There is no `Button`.** It was the outlined, square-cornered control the
+  app started from, and by the end it was a second way of drawing the same
+  pill: forty-eight call sites, four variants, and a `danger` that was a
+  component rather than a loudness. Retiring it left one pressable, which is
+  why a new button cannot arrive in a shape the app does not have.
 - **Fifteen pressables had become one shape written fifteen times.** Each
   carried its own `resolveStyle` closure, its own fill and its own height - and
   the heights were 40, 46, 48, 50, 52, 54 and 56, six of which no reader can
@@ -339,11 +344,13 @@ own.
   (`tone`), how big (`size`), whether it takes the row (`grows`). The fill, the
   text colour, the glyph's colour and size and the shadow all follow from
   those, so a new button cannot arrive in a colour the app does not have.
-- **Six tones, in three pairs:** one loud and one quiet for a light ground
-  (`espresso`, `surface`), the same two for an espresso one (`cream`,
-  `lifted`), and two specials - `surfaceLead`, whose glyph is the primary brown
-  because the mark is what the reader is looking for, and `faint`, which is a
-  control with nothing to do yet rather than a level of loudness.
+- **Seven tones, in three pairs and a state:** one loud and one quiet for a
+  light ground (`espresso`, `surface`), the same two for an espresso one
+  (`cream`, `lifted`), two specials - `surfaceLead`, whose glyph is the primary
+  brown because the mark is what the reader is looking for, and `faint`, which
+  is a control with nothing to do yet rather than a level of loudness - and
+  `danger`, which is a loudness rather than a second component: deleting an
+  account is the same pill saying a different thing.
 - **`raised` is asked for rather than carried by a tone.** The same cream pill
   is the loudest thing on the home screen and an ordinary answer inside a card,
   and only the first is lifted off what it sits on.
@@ -353,6 +360,39 @@ own.
   type variants and a colour. The rules between the columns belong to the row,
   because a rule sits _between_ two figures and a column drawing its own
   leading edge would print one against the card's padding.
+
+### One field, two grounds
+
+`Input` is every text box in the app, and the two it replaced say why it takes
+a `ground` rather than being copied for the second one.
+
+- **A field is filled, and its ring is kept back for when it has something to
+  say.** The outlined box this replaced drew a border in every state, which
+  left the design nothing to do with one: focus, an error and a value read off
+  a photograph in bad light were the same rectangle in three colours, two of
+  which are only distinguishable side by side. The resting ring is drawn in the
+  fill's own colour rather than left off, because a border that appears on
+  focus and was not there before moves the value it surrounds by two points on
+  the frame the keyboard opens.
+- **`resolveInputRing` decides which of four things is true, and the order is
+  the rule.** An error wins over everything: a ring saying "worth a glance"
+  over a value the form has already refused would be the app hedging about its
+  own complaint. An unverified value wins over focus for the same reason in
+  miniature - a figure read off a photograph is worth marking while somebody is
+  standing in it, not only before they arrive.
+- **The signed-out screens were a second field component.** `AuthField` existed
+  because `Input` could not be told it was standing on brown; everything else
+  about the two was the same box, and the copy had quietly acquired the one
+  thing every masked field on a phone needs - an eye that unmasks it. Merging
+  them gave the shared field the eye and gave the dark form one less component
+  to keep in step.
+- **`autoCapitalize` also decides autocorrect**, because the two answer one
+  question. A field told not to capitalise its first letter is holding
+  something that is not language - an address, a search term, a model number -
+  and every one of those is made worse by a dictionary.
+- **A field's label is an eyebrow with an optional glyph.** Small and tracked
+  out, so a column of them reads as labels rather than as a column of headings,
+  and the mark is what turns one back into a heading for the box under it.
 
 ### Getting out of a screen
 
@@ -1596,6 +1636,27 @@ a limit legible rather than punitive.
 - **`QueryState` is the waiting room every screen shares.** One component for
   the two states that otherwise turn into a blank screen: a query that has not
   answered yet, and one that failed. The failure always carries a retry.
+- **`StateMark` is the one picture an empty screen gets**, and every one of
+  them gets the same one: two dashed rings round the glyph of whatever is
+  missing, built from the same borders and radii as every other decoration
+  here. It was written for the cupboard and is the same object on an empty
+  timeline, an empty catalogue and a route that does not exist - drawn
+  differently on each, those would be four apps. An illustration would have a
+  fixed palette and be wrong in one of the two colour schemes the day it was
+  added.
+- **A state that confirms something draws no mark.** A bag written into the
+  cupboard, a coffee bought and a coffee left on the shelf all use this shape,
+  and none of them has anything missing to draw. The only mark available would
+  be a tick, which on the scan's two endings would grade the decision somebody
+  had just made.
+- **The error state is a disconnected signal, not a warning triangle.** Almost
+  every failure it is drawn for is a request that never arrived, and a triangle
+  tells the reader they did something wrong.
+- **All four take a `ground`**, because two screens in this app are dark in
+  both colour schemes. Brew mode used to work around that by turning itself
+  light until the recipe arrived - so opening it flashed white and then went
+  black, on the one screen in the product held at arm's length over a kettle.
+  The ground now belongs to the route; only the padding follows the content.
 - **No raw error code ever reaches the interface.** `resolveRequestErrorKeys`
   maps every `ERROR_CODES` value and every client-side failure onto a Slovak
   sentence, and the map is total, so a new error code is a type error here

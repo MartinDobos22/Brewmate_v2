@@ -3,7 +3,12 @@
  * so they live here rather than inside a StyleSheet.
  */
 export const SIZE = {
-  inputHeight: 48,
+  /**
+   * Every text field in the app, and the round button beside the one in the
+   * chat composer - a field and the control that submits it reading as two
+   * different heights is the one thing a bar of two elements must not do.
+   */
+  inputHeight: 52,
   chipHeight: 32,
   /**
    * A chip that states a fact rather than offering a choice. Smaller than a
@@ -273,8 +278,6 @@ export const SIZE = {
   brandMarkInner: 34,
   /** The ring set hanging off the top of a signed-out screen, behind the mark. */
   authRingsSize: 380,
-  /** A field on the signed-out screens, which are the only dark forms in the app. */
-  authFieldHeight: 52,
 } as const;
 
 /** Dimensions expressed as a share of the parent. */

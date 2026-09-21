@@ -1,6 +1,8 @@
 import type MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { ComponentProps } from 'react';
 
+import type { InputGround } from '../../../components/ui';
+
 type MaterialIconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
 
 /**
@@ -26,8 +28,13 @@ export const BRAND_BREATH = {
 export const AUTH_ICONS = {
   email: 'email-outline',
   password: 'lock-outline',
-  reveal: 'eye-outline',
-  conceal: 'eye-off-outline',
   submit: 'arrow-right',
   google: 'google',
 } as const satisfies Record<string, MaterialIconName>;
+
+/**
+ * These screens are dark in both colour schemes, so their fields have to be
+ * told what they are standing on - a bordered white box on the brown would be
+ * a piece of some other application dropped onto it.
+ */
+export const AUTH_INPUT_GROUND: InputGround = 'espresso';
