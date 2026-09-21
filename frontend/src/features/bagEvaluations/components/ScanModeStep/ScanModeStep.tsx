@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { OptionCard, Text } from '../../../../components/ui';
+import { ActionRow } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { SCAN_ICONS } from '../../constants';
@@ -22,7 +22,9 @@ export interface ScanModeStepProps {
  * front of somebody who already owns the coffee.
  *
  * The shop question comes first: it is the one thing a brand-new account can
- * do in its first minute and get something real back from.
+ * do in its first minute and get something real back from. Both rows carry the
+ * same weight - neither is a fallback - and only the disc under the glyph
+ * differs, so the eye finds the right one without reading two sentences.
  */
 export const ScanModeStep = ({ onChoose }: ScanModeStepProps): JSX.Element => {
   const styles = useThemedStyles(createScanModeStepStyles);
@@ -30,21 +32,20 @@ export const ScanModeStep = ({ onChoose }: ScanModeStepProps): JSX.Element => {
 
   return (
     <View style={styles.options}>
-      <Text variant="bodyMedium" tone="muted">
-        {t(TRANSLATION_KEYS.scanIntro)}
-      </Text>
-      <OptionCard
-        label={t(TRANSLATION_KEYS.scanModeVerdictTitle)}
-        note={t(TRANSLATION_KEYS.scanModeVerdictBody)}
+      <ActionRow
         icon={SCAN_ICONS.shop}
+        accent="cream"
+        title={t(TRANSLATION_KEYS.scanModeVerdictTitle)}
+        caption={t(TRANSLATION_KEYS.scanModeVerdictBody)}
         onPress={(): void => {
           onChoose(BAG_SCAN_MODES.verdict);
         }}
       />
-      <OptionCard
-        label={t(TRANSLATION_KEYS.scanModeInventoryTitle)}
-        note={t(TRANSLATION_KEYS.scanModeInventoryBody)}
+      <ActionRow
         icon={SCAN_ICONS.cupboard}
+        accent="fresh"
+        title={t(TRANSLATION_KEYS.scanModeInventoryTitle)}
+        caption={t(TRANSLATION_KEYS.scanModeInventoryBody)}
         onPress={(): void => {
           onChoose(BAG_SCAN_MODES.inventory);
         }}

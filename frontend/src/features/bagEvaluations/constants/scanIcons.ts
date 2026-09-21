@@ -1,8 +1,16 @@
 import type { TileGlyph } from '../../../components/ui';
 
+import { SCAN_OUTCOMES, type ScanOutcome } from './scanOutcomes';
+
 /** The glyphs on the scanner's tiles and in its argument. */
 export const SCAN_ICONS = {
   camera: 'camera-outline',
+  /** On the button rather than beside the heading, so it reads as the act. */
+  capture: 'camera',
+  library: 'image-outline',
+  /** The window standing in for a photograph nobody has taken yet. */
+  viewfinder: 'image-filter-center-focus-weak',
+  history: 'history',
   manual: 'pencil-outline',
   verdict: 'comment-question-outline',
   shop: 'storefront-outline',
@@ -26,7 +34,13 @@ export const SCAN_ICONS = {
  * cross, because leaving a coffee on the shelf is not a failure and the screen
  * must not read as though it were.
  */
-export const OUTCOME_ICONS = {
-  bought: 'basket-check-outline',
-  left: 'close',
-} as const satisfies Record<string, TileGlyph>;
+export const OUTCOME_ICONS: Record<ScanOutcome, TileGlyph> = {
+  [SCAN_OUTCOMES.bought]: 'basket-check-outline',
+  [SCAN_OUTCOMES.left]: 'close-circle-outline',
+  /**
+   * Neither, which is the ordinary case: somebody who asked about a bag and
+   * never came back to say. A question mark rather than an empty slot, so the
+   * column of marks stays a column.
+   */
+  [SCAN_OUTCOMES.undecided]: 'help-circle-outline',
+};

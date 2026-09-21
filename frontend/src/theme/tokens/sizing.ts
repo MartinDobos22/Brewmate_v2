@@ -178,6 +178,20 @@ export const SIZE = {
   optionCardMinHeight: 72,
   /** The disc its glyph sits in, which is what makes a column of them scannable. */
   optionBadgeSize: 40,
+  /**
+   * The scanner's own block: the badge over its title, and the window that
+   * stands in for the photograph nobody has taken yet.
+   *
+   * The window is sized to be a picture rather than a button - it is the one
+   * thing on that card that says what the camera is for, and at button height
+   * it would read as a third control between the two real ones.
+   */
+  scanBadgeSize: 46,
+  scanViewfinderHeight: 170,
+  scanViewfinderInset: 22,
+  /** The camera, and the two quieter ways in beside each other under it. */
+  scanCaptureHeight: 52,
+  scanAlternativeHeight: 48,
   /** The round way back and the pill out of a step of onboarding. */
   onboardingBackSize: 42,
   onboardingSkipHeight: 38,

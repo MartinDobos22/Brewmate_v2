@@ -14,6 +14,8 @@ type ActionRowStyleMap = ViewStyles<
   | 'badgeEspressoInset'
   | 'badgeSurface'
   | 'badgeFresh'
+  | 'badgeCream'
+  | 'badgeFreshAccent'
 >;
 
 /**
@@ -60,6 +62,8 @@ export const createActionRowStyles = (theme: Theme): ActionRowStyleMap =>
     badgeEspressoInset: { backgroundColor: theme.colors.espressoLift },
     badgeSurface: { backgroundColor: theme.colors.surfaceVariant },
     badgeFresh: { backgroundColor: theme.colors.background },
+    badgeCream: { backgroundColor: theme.colors.cream },
+    badgeFreshAccent: { backgroundColor: theme.colors.freshContainer },
     body: { flex: 1, minWidth: 0, gap: theme.spacing.xxs },
     pressed: { opacity: theme.opacity.pressed },
   });

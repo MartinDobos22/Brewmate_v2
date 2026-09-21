@@ -50,3 +50,25 @@ export const ACTION_ROW_CAPTION_TONES = {
 } as const satisfies Record<ActionRowTone, TextTone>;
 
 export const ACTION_ROW_CHEVRON = 'chevron-right';
+
+/**
+ * A tint for the glyph's disc alone, where two rows of the same tone have to
+ * be told apart at a glance.
+ *
+ * The scanner's two intents are the case: both are ordinary answers on an
+ * ordinary card, so neither may be louder than the other - but "I am standing
+ * in a shop" and "I already own this" are different enough kinds of act that
+ * the eye should not have to read two sentences to find the right one. It
+ * recolours the disc and nothing else, so the row's own weight is untouched.
+ */
+export type ActionRowAccent = 'cream' | 'fresh';
+
+export const ACTION_ROW_ACCENT_BADGES = {
+  cream: 'badgeCream',
+  fresh: 'badgeFreshAccent',
+} as const satisfies Record<ActionRowAccent, string>;
+
+export const ACTION_ROW_ACCENT_ICON_COLORS = {
+  cream: 'onCream',
+  fresh: 'onFresh',
+} as const satisfies Record<ActionRowAccent, keyof ColorPalette>;

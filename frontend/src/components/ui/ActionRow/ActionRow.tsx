@@ -8,12 +8,15 @@ import type { TileGlyph } from '../Tile';
 
 import { createActionRowStyles } from './ActionRow.styles';
 import {
+  ACTION_ROW_ACCENT_BADGES,
+  ACTION_ROW_ACCENT_ICON_COLORS,
   ACTION_ROW_CAPTION_TONES,
   ACTION_ROW_CHEVRON,
   ACTION_ROW_CHEVRON_COLORS,
   ACTION_ROW_ICON_COLORS,
   ACTION_ROW_TITLE_TONES,
   DEFAULT_ACTION_ROW_TONE,
+  type ActionRowAccent,
   type ActionRowTone,
 } from './actionRowTones';
 
@@ -30,6 +33,8 @@ export interface ActionRowProps {
   /** One line saying what pressing this does, where the title does not say it. */
   readonly caption?: string;
   readonly tone?: ActionRowTone;
+  /** Recolours the glyph's disc alone, to tell two rows of one tone apart. */
+  readonly accent?: ActionRowAccent;
   readonly onPress: () => void;
 }
 
@@ -39,6 +44,7 @@ export const ActionRow = ({
   title,
   caption,
   tone = DEFAULT_ACTION_ROW_TONE,
+  accent,
   onPress,
 }: ActionRowProps): JSX.Element => {
   const styles = useThemedStyles(createActionRowStyles);
@@ -57,11 +63,22 @@ export const ActionRow = ({
       accessibilityRole="button"
       accessibilityLabel={caption === undefined ? title : `${title}. ${caption}`}
     >
-      <View style={[styles.badge, styles[BADGE_STYLES[tone]]]}>
+      <View
+        style={[
+          styles.badge,
+          styles[accent === undefined ? BADGE_STYLES[tone] : ACTION_ROW_ACCENT_BADGES[accent]],
+        ]}
+      >
         <MaterialCommunityIcons
           name={icon}
           size={theme.size.iconMedium}
-          color={theme.colors[ACTION_ROW_ICON_COLORS[tone]]}
+          color={
+            theme.colors[
+              accent === undefined
+                ? ACTION_ROW_ICON_COLORS[tone]
+                : ACTION_ROW_ACCENT_ICON_COLORS[accent]
+            ]
+          }
         />
       </View>
       <View style={styles.body}>
