@@ -923,11 +923,15 @@ where the two meet.
   it. This screen exists to be used inside a building on one bar, and an app
   that answers "skús to znova" there has answered nothing.
 - **The reasoning and the gaps are stored separately**, as the API already
-  models them, and both are printed - folded away behind one tap, because in a
-  shop the sentence is wanted first and the argument is what somebody opens when
-  they want to disagree with it. `profileConfidenceAtTime` is stamped by the
-  server, so how much that afternoon's advice was worth stays readable a month
-  later.
+  models them, and both are printed - open, with no disclosure button. They
+  used to be folded away on the argument that in a shop the sentence is wanted
+  first, which was true and still cost the screen its whole purpose: a verdict
+  whose argument is behind a tap is one nobody checks, and the only reason to
+  believe this one rather than a number is that the argument is right there.
+  Each reason carries the mark of the fact it was argued from - a roast, a set
+  of notes, a date, the taste comparison - which classifies without grading.
+  `profileConfidenceAtTime` is stamped by the server, so how much that
+  afternoon's advice was worth stays readable a month later.
 
 ### Two modes, one parsing layer
 

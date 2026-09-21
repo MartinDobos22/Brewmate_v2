@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { Card, PillButton, Text } from '../../../../components/ui';
+import { Card, PillButton, SectionHeading, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useExportAccount } from '../../hooks';
 
@@ -22,10 +22,11 @@ export const AccountDataCard = (): JSX.Element => {
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.privacyTitle)}</Text>
-      <Text variant="bodySmall" tone="muted">
-        {t(TRANSLATION_KEYS.privacyExportBody)}
-      </Text>
+      <SectionHeading
+        title={t(TRANSLATION_KEYS.privacyTitle)}
+        caption={t(TRANSLATION_KEYS.privacyExportBody)}
+        placement="card"
+      />
       <PillButton
         tone="surface"
         label={t(

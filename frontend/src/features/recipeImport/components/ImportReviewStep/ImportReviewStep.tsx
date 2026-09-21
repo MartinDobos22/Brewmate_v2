@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Card, PillButton, Text } from '../../../../components/ui';
+import { Card, PillButton, SectionHeading, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import type { RecipeImport } from '../../hooks';
@@ -32,10 +32,11 @@ export const ImportReviewStep = ({ recipeImport }: ImportReviewStepProps): JSX.E
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.importReviewTitle)}</Text>
-      <Text variant="bodySmall" tone="muted">
-        {t(TRANSLATION_KEYS.importReviewIntro)}
-      </Text>
+      <SectionHeading
+        title={t(TRANSLATION_KEYS.importReviewTitle)}
+        caption={t(TRANSLATION_KEYS.importReviewIntro)}
+        placement="card"
+      />
       <ImportReviewFields
         values={recipeImport.form}
         disabled={recipeImport.isConverting}

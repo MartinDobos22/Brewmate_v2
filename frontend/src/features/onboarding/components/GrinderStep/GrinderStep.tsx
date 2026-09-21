@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { PillButton, Text } from '../../../../components/ui';
+import { Card, PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { EquipmentSummaryList, GrinderPicker } from '../../../inventory/components';
@@ -37,11 +37,13 @@ export const GrinderStep = ({ flow }: GrinderStepProps): JSX.Element => {
       <Text variant="bodyMedium" tone="muted">
         {t(TRANSLATION_KEYS.setupGrinderBody)}
       </Text>
-      <EquipmentSummaryList
-        items={inventory.owned}
-        emptyText={t(TRANSLATION_KEYS.setupGrinderNoneNote)}
-        onRemove={inventory.remove}
-      />
+      <Card>
+        <EquipmentSummaryList
+          items={inventory.owned}
+          emptyText={t(TRANSLATION_KEYS.setupGrinderNoneNote)}
+          onRemove={inventory.remove}
+        />
+      </Card>
       <View style={styles.picker}>
         <GrinderPicker onSelect={inventory.add} />
       </View>

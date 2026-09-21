@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Card, PillButton, Text } from '../../../../components/ui';
+import { Card, PillButton, SectionHeading, Text } from '../../../../components/ui';
 import { ROUTES, buildRecipeChatRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
@@ -52,10 +52,11 @@ export const BrewDonePanel = ({
       </Text>
       {isQueued ? (
         <Card>
-          <Text variant="titleMedium">{t(TRANSLATION_KEYS.brewModeQueuedTitle)}</Text>
-          <Text variant="bodySmall" tone="muted">
-            {t(TRANSLATION_KEYS.brewModeQueuedBody)}
-          </Text>
+          <SectionHeading
+            title={t(TRANSLATION_KEYS.brewModeQueuedTitle)}
+            caption={t(TRANSLATION_KEYS.brewModeQueuedBody)}
+            placement="card"
+          />
         </Card>
       ) : null}
       <PillButton

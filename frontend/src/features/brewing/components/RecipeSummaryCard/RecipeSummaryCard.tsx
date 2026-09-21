@@ -2,7 +2,7 @@ import type { BrewMethod, BrewParams } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Card, Text, ValueDisplay } from '../../../../components/ui';
+import { Card, SectionHeading, Text, ValueDisplay } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { formatGrams, formatRatio, formatTemperature } from '../../../../lib/formatters';
 import { useThemedStyles } from '../../../../theme';
@@ -35,10 +35,7 @@ export const RecipeSummaryCard = ({
 
   return (
     <Card>
-      <Text variant="titleMedium">{title}</Text>
-      <Text variant="bodyMedium" tone="muted">
-        {method.nameSk}
-      </Text>
+      <SectionHeading title={title} caption={method.nameSk} placement="card" />
       <View style={styles.values}>
         <ValueDisplay
           label={t(TRANSLATION_KEYS.recipeDose)}
