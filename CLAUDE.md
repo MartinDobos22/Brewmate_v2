@@ -361,6 +361,30 @@ own.
   because a rule sits _between_ two figures and a column drawing its own
   leading edge would print one against the card's padding.
 
+### One chip, and what a pill means here
+
+- **A chip that can be selected is a control; one that cannot is a pill.**
+  That is the whole rule, and it is what `selected` means: naming it at all
+  makes the chip a filter token and gives it the square-ish radius the rest of
+  this app's controls have. Material pills its chips and Brewmate does not,
+  precisely so that a pill can mean something - there is nothing to choose
+  here, this is a fact or a shortcut.
+- **Pressing is a separate question.** A shortcut in the chat composer is a
+  pill and is pressed; it fills the box and never stays chosen. A roast level
+  in a form is a control and stays chosen. Reading the two off one prop would
+  have made every shortcut look like an answer somebody had given.
+- **Three pills became one.** An attribute on a bag's card, a flavour the
+  profile has an opinion about and a shortcut to writing were three components
+  with three heights - 26, 34 and 32 - and three fills. Two heights remain,
+  because 34 and 32 are a difference no reader can see and one every new chip
+  would have had to guess at.
+- **Three tones, and `lifted` is the odd one.** `neutral` and `fresh` are
+  fills; `lifted` is the card surface, which is the colour of most of what a
+  chip sits on - so it is the one tone that needs a shadow to exist at all.
+  It is for a fact that has to read as present beside one that is painted, and
+  a flavour somebody dislikes is exactly that: as much a fact about them as
+  one they love, so it is quiet rather than absent or marked as wrong.
+
 ### One card, two depths
 
 - **There are no borders on cards.** That is the redesign's sentence, not a
@@ -381,8 +405,15 @@ own.
   needs clipping clips itself, which the progress bar and the tile already do.
 - **The gap inside a card is 16, and a title with its own caption is one
   child.** Two loose children 16 apart read as two unrelated things, so a
-  heading and the line under it go through `SectionHeading` - which is what it
-  is for - rather than sitting in the card as a pair.
+  heading and the line under it go through `SectionHeading` with
+  `placement="card"` - which drops the top padding a group label carries on a
+  screen, because the card's own padding is already there.
+- **A `ListItem` is drawn on whatever it sits on.** It used to paint itself
+  the surface colour, which is the colour of the card under it - so the fill
+  did nothing except stop any other ground showing through, and a row on one
+  was a white block on it. A list that wants to read as one continuous sheet
+  paints its own container, which is the grinder catalogue's decision to make
+  rather than the row's.
 
 ### One field, two grounds
 

@@ -68,7 +68,7 @@ export const CoffeeBagCard = ({
           <Text variant="itemTitle">{bag.name}</Text>
           <View style={styles.chips}>
             {bagAttributes(bag, roastLabel).map((attribute: string): JSX.Element => (
-              <Chip key={attribute} label={attribute} />
+              <Chip key={attribute} label={attribute} size="small" />
             ))}
           </View>
           <BagFreshnessStatus bag={bag} />

@@ -2,6 +2,7 @@ import { useState, type JSX } from 'react';
 
 import { Chip, PillButton } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { DS_CHIP_ICON } from '../../constants';
 import { SectionBlock } from '../SectionBlock';
 
 const noop = (): void => undefined;
@@ -36,8 +37,13 @@ export const ButtonsSection = (): JSX.Element => {
           setSelected(!selected);
         }}
       />
-      <Chip label={t(TRANSLATION_KEYS.dsChipDefault)} onPress={noop} />
-      <Chip label={t(TRANSLATION_KEYS.dsChipDisabled)} onPress={noop} disabled />
+      <Chip label={t(TRANSLATION_KEYS.dsChipDefault)} selected={false} onPress={noop} />
+      <Chip label={t(TRANSLATION_KEYS.dsChipDisabled)} selected={false} onPress={noop} disabled />
+      <Chip label={t(TRANSLATION_KEYS.dsChipFact)} size="small" />
+      <Chip label={t(TRANSLATION_KEYS.dsChipNeutral)} icon={DS_CHIP_ICON} />
+      <Chip label={t(TRANSLATION_KEYS.dsChipFresh)} icon={DS_CHIP_ICON} tone="fresh" />
+      <Chip label={t(TRANSLATION_KEYS.dsChipLifted)} icon={DS_CHIP_ICON} tone="lifted" />
+      <Chip label={t(TRANSLATION_KEYS.dsChipShortcut)} icon={DS_CHIP_ICON} onPress={noop} />
     </SectionBlock>
   );
 };

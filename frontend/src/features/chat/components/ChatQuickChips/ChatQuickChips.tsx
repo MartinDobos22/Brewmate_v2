@@ -1,10 +1,9 @@
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { JSX } from 'react';
-import { Pressable, ScrollView, type StyleProp, type ViewStyle } from 'react-native';
+import { ScrollView } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { Chip } from '../../../../components/ui';
 import { useTranslation } from '../../../../i18n';
-import { useTheme, useThemedStyles } from '../../../../theme';
+import { useThemedStyles } from '../../../../theme';
 import { CHAT_QUICK_CHIPS, type ChatQuickChip } from '../../constants';
 
 import { createChatQuickChipsStyles } from './ChatQuickChips.styles';
@@ -23,17 +22,14 @@ export interface ChatQuickChipsProps {
  * decode. They sit above the input rather than instead of it: the whole point
  * of asking an open question is that the interesting answers are the ones
  * nobody anticipated.
+ *
+ * They are the shared pill rather than a private copy of it, and they carry
+ * no `selected` for the reason above - nothing here is chosen, a chip fills
+ * the box and the box is what answers.
  */
 export const ChatQuickChips = ({ disabled, onPick }: ChatQuickChipsProps): JSX.Element => {
   const styles = useThemedStyles(createChatQuickChipsStyles);
-  const theme = useTheme();
   const { t } = useTranslation();
-
-  const chipStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
-    styles.chip,
-    pressed && !disabled && styles.pressed,
-    disabled && styles.disabled,
-  ];
 
   return (
     <ScrollView
@@ -42,32 +38,17 @@ export const ChatQuickChips = ({ disabled, onPick }: ChatQuickChipsProps): JSX.E
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={styles.row}
     >
-      {CHAT_QUICK_CHIPS.map((chip: ChatQuickChip): JSX.Element => {
-        const label = t(chip.labelKey);
-
-        return (
-          <Pressable
-            key={chip.labelKey}
-            style={chipStyle}
-            disabled={disabled}
-            onPress={(): void => {
-              onPick(t(chip.messageKey));
-            }}
-            accessibilityRole="button"
-            accessibilityState={{ disabled }}
-            accessibilityLabel={label}
-          >
-            <MaterialCommunityIcons
-              name={chip.icon}
-              size={theme.size.iconTiny}
-              color={theme.colors.onSurfaceVariant}
-            />
-            <Text variant="statusLabel" tone="muted">
-              {label}
-            </Text>
-          </Pressable>
-        );
-      })}
+      {CHAT_QUICK_CHIPS.map((chip: ChatQuickChip): JSX.Element => (
+        <Chip
+          key={chip.labelKey}
+          label={t(chip.labelKey)}
+          icon={chip.icon}
+          disabled={disabled}
+          onPress={(): void => {
+            onPick(t(chip.messageKey));
+          }}
+        />
+      ))}
     </ScrollView>
   );
 };

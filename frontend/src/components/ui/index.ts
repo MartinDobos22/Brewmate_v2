@@ -2,8 +2,8 @@ export { Card, DEFAULT_CARD_DEPTH } from './Card';
 export type { CardProps, CardDepth } from './Card';
 export { ChatBubble, CHAT_AUTHORS } from './ChatBubble';
 export type { ChatBubbleProps, ChatAuthor } from './ChatBubble';
-export { Chip } from './Chip';
-export type { ChipProps } from './Chip';
+export { Chip, DEFAULT_CHIP_TONE, DEFAULT_CHIP_SIZE } from './Chip';
+export type { ChipProps, ChipTone, ChipSize } from './Chip';
 export { Dropdown, DropdownTrigger, filterDropdownOptions } from './Dropdown';
 export type {
   DropdownProps,
@@ -29,8 +29,8 @@ export { ProgressBar } from './ProgressBar';
 export type { ProgressBarProps } from './ProgressBar';
 export { QueryState } from './QueryState';
 export type { QueryStateProps } from './QueryState';
-export { SectionHeading } from './SectionHeading';
-export type { SectionHeadingProps } from './SectionHeading';
+export { SectionHeading, DEFAULT_SECTION_HEADING_PLACEMENT } from './SectionHeading';
+export type { SectionHeadingProps, SectionHeadingPlacement } from './SectionHeading';
 export { Sheet } from './Sheet';
 export type { SheetProps } from './Sheet';
 export { Slider, clampToStep, toRatio, fromRatio } from './Slider';

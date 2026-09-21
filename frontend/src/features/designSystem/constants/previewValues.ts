@@ -30,3 +30,6 @@ export const DS_STATE_GROUND: StateGround = 'espresso';
 
 /** The dark ground a field is shown against, beside its ordinary one. */
 export const DS_INPUT_GROUND: InputGround = 'espresso';
+
+/** Something for the pill chips to carry, so the mark's spacing is checkable. */
+export const DS_CHIP_ICON = 'fruit-citrus' satisfies TileGlyph;

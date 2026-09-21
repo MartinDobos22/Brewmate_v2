@@ -89,11 +89,9 @@ export const SIZE = {
   radarChartLabelInset: 46,
   /** The same web on a home tile, where it is read as a shape and has no labels. */
   radarChartCompactSize: 96,
-  /** One axis's glyph in the list under the chart. */
   /** The circle a signed-in person is represented by. */
   profileAvatarSize: 46,
-  /** A flavour the profile has an opinion about. */
-  flavorChipHeight: 34,
+  /** One axis's glyph in the list under the chart. */
   axisRowGlyph: 19,
   /**
    * How far a divider is inset past that glyph, so the marks form a column of

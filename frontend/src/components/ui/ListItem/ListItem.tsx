@@ -1,27 +1,34 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { JSX, ReactNode } from 'react';
 import { Pressable, View, type StyleProp, type ViewStyle } from 'react-native';
 
-import { useThemedStyles } from '../../../theme';
+import { useTheme, useThemedStyles } from '../../../theme';
 import { Text } from '../Text';
+import type { TileGlyph } from '../Tile';
 
 import { createListItemStyles } from './ListItem.styles';
 
 export interface ListItemProps {
   readonly title: string;
   readonly subtitle?: string;
+  /** A mark in a column of its own before the title. */
+  readonly icon?: TileGlyph;
   readonly trailing?: ReactNode;
   readonly onPress?: () => void;
   readonly showDivider?: boolean;
 }
 
+/** One row in a list, drawn on whatever it sits on. */
 export const ListItem = ({
   title,
   subtitle,
+  icon,
   trailing,
   onPress,
   showDivider = false,
 }: ListItemProps): JSX.Element => {
   const styles = useThemedStyles(createListItemStyles);
+  const theme = useTheme();
 
   const resolveStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
     styles.base,
@@ -37,10 +44,19 @@ export const ListItem = ({
       accessibilityRole={onPress === undefined ? 'text' : 'button'}
       accessibilityLabel={title}
     >
+      {icon === undefined ? null : (
+        <View style={styles.mark}>
+          <MaterialCommunityIcons
+            name={icon}
+            size={theme.size.iconRow}
+            color={theme.colors.onSurfaceVariant}
+          />
+        </View>
+      )}
       <View style={styles.content}>
-        <Text variant="titleMedium">{title}</Text>
+        <Text variant="rowTitle">{title}</Text>
         {subtitle === undefined ? null : (
-          <Text variant="bodySmall" tone="muted">
+          <Text variant="caption" tone="muted">
             {subtitle}
           </Text>
         )}
