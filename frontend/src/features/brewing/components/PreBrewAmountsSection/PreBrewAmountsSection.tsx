@@ -53,7 +53,7 @@ export const PreBrewAmountsSection = ({
   );
 
   return (
-    <Card variant="softEmphasis">
+    <Card depth="emphasis">
       <View style={styles.heading}>
         <MaterialCommunityIcons
           name={CALCULATOR_ICONS.section}

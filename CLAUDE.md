@@ -361,6 +361,29 @@ own.
   because a rule sits _between_ two figures and a column drawing its own
   leading edge would print one against the card's padding.
 
+### One card, two depths
+
+- **There are no borders on cards.** That is the redesign's sentence, not a
+  preference: depth replaced the hairlines outright, so two cards on a screen
+  are told apart by how far each stands off the ground rather than by a line
+  round one of them.
+- **Six variants were two questions asked at once** - which surface, and
+  whether there was an outline. Four of the six differed by a tint no reader
+  compares across a scroll, and the outline was drawn on every card whether or
+  not it was separating anything. What is left is `depth`, which is the only
+  thing a caller still has to decide.
+- **`emphasis` is a comparison, never a level.** The ready bag above the
+  ageing one, the latest version of a recipe above the first, the pinned
+  recipe among the saved ones. A screen with one card on it never names it -
+  a card raised above nothing is a card with a shadow for decoration.
+- **A card does not clip itself.** `overflow: hidden` sets `masksToBounds` on
+  iOS, which removes the one thing the card is now built out of. Anything that
+  needs clipping clips itself, which the progress bar and the tile already do.
+- **The gap inside a card is 16, and a title with its own caption is one
+  child.** Two loose children 16 apart read as two unrelated things, so a
+  heading and the line under it go through `SectionHeading` - which is what it
+  is for - rather than sitting in the card as a pair.
+
 ### One field, two grounds
 
 `Input` is every text box in the app, and the two it replaced say why it takes

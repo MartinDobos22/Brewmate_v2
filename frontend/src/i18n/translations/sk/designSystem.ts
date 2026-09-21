@@ -30,6 +30,7 @@ export const SK_DESIGN_SYSTEM = {
   dsInputHelp: 'Tak, ako to máš napísané na balíčku.',
   dsInputErrorLabel: 'Vstup s chybou',
   dsInputErrorText: 'Toto pole je povinné.',
+  dsCardEmphasisTitle: 'Zdôraznená karta',
   dsInputUnverifiedLabel: 'Neoverená hodnota',
   dsInputUnverifiedHelp: 'Prečítané z fotky - pozri sa na to, kým to uložíš.',
   dsInputSecretLabel: 'Skryté pole',

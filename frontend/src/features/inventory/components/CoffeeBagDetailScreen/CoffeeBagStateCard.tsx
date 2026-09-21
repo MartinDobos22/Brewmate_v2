@@ -21,7 +21,7 @@ export interface CoffeeBagStateCardProps {
  * the room in the world to say what is true of it in words.
  */
 export const CoffeeBagStateCard = ({ bag }: CoffeeBagStateCardProps): JSX.Element => (
-  <Card variant="container">
+  <Card>
     <BagRemainingBar bag={bag} />
     <BagFreshnessStatus bag={bag} />
   </Card>

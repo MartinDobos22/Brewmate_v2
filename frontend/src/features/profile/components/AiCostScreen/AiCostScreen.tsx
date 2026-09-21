@@ -55,7 +55,7 @@ export const AiCostScreen = (): JSX.Element => {
             titleKey={TRANSLATION_KEYS.aiCostsMonthTitle}
           />
           <AiCostBreakdown totals={summary.data.byFunction} />
-          <Card variant="container">
+          <Card>
             <Text variant="titleMedium">{t(TRANSLATION_KEYS.aiCostsWhatCountsTitle)}</Text>
             <Text variant="bodySmall" tone="muted">
               {t(TRANSLATION_KEYS.aiCostsWhatCountsBody)}

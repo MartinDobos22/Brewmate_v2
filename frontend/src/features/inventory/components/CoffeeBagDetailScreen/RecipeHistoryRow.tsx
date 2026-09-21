@@ -27,7 +27,7 @@ export const RecipeHistoryRow = ({ recipe }: RecipeHistoryRowProps): JSX.Element
   const dose = `${formatGrams(recipe.params.doseGrams)} ${t(TRANSLATION_KEYS.unitGrams)}`;
 
   return (
-    <Card variant={recipe.isPinned ? 'containerHigh' : 'outlined'}>
+    <Card depth={recipe.isPinned ? 'emphasis' : 'rest'}>
       <Text variant="labelSmall" tone={recipe.isPinned ? 'secondary' : 'muted'}>
         {t(recipe.isPinned ? TRANSLATION_KEYS.bagRecipePinned : TRANSLATION_KEYS.bagRecipeSaved)}
       </Text>

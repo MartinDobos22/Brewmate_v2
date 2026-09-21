@@ -26,7 +26,8 @@ export const SurfacesSection = (): JSX.Element => {
           {t(TRANSLATION_KEYS.dsCardBody)}
         </Text>
       </Card>
-      <Card variant="container">
+      <Card depth="emphasis">
+        <Text variant="titleMedium">{t(TRANSLATION_KEYS.dsCardEmphasisTitle)}</Text>
         <ListItem
           title={t(TRANSLATION_KEYS.dsListItemTitle)}
           subtitle={t(TRANSLATION_KEYS.dsListItemSubtitle)}

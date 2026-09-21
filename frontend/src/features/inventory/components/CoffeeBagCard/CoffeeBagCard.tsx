@@ -54,7 +54,7 @@ export const CoffeeBagCard = ({
   const roastLabel = bag.roastLevel === null ? null : t(ROAST_LEVEL_LABEL_KEYS[bag.roastLevel]);
 
   return (
-    <Card variant={emphasised ? 'softEmphasis' : 'soft'}>
+    <Card depth={emphasised ? 'emphasis' : 'rest'}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={bag.name}

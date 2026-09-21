@@ -1,26 +1,21 @@
 import type { JSX, ReactNode } from 'react';
 import { View } from 'react-native';
 
-import { useThemedStyles } from '../../../theme';
+import { useTheme, useThemedStyles } from '../../../theme';
 
-import { createCardStyles } from './Card.styles';
-
-export type CardVariant =
-  'surface' | 'container' | 'containerHigh' | 'outlined' | 'soft' | 'softEmphasis';
-
-const DEFAULT_CARD_VARIANT: CardVariant = 'outlined';
+import { cardElevation, createCardStyles } from './Card.styles';
+import { DEFAULT_CARD_DEPTH, type CardDepth } from './cardDepths';
 
 export interface CardProps {
   readonly children: ReactNode;
-  readonly variant?: CardVariant;
+  /** Named only where one card on the screen is meant to outrank the rest. */
+  readonly depth?: CardDepth;
 }
 
-/**
- * A grouped block of content. Radius 16 and no shadow by default; the `soft`
- * variants are the redesign's, where depth replaced the outline.
- */
-export const Card = ({ children, variant = DEFAULT_CARD_VARIANT }: CardProps): JSX.Element => {
+/** A grouped block of content: one surface, one radius, no border. */
+export const Card = ({ children, depth = DEFAULT_CARD_DEPTH }: CardProps): JSX.Element => {
   const styles = useThemedStyles(createCardStyles);
+  const theme = useTheme();
 
-  return <View style={[styles.base, styles[variant]]}>{children}</View>;
+  return <View style={[styles.base, cardElevation(theme, depth)]}>{children}</View>;
 };

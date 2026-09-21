@@ -1,5 +1,5 @@
-export { Card } from './Card';
-export type { CardProps, CardVariant } from './Card';
+export { Card, DEFAULT_CARD_DEPTH } from './Card';
+export type { CardProps, CardDepth } from './Card';
 export { ChatBubble, CHAT_AUTHORS } from './ChatBubble';
 export type { ChatBubbleProps, ChatAuthor } from './ChatBubble';
 export { Chip } from './Chip';
