@@ -1,8 +1,7 @@
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useState, type JSX } from 'react';
-import { Pressable, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
+import { TextInput, View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { useIsOnline } from '../../../../hooks';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useTheme, useThemedStyles } from '../../../../theme';
@@ -52,12 +51,6 @@ export const ChatComposer = ({
     setDraft(EMPTY);
   };
 
-  const sendStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
-    styles.send,
-    canSend && styles.sendActive,
-    pressed && canSend && styles.pressed,
-  ];
-
   return (
     <View style={styles.bar}>
       {isOnline && !hasFailed ? null : (
@@ -93,20 +86,14 @@ export const ChatComposer = ({
             accessibilityLabel={t(TRANSLATION_KEYS.recipeChatInputLabel)}
           />
         </View>
-        <Pressable
-          style={sendStyle}
+        <PillButton
+          tone={canSend ? 'espresso' : 'faint'}
+          size="small"
+          icon={CHAT_COMPOSER_ICONS.send}
+          spokenLabel={t(TRANSLATION_KEYS.recipeChatSend)}
           disabled={!canSend}
           onPress={send}
-          accessibilityRole="button"
-          accessibilityState={{ disabled: !canSend }}
-          accessibilityLabel={t(TRANSLATION_KEYS.recipeChatSend)}
-        >
-          <MaterialCommunityIcons
-            name={CHAT_COMPOSER_ICONS.send}
-            size={theme.size.iconLarge}
-            color={canSend ? theme.colors.cream : theme.colors.onSurfaceVariant}
-          />
-        </Pressable>
+        />
       </View>
     </View>
   );

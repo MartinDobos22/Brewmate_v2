@@ -235,12 +235,14 @@ frontend/
     │                   brewing, http, time, interpolation
     ├── i18n/           Slovak copy, split by domain under translations/sk/
     ├── components/
-    │   ├── ui/         Button, Card, Tile, SectionHeading, Text, Input, Chip,
-    │   │               OptionCard, Dropdown, Sheet, ListItem, ChatBubble, Slider,
-    │   │               NumberStepper, ProgressBar, EmptyState, LoadingState,
-    │   │               ErrorState, QueryState, ValueDisplay - each its own folder
-    │   └── layout/     Screen, TileRow, AppProviders, RootStack, TabsNavigator,
-    │                   TabBarIcon, BottomNavBar
+    │   ├── ui/         Button, PillButton, Card, Tile, ActionRow, InfoNote,
+    │   │               SectionHeading, Text, Input, Chip, OptionCard, Dropdown,
+    │   │               Sheet, ListItem, ChatBubble, Slider, NumberStepper,
+    │   │               ProgressBar, StepProgress, Dial, FigureRow, DriftingRings,
+    │   │               EmptyState, LoadingState, ErrorState, QueryState,
+    │   │               ValueDisplay - each its own folder
+    │   └── layout/     Screen, EspressoHeader, TileRow, AppProviders, RootStack,
+    │                   TabsNavigator, TabBarIcon, BottomNavBar
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
     │                   chat, tasteProfile, coffeeTaste, bagEvaluations,
     │                   recipeImport, espresso, history, onboarding, profile,
@@ -320,6 +322,37 @@ into the softer geometry by naming it (`SHAPE.softCard`, `SHAPE.heroCard`,
 `SHAPE.headerBlock`, `SHAPE.insetBlock`, `SHAPE.pill`). `pill` is a kind rather
 than a number because the number is different on every element it applies to -
 half the height, whatever the height is - and wrong the moment that changes.
+
+### One pill, one scale
+
+Every button in this app shaped like a pill is `PillButton`, and every trio of
+recipe figures is `FigureRow`. Both exist because the screens had grown their
+own.
+
+- **Fifteen pressables had become one shape written fifteen times.** Each
+  carried its own `resolveStyle` closure, its own fill and its own height - and
+  the heights were 40, 46, 48, 50, 52, 54 and 56, six of which no reader can
+  tell apart. `PillButton` has four: `large` for the one thing a screen most
+  wants pressed, `medium` for an ordinary button, `small` for a pair sharing a
+  row, `compact` for a round control inside a line of text.
+- **A caller picks what the button _is_, never what it looks like.** How loud
+  (`tone`), how big (`size`), whether it takes the row (`grows`). The fill, the
+  text colour, the glyph's colour and size and the shadow all follow from
+  those, so a new button cannot arrive in a colour the app does not have.
+- **Six tones, in three pairs:** one loud and one quiet for a light ground
+  (`espresso`, `surface`), the same two for an espresso one (`cream`,
+  `lifted`), and two specials - `surfaceLead`, whose glyph is the primary brown
+  because the mark is what the reader is looking for, and `faint`, which is a
+  control with nothing to do yet rather than a level of loudness.
+- **`raised` is asked for rather than carried by a tone.** The same cream pill
+  is the loudest thing on the home screen and an ordinary answer inside a card,
+  and only the first is lifted off what it sits on.
+- **The three figures are one row, taken as data.** Dose, water and the ratio
+  that divides them appear on the home block, in the conversation's header and
+  on every version in the timeline; the three copies differed by exactly two
+  type variants and a colour. The rules between the columns belong to the row,
+  because a rule sits _between_ two figures and a column drawing its own
+  leading edge would print one against the card's padding.
 
 ### Getting out of a screen
 

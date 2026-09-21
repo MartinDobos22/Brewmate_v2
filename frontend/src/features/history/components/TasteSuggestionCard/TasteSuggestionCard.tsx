@@ -3,7 +3,7 @@ import { INSIGHT_EXPLANATION_SOURCES, type TasteSuggestion } from '@brewmate/sha
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useTheme, useThemedStyles } from '../../../../theme';
 import { ROAST_LEVEL_LABEL_KEYS } from '../../../tasteProfile/constants';
@@ -11,7 +11,6 @@ import { SUGGESTION_ICONS } from '../../constants';
 import { useAcceptTasteSuggestion, useDismissTasteSuggestion } from '../../hooks';
 import { describeSuggestion } from '../../services';
 
-import { SuggestionAnswer } from './SuggestionAnswer';
 import { SuggestionChange } from './SuggestionChange';
 import { createTasteSuggestionStyles } from './TasteSuggestionCard.styles';
 
@@ -95,16 +94,19 @@ export const TasteSuggestionCard = ({
       </Text>
 
       <View style={styles.actions}>
-        <SuggestionAnswer
+        <PillButton
+          tone="cream"
+          grows
           icon={SUGGESTION_ICONS.accept}
           label={t(TRANSLATION_KEYS.suggestionAccept)}
           disabled={busy}
-          agrees
           onPress={(): void => {
             accept.mutate(suggestion.ref);
           }}
         />
-        <SuggestionAnswer
+        <PillButton
+          tone="lifted"
+          grows
           icon={SUGGESTION_ICONS.dismiss}
           label={t(TRANSLATION_KEYS.suggestionDismiss)}
           disabled={busy}

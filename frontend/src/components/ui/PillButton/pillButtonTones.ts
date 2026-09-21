@@ -1,0 +1,91 @@
+import type { ColorPalette, ElevationToken, SizeToken, TypographyToken } from '../../../theme';
+import type { TextTone } from '../Text';
+
+/**
+ * How loudly a pill asks to be pressed, and on what it is drawn.
+ *
+ * Six and no more, in three pairs: one loud and one quiet for a light ground,
+ * the same two for an espresso one, and two specials. A screen where every
+ * button is coloured is a screen with no hierarchy at all, and a button that
+ * picked its own colours would be the seventh pair by the end of the month.
+ *
+ * `surfaceLead` is the quiet one whose glyph is the primary brown rather than
+ * the muted grey: for a row where the mark is what the reader is looking for
+ * and the words only confirm it. `faint` is a control with nothing to do yet -
+ * a send button over an empty box - which is a state rather than a level.
+ */
+export type PillTone = 'cream' | 'espresso' | 'lifted' | 'surface' | 'surfaceLead' | 'faint';
+
+export const DEFAULT_PILL_TONE: PillTone = 'surface';
+
+export const PILL_BACKGROUNDS = {
+  cream: 'cream',
+  espresso: 'espresso',
+  lifted: 'espressoLift',
+  surface: 'surfaceVariant',
+  surfaceLead: 'surfaceVariant',
+  faint: 'outlineFaint',
+} as const satisfies Record<PillTone, keyof ColorPalette>;
+
+export const PILL_LABEL_TONES = {
+  cream: 'onCream',
+  espresso: 'onCream',
+  lifted: 'onEspresso',
+  surface: 'default',
+  surfaceLead: 'default',
+  faint: 'muted',
+} as const satisfies Record<PillTone, TextTone>;
+
+export const PILL_ICON_COLORS = {
+  cream: 'onCream',
+  espresso: 'cream',
+  lifted: 'accentSoft',
+  surface: 'onSurfaceVariant',
+  surfaceLead: 'primary',
+  faint: 'onSurfaceVariant',
+} as const satisfies Record<PillTone, keyof ColorPalette>;
+
+/**
+ * The shadow a tone carries, or none.
+ *
+ * Only the two dark fills are lifted off what they sit on. A shadow under a
+ * pill the same colour as its surroundings is one nobody sees, and a shadow
+ * under every button would flatten the one that matters.
+ */
+export const PILL_ELEVATIONS = {
+  cream: null,
+  espresso: 'buttonDark',
+  lifted: null,
+  surface: null,
+  surfaceLead: null,
+  faint: null,
+} as const satisfies Record<PillTone, ElevationToken | null>;
+
+/**
+ * How big, which is a decision about the row a pill sits in rather than about
+ * the pill.
+ */
+export type PillSize = 'large' | 'medium' | 'small' | 'compact';
+
+export const DEFAULT_PILL_SIZE: PillSize = 'medium';
+
+export const PILL_HEIGHTS = {
+  large: 'pillLarge',
+  medium: 'pillMedium',
+  small: 'pillSmall',
+  compact: 'pillCompact',
+} as const satisfies Record<PillSize, SizeToken>;
+
+export const PILL_LABEL_VARIANTS = {
+  large: 'cardTitle',
+  medium: 'rowTitle',
+  small: 'actionLabel',
+  compact: 'actionLabel',
+} as const satisfies Record<PillSize, TypographyToken>;
+
+export const PILL_ICON_SIZES = {
+  large: 'iconLarge',
+  medium: 'iconRow',
+  small: 'iconRow',
+  compact: 'iconLarge',
+} as const satisfies Record<PillSize, SizeToken>;

@@ -8,9 +8,9 @@ import {
 } from '@brewmate/shared';
 import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
-import { Pressable, View, type StyleProp, type ViewStyle } from 'react-native';
+import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { FigureRow, PillButton, Text } from '../../../../components/ui';
 import { buildRecipeChatRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { formatGrams, formatRatio } from '../../../../lib/formatters';
@@ -20,7 +20,6 @@ import { ConstraintBadges } from '../ConstraintBadges';
 
 import { createTimelineEntryStyles } from './TimelineEntryCard.styles';
 import { TimelineCount } from './TimelineCount';
-import { TimelineFigure } from './TimelineFigure';
 
 const NOTHING = 0;
 const NEXT = 1;
@@ -67,11 +66,6 @@ export const TimelineEntryCard = ({ entry, index, total }: TimelineEntryCardProp
     hasAnyConstraint(brew.constraints),
   );
 
-  const chatStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
-    styles.chat,
-    pressed && styles.pressed,
-  ];
-
   return (
     <View style={styles.entry}>
       <View style={styles.rail}>
@@ -108,21 +102,24 @@ export const TimelineEntryCard = ({ entry, index, total }: TimelineEntryCardProp
           </View>
         </View>
 
-        <View style={styles.numbers}>
-          <TimelineFigure
-            value={formatGrams(entry.recipe.params.doseGrams)}
-            labelKey={TRANSLATION_KEYS.figureDose}
-          />
-          <TimelineFigure
-            value={formatGrams(entry.recipe.params.waterGrams)}
-            labelKey={TRANSLATION_KEYS.figureWater}
-          />
-          <TimelineFigure
-            value={formatRatio(entry.recipe.params.ratio)}
-            labelKey={TRANSLATION_KEYS.figureRatio}
-            derived
-          />
-        </View>
+        <FigureRow
+          ruled={false}
+          figures={[
+            {
+              value: formatGrams(entry.recipe.params.doseGrams),
+              label: t(TRANSLATION_KEYS.figureDose),
+            },
+            {
+              value: formatGrams(entry.recipe.params.waterGrams),
+              label: t(TRANSLATION_KEYS.figureWater),
+            },
+            {
+              value: formatRatio(entry.recipe.params.ratio),
+              label: t(TRANSLATION_KEYS.figureRatio),
+              derived: true,
+            },
+          ]}
+        />
 
         {note === undefined ? null : (
           <View style={styles.note}>
@@ -164,21 +161,15 @@ export const TimelineEntryCard = ({ entry, index, total }: TimelineEntryCardProp
           />
         </View>
 
-        <Pressable
-          style={chatStyle}
+        <PillButton
+          tone="surfaceLead"
+          size="small"
+          icon={TIMELINE_ICONS.chat}
+          label={t(TRANSLATION_KEYS.historyOpenChat)}
           onPress={(): void => {
             router.push(buildRecipeChatRoute(entry.recipe.id));
           }}
-          accessibilityRole="button"
-          accessibilityLabel={t(TRANSLATION_KEYS.historyOpenChat)}
-        >
-          <MaterialCommunityIcons
-            name={TIMELINE_ICONS.chat}
-            size={theme.size.iconRow}
-            color={theme.colors.primary}
-          />
-          <Text variant="actionLabel">{t(TRANSLATION_KEYS.historyOpenChat)}</Text>
-        </Pressable>
+        />
       </View>
     </View>
   );

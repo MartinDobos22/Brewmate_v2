@@ -13,7 +13,6 @@ export const SIZE = {
    */
   attributeChipHeight: 26,
   listItemMinHeight: 56,
-  tabBarHeight: 56,
   iconTiny: 13,
   iconSmall: 16,
   iconMedium: 24,
@@ -24,7 +23,6 @@ export const SIZE = {
    */
   iconRow: 18,
   iconLarge: 20,
-  avatarMedium: 40,
   sheetHandleWidth: 32,
   sheetHandleHeight: 4,
   sliderTrackHeight: 6,
@@ -66,8 +64,6 @@ export const SIZE = {
   timelineRailWidth: 2,
   /** A pill saying what was missing on the morning a cup was made. */
   constraintBadgeHeight: 28,
-  /** The way into the conversation about one version of a recipe. */
-  timelineChatHeight: 46,
   /**
    * One row of a count in the history report: the name it belongs to on the
    * left and the figure on the right, both at fixed widths so the bars between
@@ -75,8 +71,6 @@ export const SIZE = {
    */
   insightNameWidth: 78,
   insightCountWidth: 26,
-  /** A bar in the taste profile chart: readable, but not a block of colour. */
-  profileBarHeight: 10,
   /**
    * The taste profile as a five-sided web, on the profile screen.
    *
@@ -125,8 +119,6 @@ export const SIZE = {
   dialLargeStroke: 7,
   dialSmall: 58,
   dialSmallStroke: 6,
-  /** The two pills under a bag on the cupboard. */
-  bagActionHeight: 46,
   /**
    * The conversation after the cup.
    *
@@ -135,9 +127,6 @@ export const SIZE = {
    * on one line without either having to be measured against the other.
    */
   chatAvatarSize: 30,
-  chatSendSize: 48,
-  /** The pill that accepts a proposal, under the table describing it. */
-  acceptPillHeight: 50,
   /** The hairline between two figures inside an espresso header's own row. */
   headerRuleHeight: 28,
   /** A round icon button in a screen's title row. */
@@ -173,15 +162,6 @@ export const SIZE = {
   calculatorButtonSize: 42,
   /** The dot between two facts on a meta line. */
   metaDotSize: 3,
-  /**
-   * The home screen's own row of actions, inside the espresso block.
-   *
-   * Bigger than a foot bar's pill because this is the one control on the
-   * screen somebody reaches for without reading anything first, and the two
-   * round buttons beside it are the same height so the row reads as three
-   * ways to start rather than as a button with decorations.
-   */
-  homeActionSize: 56,
   /** One of the three segments counting the first steps off. */
   startSegmentHeight: 5,
   /** The coloured spine down the left of a bag's row, saying what state it is in. */
@@ -189,12 +169,23 @@ export const SIZE = {
   bagSpineHeight: 40,
   /** The glyph and the one button on a card reporting that nothing is there yet. */
   emptyRowBadge: 44,
-  emptyRowAction: 40,
-  /** A pill in an espresso header, and the one in a foot bar. */
-  headerPillHeight: 48,
-  footBarPillHeight: 52,
-  /** The two answers to what happened to a bag in a shop. */
-  outcomeButtonHeight: 54,
+  /**
+   * The four heights every pill button in the app is drawn at.
+   *
+   * Four rather than the ten the screens had accumulated. Those ten came from
+   * tracing a design one screen at a time - 46, 48, 50, 52, 54 and 56 all
+   * appeared, and no reader could tell any pair of them apart. A scale is what
+   * stops the next screen inventing an eleventh.
+   *
+   * `large` is the one thing a screen most wants pressed and is sized to be
+   * hit without aiming; `medium` is the ordinary button; `small` is a pair of
+   * alternatives sharing a row; `compact` is a round control inside a row of
+   * text.
+   */
+  pillLarge: 56,
+  pillMedium: 52,
+  pillSmall: 46,
+  pillCompact: 40,
   /** A questionnaire answer card. Big enough to tap without aiming. */
   optionCardMinHeight: 72,
   /** The disc its glyph sits in, which is what makes a column of them scannable. */
@@ -210,9 +201,6 @@ export const SIZE = {
   scanBadgeSize: 46,
   scanViewfinderHeight: 170,
   scanViewfinderInset: 22,
-  /** The camera, and the two quieter ways in beside each other under it. */
-  scanCaptureHeight: 52,
-  scanAlternativeHeight: 48,
   /** The round way back and the pill out of a step of onboarding. */
   onboardingBackSize: 42,
   onboardingSkipHeight: 38,
@@ -230,8 +218,6 @@ export const SIZE = {
    */
   brewControlSize: 66,
   brewPrimaryControlSize: 90,
-  /** The dot that says which step of the brew is running. */
-  brewStepDotSize: 10,
   /**
    * The step bar above the pour, which is thin on purpose.
    *
@@ -274,16 +260,8 @@ export const SIZE = {
   tileRingOffset: -46,
   /** The miniature brewing chart on the home screen. */
   tileChartHeight: 52,
-  /**
-   * One axis of the miniature taste profile. Thinner than the labelled chart's
-   * own bar, because five of these are read as a shape rather than as five
-   * measurements.
-   */
-  tileTrackHeight: 6,
   /** The smallest a bar in a miniature chart may be drawn at. */
   tileBarMinHeight: 3,
-  /** One bag in the cupboard tile's freshness strip. */
-  tilePipSize: 10,
 
   /**
    * The mark on the signed-out screens.
@@ -299,9 +277,6 @@ export const SIZE = {
   authRingsSize: 380,
   /** A field on the signed-out screens, which are the only dark forms in the app. */
   authFieldHeight: 52,
-  /** The one button those screens most want pressed, and the two beside it. */
-  authSubmitHeight: 54,
-  authProviderHeight: 52,
 } as const;
 
 /** Dimensions expressed as a share of the parent. */

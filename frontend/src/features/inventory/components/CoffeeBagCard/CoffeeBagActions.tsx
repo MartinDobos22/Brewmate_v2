@@ -1,10 +1,9 @@
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { JSX } from 'react';
-import { Pressable, View, type StyleProp, type ViewStyle } from 'react-native';
+import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { PillButton } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { useTheme, useThemedStyles } from '../../../../theme';
+import { useThemedStyles } from '../../../../theme';
 import { INVENTORY_TILE_ICONS } from '../../constants';
 
 import { createCoffeeBagCardStyles } from './CoffeeBagCard.styles';
@@ -28,47 +27,24 @@ export const CoffeeBagActions = ({
   archiving,
 }: CoffeeBagActionsProps): JSX.Element => {
   const styles = useThemedStyles(createCoffeeBagCardStyles);
-  const theme = useTheme();
   const { t } = useTranslation();
-
-  const brewStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
-    styles.brew,
-    pressed && styles.pressed,
-  ];
-
-  const archiveStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
-    styles.archive,
-    pressed && styles.pressed,
-  ];
 
   return (
     <View style={styles.actions}>
-      <Pressable
-        style={brewStyle}
+      <PillButton
+        tone="espresso"
+        size="small"
+        grows
+        icon={INVENTORY_TILE_ICONS.brew}
+        label={t(TRANSLATION_KEYS.bagDetailBrewTitle)}
         onPress={onBrew}
-        accessibilityRole="button"
-        accessibilityLabel={t(TRANSLATION_KEYS.bagDetailBrewTitle)}
-      >
-        <MaterialCommunityIcons
-          name={INVENTORY_TILE_ICONS.brew}
-          size={theme.size.iconSmall}
-          color={theme.colors.cream}
-        />
-        <Text variant="actionLabel" tone="onCream">
-          {t(TRANSLATION_KEYS.bagDetailBrewTitle)}
-        </Text>
-      </Pressable>
-      <Pressable
-        style={archiveStyle}
+      />
+      <PillButton
+        size="small"
+        label={t(TRANSLATION_KEYS.inventoryBagArchive)}
+        isPending={archiving}
         onPress={onArchive}
-        disabled={archiving}
-        accessibilityRole="button"
-        accessibilityLabel={t(TRANSLATION_KEYS.inventoryBagArchive)}
-      >
-        <Text variant="actionLabel" tone={archiving ? 'disabled' : 'default'}>
-          {t(TRANSLATION_KEYS.inventoryBagArchive)}
-        </Text>
-      </Pressable>
+      />
     </View>
   );
 };

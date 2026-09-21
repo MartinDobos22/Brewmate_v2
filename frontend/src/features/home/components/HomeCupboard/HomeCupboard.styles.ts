@@ -12,7 +12,6 @@ type HomeCupboardStyleMap = ViewStyles<
   | 'divider'
   | 'empty'
   | 'badge'
-  | 'add'
   | 'pressed'
 >;
 
@@ -76,14 +75,6 @@ export const createHomeCupboardStyles = (theme: Theme): HomeCupboardStyleMap =>
       justifyContent: 'center',
       borderRadius: theme.shape.pill,
       backgroundColor: theme.colors.surfaceVariant,
-    },
-    add: {
-      width: theme.size.emptyRowAction,
-      height: theme.size.emptyRowAction,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: theme.shape.pill,
-      backgroundColor: theme.colors.espresso,
     },
     pressed: { opacity: theme.opacity.pressed },
   });

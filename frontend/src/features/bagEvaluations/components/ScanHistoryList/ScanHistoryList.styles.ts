@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import type { Theme, ViewStyles } from '../../../../theme';
 
 type ScanHistoryListStyleMap = ViewStyles<
-  'section' | 'heading' | 'title' | 'list' | 'row' | 'body' | 'divider' | 'pressed'
+  'section' | 'heading' | 'title' | 'list' | 'row' | 'body' | 'divider'
 >;
 
 /**
@@ -51,5 +51,4 @@ export const createScanHistoryListStyles = (theme: Theme): ScanHistoryListStyleM
       marginLeft: theme.spacing.xxxl,
       backgroundColor: theme.colors.divider,
     },
-    pressed: { opacity: theme.opacity.pressed },
   });

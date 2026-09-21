@@ -3,15 +3,7 @@ import { StyleSheet } from 'react-native';
 import type { Theme, ViewStyles } from '../../../../theme';
 
 type BagPhotoStepStyleMap = ViewStyles<
-  | 'card'
-  | 'heading'
-  | 'title'
-  | 'viewfinder'
-  | 'frame'
-  | 'capture'
-  | 'alternatives'
-  | 'alternative'
-  | 'pressed'
+  'card' | 'heading' | 'title' | 'viewfinder' | 'frame' | 'alternatives'
 >;
 
 /**
@@ -61,28 +53,5 @@ export const createBagPhotoStepStyles = (theme: Theme): BagPhotoStepStyleMap =>
       borderStyle: 'dashed',
       borderColor: theme.colors.outlineDashed,
     },
-    capture: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: theme.spacing.sm,
-      height: theme.size.scanCaptureHeight,
-      borderRadius: theme.shape.pill,
-      backgroundColor: theme.colors.espresso,
-      shadowColor: theme.colors.espresso,
-      ...theme.elevation.buttonDark,
-    },
     alternatives: { flexDirection: 'row', gap: theme.spacing.sm },
-    alternative: {
-      flex: 1,
-      minWidth: 0,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: theme.spacing.sm,
-      height: theme.size.scanAlternativeHeight,
-      borderRadius: theme.shape.pill,
-      backgroundColor: theme.colors.surfaceVariant,
-    },
-    pressed: { opacity: theme.opacity.pressed },
   });

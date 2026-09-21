@@ -2,9 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import type { Theme, ViewStyles } from '../../../../theme';
 
-type PreBrewScreenStyleMap = ViewStyles<
-  'root' | 'scroll' | 'content' | 'extras' | 'failure' | 'submit'
->;
+type PreBrewScreenStyleMap = ViewStyles<'root' | 'scroll' | 'content' | 'extras' | 'failure'>;
 
 /**
  * A scroll with a bar against the bottom edge that does not move with it.
@@ -21,5 +19,4 @@ export const createPreBrewScreenStyles = (theme: Theme): PreBrewScreenStyleMap =
     extras: { gap: theme.spacing.sm },
     /** Three lines: what failed, what to do about it, and where to look it up. */
     failure: { gap: theme.spacing.xxs },
-    submit: { gap: theme.spacing.sm },
   });

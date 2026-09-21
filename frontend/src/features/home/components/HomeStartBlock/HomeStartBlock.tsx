@@ -1,13 +1,12 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { HOME_TILE_ICONS } from '../../constants';
 import { useOpenGettingStartedStep, type GettingStarted } from '../../hooks';
 import type { GettingStartedStep } from '../../services';
-import { HomeLeadAction, HomeQuietAction } from '../HomeActions';
 
 import { createHomeStartBlockStyles } from './HomeStartBlock.styles';
 import { StartProgress } from './StartProgress';
@@ -54,7 +53,11 @@ export const HomeStartBlock = ({ gettingStarted }: HomeStartBlockProps): JSX.Ele
         ))}
       </View>
       <View style={styles.row}>
-        <HomeLeadAction
+        <PillButton
+          tone="cream"
+          size="large"
+          grows
+          raised
           icon={HOME_TILE_ICONS.go}
           label={t(TRANSLATION_KEYS.homeStartBegin)}
           onPress={(): void => {
@@ -63,7 +66,9 @@ export const HomeStartBlock = ({ gettingStarted }: HomeStartBlockProps): JSX.Ele
             }
           }}
         />
-        <HomeQuietAction
+        <PillButton
+          tone="lifted"
+          size="large"
           label={t(TRANSLATION_KEYS.homeStartHideShort)}
           onPress={gettingStarted.hide}
         />

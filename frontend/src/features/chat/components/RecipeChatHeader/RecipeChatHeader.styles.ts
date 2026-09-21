@@ -2,9 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import type { Theme, ViewStyles } from '../../../../theme';
 
-type RecipeChatHeaderStyleMap = ViewStyles<
-  'method' | 'name' | 'version' | 'figures' | 'figure' | 'rule'
->;
+type RecipeChatHeaderStyleMap = ViewStyles<'method' | 'name' | 'version'>;
 
 /**
  * What the conversation is about, in the block at the top of the screen.
@@ -30,14 +28,5 @@ export const createRecipeChatHeaderStyles = (theme: Theme): RecipeChatHeaderStyl
       paddingHorizontal: theme.spacing.sm,
       borderRadius: theme.shape.pill,
       backgroundColor: theme.colors.espressoDeep,
-    },
-    figures: { flexDirection: 'row', alignItems: 'flex-end' },
-    figure: { flex: 1, minWidth: 0, gap: theme.spacing.xxs },
-    rule: {
-      width: theme.borderWidth.thin,
-      height: theme.size.headerRuleHeight,
-      marginHorizontal: theme.spacing.md,
-      marginBottom: theme.spacing.xs,
-      backgroundColor: theme.colors.espressoLine,
     },
   });

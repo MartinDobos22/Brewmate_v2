@@ -2,17 +2,15 @@ import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { FigureRow, PillButton, Text } from '../../../../components/ui';
 import { ROUTES, buildBrewModeRoute, buildBrewRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { formatGrams, formatRatio } from '../../../../lib/formatters';
 import { useThemedStyles } from '../../../../theme';
 import { HOME_TILE_ICONS } from '../../constants';
 import type { HomeSuggestion as Suggestion } from '../../hooks';
-import { HomeLeadAction, HomeRoundAction } from '../HomeActions';
 
 import { createHomeSuggestionStyles } from './HomeSuggestion.styles';
-import { SuggestionFigure } from './SuggestionFigure';
 import { SuggestionSubject } from './SuggestionSubject';
 
 export interface HomeSuggestionProps {
@@ -49,26 +47,29 @@ export const HomeSuggestion = ({ suggestion }: HomeSuggestionProps): JSX.Element
       </Text>
       <SuggestionSubject suggested={suggested} method={method} />
       {recipe === null ? null : (
-        <View style={styles.figures}>
-          <SuggestionFigure
-            value={formatGrams(recipe.params.doseGrams)}
-            labelKey={TRANSLATION_KEYS.figureDose}
-          />
-          <View style={styles.rule} />
-          <SuggestionFigure
-            value={formatGrams(recipe.params.waterGrams)}
-            labelKey={TRANSLATION_KEYS.figureWater}
-          />
-          <View style={styles.rule} />
-          <SuggestionFigure
-            value={formatRatio(recipe.params.ratio)}
-            labelKey={TRANSLATION_KEYS.figureRatio}
-            derived
-          />
-        </View>
+        <FigureRow
+          scale="hero"
+          ground="espresso"
+          figures={[
+            { value: formatGrams(recipe.params.doseGrams), label: t(TRANSLATION_KEYS.figureDose) },
+            {
+              value: formatGrams(recipe.params.waterGrams),
+              label: t(TRANSLATION_KEYS.figureWater),
+            },
+            {
+              value: formatRatio(recipe.params.ratio),
+              label: t(TRANSLATION_KEYS.figureRatio),
+              derived: true,
+            },
+          ]}
+        />
       )}
       <View style={styles.row}>
-        <HomeLeadAction
+        <PillButton
+          tone="cream"
+          size="large"
+          grows
+          raised
           icon={HOME_TILE_ICONS.brew}
           label={t(
             recipe === null
@@ -81,16 +82,20 @@ export const HomeSuggestion = ({ suggestion }: HomeSuggestionProps): JSX.Element
             );
           }}
         />
-        <HomeRoundAction
+        <PillButton
+          tone="lifted"
+          size="large"
           icon={HOME_TILE_ICONS.quickBrew}
-          label={t(TRANSLATION_KEYS.homeTileQuickBrewTitle)}
+          spokenLabel={t(TRANSLATION_KEYS.homeTileQuickBrewTitle)}
           onPress={(): void => {
             router.push(ROUTES.quickBrew);
           }}
         />
-        <HomeRoundAction
+        <PillButton
+          tone="lifted"
+          size="large"
           icon={HOME_TILE_ICONS.scan}
-          label={t(TRANSLATION_KEYS.homeTileScanTitle)}
+          spokenLabel={t(TRANSLATION_KEYS.homeTileScanTitle)}
           onPress={(): void => {
             router.push(ROUTES.scan);
           }}

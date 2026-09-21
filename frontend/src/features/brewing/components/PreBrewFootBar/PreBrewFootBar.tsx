@@ -1,9 +1,9 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { Recipe } from '@brewmate/shared';
 import type { JSX } from 'react';
-import { Pressable, View, type StyleProp, type ViewStyle } from 'react-native';
+import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { useIsOnline } from '../../../../hooks';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { formatGrams, formatRatio } from '../../../../lib/formatters';
@@ -46,12 +46,6 @@ export const PreBrewFootBar = ({ setup, onWritten }: PreBrewFootBarProps): JSX.E
 
   const subject =
     setup.method === undefined ? coffee : [setup.method.nameSk, coffee].join(PLAN_SEPARATOR);
-
-  const submitStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
-    styles.submit,
-    pressed && styles.pressed,
-    isBlocked && styles.disabled,
-  ];
 
   return (
     <>
@@ -99,27 +93,19 @@ export const PreBrewFootBar = ({ setup, onWritten }: PreBrewFootBarProps): JSX.E
             </Text>
           </View>
         </View>
-        <Pressable
-          style={submitStyle}
+        <PillButton
+          tone="espresso"
+          icon={FOOT_BAR_ICONS.submit}
+          label={t(
+            setup.isPending ? TRANSLATION_KEYS.preBrewSubmitting : TRANSLATION_KEYS.preBrewSubmit,
+          )}
+          spokenLabel={t(TRANSLATION_KEYS.preBrewSubmit)}
+          isPending={setup.isPending}
           disabled={isBlocked}
           onPress={(): void => {
             setup.askForRecipe(onWritten);
           }}
-          accessibilityRole="button"
-          accessibilityState={{ disabled: isBlocked }}
-          accessibilityLabel={t(TRANSLATION_KEYS.preBrewSubmit)}
-        >
-          <Text variant="rowTitle" tone="onCream" numberOfLines={1}>
-            {t(
-              setup.isPending ? TRANSLATION_KEYS.preBrewSubmitting : TRANSLATION_KEYS.preBrewSubmit,
-            )}
-          </Text>
-          <MaterialCommunityIcons
-            name={FOOT_BAR_ICONS.submit}
-            size={theme.size.iconSmall}
-            color={theme.colors.cream}
-          />
-        </Pressable>
+        />
       </View>
     </>
   );

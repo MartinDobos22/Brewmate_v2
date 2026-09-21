@@ -1,9 +1,9 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { BrewParams, RecipePatch } from '@brewmate/shared';
 import { Fragment, type JSX } from 'react';
-import { Pressable, View, type StyleProp, type ViewStyle } from 'react-native';
+import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useTheme, useThemedStyles } from '../../../../theme';
 import { CHAT_PATCH_ICONS, PATCH_ROW_ICONS } from '../../constants';
@@ -49,11 +49,6 @@ export const RecipePatchCard = ({
   const { t } = useTranslation();
   const rows = describeRecipePatch(patch, current);
   const rewritesSteps = patchRewritesSteps(patch);
-
-  const applyStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
-    styles.apply,
-    pressed && styles.pressed,
-  ];
 
   return (
     <View style={styles.card}>
@@ -108,25 +103,15 @@ export const RecipePatchCard = ({
           {t(TRANSLATION_KEYS.recipePatchApplied)}
         </Text>
       ) : (
-        <Pressable
-          style={applyStyle}
-          disabled={isApplying}
+        <PillButton
+          tone="espresso"
+          icon={CHAT_PATCH_ICONS.apply}
+          label={t(
+            isApplying ? TRANSLATION_KEYS.recipePatchApplying : TRANSLATION_KEYS.recipePatchApply,
+          )}
+          isPending={isApplying}
           onPress={onApply}
-          accessibilityRole="button"
-          accessibilityState={{ disabled: isApplying }}
-          accessibilityLabel={t(TRANSLATION_KEYS.recipePatchApply)}
-        >
-          <MaterialCommunityIcons
-            name={CHAT_PATCH_ICONS.apply}
-            size={theme.size.iconLarge}
-            color={theme.colors.cream}
-          />
-          <Text variant="rowTitle" tone="onCream">
-            {t(
-              isApplying ? TRANSLATION_KEYS.recipePatchApplying : TRANSLATION_KEYS.recipePatchApply,
-            )}
-          </Text>
-        </Pressable>
+        />
       )}
     </View>
   );

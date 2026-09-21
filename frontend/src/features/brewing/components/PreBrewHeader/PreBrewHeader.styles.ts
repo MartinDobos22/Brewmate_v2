@@ -12,8 +12,6 @@ type PreBrewHeaderStyleMap = ViewStyles<
   | 'meta'
   | 'dot'
   | 'actions'
-  | 'photo'
-  | 'skip'
   | 'pressed'
 >;
 
@@ -64,23 +62,5 @@ export const createPreBrewHeaderStyles = (theme: Theme): PreBrewHeaderStyleMap =
       backgroundColor: theme.colors.primary,
     },
     actions: { flexDirection: 'row', gap: theme.spacing.sm },
-    photo: {
-      flex: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: theme.spacing.sm,
-      height: theme.size.headerPillHeight,
-      borderRadius: theme.shape.pill,
-      backgroundColor: theme.colors.cream,
-    },
-    skip: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: theme.size.headerPillHeight,
-      paddingHorizontal: theme.spacing.lg,
-      borderRadius: theme.shape.pill,
-      backgroundColor: theme.colors.espressoLift,
-    },
     pressed: { opacity: theme.opacity.pressed },
   });

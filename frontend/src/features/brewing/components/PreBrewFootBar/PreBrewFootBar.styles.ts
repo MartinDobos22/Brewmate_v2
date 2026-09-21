@@ -2,9 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import type { Theme, ViewStyles } from '../../../../theme';
 
-type PreBrewFootBarStyleMap = ViewStyles<
-  'bar' | 'plan' | 'line' | 'submit' | 'notices' | 'pressed' | 'disabled'
->;
+type PreBrewFootBarStyleMap = ViewStyles<'bar' | 'plan' | 'line' | 'notices'>;
 
 /**
  * The plan and the commitment, pinned to the bottom edge.
@@ -37,17 +35,6 @@ export const createPreBrewFootBarStyles = (theme: Theme): PreBrewFootBarStyleMap
     },
     plan: { flex: 1, minWidth: 0, gap: theme.spacing.xxs },
     line: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xs },
-    submit: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing.xs,
-      height: theme.size.footBarPillHeight,
-      paddingHorizontal: theme.spacing.lg,
-      borderRadius: theme.shape.pill,
-      backgroundColor: theme.colors.espresso,
-      shadowColor: theme.colors.espresso,
-      ...theme.elevation.buttonDark,
-    },
     /** What stands between this bar and a recipe, above it rather than in it. */
     notices: {
       gap: theme.spacing.xs,
@@ -55,6 +42,4 @@ export const createPreBrewFootBarStyles = (theme: Theme): PreBrewFootBarStyleMap
       paddingTop: theme.spacing.md,
       backgroundColor: theme.colors.surface,
     },
-    pressed: { opacity: theme.opacity.pressed },
-    disabled: { opacity: theme.opacity.disabled },
   });

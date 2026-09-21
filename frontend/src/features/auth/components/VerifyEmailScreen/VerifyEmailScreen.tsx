@@ -1,18 +1,17 @@
 import { useCallback, useState, type JSX } from 'react';
 import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { ROUTES } from '../../../../constants';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
+import { AUTH_ICONS } from '../../constants';
 import { useAuthSession } from '../../context';
 import { useAuthAction } from '../../hooks';
 import { refreshEmailVerification, resendVerificationEmail } from '../../services';
 import { AuthErrorMessage } from '../AuthErrorMessage';
 import { AuthScreenLayout } from '../AuthScreenLayout';
 import { AuthNavigationLink } from '../AuthNavigationLink';
-import { AuthSubmitButton } from '../AuthSubmitButton';
-import { VerifyEmailAction } from './VerifyEmailAction';
 
 import { createVerifyEmailScreenStyles } from './VerifyEmailScreen.styles';
 
@@ -57,12 +56,17 @@ export const VerifyEmailScreen = (): JSX.Element => {
           </Text>
         ) : null}
         <AuthErrorMessage errorKey={resend.errorKey ?? check.errorKey} />
-        <AuthSubmitButton
+        <PillButton
+          tone="cream"
+          size="large"
+          raised
+          icon={AUTH_ICONS.submit}
           label={t(TRANSLATION_KEYS.authVerifyCheckAction)}
           onPress={check.run}
           isPending={check.isPending}
         />
-        <VerifyEmailAction
+        <PillButton
+          tone="lifted"
           label={t(TRANSLATION_KEYS.authVerifyResendAction)}
           onPress={resend.run}
           isPending={resend.isPending}

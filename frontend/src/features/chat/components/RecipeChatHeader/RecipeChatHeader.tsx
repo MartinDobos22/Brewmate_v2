@@ -4,7 +4,7 @@ import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { EspressoHeader } from '../../../../components/layout';
-import { Text } from '../../../../components/ui';
+import { FigureRow, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { formatGrams, formatRatio } from '../../../../lib/formatters';
 import { useTheme, useThemedStyles } from '../../../../theme';
@@ -12,7 +12,6 @@ import { BREW_METHOD_CATEGORY_ICONS } from '../../../brewing/constants';
 import { useBrewMethodCatalog } from '../../../inventory/hooks';
 import { CHAT_HEADER_ICONS } from '../../constants';
 
-import { RecipeChatFigure } from './RecipeChatFigure';
 import { createRecipeChatHeaderStyles } from './RecipeChatHeader.styles';
 
 export interface RecipeChatHeaderProps {
@@ -67,23 +66,19 @@ export const RecipeChatHeader = ({ recipe }: RecipeChatHeaderProps): JSX.Element
           </Text>
         </View>
       </View>
-      <View style={styles.figures}>
-        <RecipeChatFigure
-          value={formatGrams(recipe.params.doseGrams)}
-          labelKey={TRANSLATION_KEYS.figureDose}
-        />
-        <View style={styles.rule} />
-        <RecipeChatFigure
-          value={formatGrams(recipe.params.waterGrams)}
-          labelKey={TRANSLATION_KEYS.figureWater}
-        />
-        <View style={styles.rule} />
-        <RecipeChatFigure
-          value={formatRatio(recipe.params.ratio)}
-          labelKey={TRANSLATION_KEYS.figureRatio}
-          derived
-        />
-      </View>
+      <FigureRow
+        scale="header"
+        ground="espresso"
+        figures={[
+          { value: formatGrams(recipe.params.doseGrams), label: t(TRANSLATION_KEYS.figureDose) },
+          { value: formatGrams(recipe.params.waterGrams), label: t(TRANSLATION_KEYS.figureWater) },
+          {
+            value: formatRatio(recipe.params.ratio),
+            label: t(TRANSLATION_KEYS.figureRatio),
+            derived: true,
+          },
+        ]}
+      />
     </EspressoHeader>
   );
 };

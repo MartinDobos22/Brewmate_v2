@@ -3,17 +3,7 @@ import { StyleSheet } from 'react-native';
 import type { Theme, ViewStyles } from '../../../../theme';
 
 type SuggestionStyleMap = ViewStyles<
-  | 'card'
-  | 'heading'
-  | 'title'
-  | 'changes'
-  | 'change'
-  | 'line'
-  | 'actions'
-  | 'accept'
-  | 'dismiss'
-  | 'pressed'
-  | 'disabled'
+  'card' | 'heading' | 'title' | 'changes' | 'change' | 'line' | 'actions'
 >;
 
 /**
@@ -53,28 +43,4 @@ export const createTasteSuggestionStyles = (theme: Theme): SuggestionStyleMap =>
     change: { flexDirection: 'row', alignItems: 'flex-start', gap: theme.spacing.sm },
     line: { flex: 1, minWidth: 0 },
     actions: { flexDirection: 'row', gap: theme.spacing.sm },
-    accept: {
-      flex: 1,
-      minWidth: 0,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: theme.spacing.sm,
-      height: theme.size.acceptPillHeight,
-      borderRadius: theme.shape.pill,
-      backgroundColor: theme.colors.cream,
-    },
-    dismiss: {
-      flex: 1,
-      minWidth: 0,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: theme.spacing.sm,
-      height: theme.size.acceptPillHeight,
-      borderRadius: theme.shape.pill,
-      backgroundColor: theme.colors.espressoLift,
-    },
-    pressed: { opacity: theme.opacity.pressed },
-    disabled: { opacity: theme.opacity.disabled },
   });

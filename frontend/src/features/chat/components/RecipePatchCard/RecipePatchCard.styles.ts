@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import type { Theme, ViewStyles } from '../../../../theme';
 
 type RecipePatchCardStyleMap = ViewStyles<
-  'card' | 'heading' | 'title' | 'rows' | 'row' | 'label' | 'divider' | 'apply' | 'pressed'
+  'card' | 'heading' | 'title' | 'rows' | 'row' | 'label' | 'divider'
 >;
 
 /**
@@ -47,16 +47,4 @@ export const createRecipePatchCardStyles = (theme: Theme): RecipePatchCardStyleM
     /** The label takes what the values leave, so a long one wraps before they do. */
     label: { flex: 1, minWidth: 0 },
     divider: { height: theme.borderWidth.thin, backgroundColor: theme.colors.divider },
-    apply: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: theme.spacing.sm,
-      height: theme.size.acceptPillHeight,
-      borderRadius: theme.shape.pill,
-      backgroundColor: theme.colors.espresso,
-      shadowColor: theme.colors.espresso,
-      ...theme.elevation.buttonDark,
-    },
-    pressed: { opacity: theme.opacity.pressed },
   });

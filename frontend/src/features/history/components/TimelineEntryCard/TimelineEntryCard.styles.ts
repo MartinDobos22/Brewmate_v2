@@ -14,15 +14,11 @@ type TimelineEntryStyleMap = ViewStyles<
   | 'title'
   | 'chip'
   | 'chipLatest'
-  | 'numbers'
-  | 'figure'
   | 'note'
   | 'noteText'
   | 'constrained'
   | 'counts'
   | 'count'
-  | 'chat'
-  | 'pressed'
 >;
 
 /**
@@ -95,8 +91,6 @@ export const createTimelineEntryStyles = (theme: Theme): TimelineEntryStyleMap =
       backgroundColor: theme.colors.surfaceVariant,
     },
     chipLatest: { backgroundColor: theme.colors.freshContainer },
-    numbers: { flexDirection: 'row', alignItems: 'flex-end' },
-    figure: { flex: 1, minWidth: 0, gap: theme.spacing.xxs },
     /**
      * What the person wrote, in a block of its own.
      *
@@ -115,14 +109,4 @@ export const createTimelineEntryStyles = (theme: Theme): TimelineEntryStyleMap =
     constrained: { gap: theme.spacing.sm },
     counts: { flexDirection: 'row', gap: theme.spacing.lg },
     count: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xs },
-    chat: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: theme.spacing.sm,
-      height: theme.size.timelineChatHeight,
-      borderRadius: theme.shape.pill,
-      backgroundColor: theme.colors.surfaceVariant,
-    },
-    pressed: { opacity: theme.opacity.pressed },
   });

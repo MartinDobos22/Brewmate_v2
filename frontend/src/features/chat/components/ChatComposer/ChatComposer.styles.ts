@@ -2,10 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import type { TextStyles, Theme, ViewStyles } from '../../../../theme';
 
-type ChatComposerStyleMap = ViewStyles<
-  'bar' | 'notices' | 'row' | 'field' | 'send' | 'sendActive' | 'pressed'
-> &
-  TextStyles<'input'>;
+type ChatComposerStyleMap = ViewStyles<'bar' | 'notices' | 'row' | 'field'> & TextStyles<'input'>;
 
 /**
  * Where somebody says how the coffee was, pinned to the bottom edge.
@@ -61,20 +58,4 @@ export const createChatComposerStyles = (theme: Theme): ChatComposerStyleMap =>
       color: theme.colors.onSurface,
       padding: theme.spacing.none,
     },
-    send: {
-      width: theme.size.chatSendSize,
-      height: theme.size.chatSendSize,
-      borderRadius: theme.shape.avatar,
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexGrow: 0,
-      flexShrink: 0,
-      backgroundColor: theme.colors.outlineFaint,
-    },
-    sendActive: {
-      backgroundColor: theme.colors.espresso,
-      shadowColor: theme.colors.espresso,
-      ...theme.elevation.buttonDark,
-    },
-    pressed: { opacity: theme.opacity.pressed },
   });

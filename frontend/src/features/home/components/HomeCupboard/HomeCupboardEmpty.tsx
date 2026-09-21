@@ -1,9 +1,9 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
-import { Pressable, View, type StyleProp, type ViewStyle } from 'react-native';
+import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { ROUTES } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useTheme, useThemedStyles } from '../../../../theme';
@@ -26,11 +26,6 @@ export const HomeCupboardEmpty = (): JSX.Element => {
   const { t } = useTranslation();
   const router = useRouter();
 
-  const resolveStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
-    styles.add,
-    pressed && styles.pressed,
-  ];
-
   return (
     <View style={styles.empty}>
       <View style={styles.badge}>
@@ -45,20 +40,15 @@ export const HomeCupboardEmpty = (): JSX.Element => {
           {t(TRANSLATION_KEYS.homeCupboardEmpty)}
         </Text>
       </View>
-      <Pressable
-        style={resolveStyle}
+      <PillButton
+        tone="espresso"
+        size="compact"
+        icon={HOME_TILE_ICONS.add}
+        spokenLabel={t(TRANSLATION_KEYS.inventoryAddTitle)}
         onPress={(): void => {
           router.push(ROUTES.scan);
         }}
-        accessibilityRole="button"
-        accessibilityLabel={t(TRANSLATION_KEYS.inventoryAddTitle)}
-      >
-        <MaterialCommunityIcons
-          name={HOME_TILE_ICONS.add}
-          size={theme.size.iconLarge}
-          color={theme.colors.cream}
-        />
-      </Pressable>
+      />
     </View>
   );
 };

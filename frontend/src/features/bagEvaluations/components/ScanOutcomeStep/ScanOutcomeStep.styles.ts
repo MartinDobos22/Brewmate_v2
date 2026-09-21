@@ -2,9 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import type { Theme, ViewStyles } from '../../../../theme';
 
-type ScanOutcomeStyleMap = ViewStyles<
-  'wrapper' | 'words' | 'buttons' | 'bought' | 'left' | 'again' | 'pressed'
->;
+type ScanOutcomeStyleMap = ViewStyles<'wrapper' | 'words' | 'buttons'>;
 
 /**
  * Did the advice survive contact with the shelf?
@@ -22,37 +20,4 @@ export const createScanOutcomeStyles = (theme: Theme): ScanOutcomeStyleMap =>
     wrapper: { gap: theme.spacing.lg, marginTop: 'auto' },
     words: { gap: theme.spacing.xs, paddingHorizontal: theme.spacing.xxs },
     buttons: { flexDirection: 'row', gap: theme.spacing.sm },
-    bought: {
-      flex: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: theme.spacing.sm,
-      height: theme.size.outcomeButtonHeight,
-      borderRadius: theme.shape.pill,
-      backgroundColor: theme.colors.espresso,
-      shadowColor: theme.colors.espresso,
-      ...theme.elevation.buttonDark,
-    },
-    left: {
-      flex: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: theme.spacing.sm,
-      height: theme.size.outcomeButtonHeight,
-      borderRadius: theme.shape.pill,
-      backgroundColor: theme.colors.surface,
-      shadowColor: theme.colors.espresso,
-      ...theme.elevation.card,
-    },
-    /** Flat and unboxed: it leaves this verdict rather than answering it. */
-    again: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: theme.spacing.sm,
-      height: theme.size.minTouchTarget,
-    },
-    pressed: { opacity: theme.opacity.pressed },
   });

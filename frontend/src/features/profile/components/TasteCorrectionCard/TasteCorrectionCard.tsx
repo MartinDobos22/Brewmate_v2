@@ -1,8 +1,8 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useState, type JSX } from 'react';
-import { Pressable, View, type StyleProp, type ViewStyle } from 'react-native';
+import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useTheme, useThemedStyles } from '../../../../theme';
 import { ONBOARDING_STEPS } from '../../../onboarding/constants';
@@ -29,16 +29,6 @@ export const TasteCorrectionCard = (): JSX.Element | null => {
   const openStep = useOnboardingStepLink();
   const [tuning, setTuning] = useState(false);
 
-  const primaryStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
-    styles.primary,
-    pressed && styles.pressed,
-  ];
-
-  const secondaryStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
-    styles.secondary,
-    pressed && styles.pressed,
-  ];
-
   if (profile === undefined) {
     return null;
   }
@@ -57,38 +47,24 @@ export const TasteCorrectionCard = (): JSX.Element | null => {
         {t(TRANSLATION_KEYS.profileTuneCardBody)}
       </Text>
       <View style={styles.buttons}>
-        <Pressable
-          style={primaryStyle}
+        <PillButton
+          tone="espresso"
+          size="small"
+          icon={CORRECTION_ICONS.questionnaire}
+          label={t(TRANSLATION_KEYS.profileRetakeAction)}
           onPress={(): void => {
             openStep(ONBOARDING_STEPS.taste);
           }}
-          accessibilityRole="button"
-          accessibilityLabel={t(TRANSLATION_KEYS.profileRetakeAction)}
-        >
-          <MaterialCommunityIcons
-            name={CORRECTION_ICONS.questionnaire}
-            size={theme.size.iconSmall}
-            color={theme.colors.cream}
-          />
-          <Text variant="actionLabel" tone="onCream">
-            {t(TRANSLATION_KEYS.profileRetakeAction)}
-          </Text>
-        </Pressable>
-        <Pressable
-          style={secondaryStyle}
+        />
+        <PillButton
+          tone="surfaceLead"
+          size="small"
+          icon={CORRECTION_ICONS.manual}
+          label={t(TRANSLATION_KEYS.profileTuneAction)}
           onPress={(): void => {
             setTuning(true);
           }}
-          accessibilityRole="button"
-          accessibilityLabel={t(TRANSLATION_KEYS.profileTuneAction)}
-        >
-          <MaterialCommunityIcons
-            name={CORRECTION_ICONS.manual}
-            size={theme.size.iconSmall}
-            color={theme.colors.primary}
-          />
-          <Text variant="actionLabel">{t(TRANSLATION_KEYS.profileTuneAction)}</Text>
-        </Pressable>
+        />
       </View>
       <TasteTuningSheet
         profile={profile}

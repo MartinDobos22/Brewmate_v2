@@ -1,7 +1,7 @@
 import { useState, type JSX } from 'react';
 import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { ROUTES } from '../../../../constants';
 import { useIsOnline } from '../../../../hooks';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
@@ -13,7 +13,6 @@ import { AuthErrorMessage } from '../AuthErrorMessage';
 import { AuthNavigationLink } from '../AuthNavigationLink';
 import { AuthField } from '../AuthField';
 import { AuthScreenLayout } from '../AuthScreenLayout';
-import { AuthSubmitButton } from '../AuthSubmitButton';
 
 import { createForgotPasswordScreenStyles } from './ForgotPasswordScreen.styles';
 
@@ -65,7 +64,11 @@ export const ForgotPasswordScreen = (): JSX.Element => {
             {t(TRANSLATION_KEYS.authResetSent)}
           </Text>
         ) : null}
-        <AuthSubmitButton
+        <PillButton
+          tone="cream"
+          size="large"
+          raised
+          icon={AUTH_ICONS.submit}
           label={t(TRANSLATION_KEYS.authResetAction)}
           onPress={submit}
           isPending={isPending}

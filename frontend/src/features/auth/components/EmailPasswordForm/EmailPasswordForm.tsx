@@ -1,6 +1,7 @@
 import { useState, type JSX, type ReactNode } from 'react';
 import { View } from 'react-native';
 
+import { PillButton } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { AUTH_ICONS } from '../../constants';
@@ -12,7 +13,6 @@ import {
 } from '../../services';
 import { AuthErrorMessage } from '../AuthErrorMessage';
 import { AuthField } from '../AuthField';
-import { AuthSubmitButton } from '../AuthSubmitButton';
 
 import { NO_CREDENTIAL_ERRORS } from './credentialErrorState';
 import { createEmailPasswordFormStyles } from './EmailPasswordForm.styles';
@@ -87,7 +87,11 @@ export const EmailPasswordForm = ({
         disabled={isPending}
       />
       <AuthErrorMessage errorKey={errorKey} />
-      <AuthSubmitButton
+      <PillButton
+        tone="cream"
+        size="large"
+        raised
+        icon={AUTH_ICONS.submit}
         label={submitLabel}
         onPress={submit}
         isPending={isPending}

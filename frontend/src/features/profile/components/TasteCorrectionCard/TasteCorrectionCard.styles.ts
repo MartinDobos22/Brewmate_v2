@@ -2,9 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import type { Theme, ViewStyles } from '../../../../theme';
 
-type TasteCorrectionCardStyleMap = ViewStyles<
-  'card' | 'heading' | 'buttons' | 'primary' | 'secondary' | 'pressed'
->;
+type TasteCorrectionCardStyleMap = ViewStyles<'card' | 'heading' | 'buttons'>;
 
 /**
  * The two ways to disagree with the profile above, stacked rather than side by
@@ -28,23 +26,4 @@ export const createTasteCorrectionCardStyles = (theme: Theme): TasteCorrectionCa
     },
     heading: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm },
     buttons: { gap: theme.spacing.sm },
-    primary: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: theme.spacing.sm,
-      height: theme.size.bagActionHeight,
-      borderRadius: theme.shape.pill,
-      backgroundColor: theme.colors.espresso,
-    },
-    secondary: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: theme.spacing.sm,
-      height: theme.size.bagActionHeight,
-      borderRadius: theme.shape.pill,
-      backgroundColor: theme.colors.surface,
-    },
-    pressed: { opacity: theme.opacity.pressed },
   });

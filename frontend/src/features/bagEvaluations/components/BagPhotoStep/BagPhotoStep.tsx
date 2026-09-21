@@ -3,14 +3,13 @@ import type { LabelPhotoIssue } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { LoadingState, Text } from '../../../../components/ui';
+import { LoadingState, PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useTheme, useThemedStyles } from '../../../../theme';
 import { SCAN_ICONS } from '../../constants';
 import { BAG_PHOTO_SOURCES, type BagPhotoSource } from '../../services/pickBagPhoto';
 import { BagPhotoIssueNotice } from '../BagPhotoIssueNotice';
 
-import { BagPhotoAction } from './BagPhotoAction';
 import { createBagPhotoStepStyles } from './BagPhotoStep.styles';
 
 const NOTHING = 0;
@@ -76,16 +75,18 @@ export const BagPhotoStep = ({
           {t(TRANSLATION_KEYS.scanPhotoViewfinder)}
         </Text>
       </View>
-      <BagPhotoAction
+      <PillButton
+        tone="espresso"
         icon={SCAN_ICONS.capture}
         label={t(wasRefused ? TRANSLATION_KEYS.scanPhotoRetake : TRANSLATION_KEYS.scanPhotoTake)}
-        leads
         onPress={(): void => {
           onCapture(BAG_PHOTO_SOURCES.camera);
         }}
       />
       <View style={styles.alternatives}>
-        <BagPhotoAction
+        <PillButton
+          size="small"
+          grows
           icon={SCAN_ICONS.library}
           label={t(TRANSLATION_KEYS.scanPhotoChoose)}
           spokenLabel={t(TRANSLATION_KEYS.scanPhotoChooseSpoken)}
@@ -93,7 +94,9 @@ export const BagPhotoStep = ({
             onCapture(BAG_PHOTO_SOURCES.library);
           }}
         />
-        <BagPhotoAction
+        <PillButton
+          size="small"
+          grows
           icon={SCAN_ICONS.manual}
           label={t(TRANSLATION_KEYS.scanPhotoSkip)}
           spokenLabel={t(TRANSLATION_KEYS.scanPhotoSkipSpoken)}
