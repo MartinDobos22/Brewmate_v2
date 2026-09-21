@@ -17,7 +17,7 @@ export const createBottomNavBarStyles = (theme: Theme): BottomNavBarStyleMap =>
       flexDirection: 'row',
       backgroundColor: theme.colors.surface,
       borderTopWidth: theme.borderWidth.thin,
-      borderTopColor: theme.colors.outlineVariant,
+      borderTopColor: theme.colors.dividerStrong,
       paddingTop: theme.spacing.sm,
     },
     item: { flex: 1, alignItems: 'center', gap: theme.spacing.xxs },
