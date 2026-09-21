@@ -18,3 +18,11 @@ export {
 } from './previewTokens';
 export { PREVIEW_MODES, PREVIEW_MODE_OPTIONS, SCHEMES_FOR_MODE } from './previewSchemes';
 export type { PreviewMode, PreviewModeOption } from './previewSchemes';
+export {
+  PREVIEW_PILL_TONES,
+  PREVIEW_PILL_TONE_LABELS,
+  PREVIEW_ESPRESSO_TONES,
+  PREVIEW_PILL_SIZES,
+  PREVIEW_PILL_SIZE_LABELS,
+  PREVIEW_PILL_ICON,
+} from './previewControls';
