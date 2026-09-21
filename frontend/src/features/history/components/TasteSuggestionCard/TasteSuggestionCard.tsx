@@ -1,14 +1,18 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { INSIGHT_EXPLANATION_SOURCES, type TasteSuggestion } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, Text } from '../../../../components/ui';
+import { Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { useThemedStyles } from '../../../../theme';
+import { useTheme, useThemedStyles } from '../../../../theme';
 import { ROAST_LEVEL_LABEL_KEYS } from '../../../tasteProfile/constants';
+import { SUGGESTION_ICONS } from '../../constants';
 import { useAcceptTasteSuggestion, useDismissTasteSuggestion } from '../../hooks';
 import { describeSuggestion } from '../../services';
 
+import { SuggestionAnswer } from './SuggestionAnswer';
+import { SuggestionChange } from './SuggestionChange';
 import { createTasteSuggestionStyles } from './TasteSuggestionCard.styles';
 
 const NOTHING = 0;
@@ -37,6 +41,7 @@ export const TasteSuggestionCard = ({
   brewCount,
 }: TasteSuggestionCardProps): JSX.Element => {
   const styles = useThemedStyles(createTasteSuggestionStyles);
+  const theme = useTheme();
   const { t } = useTranslation();
   const accept = useAcceptTasteSuggestion();
   const dismiss = useDismissTasteSuggestion();
@@ -45,45 +50,63 @@ export const TasteSuggestionCard = ({
   const busy = accept.isPending || dismiss.isPending;
 
   return (
-    <Card variant="container">
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.suggestionTitle)}</Text>
-
-      <View style={styles.body}>
-        <Text variant="bodyMedium">{describeSuggestion(suggestion, brewCount, t)}</Text>
+    <View style={styles.card}>
+      <View style={styles.heading}>
+        <MaterialCommunityIcons
+          name={SUGGESTION_ICONS.heading}
+          size={theme.size.iconLarge}
+          color={theme.colors.accentOnEspresso}
+        />
+        <View style={styles.title}>
+          <Text variant="sectionHeading" tone="onEspresso">
+            {t(TRANSLATION_KEYS.suggestionTitle)}
+          </Text>
+        </View>
       </View>
 
-      <Text variant="labelMedium" tone="muted">
-        {t(TRANSLATION_KEYS.suggestionChangesTitle)}
+      <Text variant="bodyLead" tone="onEspresso">
+        {describeSuggestion(suggestion, brewCount, t)}
       </Text>
+
       <View style={styles.changes}>
+        <Text variant="eyebrow" tone="onEspressoMuted">
+          {t(TRANSLATION_KEYS.suggestionChangesTitle)}
+        </Text>
         {suggestion.roastPreference === null ? null : (
-          <Text variant="bodySmall">
-            {t(TRANSLATION_KEYS.suggestionChangeRoast, {
+          <SuggestionChange
+            icon={SUGGESTION_ICONS.roast}
+            text={t(TRANSLATION_KEYS.suggestionChangeRoast, {
               value: t(ROAST_LEVEL_LABEL_KEYS[suggestion.roastPreference]),
             })}
-          </Text>
+          />
         )}
         {notes.length === NOTHING ? null : (
-          <Text variant="bodySmall">
-            {t(TRANSLATION_KEYS.suggestionChangeNotes, {
+          <SuggestionChange
+            icon={SUGGESTION_ICONS.notes}
+            text={t(TRANSLATION_KEYS.suggestionChangeNotes, {
               values: notes.join(t(TRANSLATION_KEYS.suggestionSeparator)),
             })}
-          </Text>
+          />
         )}
       </View>
 
+      <Text variant="caption" tone="onEspressoMuted">
+        {t(TRANSLATION_KEYS.suggestionClosing)}
+      </Text>
+
       <View style={styles.actions}>
-        <Button
+        <SuggestionAnswer
+          icon={SUGGESTION_ICONS.accept}
           label={t(TRANSLATION_KEYS.suggestionAccept)}
-          variant="primary"
           disabled={busy}
+          agrees
           onPress={(): void => {
             accept.mutate(suggestion.ref);
           }}
         />
-        <Button
+        <SuggestionAnswer
+          icon={SUGGESTION_ICONS.dismiss}
           label={t(TRANSLATION_KEYS.suggestionDismiss)}
-          variant="secondary"
           disabled={busy}
           onPress={(): void => {
             dismiss.mutate(suggestion.ref);
@@ -92,12 +115,10 @@ export const TasteSuggestionCard = ({
       </View>
 
       {suggestion.explanationSource === INSIGHT_EXPLANATION_SOURCES.rules ? (
-        <View style={styles.source}>
-          <Text variant="labelSmall" tone="muted">
-            {t(TRANSLATION_KEYS.suggestionWrittenByPhone)}
-          </Text>
-        </View>
+        <Text variant="captionSmall" tone="onEspressoMuted">
+          {t(TRANSLATION_KEYS.suggestionWrittenByPhone)}
+        </Text>
       ) : null}
-    </Card>
+    </View>
   );
 };

@@ -1,0 +1,1 @@
+export { INSIGHTS_NOTE_ICON, INSIGHTS_COUNT_ICON, SUGGESTION_ICONS } from './insightIcons';

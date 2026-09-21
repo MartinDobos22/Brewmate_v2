@@ -54,6 +54,13 @@ export const SIZE = {
    */
   stepperFieldMinWidth: 64,
   swatchSize: 56,
+  /**
+   * One row of a count in the history report: the name it belongs to on the
+   * left and the figure on the right, both at fixed widths so the bars between
+   * them start and end in one column down the card.
+   */
+  insightNameWidth: 78,
+  insightCountWidth: 26,
   /** A bar in the taste profile chart: readable, but not a block of colour. */
   profileBarHeight: 10,
   /**

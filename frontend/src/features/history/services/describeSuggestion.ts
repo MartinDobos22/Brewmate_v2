@@ -35,6 +35,13 @@ export const describeReasonValue = (reason: SuggestionReason, t: Translator['t']
  * them into Slovak. That is what lets the card say the same thing whether a
  * model was reachable or not - and it is why the line admitting which of the
  * two happened is worth printing rather than hiding.
+ *
+ * It stops at the reasons. The caveat - that this was drawn from what somebody
+ * brewed rather than from anything they said, and that refusing changes
+ * nothing - used to be the last sentence of the phone's version and was
+ * therefore absent from the model's, which is exactly backwards: a paragraph
+ * written by a model is the one that most needs saying where it came from. It
+ * is now a line of its own on the card, printed either way.
  */
 export const describeSuggestion = (
   suggestion: TasteSuggestion,
@@ -45,8 +52,8 @@ export const describeSuggestion = (
     return suggestion.explanation;
   }
 
-  return [
-    ...suggestion.reasons.map((reason: SuggestionReason): string =>
+  return suggestion.reasons
+    .map((reason: SuggestionReason): string =>
       reason.kind === INSIGHT_REASON_KINDS.roastHistory
         ? t(TRANSLATION_KEYS.suggestionRoastLine, {
             total: brewCount,
@@ -57,7 +64,6 @@ export const describeSuggestion = (
             value: reason.value,
             count: reason.brewCount,
           }),
-    ),
-    t(TRANSLATION_KEYS.suggestionClosing),
-  ].join(SENTENCE_SEPARATOR);
+    )
+    .join(SENTENCE_SEPARATOR);
 };
