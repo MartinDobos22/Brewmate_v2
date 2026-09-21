@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { CALIBRATION_STAGES } from '../../constants/calibrationRecipe';
 import { ONBOARDING_STEPS } from '../../constants/onboardingSteps';
@@ -48,9 +48,10 @@ export const CalibrationStep = ({ flow }: CalibrationStepProps): JSX.Element => 
         />
       )}
       {ready && calibration.stage === CALIBRATION_STAGES.proposal ? (
-        <Button
+        <PillButton
+          tone="surface"
           label={t(TRANSLATION_KEYS.calibrationBrewedAction)}
-          loading={calibration.isPending}
+          isPending={calibration.isPending}
           fullWidth
           onPress={(): void => {
             calibration.start(t(TRANSLATION_KEYS.calibrationRationale));
@@ -65,13 +66,13 @@ export const CalibrationStep = ({ flow }: CalibrationStepProps): JSX.Element => 
           {t(TRANSLATION_KEYS.calibrationSavedBody)}
         </Text>
       ) : null}
-      <Button
+      <PillButton
+        tone="surface"
         label={t(
           calibration.stage === CALIBRATION_STAGES.saved
             ? TRANSLATION_KEYS.onboardingContinue
             : TRANSLATION_KEYS.calibrationSkip,
         )}
-        variant={calibration.stage === CALIBRATION_STAGES.saved ? 'primary' : 'tertiary'}
         onPress={flow.goNext}
         fullWidth
       />

@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, Text } from '../../../../components/ui';
+import { Card, PillButton, Text } from '../../../../components/ui';
 import { ROUTES, buildRecipeChatRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
@@ -58,17 +58,18 @@ export const BrewDonePanel = ({
           </Text>
         </Card>
       ) : null}
-      <Button
+      <PillButton
+        tone="espresso"
         label={t(TRANSLATION_KEYS.brewModeDoneChat)}
         fullWidth
-        loading={isPending}
+        isPending={isPending}
         onPress={(): void => {
           router.replace(buildRecipeChatRoute(recipeId, brewLog?.id));
         }}
       />
-      <Button
+      <PillButton
+        tone="surface"
         label={t(TRANSLATION_KEYS.brewModeDoneLater)}
-        variant="tertiary"
         fullWidth
         onPress={(): void => {
           router.replace(ROUTES.home);

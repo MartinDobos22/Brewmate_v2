@@ -2,9 +2,10 @@ import type { CoffeeBag } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, EmptyState, QueryState, Text } from '../../../../components/ui';
+import { EmptyState, PillButton, QueryState, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
+import { INVENTORY_EMPTY_ICONS } from '../../../inventory/constants';
 import { useCoffeeBags } from '../../../inventory/hooks';
 import { PreBrewBagOption } from '../PreBrewBagOption';
 
@@ -56,12 +57,13 @@ export const CoffeeSourceBagList = ({
   if (items.length === NOTHING) {
     return (
       <EmptyState
+        icon={INVENTORY_EMPTY_ICONS.cupboard}
         title={t(TRANSLATION_KEYS.preBrewSourceEmptyTitle)}
         description={t(TRANSLATION_KEYS.preBrewSourceEmptyBody)}
         actions={[
           {
             label: t(TRANSLATION_KEYS.preBrewSourcePhoto),
-            variant: 'primary',
+            tone: 'espresso',
             onPress: onPhotograph,
           },
           { label: t(TRANSLATION_KEYS.preBrewSourceBack), onPress: onBack },
@@ -76,9 +78,9 @@ export const CoffeeSourceBagList = ({
       {items.map((bag: CoffeeBag): JSX.Element => (
         <PreBrewBagOption key={bag.id} bag={bag} selected={NOT_SELECTED} onChoose={onChoose} />
       ))}
-      <Button
+      <PillButton
+        tone="surface"
         label={t(TRANSLATION_KEYS.preBrewSourceBack)}
-        variant="tertiary"
         fullWidth
         onPress={onBack}
       />

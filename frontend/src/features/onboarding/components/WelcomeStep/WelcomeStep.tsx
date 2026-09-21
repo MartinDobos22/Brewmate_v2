@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { ONBOARDING_STEPS } from '../../constants/onboardingSteps';
 import type { OnboardingFlow } from '../../hooks/useOnboardingFlow';
@@ -27,7 +27,12 @@ export const WelcomeStep = ({ flow }: WelcomeStepProps): JSX.Element => {
           {t(TRANSLATION_KEYS.onboardingResumeNotice)}
         </Text>
       ) : null}
-      <Button label={t(TRANSLATION_KEYS.onboardingWelcomeAction)} onPress={flow.goNext} fullWidth />
+      <PillButton
+        tone="espresso"
+        label={t(TRANSLATION_KEYS.onboardingWelcomeAction)}
+        onPress={flow.goNext}
+        fullWidth
+      />
     </OnboardingStepLayout>
   );
 };

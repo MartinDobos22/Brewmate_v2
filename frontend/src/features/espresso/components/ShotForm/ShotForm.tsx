@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, Input, Text } from '../../../../components/ui';
+import { Card, Input, PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import type { DialInSession } from '../../hooks';
@@ -84,12 +84,13 @@ export const ShotForm = ({ session }: ShotFormProps): JSX.Element => {
             {t(TRANSLATION_KEYS.dialInMissingShot)}
           </Text>
         )}
-        <Button
+        <PillButton
+          tone="espresso"
           label={t(
             session.isSending ? TRANSLATION_KEYS.dialInSending : TRANSLATION_KEYS.dialInSend,
           )}
           fullWidth
-          loading={session.isSending}
+          isPending={session.isSending}
           disabled={!session.canSend || session.isSending}
           onPress={session.send}
         />

@@ -1,7 +1,7 @@
 import type { BrewMethod, Equipment } from '@brewmate/shared';
 import { useState, type JSX } from 'react';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { BrewMethodPicker, BrewerDetailsSheet } from '../../../inventory/components';
 import { useBrewerSelection } from '../../../inventory/hooks';
@@ -49,7 +49,12 @@ export const BrewersStep = ({ flow }: BrewersStepProps): JSX.Element => {
           {t(TRANSLATION_KEYS.setupBrewersEmptyNotice)}
         </Text>
       ) : null}
-      <Button label={t(TRANSLATION_KEYS.onboardingContinue)} onPress={flow.goNext} fullWidth />
+      <PillButton
+        tone="espresso"
+        label={t(TRANSLATION_KEYS.onboardingContinue)}
+        onPress={flow.goNext}
+        fullWidth
+      />
       {details === null ? null : (
         <BrewerDetailsSheet
           visible

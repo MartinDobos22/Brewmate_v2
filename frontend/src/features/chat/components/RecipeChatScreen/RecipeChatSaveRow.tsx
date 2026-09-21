@@ -2,7 +2,7 @@ import type { Recipe } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { useUpdateRecipe } from '../../../brewing/hooks';
@@ -41,11 +41,11 @@ export const RecipeChatSaveRow = ({ recipe }: RecipeChatSaveRowProps): JSX.Eleme
               {t(TRANSLATION_KEYS.recipeSaveError)}
             </Text>
           ) : null}
-          <Button
+          <PillButton
+            tone="surface"
             label={t(TRANSLATION_KEYS.recipeSaveAction)}
-            variant="secondary"
             fullWidth
-            loading={update.isPending}
+            isPending={update.isPending}
             onPress={(): void => {
               update.mutate({ id: recipe.id, changes: { isSaved: SAVED } });
             }}

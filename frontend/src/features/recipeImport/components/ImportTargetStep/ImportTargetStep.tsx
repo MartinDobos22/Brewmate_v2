@@ -2,7 +2,7 @@ import type { BrewConstraints } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useIsOnline } from '../../../../hooks';
 import { useThemedStyles } from '../../../../theme';
@@ -61,20 +61,21 @@ export const ImportTargetStep = ({ recipeImport }: ImportTargetStepProps): JSX.E
             {t(TRANSLATION_KEYS.importMissingMethod)}
           </Text>
         ) : null}
-        <Button
+        <PillButton
+          tone="espresso"
           label={t(
             recipeImport.isConverting
               ? TRANSLATION_KEYS.importConverting
               : TRANSLATION_KEYS.importConvert,
           )}
           fullWidth
-          loading={recipeImport.isConverting}
+          isPending={recipeImport.isConverting}
           disabled={recipeImport.method === undefined || !isOnline}
           onPress={recipeImport.convert}
         />
-        <Button
+        <PillButton
+          tone="surface"
           label={t(TRANSLATION_KEYS.actionBack)}
-          variant="tertiary"
           fullWidth
           disabled={recipeImport.isConverting}
           onPress={recipeImport.back}

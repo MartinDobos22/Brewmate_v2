@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { CoffeeBagFormFields } from '../../../inventory/components';
 import { BAG_PHOTO_FAILURE_KEYS } from '../../constants/bagPhotoFailures';
@@ -55,14 +55,15 @@ export const BagLabelForm = ({ scan }: BagLabelFormProps): JSX.Element => {
           {t(TRANSLATION_KEYS.scanError)}
         </Text>
       ) : null}
-      <Button
+      <PillButton
+        tone="espresso"
         label={t(
           scan.mode === BAG_SCAN_MODES.inventory
             ? TRANSLATION_KEYS.inventoryAddSubmit
             : TRANSLATION_KEYS.scanSubmit,
         )}
         fullWidth
-        loading={scan.isSaving}
+        isPending={scan.isSaving}
         onPress={(): void => {
           scan.submit(t(TRANSLATION_KEYS.inventoryUnnamedCoffee));
         }}

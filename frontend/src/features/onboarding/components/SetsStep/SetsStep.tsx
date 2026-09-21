@@ -1,7 +1,7 @@
 import type { Equipment } from '@brewmate/shared';
 import type { JSX } from 'react';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { EquipmentSetForm, EquipmentSetList } from '../../../inventory/components';
 import { useEquipmentList } from '../../../inventory/hooks';
@@ -42,7 +42,12 @@ export const SetsStep = ({ flow }: SetsStepProps): JSX.Element => {
       ) : (
         <EquipmentSetForm equipment={owned} />
       )}
-      <Button label={t(TRANSLATION_KEYS.onboardingContinue)} onPress={flow.goNext} fullWidth />
+      <PillButton
+        tone="espresso"
+        label={t(TRANSLATION_KEYS.onboardingContinue)}
+        onPress={flow.goNext}
+        fullWidth
+      />
     </OnboardingStepLayout>
   );
 };

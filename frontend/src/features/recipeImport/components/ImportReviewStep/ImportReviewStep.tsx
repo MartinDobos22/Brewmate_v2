@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, Text } from '../../../../components/ui';
+import { Card, PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import type { RecipeImport } from '../../hooks';
@@ -52,14 +52,15 @@ export const ImportReviewStep = ({ recipeImport }: ImportReviewStepProps): JSX.E
           : t(TRANSLATION_KEYS.importReviewSteps, { count: stepCount })}
       </Text>
       <View style={styles.actions}>
-        <Button
+        <PillButton
+          tone="espresso"
           label={t(TRANSLATION_KEYS.actionContinue)}
           fullWidth
           onPress={recipeImport.toTarget}
         />
-        <Button
+        <PillButton
+          tone="surface"
           label={t(TRANSLATION_KEYS.actionBack)}
-          variant="tertiary"
           fullWidth
           onPress={recipeImport.back}
         />

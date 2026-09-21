@@ -3,7 +3,7 @@ import { ScrollView } from 'react-native';
 
 import type { Grinder } from '@brewmate/shared';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { EMPTY_GRINDER_FORM } from '../../constants';
@@ -77,10 +77,11 @@ export const AddGrinderForm = ({ onAdded }: AddGrinderFormProps): JSX.Element =>
           {t(errorKey)}
         </Text>
       )}
-      <Button
+      <PillButton
+        tone="espresso"
         label={t(TRANSLATION_KEYS.grinderAddSubmit)}
         onPress={submit}
-        loading={mutation.isPending}
+        isPending={mutation.isPending}
         fullWidth
       />
     </ScrollView>

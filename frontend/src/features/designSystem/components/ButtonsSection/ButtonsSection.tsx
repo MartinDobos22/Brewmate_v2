@@ -1,6 +1,6 @@
 import { useState, type JSX } from 'react';
 
-import { Button, Chip } from '../../../../components/ui';
+import { Chip, PillButton } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { SectionBlock } from '../SectionBlock';
 
@@ -12,12 +12,23 @@ export const ButtonsSection = (): JSX.Element => {
 
   return (
     <SectionBlock title={t(TRANSLATION_KEYS.dsSectionButtons)} inline>
-      <Button label={t(TRANSLATION_KEYS.dsButtonPrimary)} onPress={noop} />
-      <Button label={t(TRANSLATION_KEYS.dsButtonSecondary)} onPress={noop} variant="secondary" />
-      <Button label={t(TRANSLATION_KEYS.dsButtonTertiary)} onPress={noop} variant="tertiary" />
-      <Button label={t(TRANSLATION_KEYS.dsButtonDanger)} onPress={noop} variant="danger" />
-      <Button label={t(TRANSLATION_KEYS.dsButtonDisabled)} onPress={noop} disabled />
-      <Button label={t(TRANSLATION_KEYS.dsButtonLoading)} onPress={noop} loading size="small" />
+      <PillButton tone="espresso" label={t(TRANSLATION_KEYS.dsButtonPrimary)} onPress={noop} />
+      <PillButton tone="surface" label={t(TRANSLATION_KEYS.dsButtonSecondary)} onPress={noop} />
+      <PillButton tone="surface" label={t(TRANSLATION_KEYS.dsButtonTertiary)} onPress={noop} />
+      <PillButton tone="danger" label={t(TRANSLATION_KEYS.dsButtonDanger)} onPress={noop} />
+      <PillButton
+        tone="espresso"
+        label={t(TRANSLATION_KEYS.dsButtonDisabled)}
+        onPress={noop}
+        disabled
+      />
+      <PillButton
+        tone="espresso"
+        label={t(TRANSLATION_KEYS.dsButtonLoading)}
+        onPress={noop}
+        isPending
+        size="small"
+      />
       <Chip
         label={t(TRANSLATION_KEYS.dsChipSelected)}
         selected={selected}

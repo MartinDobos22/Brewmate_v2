@@ -3,10 +3,11 @@ import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, EmptyState, Text } from '../../../../components/ui';
+import { EmptyState, PillButton, Text } from '../../../../components/ui';
 import { buildBrewRoute, buildTimelineRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
+import { INVENTORY_EMPTY_ICONS } from '../../constants';
 import { useBrewMethodCatalog } from '../../hooks';
 import { groupRecipesByMethod, type RecipeMethodGroup } from '../../services/groupRecipesByMethod';
 
@@ -38,12 +39,13 @@ export const BagRecipeHistory = ({ recipes, bagId }: BagRecipeHistoryProps): JSX
   if (recipes.length === NOTHING) {
     return (
       <EmptyState
+        icon={INVENTORY_EMPTY_ICONS.recipes}
         title={t(TRANSLATION_KEYS.bagRecipesEmptyTitle)}
         description={t(TRANSLATION_KEYS.bagRecipesEmptyBody)}
         actions={[
           {
             label: t(TRANSLATION_KEYS.bagRecipesEmptyAction),
-            variant: 'primary',
+            tone: 'espresso',
             onPress: (): void => {
               router.push(buildBrewRoute(bagId));
             },
@@ -74,9 +76,9 @@ export const BagRecipeHistory = ({ recipes, bagId }: BagRecipeHistoryProps): JSX
               got" and the timeline answers "how did it get here" - two
               questions somebody asks on different days.
             */}
-            <Button
+            <PillButton
+              tone="surface"
               label={t(TRANSLATION_KEYS.historyTimelineOpenAction)}
-              variant="tertiary"
               onPress={(): void => {
                 router.push(buildTimelineRoute(group.methodId, bagId));
               }}

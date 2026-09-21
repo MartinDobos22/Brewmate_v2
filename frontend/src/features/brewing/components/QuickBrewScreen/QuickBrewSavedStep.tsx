@@ -17,7 +17,7 @@ export const QuickBrewSavedStep = (): JSX.Element => {
       actions={[
         {
           label: t(TRANSLATION_KEYS.quickBrewSavedAction),
-          variant: 'primary',
+          tone: 'espresso',
           onPress: (): void => {
             router.replace(ROUTES.home);
           },

@@ -1,7 +1,7 @@
 import { useState, type JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, ChatBubble, Input, Text, CHAT_AUTHORS } from '../../../../components/ui';
+import { CHAT_AUTHORS, ChatBubble, Input, PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import type { CalibrationBrew } from '../../hooks/useCalibrationBrew';
@@ -47,13 +47,14 @@ export const CalibrationChat = ({ calibration }: CalibrationChatProps): JSX.Elem
         disabled={calibration.isPending}
         onChangeText={setDescription}
       />
-      <Button
+      <PillButton
+        tone="espresso"
         label={t(TRANSLATION_KEYS.calibrationChatSend)}
         onPress={(): void => {
           calibration.describe(description);
         }}
         disabled={description.trim() === EMPTY}
-        loading={calibration.isPending}
+        isPending={calibration.isPending}
         fullWidth
       />
       {calibration.notUnderstood ? (

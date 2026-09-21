@@ -3,8 +3,6 @@
  * so they live here rather than inside a StyleSheet.
  */
 export const SIZE = {
-  buttonHeightSmall: 36,
-  buttonHeightMedium: 48,
   inputHeight: 48,
   chipHeight: 32,
   /**

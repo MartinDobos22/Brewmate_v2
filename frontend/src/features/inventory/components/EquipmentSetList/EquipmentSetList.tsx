@@ -2,7 +2,7 @@ import type { EquipmentSet } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, ListItem, Text } from '../../../../components/ui';
+import { ListItem, PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { useEquipmentSetSwitcher } from '../../hooks';
@@ -34,9 +34,9 @@ export const EquipmentSetList = (): JSX.Element => {
           subtitle={set.isDefault ? t(TRANSLATION_KEYS.setupSetsDefaultBadge) : undefined}
           trailing={
             set.isDefault ? undefined : (
-              <Button
+              <PillButton
+                tone="surface"
                 label={t(TRANSLATION_KEYS.setupSetsMakeDefault)}
-                variant="tertiary"
                 size="small"
                 onPress={(): void => {
                   switcher.makeDefault(set.id);

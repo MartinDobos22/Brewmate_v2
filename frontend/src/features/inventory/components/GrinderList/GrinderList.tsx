@@ -6,6 +6,7 @@ import type { Grinder } from '@brewmate/shared';
 import { EmptyState, ErrorState, LoadingState } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
+import { INVENTORY_EMPTY_ICONS } from '../../constants';
 import { GrinderListItem } from '../GrinderListItem';
 
 import { createGrinderListStyles } from './GrinderList.styles';
@@ -59,6 +60,7 @@ export const GrinderList = ({
   if (items.length === NOTHING) {
     return (
       <EmptyState
+        icon={INVENTORY_EMPTY_ICONS.catalogue}
         title={t(
           isFiltered ? TRANSLATION_KEYS.grinderNoResultsTitle : TRANSLATION_KEYS.grinderEmptyTitle,
         )}
@@ -68,7 +70,7 @@ export const GrinderList = ({
         actions={[
           {
             label: t(TRANSLATION_KEYS.grinderNotFoundAction),
-            variant: 'primary',
+            tone: 'espresso',
             onPress: onAddOwn,
           },
         ]}

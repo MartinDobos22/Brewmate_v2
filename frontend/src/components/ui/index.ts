@@ -1,5 +1,3 @@
-export { Button } from './Button';
-export type { ButtonProps, ButtonVariant, ButtonSize } from './Button';
 export { Card } from './Card';
 export type { CardProps, CardVariant } from './Card';
 export { ChatBubble, CHAT_AUTHORS } from './ChatBubble';
@@ -44,6 +42,8 @@ export type { TextProps, TextVariant, TextTone, TextAlign } from './Text';
 export { Tile, DEFAULT_TILE_TONE } from './Tile';
 export type { TileProps, TileGlyph, TileTone } from './Tile';
 export { ActionRow } from './ActionRow';
+export { StateMark } from './StateMark';
+export type { StateMarkProps, StateGround } from './StateMark';
 export { PillButton } from './PillButton';
 export type { PillButtonProps, PillTone, PillSize } from './PillButton';
 export { FigureRow } from './FigureColumn';

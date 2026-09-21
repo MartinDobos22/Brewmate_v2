@@ -2,7 +2,7 @@ import type { Grinder } from '@brewmate/shared';
 import { useState, type JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button } from '../../../../components/ui';
+import { PillButton } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { useGrinderCatalog } from '../../hooks';
@@ -47,9 +47,9 @@ export const GrinderPicker = ({ onSelect }: GrinderPickerProps): JSX.Element => 
           onSelect={onSelect}
         />
       </View>
-      <Button
+      <PillButton
+        tone="surface"
         label={t(TRANSLATION_KEYS.grinderNotFoundAction)}
-        variant="tertiary"
         fullWidth
         onPress={openSheet}
       />

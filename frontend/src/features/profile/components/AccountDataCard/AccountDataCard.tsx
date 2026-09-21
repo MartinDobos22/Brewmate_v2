@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { Button, Card, Text } from '../../../../components/ui';
+import { Card, PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useExportAccount } from '../../hooks';
 
@@ -26,15 +26,15 @@ export const AccountDataCard = (): JSX.Element => {
       <Text variant="bodySmall" tone="muted">
         {t(TRANSLATION_KEYS.privacyExportBody)}
       </Text>
-      <Button
+      <PillButton
+        tone="surface"
         label={t(
           exportAccount.isPending
             ? TRANSLATION_KEYS.privacyExportPreparing
             : TRANSLATION_KEYS.privacyExportAction,
         )}
-        variant="secondary"
         fullWidth
-        loading={exportAccount.isPending}
+        isPending={exportAccount.isPending}
         onPress={(): void => {
           exportAccount.mutate();
         }}

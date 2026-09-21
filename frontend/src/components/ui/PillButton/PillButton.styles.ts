@@ -10,7 +10,7 @@ import {
   type PillTone,
 } from './pillButtonTones';
 
-type PillButtonStyleMap = ViewStyles<'base' | 'grows' | 'pressed' | 'disabled'>;
+type PillButtonStyleMap = ViewStyles<'base' | 'grows' | 'fullWidth' | 'pressed' | 'disabled'>;
 
 /**
  * Every button in this app that is shaped like a pill.
@@ -35,6 +35,14 @@ export const createPillButtonStyles = (theme: Theme): PillButtonStyleMap =>
     },
     /** Takes the row it is in, for a pair of buttons sharing one. */
     grows: { flex: 1, minWidth: 0 },
+    /**
+     * Takes the width of whatever it is stacked in.
+     *
+     * Not the same as `grows`, which divides a row between two buttons. This
+     * is one button under a form, and the difference matters in a column: a
+     * flexed child of a column stretches vertically instead.
+     */
+    fullWidth: { alignSelf: 'stretch' },
     pressed: { opacity: theme.opacity.pressed },
     disabled: { opacity: theme.opacity.disabled },
   });

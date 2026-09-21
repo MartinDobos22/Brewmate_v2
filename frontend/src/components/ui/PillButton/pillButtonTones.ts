@@ -13,8 +13,14 @@ import type { TextTone } from '../Text';
  * the muted grey: for a row where the mark is what the reader is looking for
  * and the words only confirm it. `faint` is a control with nothing to do yet -
  * a send button over an empty box - which is a state rather than a level.
+ *
+ * `danger` is the seventh and belongs to no pair. It exists for deleting an
+ * account and for nothing else: an app that painted more than one button red
+ * would be one whose red means "important" rather than "this cannot be
+ * undone".
  */
-export type PillTone = 'cream' | 'espresso' | 'lifted' | 'surface' | 'surfaceLead' | 'faint';
+export type PillTone =
+  'cream' | 'espresso' | 'lifted' | 'surface' | 'surfaceLead' | 'faint' | 'danger';
 
 export const DEFAULT_PILL_TONE: PillTone = 'surface';
 
@@ -25,6 +31,7 @@ export const PILL_BACKGROUNDS = {
   surface: 'surfaceVariant',
   surfaceLead: 'surfaceVariant',
   faint: 'outlineFaint',
+  danger: 'error',
 } as const satisfies Record<PillTone, keyof ColorPalette>;
 
 export const PILL_LABEL_TONES = {
@@ -34,6 +41,7 @@ export const PILL_LABEL_TONES = {
   surface: 'default',
   surfaceLead: 'default',
   faint: 'muted',
+  danger: 'onPrimary',
 } as const satisfies Record<PillTone, TextTone>;
 
 export const PILL_ICON_COLORS = {
@@ -43,6 +51,7 @@ export const PILL_ICON_COLORS = {
   surface: 'onSurfaceVariant',
   surfaceLead: 'primary',
   faint: 'onSurfaceVariant',
+  danger: 'onError',
 } as const satisfies Record<PillTone, keyof ColorPalette>;
 
 /**
@@ -59,6 +68,7 @@ export const PILL_ELEVATIONS = {
   surface: null,
   surfaceLead: null,
   faint: null,
+  danger: null,
 } as const satisfies Record<PillTone, ElevationToken | null>;
 
 /**

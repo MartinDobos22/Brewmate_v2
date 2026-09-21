@@ -2,7 +2,7 @@ import type { TasteProfile } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { ScrollView } from 'react-native';
 
-import { Button, Sheet, Text } from '../../../../components/ui';
+import { PillButton, Sheet, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { TasteAxisSliders } from '../../../tasteProfile/components';
@@ -43,9 +43,10 @@ export const TasteTuningSheet = ({
             {t(TRANSLATION_KEYS.profileTuneError)}
           </Text>
         ) : null}
-        <Button
+        <PillButton
+          tone="espresso"
           label={t(TRANSLATION_KEYS.profileTuneSave)}
-          loading={tuning.isPending}
+          isPending={tuning.isPending}
           fullWidth
           onPress={(): void => {
             tuning.save(onClose);

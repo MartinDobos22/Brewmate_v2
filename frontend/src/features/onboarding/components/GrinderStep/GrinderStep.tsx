@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { EquipmentSummaryList, GrinderPicker } from '../../../inventory/components';
@@ -45,13 +45,13 @@ export const GrinderStep = ({ flow }: GrinderStepProps): JSX.Element => {
       <View style={styles.picker}>
         <GrinderPicker onSelect={inventory.add} />
       </View>
-      <Button
+      <PillButton
+        tone={hasGrinder ? 'espresso' : 'surface'}
         label={t(
           hasGrinder
             ? TRANSLATION_KEYS.onboardingContinue
             : TRANSLATION_KEYS.setupGrinderNoneAction,
         )}
-        variant={hasGrinder ? 'primary' : 'secondary'}
         onPress={flow.goNext}
         fullWidth
       />

@@ -32,6 +32,8 @@ export interface PillButtonProps {
   readonly size?: PillSize;
   /** Takes the row it is in, for a pair of buttons sharing one. */
   readonly grows?: boolean;
+  /** Takes the width of the column it is stacked in - one button under a form. */
+  readonly fullWidth?: boolean;
   /** The deeper shadow, for the one button on a screen that is a commitment. */
   readonly raised?: boolean;
   /** Replaces the glyph with a spinner and refuses further presses. */
@@ -70,6 +72,7 @@ export const PillButton = ({
   tone = DEFAULT_PILL_TONE,
   size = DEFAULT_PILL_SIZE,
   grows = false,
+  fullWidth = false,
   raised = false,
   isPending = false,
   disabled = false,
@@ -86,6 +89,7 @@ export const PillButton = ({
     label === undefined && pillCircle(theme, size),
     raised && pillRaised(theme),
     grows && styles.grows,
+    fullWidth && styles.fullWidth,
     pressed && !isBlocked && styles.pressed,
     isBlocked && styles.disabled,
   ];

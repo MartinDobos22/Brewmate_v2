@@ -2,14 +2,13 @@ import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { ActionRow, InfoNote, Text } from '../../../../components/ui';
+import { ActionRow, InfoNote, StateMark, Text } from '../../../../components/ui';
 import { buildScanRoute, ROUTES } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { BAG_SCAN_MODES } from '../../../bagEvaluations/constants';
-import { INVENTORY_TILE_ICONS, SHOP_HELP_ICON } from '../../constants';
+import { INVENTORY_EMPTY_ICONS, INVENTORY_TILE_ICONS, SHOP_HELP_ICON } from '../../constants';
 
-import { EmptyCupboardMark } from './EmptyCupboardMark';
 import { createInventoryEmptyStyles } from './InventoryEmpty.styles';
 
 export interface InventoryEmptyProps {
@@ -38,7 +37,7 @@ export const InventoryEmpty = ({ onAddManually }: InventoryEmptyProps): JSX.Elem
   return (
     <View style={styles.wrapper}>
       <View style={styles.figure}>
-        <EmptyCupboardMark />
+        <StateMark icon={INVENTORY_EMPTY_ICONS.cupboard} />
         <View style={styles.words}>
           <Text variant="displayCompact" align="center">
             {t(TRANSLATION_KEYS.inventoryEmptyTitle)}

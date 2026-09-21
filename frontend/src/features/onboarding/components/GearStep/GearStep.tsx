@@ -1,7 +1,7 @@
 import { EQUIPMENT_TYPES, readKettleParams } from '@brewmate/shared';
 import type { JSX } from 'react';
 
-import { Button, OptionCard, Text } from '../../../../components/ui';
+import { OptionCard, PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useEquipmentToggle } from '../../../inventory/hooks';
 import { ONBOARDING_STEPS } from '../../constants/onboardingSteps';
@@ -69,7 +69,12 @@ export const GearStep = ({ flow }: GearStepProps): JSX.Element => {
           kettle.setPresent(NO_CONTROL);
         }}
       />
-      <Button label={t(TRANSLATION_KEYS.onboardingContinue)} onPress={flow.goNext} fullWidth />
+      <PillButton
+        tone="espresso"
+        label={t(TRANSLATION_KEYS.onboardingContinue)}
+        onPress={flow.goNext}
+        fullWidth
+      />
     </OnboardingStepLayout>
   );
 };

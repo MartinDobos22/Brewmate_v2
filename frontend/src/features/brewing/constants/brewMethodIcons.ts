@@ -46,3 +46,14 @@ export const PRE_BREW_COFFEE_ICONS = {
   change: 'swap-horizontal',
   photo: 'camera',
 } as const satisfies Record<string, TileGlyph>;
+
+/**
+ * An account with no brewer written down, which is what the quick-brew flow
+ * hits before onboarding has been through.
+ *
+ * The same glyph the brewers step of onboarding carries, because that is
+ * exactly where this screen's one action goes. A different picture for the
+ * same piece of equipment would make the destination look like a third thing
+ * to do rather than the answer to the sentence above it.
+ */
+export const EMPTY_BREW_METHODS_ICON = 'filter-outline' satisfies TileGlyph;

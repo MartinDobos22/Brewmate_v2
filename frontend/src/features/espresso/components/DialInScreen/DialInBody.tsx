@@ -2,7 +2,7 @@ import type { BrewMethod } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { RecipeSummaryCard } from '../../../brewing/components';
@@ -61,15 +61,15 @@ export const DialInBody = ({ session, method }: DialInBodyProps): JSX.Element | 
             {t(TRANSLATION_KEYS.dialInFinished)}
           </Text>
         ) : (
-          <Button
+          <PillButton
+            tone="surface"
             label={t(
               session.isFinishing
                 ? TRANSLATION_KEYS.dialInFinishing
                 : TRANSLATION_KEYS.dialInFinish,
             )}
-            variant="secondary"
             fullWidth
-            loading={session.isFinishing}
+            isPending={session.isFinishing}
             onPress={session.finish}
           />
         )}

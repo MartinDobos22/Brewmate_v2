@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { buildBrewModeRoute, buildRecipeChatRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
@@ -58,16 +58,17 @@ export const ImportResultStep = ({ recipeImport }: ImportResultStepProps): JSX.E
         )}
       />
       {report === null || report === undefined ? null : <ConversionReportCard report={report} />}
-      <Button
+      <PillButton
+        tone="espresso"
         label={t(TRANSLATION_KEYS.importResultBrew)}
         fullWidth
         onPress={(): void => {
           router.replace(buildBrewModeRoute(recipe.id));
         }}
       />
-      <Button
+      <PillButton
+        tone="surface"
         label={t(TRANSLATION_KEYS.importResultChat)}
-        variant="secondary"
         fullWidth
         onPress={(): void => {
           router.push(buildRecipeChatRoute(recipe.id));

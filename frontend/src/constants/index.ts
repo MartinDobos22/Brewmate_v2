@@ -14,6 +14,7 @@ export {
 } from './http';
 export type { HttpMethod } from './http';
 export { LIMITS } from './limits';
+export { NOT_FOUND_ICON } from './notFound';
 export type { LimitToken } from './limits';
 export { QUERY_KEYS, QUERY_ROOTS } from './queryKeys';
 export type { AppQueryKey, QueryFilter, QueryKeyFactory } from './queryKeys';

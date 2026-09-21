@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { Button, LoadingState, OptionCard, Text } from '../../../../components/ui';
+import { LoadingState, OptionCard, PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { ONBOARDING_STEPS } from '../../constants/onboardingSteps';
 import { useTasteQuestionnaire } from '../../hooks/useTasteQuestionnaire';
@@ -76,9 +76,9 @@ export const TasteStep = ({ flow }: TasteStepProps): JSX.Element => {
           <Text variant="bodyMuted" tone="error">
             {t(TRANSLATION_KEYS.tqSaveFailed)}
           </Text>
-          <Button
+          <PillButton
+            tone="surface"
             label={t(TRANSLATION_KEYS.actionRetry)}
-            variant="secondary"
             onPress={questionnaire.retry}
             fullWidth
           />

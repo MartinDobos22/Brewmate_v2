@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, Text } from '../../../../components/ui';
+import { Card, PillButton, Text } from '../../../../components/ui';
 import { buildBrewModeRoute, ROUTES } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
@@ -59,7 +59,8 @@ export const QuickBrewRecipeStep = ({ brew }: QuickBrewRecipeStepProps): JSX.Ele
       </Text>
       {recipe === undefined ? null : (
         <View style={styles.offer}>
-          <Button
+          <PillButton
+            tone="espresso"
             label={t(TRANSLATION_KEYS.quickBrewBrewAction)}
             fullWidth
             onPress={(): void => {
@@ -82,18 +83,18 @@ export const QuickBrewRecipeStep = ({ brew }: QuickBrewRecipeStepProps): JSX.Ele
               {t(TRANSLATION_KEYS.quickBrewSaveError)}
             </Text>
           ) : null}
-          <Button
+          <PillButton
+            tone="surface"
             label={t(TRANSLATION_KEYS.quickBrewAddToInventoryAction)}
-            variant="secondary"
             fullWidth
-            loading={brew.isPending}
+            isPending={brew.isPending}
             onPress={(): void => {
               brew.keepCoffee(t(TRANSLATION_KEYS.quickBrewUnnamedCoffee));
             }}
           />
-          <Button
+          <PillButton
+            tone="surface"
             label={t(TRANSLATION_KEYS.quickBrewAddToInventorySkip)}
-            variant="tertiary"
             fullWidth
             onPress={(): void => {
               router.replace(ROUTES.home);

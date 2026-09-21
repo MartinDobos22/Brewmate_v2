@@ -11,8 +11,24 @@ export const INVENTORY_TILE_ICONS = {
   brew: 'coffee-outline',
 } as const satisfies Record<string, TileGlyph>;
 
-/** The glyph of the thing an empty cupboard has none of. */
-export const EMPTY_CUPBOARD_ICON = 'package-variant-closed' satisfies TileGlyph;
+/**
+ * What each of this domain's empty screens has none of, drawn.
+ *
+ * One record rather than a glyph beside each screen, because these are the
+ * same statement made three times - here is the thing that is missing - and a
+ * cupboard whose mark was chosen in one file and a catalogue whose mark was
+ * chosen in another drift apart the first time either is changed.
+ *
+ * `catalogue` is a search that found nothing rather than a shelf that is
+ * empty: the grinder list is full, and what is missing is the one somebody
+ * typed. Naming that difference is what sends them to the add form instead of
+ * to a different search term.
+ */
+export const INVENTORY_EMPTY_ICONS = {
+  cupboard: 'package-variant-closed',
+  recipes: 'notebook-outline',
+  catalogue: 'magnify-close',
+} as const satisfies Record<string, TileGlyph>;
 
 /**
  * The third way out of an empty cupboard: somebody with no coffee at home at

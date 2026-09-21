@@ -8,6 +8,7 @@ import { EmptyState, QueryState, Text } from '../../../../components/ui';
 import { buildBrewRoute, ROUTES } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
+import { EMPTY_TIMELINE_ICON } from '../../constants';
 import { useRecipeTimeline } from '../../hooks';
 import { readTimelineParams } from '../../services';
 import { TimelineEntryCard } from '../TimelineEntryCard';
@@ -58,12 +59,13 @@ export const RecipeTimelineScreen = (): JSX.Element => {
 
       {timeline.isSuccess && entries.length === NOTHING ? (
         <EmptyState
+          icon={EMPTY_TIMELINE_ICON}
           title={t(TRANSLATION_KEYS.historyTimelineEmptyTitle)}
           description={t(TRANSLATION_KEYS.historyTimelineEmptyBody)}
           actions={[
             {
               label: t(TRANSLATION_KEYS.historyTimelineEmptyAction),
-              variant: 'primary',
+              tone: 'espresso',
               onPress: (): void => {
                 router.push(
                   params.bagId === undefined ? ROUTES.brew : buildBrewRoute(params.bagId),

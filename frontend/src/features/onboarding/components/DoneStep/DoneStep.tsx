@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { ONBOARDING_STEPS } from '../../constants/onboardingSteps';
 import { TasteRadarChart } from '../../../tasteProfile/components';
@@ -34,7 +34,12 @@ export const DoneStep = ({ flow }: DoneStepProps): JSX.Element => {
       <Text variant="bodySmall" tone="muted">
         {t(TRANSLATION_KEYS.onboardingDoneProfileHint)}
       </Text>
-      <Button label={t(TRANSLATION_KEYS.onboardingDoneAction)} onPress={flow.goNext} fullWidth />
+      <PillButton
+        tone="espresso"
+        label={t(TRANSLATION_KEYS.onboardingDoneAction)}
+        onPress={flow.goNext}
+        fullWidth
+      />
     </OnboardingStepLayout>
   );
 };

@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { Button, Card, Text } from '../../../../components/ui';
+import { Card, PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { EquipmentSetList } from '../../../inventory/components';
 import { ONBOARDING_STEPS } from '../../../onboarding/constants';
@@ -15,9 +15,9 @@ export const SetsSection = (): JSX.Element => {
     <Card>
       <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileSetsTitle)}</Text>
       <EquipmentSetList />
-      <Button
+      <PillButton
+        tone="surface"
         label={t(TRANSLATION_KEYS.setupSetsAddAction)}
-        variant="secondary"
         fullWidth
         onPress={(): void => {
           openStep(ONBOARDING_STEPS.sets);

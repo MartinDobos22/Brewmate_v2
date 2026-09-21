@@ -21,9 +21,7 @@ export const ScanDoneStep = ({ scan }: { readonly scan: BagScan }): JSX.Element 
       <EmptyState
         title={t(TRANSLATION_KEYS.scanAddedTitle)}
         description={t(TRANSLATION_KEYS.scanAddedBody)}
-        actions={[
-          { label: t(TRANSLATION_KEYS.scanAgain), variant: 'primary', onPress: scan.reset },
-        ]}
+        actions={[{ label: t(TRANSLATION_KEYS.scanAgain), tone: 'espresso', onPress: scan.reset }]}
       />
     );
   }
@@ -40,7 +38,7 @@ export const ScanDoneStep = ({ scan }: { readonly scan: BagScan }): JSX.Element 
           ? TRANSLATION_KEYS.scanSavedBody
           : TRANSLATION_KEYS.scanSkippedBody,
       )}
-      actions={[{ label: t(TRANSLATION_KEYS.scanAgain), variant: 'primary', onPress: scan.reset }]}
+      actions={[{ label: t(TRANSLATION_KEYS.scanAgain), tone: 'espresso', onPress: scan.reset }]}
     />
   );
 };

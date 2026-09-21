@@ -4,6 +4,7 @@ import { useRequestErrorCopy } from '../../../hooks/useRequestErrorCopy';
 import { TRANSLATION_KEYS, useTranslation } from '../../../i18n';
 import { ErrorState } from '../ErrorState';
 import { LoadingState } from '../LoadingState';
+import { DEFAULT_STATE_GROUND, type StateGround } from '../StateMark';
 
 export interface QueryStateProps {
   readonly isPending: boolean;
@@ -12,6 +13,8 @@ export interface QueryStateProps {
   readonly onRetry: () => void;
   /** Overrides the default "Načítava sa…" where a screen can say more. */
   readonly loadingLabel?: string;
+  /** Named by the two screens that are dark in both colour schemes. */
+  readonly ground?: StateGround;
 }
 
 /**
@@ -28,12 +31,15 @@ export const QueryState = ({
   error,
   onRetry,
   loadingLabel,
+  ground = DEFAULT_STATE_GROUND,
 }: QueryStateProps): JSX.Element | null => {
   const { t } = useTranslation();
   const copy = useRequestErrorCopy(error);
 
   if (isPending) {
-    return <LoadingState label={loadingLabel ?? t(TRANSLATION_KEYS.stateLoading)} />;
+    return (
+      <LoadingState label={loadingLabel ?? t(TRANSLATION_KEYS.stateLoading)} ground={ground} />
+    );
   }
 
   if (isError) {
@@ -43,6 +49,7 @@ export const QueryState = ({
         description={copy.description}
         retryLabel={t(TRANSLATION_KEYS.actionRetry)}
         onRetry={onRetry}
+        ground={ground}
       />
     );
   }

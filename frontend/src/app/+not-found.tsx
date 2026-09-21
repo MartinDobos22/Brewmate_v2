@@ -3,7 +3,7 @@ import type { JSX } from 'react';
 
 import { Screen, STACK_SCREEN_EDGES } from '../components/layout';
 import { EmptyState } from '../components/ui';
-import { ROUTES } from '../constants';
+import { NOT_FOUND_ICON, ROUTES } from '../constants';
 import { TRANSLATION_KEYS, useTranslation } from '../i18n';
 
 export default function NotFoundRoute(): JSX.Element {
@@ -12,6 +12,7 @@ export default function NotFoundRoute(): JSX.Element {
   return (
     <Screen edges={STACK_SCREEN_EDGES}>
       <EmptyState
+        icon={NOT_FOUND_ICON}
         title={t(TRANSLATION_KEYS.titleNotFound)}
         description={t(TRANSLATION_KEYS.notFoundBody)}
       />

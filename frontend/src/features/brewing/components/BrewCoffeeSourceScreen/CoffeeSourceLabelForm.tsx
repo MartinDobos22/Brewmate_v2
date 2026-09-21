@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { BAG_PHOTO_FAILURE_KEYS } from '../../../bagEvaluations/constants';
@@ -61,17 +61,18 @@ export const CoffeeSourceLabelForm = ({ source }: CoffeeSourceLabelFormProps): J
         </Text>
       ) : null}
       <View style={styles.actions}>
-        <Button
+        <PillButton
+          tone="espresso"
           label={t(TRANSLATION_KEYS.preBrewSourceKeep)}
           fullWidth
-          loading={source.isSaving}
+          isPending={source.isSaving}
           onPress={(): void => {
             source.keepLabel(t(TRANSLATION_KEYS.inventoryUnnamedCoffee));
           }}
         />
-        <Button
+        <PillButton
+          tone="surface"
           label={t(TRANSLATION_KEYS.preBrewSourceBack)}
-          variant="tertiary"
           fullWidth
           disabled={source.isSaving}
           onPress={source.back}

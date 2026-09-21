@@ -44,3 +44,13 @@ export const TIMELINE_ICONS = {
   chat: 'message-outline',
   latest: 'check',
 } as const satisfies Record<string, TileGlyph>;
+
+/**
+ * A line with nothing on it yet.
+ *
+ * The rail itself, drawn empty, rather than a coffee cup: what is missing on
+ * this screen is not a coffee - the bag it was opened for is sitting in the
+ * cupboard - it is everything that happens to a recipe after somebody brews
+ * it and says what the cup was like.
+ */
+export const EMPTY_TIMELINE_ICON: TileGlyph = 'timeline-text-outline';

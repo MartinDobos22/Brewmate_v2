@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { Alert } from 'react-native';
 
-import { Button } from '../../../../components/ui';
+import { PillButton } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useDeleteAccount } from '../../hooks';
 import { AuthErrorMessage } from '../AuthErrorMessage';
@@ -39,11 +39,11 @@ export const DeleteAccountButton = (): JSX.Element => {
 
   return (
     <>
-      <Button
+      <PillButton
+        tone="danger"
         label={t(TRANSLATION_KEYS.authDeleteAccountAction)}
         onPress={confirm}
-        variant="danger"
-        loading={isPending}
+        isPending={isPending}
         fullWidth
       />
       <AuthErrorMessage errorKey={errorKey} />

@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { ROUTES } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
@@ -43,9 +43,9 @@ export const ConfidenceBoost = ({ profile }: ConfidenceBoostProps): JSX.Element 
           {t(TRANSLATION_KEYS.profileConfidenceBoostDescribe)}
         </Text>
       </View>
-      <Button
+      <PillButton
+        tone="surface"
         label={t(TRANSLATION_KEYS.profileConfidenceBoostAction)}
-        variant="secondary"
         fullWidth
         onPress={(): void => {
           router.push(ROUTES.quickBrew);

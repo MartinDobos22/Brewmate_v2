@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, Input, Text } from '../../../../components/ui';
+import { Card, Input, PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { BAG_PHOTO_SOURCES } from '../../../bagEvaluations/services';
@@ -49,9 +49,9 @@ export const ImportSourceStep = ({ recipeImport }: ImportSourceStepProps): JSX.E
       <View style={styles.actions}>
         {source.camera.isSupported ? (
           <View style={styles.photoRow}>
-            <Button
+            <PillButton
+              tone="surface"
               label={t(TRANSLATION_KEYS.importSourcePhoto)}
-              variant="secondary"
               fullWidth
               disabled={source.isReading}
               onPress={(): void => {
@@ -60,14 +60,15 @@ export const ImportSourceStep = ({ recipeImport }: ImportSourceStepProps): JSX.E
             />
           </View>
         ) : null}
-        <Button
+        <PillButton
+          tone="espresso"
           label={t(
             source.isReading
               ? TRANSLATION_KEYS.importSourceReading
               : TRANSLATION_KEYS.importSourceRead,
           )}
           fullWidth
-          loading={source.isReading}
+          isPending={source.isReading}
           disabled={!source.canRead || source.isReading}
           onPress={(): void => {
             source.read(recipeImport.toReview);
@@ -78,9 +79,9 @@ export const ImportSourceStep = ({ recipeImport }: ImportSourceStepProps): JSX.E
             {t(TRANSLATION_KEYS.importSourceEmpty)}
           </Text>
         )}
-        <Button
+        <PillButton
+          tone="surface"
           label={t(TRANSLATION_KEYS.importSourceManual)}
-          variant="tertiary"
           fullWidth
           disabled={source.isReading}
           onPress={recipeImport.startManually}

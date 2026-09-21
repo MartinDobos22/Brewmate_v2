@@ -3,6 +3,7 @@ import type { JSX } from 'react';
 
 import { Screen, SCREEN_GROUNDS } from '../../../../components/layout';
 import { QueryState } from '../../../../components/ui';
+import { BREW_MODE_STATE_GROUND } from '../../constants';
 import { useRecipe } from '../../hooks/useRecipe';
 
 import { BrewModeRun } from './BrewModeRun';
@@ -21,10 +22,14 @@ import { BREW_MODE_PARAMS, readRouteParam } from './brewModeParams';
  * brew, so it lays itself out against the full height instead of flowing down
  * a scroll somebody would have to chase with a wet hand.
  *
- * The ground follows the content rather than the route: there is no brew until
- * the recipe has arrived, so waiting for it and failing to get it are drawn as
- * the ordinary states they are. A dark skeleton is a screen of its own and is
- * not one of these two.
+ * The ground belongs to the route rather than to what has loaded. It used to
+ * turn light while the recipe was on its way, so opening brew mode flashed a
+ * white screen and then went black - on the one screen in the product held at
+ * arm's length over a kettle. Waiting and failing are drawn on the espresso
+ * ground instead, which is what `ground` on the state components is for.
+ *
+ * Only the padding still follows the content: a state is text that needs a
+ * margin, and the run measures itself against the full height.
  */
 export const BrewModeScreen = (): JSX.Element => {
   const params = useLocalSearchParams();
@@ -33,10 +38,7 @@ export const BrewModeScreen = (): JSX.Element => {
   const recipe = useRecipe(recipeId);
 
   return (
-    <Screen
-      ground={recipe.data === undefined ? SCREEN_GROUNDS.surface : SCREEN_GROUNDS.brew}
-      padded={recipe.data === undefined}
-    >
+    <Screen ground={SCREEN_GROUNDS.brew} padded={recipe.data === undefined}>
       <QueryState
         isPending={recipe.isPending}
         isError={recipe.isError}
@@ -44,6 +46,7 @@ export const BrewModeScreen = (): JSX.Element => {
         onRetry={(): void => {
           void recipe.refetch();
         }}
+        ground={BREW_MODE_STATE_GROUND}
       />
       {recipe.data === undefined ? null : (
         <BrewModeRun recipe={recipe.data} equipmentSetId={equipmentSetId} />

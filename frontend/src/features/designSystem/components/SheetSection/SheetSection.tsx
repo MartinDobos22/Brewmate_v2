@@ -1,6 +1,6 @@
 import { useState, type JSX } from 'react';
 
-import { Button, Sheet, Text } from '../../../../components/ui';
+import { PillButton, Sheet, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { SectionBlock } from '../SectionBlock';
 
@@ -14,9 +14,9 @@ export const SheetSection = (): JSX.Element => {
 
   return (
     <SectionBlock title={t(TRANSLATION_KEYS.dsSectionSheet)}>
-      <Button
+      <PillButton
+        tone="surface"
         label={t(TRANSLATION_KEYS.dsOpenSheet)}
-        variant="secondary"
         onPress={(): void => {
           setVisible(true);
         }}
@@ -30,7 +30,7 @@ export const SheetSection = (): JSX.Element => {
         <Text variant="bodyMedium" tone="muted">
           {t(TRANSLATION_KEYS.dsSheetBody)}
         </Text>
-        <Button label={t(TRANSLATION_KEYS.actionClose)} onPress={close} />
+        <PillButton tone="espresso" label={t(TRANSLATION_KEYS.actionClose)} onPress={close} />
       </Sheet>
     </SectionBlock>
   );

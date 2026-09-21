@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button } from '../../../../components/ui';
+import { PillButton } from '../../../../components/ui';
 import { buildBrewModeRoute, buildTimelineRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { formatDateTime } from '../../../../lib/formatters';
@@ -90,16 +90,17 @@ export const PreBrewPreviousRecipe = ({
         ]}
       />
       <View style={styles.actions}>
-        <Button
+        <PillButton
+          tone="espresso"
           label={t(TRANSLATION_KEYS.preBrewPreviousBrewAgain)}
           fullWidth
           onPress={(): void => {
             router.replace(buildBrewModeRoute(recipe.id, equipmentSetId));
           }}
         />
-        <Button
+        <PillButton
+          tone="surface"
           label={t(TRANSLATION_KEYS.preBrewPreviousTimeline)}
-          variant="tertiary"
           fullWidth
           onPress={(): void => {
             router.push(buildTimelineRoute(method.id, bag?.id ?? null));

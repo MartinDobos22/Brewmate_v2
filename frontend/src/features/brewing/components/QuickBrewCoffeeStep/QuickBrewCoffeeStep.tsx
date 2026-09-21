@@ -2,7 +2,7 @@ import { ROAST_LEVEL_VALUES, type RoastLevel } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Chip, Input, Text } from '../../../../components/ui';
+import { Chip, Input, PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { ROAST_LEVEL_LABEL_KEYS } from '../../../tasteProfile/constants';
@@ -72,17 +72,18 @@ export const QuickBrewCoffeeStep = ({ brew }: QuickBrewCoffeeStepProps): JSX.Ele
           {t(TRANSLATION_KEYS.quickBrewError)}
         </Text>
       ) : null}
-      <Button
+      <PillButton
+        tone="espresso"
         label={t(TRANSLATION_KEYS.quickBrewSubmit)}
         fullWidth
-        loading={brew.isPending}
+        isPending={brew.isPending}
         onPress={(): void => {
           brew.askForRecipe(t(TRANSLATION_KEYS.quickBrewRationale));
         }}
       />
-      <Button
+      <PillButton
+        tone="surface"
         label={t(TRANSLATION_KEYS.actionBack)}
-        variant="tertiary"
         fullWidth
         onPress={brew.back}
       />
