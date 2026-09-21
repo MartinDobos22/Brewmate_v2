@@ -41,8 +41,8 @@ export const RecipeTimelineScreen = (): JSX.Element => {
   return (
     <Screen scrollable>
       <View style={styles.intro}>
-        <Text variant="headlineSmall">{t(TRANSLATION_KEYS.historyTimelineTitle)}</Text>
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="displayTitle">{t(TRANSLATION_KEYS.historyTimelineTitle)}</Text>
+        <Text variant="bodyMuted" tone="muted">
           {t(TRANSLATION_KEYS.historyTimelineSubtitle)}
         </Text>
       </View>

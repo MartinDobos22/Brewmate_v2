@@ -21,3 +21,26 @@ export const SUGGESTION_ICONS = {
   accept: 'check',
   dismiss: 'close',
 } as const satisfies Record<string, TileGlyph>;
+
+/**
+ * The badge that says something was missing, and the fallback for a
+ * constraint somebody typed in themselves.
+ *
+ * The lead badge states the fact and the ones after it name what: only the
+ * first carries the caution tone, because a row of ochre pills would read as
+ * a list of mistakes rather than as a fact about one morning.
+ */
+export const CONSTRAINT_LEAD_ICON: TileGlyph = 'alert-outline';
+export const OTHER_CONSTRAINT_ICON: TileGlyph = 'help-circle-outline';
+
+/**
+ * One version of a recipe, on the rail: what it is, what was said about it,
+ * what came of it, and the way into the conversation.
+ */
+export const TIMELINE_ICONS = {
+  quote: 'format-quote-open',
+  brews: 'coffee-outline',
+  notes: 'message-text-outline',
+  chat: 'message-outline',
+  latest: 'check',
+} as const satisfies Record<string, TileGlyph>;

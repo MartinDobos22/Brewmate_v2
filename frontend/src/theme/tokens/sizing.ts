@@ -55,6 +55,20 @@ export const SIZE = {
   stepperFieldMinWidth: 64,
   swatchSize: 56,
   /**
+   * A version's node on the timeline's rail, and the rail itself.
+   *
+   * The node carries the version's number rather than a dot, because the one
+   * question this screen answers - what did changing that do - is asked about
+   * a particular version, and counting dots down a column to find the third
+   * one is not how anybody reads.
+   */
+  timelineNodeSize: 36,
+  timelineRailWidth: 2,
+  /** A pill saying what was missing on the morning a cup was made. */
+  constraintBadgeHeight: 28,
+  /** The way into the conversation about one version of a recipe. */
+  timelineChatHeight: 46,
+  /**
    * One row of a count in the history report: the name it belongs to on the
    * left and the figure on the right, both at fixed widths so the bars between
    * them start and end in one column down the card.

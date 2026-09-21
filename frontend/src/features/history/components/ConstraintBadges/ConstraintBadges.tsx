@@ -1,3 +1,4 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import {
   readActiveConstraints,
   type BrewConstraintName,
@@ -6,10 +7,11 @@ import {
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { Text, type TileGlyph } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
-import { useThemedStyles } from '../../../../theme';
+import { useTheme, useThemedStyles } from '../../../../theme';
 import { BREW_CONSTRAINT_OPTIONS } from '../../../brewing/constants';
+import { CONSTRAINT_LEAD_ICON, OTHER_CONSTRAINT_ICON } from '../../constants';
 
 import { createConstraintBadgesStyles } from './ConstraintBadges.styles';
 
@@ -20,14 +22,14 @@ export interface ConstraintBadgesProps {
 }
 
 /**
- * The Slovak word for one constraint, taken from the same list the pre-brew
- * screen draws its checkboxes from - so a badge and the box that set it can
- * never say different things.
+ * The Slovak word and the glyph for one constraint, taken from the same list
+ * the pre-brew screen draws its checkboxes from - so a badge and the box that
+ * set it can never say different things.
  */
-const LABEL_KEYS: ReadonlyMap<BrewConstraintName, TranslationKey> = new Map(
-  BREW_CONSTRAINT_OPTIONS.map((option): readonly [BrewConstraintName, TranslationKey] => [
+const OPTIONS: ReadonlyMap<BrewConstraintName, { key: TranslationKey; icon: TileGlyph }> = new Map(
+  BREW_CONSTRAINT_OPTIONS.map((option) => [
     option.name,
-    option.labelKey,
+    { key: option.labelKey, icon: option.icon },
   ]),
 );
 
@@ -44,6 +46,7 @@ const LABEL_KEYS: ReadonlyMap<BrewConstraintName, TranslationKey> = new Map(
  */
 export const ConstraintBadges = ({ constraints }: ConstraintBadgesProps): JSX.Element | null => {
   const styles = useThemedStyles(createConstraintBadgesStyles);
+  const theme = useTheme();
   const { t } = useTranslation();
 
   const named = readActiveConstraints(constraints);
@@ -55,16 +58,40 @@ export const ConstraintBadges = ({ constraints }: ConstraintBadgesProps): JSX.El
 
   return (
     <View style={styles.row}>
-      {named.map((name: BrewConstraintName): JSX.Element => (
-        <View key={name} style={styles.badge}>
-          <Text variant="labelSmall" tone="muted">
-            {t(LABEL_KEYS.get(name) ?? TRANSLATION_KEYS.historyConstrainedBadge)}
-          </Text>
-        </View>
-      ))}
+      <View style={[styles.badge, styles.lead]}>
+        <MaterialCommunityIcons
+          name={CONSTRAINT_LEAD_ICON}
+          size={theme.size.iconTiny}
+          color={theme.colors.onCaution}
+        />
+        <Text variant="chipLabel" tone="caution">
+          {t(TRANSLATION_KEYS.historyConstrainedBadge)}
+        </Text>
+      </View>
+      {named.map((name: BrewConstraintName): JSX.Element => {
+        const option = OPTIONS.get(name);
+
+        return (
+          <View key={name} style={styles.badge}>
+            <MaterialCommunityIcons
+              name={option?.icon ?? OTHER_CONSTRAINT_ICON}
+              size={theme.size.iconTiny}
+              color={theme.colors.onSurfaceVariant}
+            />
+            <Text variant="chipLabel" tone="muted">
+              {t(option?.key ?? TRANSLATION_KEYS.historyConstrainedBadge)}
+            </Text>
+          </View>
+        );
+      })}
       {other.map((label: string): JSX.Element => (
         <View key={label} style={styles.badge}>
-          <Text variant="labelSmall" tone="muted">
+          <MaterialCommunityIcons
+            name={OTHER_CONSTRAINT_ICON}
+            size={theme.size.iconTiny}
+            color={theme.colors.onSurfaceVariant}
+          />
+          <Text variant="chipLabel" tone="muted">
             {label}
           </Text>
         </View>

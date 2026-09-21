@@ -35,6 +35,18 @@ export const SK_COMMON = {
   unitSeconds: 's',
   unitCelsius: '°C',
   unitDays: 'dní',
+
+  /*
+   * The labels under the three figures a recipe is made of.
+   *
+   * Shared rather than written per screen: the home block, the conversation's
+   * header and the timeline all print the same dose, water and ratio, and
+   * three copies of three words is three screens that eventually disagree
+   * about what to call the ratio.
+   */
+  figureDose: 'g dávka',
+  figureWater: 'g voda',
+  figureRatio: 'pomer',
   ratioSeparator: ':',
   decrease: 'Znížiť',
   increase: 'Zvýšiť',

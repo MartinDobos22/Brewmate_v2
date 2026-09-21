@@ -70,17 +70,17 @@ export const RecipeChatHeader = ({ recipe }: RecipeChatHeaderProps): JSX.Element
       <View style={styles.figures}>
         <RecipeChatFigure
           value={formatGrams(recipe.params.doseGrams)}
-          labelKey={TRANSLATION_KEYS.recipeChatDoseLabel}
+          labelKey={TRANSLATION_KEYS.figureDose}
         />
         <View style={styles.rule} />
         <RecipeChatFigure
           value={formatGrams(recipe.params.waterGrams)}
-          labelKey={TRANSLATION_KEYS.recipeChatWaterLabel}
+          labelKey={TRANSLATION_KEYS.figureWater}
         />
         <View style={styles.rule} />
         <RecipeChatFigure
           value={formatRatio(recipe.params.ratio)}
-          labelKey={TRANSLATION_KEYS.recipeChatRatioLabel}
+          labelKey={TRANSLATION_KEYS.figureRatio}
           derived
         />
       </View>

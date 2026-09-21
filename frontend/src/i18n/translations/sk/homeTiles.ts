@@ -31,9 +31,6 @@ export const SK_HOME_TILES = {
    * button that leads somewhere else than it says.
    */
   homeSuggestionEyebrow: 'Dnes ti odporúčam',
-  homeSuggestionDose: 'g kávy',
-  homeSuggestionWater: 'g vody',
-  homeSuggestionRatio: 'pomer',
   homeSuggestionBrew: 'Uvariť',
   homeSuggestionWrite: 'Napísať recept',
 

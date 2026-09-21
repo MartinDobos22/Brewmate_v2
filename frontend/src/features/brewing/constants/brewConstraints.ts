@@ -1,5 +1,6 @@
 import { BREW_CONSTRAINT_NAMES, type BrewConstraintName } from '@brewmate/shared';
 
+import type { TileGlyph } from '../../../components/ui';
 import { TRANSLATION_KEYS, type TranslationKey } from '../../../i18n';
 
 export interface BrewConstraintOption {
@@ -7,6 +8,15 @@ export interface BrewConstraintOption {
   readonly labelKey: TranslationKey;
   /** One line saying what the absence actually means in a kitchen. */
   readonly hintKey: TranslationKey;
+  /**
+   * The missing thing, drawn.
+   *
+   * A history badge is read sideways off a card rather than down a list of
+   * checkboxes, and "Bez váhy" and "Bez teplomeru" are the same shape at that
+   * size. Struck-through glyphs where one exists, because what is being said
+   * is the absence of the object rather than the object.
+   */
+  readonly icon: TileGlyph;
 }
 
 const LABEL_KEYS: Record<BrewConstraintName, TranslationKey> = {
@@ -33,6 +43,18 @@ const HINT_KEYS: Record<BrewConstraintName, TranslationKey> = {
   limitedTime: TRANSLATION_KEYS.constraintLimitedTimeHint,
 };
 
+const ICONS: Record<BrewConstraintName, TileGlyph> = {
+  noTemperatureControl: 'thermometer-off',
+  noScale: 'scale-off',
+  noGooseneck: 'kettle-outline',
+  unknownWater: 'water-off-outline',
+  noTimer: 'timer-off-outline',
+  noGrinder: 'grain',
+  fixedGrindSetting: 'lock-outline',
+  borrowedEquipment: 'hand-extended-outline',
+  limitedTime: 'timer-sand',
+};
+
 /**
  * Every constraint the app offers, in the order it offers them.
  *
@@ -50,5 +72,6 @@ export const BREW_CONSTRAINT_OPTIONS: readonly BrewConstraintOption[] = BREW_CON
     name,
     labelKey: LABEL_KEYS[name],
     hintKey: HINT_KEYS[name],
+    icon: ICONS[name],
   }),
 );

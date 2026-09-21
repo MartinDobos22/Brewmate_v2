@@ -52,17 +52,17 @@ export const HomeSuggestion = ({ suggestion }: HomeSuggestionProps): JSX.Element
         <View style={styles.figures}>
           <SuggestionFigure
             value={formatGrams(recipe.params.doseGrams)}
-            labelKey={TRANSLATION_KEYS.homeSuggestionDose}
+            labelKey={TRANSLATION_KEYS.figureDose}
           />
           <View style={styles.rule} />
           <SuggestionFigure
             value={formatGrams(recipe.params.waterGrams)}
-            labelKey={TRANSLATION_KEYS.homeSuggestionWater}
+            labelKey={TRANSLATION_KEYS.figureWater}
           />
           <View style={styles.rule} />
           <SuggestionFigure
             value={formatRatio(recipe.params.ratio)}
-            labelKey={TRANSLATION_KEYS.homeSuggestionRatio}
+            labelKey={TRANSLATION_KEYS.figureRatio}
             derived
           />
         </View>

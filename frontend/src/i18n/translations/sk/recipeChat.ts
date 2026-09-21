@@ -19,9 +19,6 @@ export const SK_RECIPE_CHAT = {
    */
   recipeChatVersionOriginal: 'pôvodný',
   recipeChatVersionAdjusted: 'upravený',
-  recipeChatDoseLabel: 'g dávka',
-  recipeChatWaterLabel: 'g voda',
-  recipeChatRatioLabel: 'pomer',
   recipeChatOpening:
     'Tak čo, aké to bolo? Napíš to pokojne vlastnými slovami - "kyslé", "prázdne", "chcem to sladšie". Aj jedna veta mi stačí.',
   recipeChatPlaceholder: 'Napíš, ako ti chutila...',
