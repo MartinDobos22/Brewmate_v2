@@ -1530,10 +1530,18 @@ as a fact rather than asked for one.
   the next answer reasons about.
 - **The advice reads the run, not the last shot.** `resolveShotTimeline` derives
   what changed between each pair and whether the shot came closer to the target
-  window, and the same derivation feeds both the chart and the prompt. A grind
+  window, and the same derivation feeds both the screen and the prompt. A grind
   that has already gone finer twice without moving the time is exactly the case
   where the answer has to stop grinding, and a model shown one shot cannot see
   it.
+- **The run is a list of shots, not a chart.** Each row carries the time, the
+  yield, what changed since the shot before it and whether that moved the cup
+  towards the target window - which is four facts, and a chart can plot one of
+  them. A dial-in is three to six shots long, so the picture would be a line
+  through four points with the reason for each of them printed beside it
+  anyway. This is written down because the derivation behind the rows reads
+  like something drawn: it is not, and the next person to open that file should
+  not have to work that out.
 - **The timeline is read back from the rows**, not accumulated on screen: the
   gaps between shots are spent grinding and tamping with the phone in a pocket.
 - **A patch is stored, never applied**, as everywhere else in this app. Taking
