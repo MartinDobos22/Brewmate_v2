@@ -30,7 +30,7 @@ export type { ProgressBarProps } from './ProgressBar';
 export { QueryState } from './QueryState';
 export type { QueryStateProps } from './QueryState';
 export { ScreenIntro } from './ScreenIntro';
-export type { ScreenIntroProps } from './ScreenIntro';
+export type { ScreenIntroProps, ScreenIntroGround } from './ScreenIntro';
 export { SectionHeading, DEFAULT_SECTION_HEADING_PLACEMENT } from './SectionHeading';
 export type { SectionHeadingProps, SectionHeadingPlacement } from './SectionHeading';
 export { Sheet } from './Sheet';

@@ -2,7 +2,7 @@ import type { CoffeeBag } from '@brewmate/shared';
 import type { JSX } from 'react';
 
 import { EspressoHeader } from '../../../../components/layout';
-import { Text } from '../../../../components/ui';
+import { ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 
 import { PreBrewCoffeeRow } from './PreBrewCoffeeRow';
@@ -37,9 +37,7 @@ export const PreBrewHeader = ({
 
   return (
     <EspressoHeader>
-      <Text variant="displayTitle" tone="onEspresso">
-        {t(TRANSLATION_KEYS.preBrewTitle)}
-      </Text>
+      <ScreenIntro ground="espresso" title={t(TRANSLATION_KEYS.preBrewTitle)} />
       {hasAnswer || hasCupboard ? (
         <PreBrewCoffeeRow bag={bag} description={description} onChange={onChange} />
       ) : (

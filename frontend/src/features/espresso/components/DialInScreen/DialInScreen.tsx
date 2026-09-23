@@ -1,15 +1,18 @@
 import type { BrewMethod } from '@brewmate/shared';
 import { useLocalSearchParams } from 'expo-router';
 import type { JSX } from 'react';
+import { View } from 'react-native';
 
-import { Screen } from '../../../../components/layout';
-import { QueryState, ScreenIntro } from '../../../../components/ui';
-import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { HEADER_SCREEN_EDGES, Screen } from '../../../../components/layout';
+import { QueryState } from '../../../../components/ui';
+import { useThemedStyles } from '../../../../theme';
 import { BREW_MODE_PARAMS, readRouteParam } from '../../../brewing/components/BrewModeScreen';
+import { RecipeChatHeader } from '../../../chat/components';
 import { useBrewMethods } from '../../../brewing/hooks';
 import { useDialInSession } from '../../hooks';
 
 import { DialInBody } from './DialInBody';
+import { createDialInScreenStyles } from './DialInScreen.styles';
 
 /**
  * A new coffee on a lever machine, dialled in over as few shots as possible.
@@ -19,9 +22,16 @@ import { DialInBody } from './DialInBody';
  * a taste, and the answer is always exactly one change. Everything on this
  * screen is a narrowing of the recipe chat towards converging quickly, because
  * every attempt costs a dose out of a bag somebody has just paid for.
+ *
+ * It is led by the conversation's own header rather than by a title and a
+ * card underneath it. This *is* that conversation - the header already says
+ * which machine, which version and what the three numbers currently are, and
+ * the dial-in printed the same three in a card below a title repeating the
+ * screen's name. Two screens holding one conversation should not be two
+ * objects to recognise.
  */
 export const DialInScreen = (): JSX.Element => {
-  const { t } = useTranslation();
+  const styles = useThemedStyles(createDialInScreenStyles);
   const params = useLocalSearchParams();
   const session = useDialInSession(readRouteParam(params[BREW_MODE_PARAMS.recipeId]));
   const methods = useBrewMethods();
@@ -30,14 +40,18 @@ export const DialInScreen = (): JSX.Element => {
   );
 
   return (
-    <Screen scrollable>
-      <ScreenIntro title={t(TRANSLATION_KEYS.dialInTitle)} lead={t(TRANSLATION_KEYS.dialInIntro)} />
-      <QueryState
-        isPending={session.isLoading}
-        isError={session.isError}
-        error={session.error}
-        onRetry={session.retry}
-      />
+    <Screen scrollable padded={false} edges={HEADER_SCREEN_EDGES}>
+      {session.recipe === undefined ? null : <RecipeChatHeader recipe={session.recipe} />}
+      {session.isLoading || session.isError ? (
+        <View style={styles.state}>
+          <QueryState
+            isPending={session.isLoading}
+            isError={session.isError}
+            error={session.error}
+            onRetry={session.retry}
+          />
+        </View>
+      ) : null}
       <DialInBody session={session} method={method} />
     </Screen>
   );

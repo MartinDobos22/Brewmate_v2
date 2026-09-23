@@ -9,7 +9,6 @@ export const SK_DIAL_IN = {
   dialInTitle: 'Ladenie espressa',
   dialInIntro:
     'Nová káva na pákovači. Uvar shot, napíš mi, ako dopadol, a ja ti poviem jednu vec, ktorú zmeniť.',
-  dialInOpening: 'Uvar prvý shot podľa odhadu nižšie a napíš mi, ako vytiekol a ako chutí.',
 
   dialInShotSection: 'Ako dopadol shot',
   dialInShotTime: 'Čas (s)',

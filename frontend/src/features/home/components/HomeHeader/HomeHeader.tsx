@@ -1,16 +1,12 @@
 import type { JSX } from 'react';
-import { View } from 'react-native';
 
 import { EspressoHeader } from '../../../../components/layout';
-import { Text } from '../../../../components/ui';
+import { ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { useThemedStyles } from '../../../../theme';
 import { useGettingStarted, useHomeSuggestion } from '../../hooks';
 import { resolveGreetingKey } from '../../services';
 import { HomeStartBlock } from '../HomeStartBlock';
 import { HomeSuggestion } from '../HomeSuggestion';
-
-import { createHomeHeaderStyles } from './HomeHeader.styles';
 
 /**
  * The block at the top of the home screen, and the rule that it is never
@@ -32,21 +28,17 @@ import { createHomeHeaderStyles } from './HomeHeader.styles';
  * other four axes in.
  */
 export const HomeHeader = (): JSX.Element => {
-  const styles = useThemedStyles(createHomeHeaderStyles);
   const { t } = useTranslation();
   const gettingStarted = useGettingStarted();
   const suggestion = useHomeSuggestion();
 
   return (
     <EspressoHeader>
-      <View style={styles.greeting}>
-        <Text variant="displayTitle" tone="onEspresso">
-          {t(resolveGreetingKey())}
-        </Text>
-        <Text variant="bodyMuted" tone="onEspressoMuted">
-          {t(TRANSLATION_KEYS.homeGreetingSubtitle)}
-        </Text>
-      </View>
+      <ScreenIntro
+        ground="espresso"
+        title={t(resolveGreetingKey())}
+        lead={t(TRANSLATION_KEYS.homeGreetingSubtitle)}
+      />
       {gettingStarted.isVisible ? (
         <HomeStartBlock gettingStarted={gettingStarted} />
       ) : (

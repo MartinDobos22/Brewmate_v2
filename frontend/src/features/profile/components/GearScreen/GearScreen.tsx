@@ -2,7 +2,7 @@ import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { EspressoHeader, HEADER_SCREEN_EDGES, Screen } from '../../../../components/layout';
-import { Text } from '../../../../components/ui';
+import { ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { EquipmentSection } from '../EquipmentSection';
@@ -29,12 +29,11 @@ export const GearScreen = (): JSX.Element => {
   return (
     <Screen scrollable padded={false} edges={HEADER_SCREEN_EDGES}>
       <EspressoHeader>
-        <Text variant="displayTitle" tone="onEspresso">
-          {t(TRANSLATION_KEYS.profileGearTitle)}
-        </Text>
-        <Text variant="bodyLead" tone="onEspressoMuted">
-          {t(TRANSLATION_KEYS.profileSectionGearCaption)}
-        </Text>
+        <ScreenIntro
+          ground="espresso"
+          title={t(TRANSLATION_KEYS.profileGearTitle)}
+          lead={t(TRANSLATION_KEYS.profileSectionGearCaption)}
+        />
       </EspressoHeader>
       <View style={styles.content}>
         <EquipmentSection />
