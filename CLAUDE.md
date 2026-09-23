@@ -436,6 +436,11 @@ own.
   heading and the line under it go through `SectionHeading` with
   `placement="card"` - which drops the top padding a group label carries on a
   screen, because the card's own padding is already there.
+- **A screen's edge is 20 and its cards sit 16 apart**, and the two moved
+  together for one reason: a card carries no border any more, so what
+  separates it from the glass and from the next card is space alone. Sixteen
+  round a bordered card read as a margin; round a borderless one it read as a
+  card pushed against the edge of the phone.
 - **A `ListItem` is drawn on whatever it sits on.** It used to paint itself
   the surface colour, which is the colour of the card under it - so the fill
   did nothing except stop any other ground showing through, and a row on one

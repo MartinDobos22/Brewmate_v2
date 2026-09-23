@@ -21,13 +21,20 @@ export const SPACING = {
 export type SpacingToken = keyof typeof SPACING;
 
 /**
- * Named layout distances. A screen edge is always 16, a card pads 16 and cards
- * sit 12 apart - so those three decisions are made once, here, not per screen.
+ * Named layout distances, made once here rather than per screen.
+ *
+ * The edge and the gap between cards are the redesign's, and they moved
+ * together for one reason: cards carry no borders any more, so what separates
+ * a card from the glass and a card from the next card is space alone.
+ * Sixteen round a bordered card read as a margin; round a borderless one it
+ * read as a card pushed against the edge of the phone. Twenty and sixteen are
+ * what the redesign specifies, and they are the two numbers every screen in
+ * the app inherits without naming either.
  */
 export const LAYOUT_SPACING = {
-  screenEdge: SPACING.lg,
+  screenEdge: SPACING.lgPlus,
   cardPadding: SPACING.lg,
-  cardGap: SPACING.md,
+  cardGap: SPACING.lg,
   sectionGap: SPACING.xl,
   inlineGap: SPACING.sm,
 } as const;
