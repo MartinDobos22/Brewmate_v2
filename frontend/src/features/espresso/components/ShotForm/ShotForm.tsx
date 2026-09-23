@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Card, Input, PillButton, Text } from '../../../../components/ui';
+import { Card, Input, PillButton, SectionHeading, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import type { DialInSession } from '../../hooks';
@@ -30,7 +30,7 @@ export const ShotForm = ({ session }: ShotFormProps): JSX.Element => {
 
   return (
     <Card>
-      <Text variant="cardTitle">{t(TRANSLATION_KEYS.dialInShotSection)}</Text>
+      <SectionHeading title={t(TRANSLATION_KEYS.dialInShotSection)} placement="card" />
       <View style={styles.row}>
         <View style={styles.field}>
           <Input

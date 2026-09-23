@@ -2,7 +2,7 @@ import { MATCH_BANDS, type CoffeeMatch, type TasteProfile } from '@brewmate/shar
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Card, Text } from '../../../../components/ui';
+import { Card, SectionHeading, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { TasteRadarChart } from '../../../tasteProfile/components';
@@ -37,7 +37,7 @@ export const CoffeeMatchCard = ({ match, profile }: CoffeeMatchCardProps): JSX.E
 
   return (
     <Card>
-      <Text variant="cardTitle">{t(TRANSLATION_KEYS.matchTitle)}</Text>
+      <SectionHeading title={t(TRANSLATION_KEYS.matchTitle)} placement="card" />
       <Text variant="bodyAnswer">{t(MATCH_BAND_KEYS[match.band])}</Text>
       {match.band === MATCH_BANDS.unknown ? null : (
         <>
