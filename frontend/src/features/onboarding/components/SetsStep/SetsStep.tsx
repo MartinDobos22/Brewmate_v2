@@ -1,7 +1,7 @@
 import type { Equipment } from '@brewmate/shared';
 import type { JSX } from 'react';
 
-import { Card, PillButton, Text } from '../../../../components/ui';
+import { Card, InfoNote, PillButton, ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { EquipmentSetForm, EquipmentSetList } from '../../../inventory/components';
 import { useEquipmentList } from '../../../inventory/hooks';
@@ -30,17 +30,15 @@ export const SetsStep = ({ flow }: SetsStepProps): JSX.Element => {
 
   return (
     <OnboardingStepLayout step={ONBOARDING_STEPS.sets} flow={flow}>
-      <Text variant="headlineSmall">{t(TRANSLATION_KEYS.setupSetsTitle)}</Text>
-      <Text variant="bodyMedium" tone="muted">
-        {t(TRANSLATION_KEYS.setupSetsBody)}
-      </Text>
+      <ScreenIntro
+        title={t(TRANSLATION_KEYS.setupSetsTitle)}
+        lead={t(TRANSLATION_KEYS.setupSetsBody)}
+      />
       <Card>
         <EquipmentSetList />
       </Card>
       {owned.length === NOTHING ? (
-        <Text variant="bodySmall" tone="muted">
-          {t(TRANSLATION_KEYS.setupSetsNothingToCombine)}
-        </Text>
+        <InfoNote text={t(TRANSLATION_KEYS.setupSetsNothingToCombine)} />
       ) : (
         <EquipmentSetForm equipment={owned} />
       )}

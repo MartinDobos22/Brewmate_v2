@@ -1,7 +1,7 @@
 import { WATER_TYPES, type WaterType } from '@brewmate/shared';
 import type { JSX } from 'react';
 
-import { PillButton, Text } from '../../../../components/ui';
+import { PillButton, ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useCurrentUser } from '../../../auth';
 import { WaterTypePicker } from '../../../inventory/components';
@@ -28,10 +28,10 @@ export const WaterStep = ({ flow }: WaterStepProps): JSX.Element => {
 
   return (
     <OnboardingStepLayout step={ONBOARDING_STEPS.water} flow={flow}>
-      <Text variant="headlineSmall">{t(TRANSLATION_KEYS.setupWaterTitle)}</Text>
-      <Text variant="bodyMedium" tone="muted">
-        {t(TRANSLATION_KEYS.setupWaterBody)}
-      </Text>
+      <ScreenIntro
+        title={t(TRANSLATION_KEYS.setupWaterTitle)}
+        lead={t(TRANSLATION_KEYS.setupWaterBody)}
+      />
       <WaterTypePicker
         selected={user?.waterType ?? WATER_TYPES.unknown}
         disabled={update.isPending}

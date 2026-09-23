@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { PillButton, Text } from '../../../../components/ui';
+import { InfoNote, PillButton, ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { CALIBRATION_STAGES } from '../../constants/calibrationRecipe';
 import { ONBOARDING_STEPS } from '../../constants/onboardingSteps';
@@ -29,15 +29,13 @@ export const CalibrationStep = ({ flow }: CalibrationStepProps): JSX.Element => 
 
   return (
     <OnboardingStepLayout step={ONBOARDING_STEPS.calibration} flow={flow}>
-      <Text variant="headlineSmall">{t(TRANSLATION_KEYS.calibrationTitle)}</Text>
-      <Text variant="bodyMedium">{t(TRANSLATION_KEYS.calibrationIntro)}</Text>
-      <Text variant="bodySmall" tone="muted">
-        {t(TRANSLATION_KEYS.calibrationWhy)}
-      </Text>
+      <ScreenIntro
+        title={t(TRANSLATION_KEYS.calibrationTitle)}
+        lead={t(TRANSLATION_KEYS.calibrationIntro)}
+        note={t(TRANSLATION_KEYS.calibrationWhy)}
+      />
       {ready ? null : (
-        <Text variant="bodyMedium" tone="tertiary">
-          {t(TRANSLATION_KEYS.calibrationNoEquipmentBody)}
-        </Text>
+        <InfoNote tone="caution" text={t(TRANSLATION_KEYS.calibrationNoEquipmentBody)} />
       )}
       {calibration.method === undefined || calibration.params === undefined ? null : (
         <CalibrationRecipeCard
@@ -62,9 +60,7 @@ export const CalibrationStep = ({ flow }: CalibrationStepProps): JSX.Element => 
         <CalibrationChat calibration={calibration} />
       ) : null}
       {calibration.stage === CALIBRATION_STAGES.saved ? (
-        <Text variant="bodyMedium" tone="secondary">
-          {t(TRANSLATION_KEYS.calibrationSavedBody)}
-        </Text>
+        <InfoNote tone="fresh" text={t(TRANSLATION_KEYS.calibrationSavedBody)} />
       ) : null}
       <PillButton
         tone="surface"

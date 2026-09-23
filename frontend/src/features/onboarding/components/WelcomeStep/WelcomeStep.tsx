@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { PillButton, Text } from '../../../../components/ui';
+import { PillButton, ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { ONBOARDING_STEPS } from '../../constants/onboardingSteps';
 import type { OnboardingFlow } from '../../hooks/useOnboardingFlow';
@@ -17,16 +17,15 @@ export const WelcomeStep = ({ flow }: WelcomeStepProps): JSX.Element => {
 
   return (
     <OnboardingStepLayout step={ONBOARDING_STEPS.welcome} flow={flow}>
-      <Text variant="headlineMedium">{t(TRANSLATION_KEYS.onboardingWelcomeTitle)}</Text>
-      <Text variant="bodyLarge">{t(TRANSLATION_KEYS.onboardingWelcomeBody)}</Text>
-      <Text variant="bodyMedium" tone="muted">
-        {t(TRANSLATION_KEYS.onboardingWelcomeDuration)}
-      </Text>
-      {isResuming ? (
-        <Text variant="bodySmall" tone="secondary">
-          {t(TRANSLATION_KEYS.onboardingResumeNotice)}
-        </Text>
-      ) : null}
+      <ScreenIntro
+        title={t(TRANSLATION_KEYS.onboardingWelcomeTitle)}
+        lead={t(TRANSLATION_KEYS.onboardingWelcomeBody)}
+        note={t(
+          isResuming
+            ? TRANSLATION_KEYS.onboardingResumeNotice
+            : TRANSLATION_KEYS.onboardingWelcomeDuration,
+        )}
+      />
       <PillButton
         tone="espresso"
         label={t(TRANSLATION_KEYS.onboardingWelcomeAction)}

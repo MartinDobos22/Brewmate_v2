@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { PillButton, Text } from '../../../../components/ui';
+import { PillButton, ScreenIntro, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { TasteRadarChart } from '../../../tasteProfile/components';
 import { useTasteProfile } from '../../../tasteProfile/hooks';
@@ -35,12 +35,14 @@ export const TasteSavedPanel = ({
 
   return (
     <>
-      <Text variant="headlineSmall">{t(TRANSLATION_KEYS.tqSavedTitle)}</Text>
-      <Text variant="bodyMedium">{t(TRANSLATION_KEYS.tqSavedBody)}</Text>
+      <ScreenIntro
+        title={t(TRANSLATION_KEYS.tqSavedTitle)}
+        lead={t(TRANSLATION_KEYS.tqSavedBody)}
+      />
       {profile === undefined ? null : (
         <TasteRadarChart axes={profile} axisConfidence={profile.axisConfidence} />
       )}
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="captionSmall" tone="muted">
         {t(TRANSLATION_KEYS.tqSavedHint)}
       </Text>
       <PillButton

@@ -1,7 +1,7 @@
 import type { BrewMethod, Equipment } from '@brewmate/shared';
 import { useState, type JSX } from 'react';
 
-import { PillButton, Text } from '../../../../components/ui';
+import { InfoNote, PillButton, ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { BrewMethodPicker, BrewerDetailsSheet } from '../../../inventory/components';
 import { useBrewerSelection } from '../../../inventory/hooks';
@@ -34,10 +34,10 @@ export const BrewersStep = ({ flow }: BrewersStepProps): JSX.Element => {
 
   return (
     <OnboardingStepLayout step={ONBOARDING_STEPS.brewers} flow={flow}>
-      <Text variant="headlineSmall">{t(TRANSLATION_KEYS.setupBrewersTitle)}</Text>
-      <Text variant="bodyMedium" tone="muted">
-        {t(TRANSLATION_KEYS.setupBrewersBody)}
-      </Text>
+      <ScreenIntro
+        title={t(TRANSLATION_KEYS.setupBrewersTitle)}
+        lead={t(TRANSLATION_KEYS.setupBrewersBody)}
+      />
       <BrewMethodPicker
         selection={selection}
         onOpenDetails={(method: BrewMethod, brewer: Equipment): void => {
@@ -45,9 +45,7 @@ export const BrewersStep = ({ flow }: BrewersStepProps): JSX.Element => {
         }}
       />
       {selection.selectedCount === NOTHING ? (
-        <Text variant="bodySmall" tone="muted">
-          {t(TRANSLATION_KEYS.setupBrewersEmptyNotice)}
-        </Text>
+        <InfoNote text={t(TRANSLATION_KEYS.setupBrewersEmptyNotice)} />
       ) : null}
       <PillButton
         tone="espresso"

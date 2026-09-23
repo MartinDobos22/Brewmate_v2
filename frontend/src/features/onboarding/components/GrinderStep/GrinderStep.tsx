@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Card, PillButton, Text } from '../../../../components/ui';
+import { Card, PillButton, ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { EquipmentSummaryList, GrinderPicker } from '../../../inventory/components';
@@ -33,10 +33,10 @@ export const GrinderStep = ({ flow }: GrinderStepProps): JSX.Element => {
 
   return (
     <OnboardingStepLayout step={ONBOARDING_STEPS.grinder} flow={flow} scrollable={false}>
-      <Text variant="headlineSmall">{t(TRANSLATION_KEYS.setupGrinderTitle)}</Text>
-      <Text variant="bodyMedium" tone="muted">
-        {t(TRANSLATION_KEYS.setupGrinderBody)}
-      </Text>
+      <ScreenIntro
+        title={t(TRANSLATION_KEYS.setupGrinderTitle)}
+        lead={t(TRANSLATION_KEYS.setupGrinderBody)}
+      />
       <Card>
         <EquipmentSummaryList
           items={inventory.owned}

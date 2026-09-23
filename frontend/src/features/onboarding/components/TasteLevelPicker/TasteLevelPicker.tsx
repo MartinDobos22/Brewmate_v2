@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { OptionCard, Text } from '../../../../components/ui';
+import { OptionCard, ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import {
   TASTE_EXPERIENCE_LABEL_KEYS,
@@ -36,10 +36,10 @@ export const TasteLevelPicker = ({ selected, onChoose }: TasteLevelPickerProps):
 
   return (
     <>
-      <Text variant="headlineSmall">{t(TRANSLATION_KEYS.tqLevelPrompt)}</Text>
-      <Text variant="bodyMedium" tone="muted">
-        {t(TRANSLATION_KEYS.tqLevelHelp)}
-      </Text>
+      <ScreenIntro
+        title={t(TRANSLATION_KEYS.tqLevelPrompt)}
+        lead={t(TRANSLATION_KEYS.tqLevelHelp)}
+      />
       {TASTE_EXPERIENCE_LEVEL_ORDER.map((level: TasteExperienceLevel): JSX.Element => (
         <OptionCard
           key={level}
