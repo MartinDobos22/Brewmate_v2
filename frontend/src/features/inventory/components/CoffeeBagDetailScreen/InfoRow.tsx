@@ -26,10 +26,10 @@ export const InfoRow = ({ label, value }: InfoRowProps): JSX.Element | null => {
 
   return (
     <View style={styles.row}>
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="eyebrow" tone="muted">
         {label}
       </Text>
-      <Text variant="bodyMedium">{value}</Text>
+      <Text variant="bodyText">{value}</Text>
     </View>
   );
 };

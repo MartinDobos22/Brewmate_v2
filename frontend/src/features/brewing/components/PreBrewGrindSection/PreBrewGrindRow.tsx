@@ -19,10 +19,10 @@ export const PreBrewGrindRow = ({ label, value, numeric }: PreBrewGrindRowProps)
 
   return (
     <View style={styles.row}>
-      <Text variant="labelSmall" tone="muted">
+      <Text variant="captionSmall" tone="muted">
         {label}
       </Text>
-      <Text variant="bodyMedium" numeric={numeric}>
+      <Text variant="bodyText" numeric={numeric}>
         {value}
       </Text>
     </View>

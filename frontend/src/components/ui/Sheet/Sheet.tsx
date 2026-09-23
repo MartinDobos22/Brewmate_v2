@@ -70,7 +70,7 @@ export const Sheet = ({
         <Animated.View style={[styles.panel, fill && styles.filled, panelStyle(translateY)]}>
           <View style={styles.handle} />
           <View style={styles.header}>
-            <Text variant="titleLarge">{title}</Text>
+            <Text variant="itemTitle">{title}</Text>
           </View>
           <View style={[styles.content, fill && styles.contentFilled]}>{children}</View>
         </Animated.View>

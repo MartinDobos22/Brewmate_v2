@@ -17,7 +17,7 @@ import {
   type ChipTone,
 } from './chipTones';
 
-const CHOICE_LABEL_VARIANT: TextVariant = 'labelMedium';
+const CHOICE_LABEL_VARIANT: TextVariant = 'actionLabel';
 
 export interface ChipProps {
   readonly label: string;

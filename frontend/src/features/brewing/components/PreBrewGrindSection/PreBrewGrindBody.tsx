@@ -81,7 +81,7 @@ export const PreBrewGrindBody = ({ reading, guidance }: PreBrewGrindBodyProps): 
         }
       />
       {setting !== null ? null : (
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(
             reading.hasGrinder
               ? TRANSLATION_KEYS.preBrewGrindNoCurve
@@ -90,7 +90,7 @@ export const PreBrewGrindBody = ({ reading, guidance }: PreBrewGrindBodyProps): 
         </Text>
       )}
       {guidance.isCollarEstimated && setting !== null ? (
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.preBrewGrindEstimated)}
         </Text>
       ) : null}

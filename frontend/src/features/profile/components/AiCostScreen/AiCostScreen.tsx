@@ -2,7 +2,7 @@ import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { Screen } from '../../../../components/layout';
-import { Card, QueryState, SectionHeading, Text } from '../../../../components/ui';
+import { Card, QueryState, ScreenIntro, SectionHeading } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { useAiUsageSummary } from '../../hooks';
@@ -29,10 +29,10 @@ export const AiCostScreen = (): JSX.Element => {
   return (
     <Screen scrollable>
       <View style={styles.intro}>
-        <Text variant="headlineSmall">{t(TRANSLATION_KEYS.aiCostsTitle)}</Text>
-        <Text variant="bodySmall" tone="muted">
-          {t(TRANSLATION_KEYS.aiCostsSubtitle)}
-        </Text>
+        <ScreenIntro
+          title={t(TRANSLATION_KEYS.aiCostsTitle)}
+          lead={t(TRANSLATION_KEYS.aiCostsSubtitle)}
+        />
       </View>
 
       <QueryState

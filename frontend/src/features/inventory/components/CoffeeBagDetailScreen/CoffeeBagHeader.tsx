@@ -2,7 +2,7 @@ import type { CoffeeBag } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { coffeeBagSummary } from '../../services/coffeeBagSummary';
@@ -26,10 +26,10 @@ export const CoffeeBagHeader = ({ bag }: CoffeeBagHeaderProps): JSX.Element => {
 
   return (
     <View style={styles.header}>
-      <Text variant="headlineSmall">{bag.name}</Text>
-      <Text variant="bodySmall" tone="muted">
-        {coffeeBagSummary(bag, t(TRANSLATION_KEYS.inventoryBagUnknownDetails))}
-      </Text>
+      <ScreenIntro
+        title={bag.name}
+        lead={coffeeBagSummary(bag, t(TRANSLATION_KEYS.inventoryBagUnknownDetails))}
+      />
     </View>
   );
 };

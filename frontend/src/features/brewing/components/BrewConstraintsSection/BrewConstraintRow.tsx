@@ -37,13 +37,13 @@ export const BrewConstraintRow = ({
     >
       <View style={styles.row}>
         <View style={[styles.box, isSet && styles.boxChecked]}>
-          <Text variant="labelMedium" tone={isSet ? 'onPrimary' : 'muted'}>
+          <Text variant="eyebrow" tone={isSet ? 'onPrimary' : 'muted'}>
             {isSet ? CHECK_MARKS.checked : CHECK_MARKS.unchecked}
           </Text>
         </View>
         <View style={styles.rowText}>
-          <Text variant="bodyMedium">{t(option.labelKey)}</Text>
-          <Text variant="bodySmall" tone="muted">
+          <Text variant="bodyText">{t(option.labelKey)}</Text>
+          <Text variant="caption" tone="muted">
             {t(option.hintKey)}
           </Text>
         </View>

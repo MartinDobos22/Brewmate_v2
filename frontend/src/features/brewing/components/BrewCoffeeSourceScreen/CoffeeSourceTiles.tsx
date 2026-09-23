@@ -60,7 +60,7 @@ export const CoffeeSourceTiles = ({
           onPress={onInventory}
         />
       </TileRow>
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {t(TRANSLATION_KEYS.preBrewSourceUnrecordedHint)}
       </Text>
       <PillButton

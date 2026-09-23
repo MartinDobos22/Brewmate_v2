@@ -361,6 +361,34 @@ own.
   because a rule sits _between_ two figures and a column drawing its own
   leading edge would print one against the card's padding.
 
+### One type scale
+
+- **There is no Material scale left.** The redesign's type arrived beside
+  `TYPE_SCALE` rather than replacing it, which was right while fifteen screens
+  had been rebuilt and twenty had not - and wrong the moment the last caller
+  went, because two ladders in a theme means the next screen somebody writes
+  picks whichever one they happened to read first. `typeScale.ts` is deleted.
+- **A variant is named after the job, never after a rung.** `displayTitle` is
+  a screen's own title, `bodyLead` is the sentence under it, `caption` is a
+  second line under a row, `eyebrow` is the label over a figure. So migrating
+  was a rename wherever the job was the same - `titleMedium` is a card's title
+  and nothing else - and a decision only where one Material size was doing two
+  jobs. `bodySmall` was the one: forty-one of them were quiet sentences
+  somebody is meant to read, which is `bodyText` at the muted tone, and eight
+  were second lines, which is `caption`. Twelve points is the size of a
+  caption, and a caveat set at it is a caveat nobody reads.
+- **The scale is two files, and the seam is what a piece of text does.**
+  `READING_SCALE` is what a screen says - a title, an answer, the sentence
+  under it. `LABEL_SCALE` is what it names - a group, a card, a row, a
+  control, a figure. None of the second is a sentence, which is why they are
+  the small end and why the only two upper-cased variants in the app are
+  there.
+- **`ScreenIntro` is the one way a screen says what it is.** Twenty-three of
+  them opened with the same three lines written out by hand, in four
+  different variants. Deliberately not `SectionHeading`, which labels a group
+  of cards from inside the page: a screen whose title is set at the same size
+  as the label over its third card is a screen with no top.
+
 ### One chip, and what a pill means here
 
 - **A chip that can be selected is a control; one that cannot is a pill.**

@@ -37,7 +37,7 @@ export const ConfidenceNotice = (): JSX.Element | null => {
 
   return (
     <View style={styles.wrapper}>
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {t(noticeKey)}
       </Text>
     </View>

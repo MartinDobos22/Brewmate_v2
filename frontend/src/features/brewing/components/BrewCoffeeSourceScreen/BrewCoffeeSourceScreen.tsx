@@ -2,7 +2,7 @@ import type { CoffeeBag } from '@brewmate/shared';
 import type { JSX } from 'react';
 
 import { Screen } from '../../../../components/layout';
-import { Text } from '../../../../components/ui';
+import { ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useCoffeeSource } from '../../hooks/useCoffeeSource';
 
@@ -36,10 +36,10 @@ export const BrewCoffeeSourceScreen = ({ onChoose }: BrewCoffeeSourceScreenProps
 
   return (
     <Screen scrollable>
-      <Text variant="headlineSmall">{t(TRANSLATION_KEYS.preBrewSourceTitle)}</Text>
-      <Text variant="bodyMedium" tone="muted">
-        {t(TRANSLATION_KEYS.preBrewSourceIntro)}
-      </Text>
+      <ScreenIntro
+        title={t(TRANSLATION_KEYS.preBrewSourceTitle)}
+        lead={t(TRANSLATION_KEYS.preBrewSourceIntro)}
+      />
       <CoffeeSourceStageContent
         source={source}
         onChoose={onChoose}

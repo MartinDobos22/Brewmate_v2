@@ -37,6 +37,6 @@ export type TextTone =
 
 export type TextAlign = 'left' | 'center' | 'right';
 
-export const DEFAULT_TEXT_VARIANT: TextVariant = 'bodyMedium';
+export const DEFAULT_TEXT_VARIANT: TextVariant = 'bodyText';
 export const DEFAULT_TEXT_TONE: TextTone = 'default';
 export const DEFAULT_TEXT_ALIGN: TextAlign = 'left';

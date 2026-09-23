@@ -75,7 +75,7 @@ export const QuickBrewMethodStep = ({ brew }: QuickBrewMethodStepProps): JSX.Ele
 
   return (
     <View style={styles.options}>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.quickBrewMethodTitle)}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.quickBrewMethodTitle)}</Text>
       {brew.methods.map((method: BrewMethod): JSX.Element => (
         <OptionCard
           key={method.id}

@@ -39,7 +39,7 @@ export const ImportResultStep = ({ recipeImport }: ImportResultStepProps): JSX.E
 
   if (recipe === null || method === undefined) {
     return (
-      <Text variant="bodyMedium" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {t(TRANSLATION_KEYS.importConvertError)}
       </Text>
     );

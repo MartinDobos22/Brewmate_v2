@@ -34,8 +34,8 @@ export const ImportTargetStep = ({ recipeImport }: ImportTargetStepProps): JSX.E
 
   return (
     <View style={styles.sections}>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.importTargetTitle)}</Text>
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.importTargetTitle)}</Text>
+      <Text variant="caption" tone="muted">
         {t(TRANSLATION_KEYS.importTargetIntro)}
       </Text>
       <PreBrewMethodSection
@@ -52,12 +52,12 @@ export const ImportTargetStep = ({ recipeImport }: ImportTargetStepProps): JSX.E
       />
       <View style={styles.actions}>
         {recipeImport.convertFailed ? (
-          <Text variant="bodySmall" tone="error">
+          <Text variant="captionSmall" tone="error">
             {t(TRANSLATION_KEYS.importConvertError)}
           </Text>
         ) : null}
         {recipeImport.method === undefined ? (
-          <Text variant="bodySmall" tone="muted">
+          <Text variant="bodyText" tone="muted">
             {t(TRANSLATION_KEYS.importMissingMethod)}
           </Text>
         ) : null}

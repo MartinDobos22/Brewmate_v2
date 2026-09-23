@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 
 import { Screen } from '../../../../components/layout';
-import { StepProgress, Text } from '../../../../components/ui';
+import { ScreenIntro, StepProgress } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useRecipeImport } from '../../hooks';
 import { resolveImportSteps } from '../../services';
@@ -28,10 +28,10 @@ export const ImportRecipeScreen = (): JSX.Element => {
 
   return (
     <Screen scrollable>
-      <Text variant="headlineSmall">{t(TRANSLATION_KEYS.importRecipeTitle)}</Text>
-      <Text variant="bodyMedium" tone="muted">
-        {t(TRANSLATION_KEYS.importRecipeIntro)}
-      </Text>
+      <ScreenIntro
+        title={t(TRANSLATION_KEYS.importRecipeTitle)}
+        lead={t(TRANSLATION_KEYS.importRecipeIntro)}
+      />
       <StepProgress current={steps.current} total={steps.total} />
       <ImportStageContent recipeImport={recipeImport} />
     </Screen>

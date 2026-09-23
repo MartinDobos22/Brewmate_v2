@@ -33,8 +33,8 @@ export const AiUsageWindowCard = ({ window, titleKey }: AiUsageWindowCardProps):
   return (
     <Card>
       <View style={styles.row}>
-        <Text variant="titleMedium">{t(titleKey)}</Text>
-        <Text variant="labelSmall" tone="muted">
+        <Text variant="cardTitle">{t(titleKey)}</Text>
+        <Text variant="captionSmall" tone="muted">
           {t(TRANSLATION_KEYS.aiCostsResetsAt, { time: formatDateTime(window.resetsAt) })}
         </Text>
       </View>
@@ -51,10 +51,10 @@ export const AiUsageWindowCard = ({ window, titleKey }: AiUsageWindowCardProps):
       </View>
 
       <View style={styles.body}>
-        <Text variant="bodySmall">
+        <Text variant="bodyText">
           {t(TRANSLATION_KEYS.aiCostsCalls, { used: window.calls, limit: window.callLimit })}
         </Text>
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="caption" tone="muted">
           {t(TRANSLATION_KEYS.aiCostsSpent, {
             spent: t(TRANSLATION_KEYS.aiCostsAmount, {
               value: formatCost(window.costEstimate),
@@ -67,7 +67,7 @@ export const AiUsageWindowCard = ({ window, titleKey }: AiUsageWindowCardProps):
           })}
         </Text>
         {window.exhaustedBy === null ? null : (
-          <Text variant="labelMedium" tone="tertiary">
+          <Text variant="eyebrow" tone="tertiary">
             {t(
               window.exhaustedBy === AI_LIMIT_KINDS.calls
                 ? TRANSLATION_KEYS.aiCostsExhaustedCalls

@@ -19,7 +19,7 @@ export const EquipmentSetList = (): JSX.Element => {
 
   if (switcher.sets.length === NOTHING) {
     return (
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {t(TRANSLATION_KEYS.setupSetsEmptyNotice)}
       </Text>
     );

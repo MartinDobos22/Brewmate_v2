@@ -20,7 +20,7 @@ export const ColorSection = (): JSX.Element => {
         {PREVIEW_COLOR_ROLES.map((role: keyof ColorPalette): JSX.Element => (
           <View key={role} style={styles.item}>
             <View style={[styles.swatch, swatchFill(theme.colors[role])]} />
-            <Text variant="labelSmall" tone="muted">
+            <Text variant="captionSmall" tone="muted">
               {role}
             </Text>
           </View>

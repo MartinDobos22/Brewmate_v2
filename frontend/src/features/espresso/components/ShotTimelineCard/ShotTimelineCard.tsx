@@ -35,7 +35,7 @@ export const ShotTimelineCard = ({ timeline }: ShotTimelineCardProps): JSX.Eleme
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.dialInTimelineTitle)}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.dialInTimelineTitle)}</Text>
       <View style={styles.list}>
         {timeline.entries.map((entry: ShotTimelineEntry): JSX.Element => (
           <ShotTimelineRow key={entry.brewLogId} entry={entry} />

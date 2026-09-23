@@ -51,8 +51,8 @@ export const BrewConstraintsHeader = ({
       accessibilityHint={t(TRANSLATION_KEYS.preBrewConstraintsHint)}
     >
       <View style={styles.headerText}>
-        <Text variant="titleMedium">{t(TRANSLATION_KEYS.preBrewConstraintsTitle)}</Text>
-        <Text variant="bodySmall" tone={isEmpty ? 'muted' : 'secondary'}>
+        <Text variant="cardTitle">{t(TRANSLATION_KEYS.preBrewConstraintsTitle)}</Text>
+        <Text variant="caption" tone={isEmpty ? 'muted' : 'secondary'}>
           {isEmpty
             ? t(TRANSLATION_KEYS.preBrewConstraintsClosed)
             : t(TRANSLATION_KEYS.preBrewConstraintsCount, { count })}

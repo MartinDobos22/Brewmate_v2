@@ -36,13 +36,13 @@ export const ConversionNoteRow = ({ note }: ConversionNoteRowProps): JSX.Element
 
   return (
     <View style={styles.note}>
-      <Text variant="labelMedium" tone={PRECISION_TONES[note.precision]}>
+      <Text variant="eyebrow" tone={PRECISION_TONES[note.precision]}>
         {t(TRANSLATION_KEYS.conversionNoteHeading, {
           field: t(CONVERSION_FIELD_KEYS[note.field]),
           precision: t(CONVERSION_PRECISION_KEYS[note.precision]),
         })}
       </Text>
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="caption" tone="muted">
         {t(CONVERSION_REASON_KEYS[note.reason])}
       </Text>
     </View>

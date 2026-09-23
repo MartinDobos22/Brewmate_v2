@@ -34,12 +34,12 @@ export const ConfidenceBoost = ({ profile }: ConfidenceBoostProps): JSX.Element 
 
   return (
     <View style={styles.wrapper}>
-      <Text variant="titleSmall">{t(TRANSLATION_KEYS.profileConfidenceBoostTitle)}</Text>
+      <Text variant="rowTitle">{t(TRANSLATION_KEYS.profileConfidenceBoostTitle)}</Text>
       <View style={styles.points}>
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.profileConfidenceBoostBrew)}
         </Text>
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="caption" tone="muted">
           {t(TRANSLATION_KEYS.profileConfidenceBoostDescribe)}
         </Text>
       </View>

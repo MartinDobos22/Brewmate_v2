@@ -43,11 +43,11 @@ export const ImportReviewStep = ({ recipeImport }: ImportReviewStepProps): JSX.E
         onChange={recipeImport.edit}
       />
       {recipeImport.parsed.grinderId === null ? (
-        <Text variant="bodySmall" tone="tertiary">
+        <Text variant="captionSmall" tone="tertiary">
           {t(TRANSLATION_KEYS.importReviewGrinderUnknown)}
         </Text>
       ) : null}
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {stepCount === NOTHING
           ? t(TRANSLATION_KEYS.importReviewNoSteps)
           : t(TRANSLATION_KEYS.importReviewSteps, { count: stepCount })}

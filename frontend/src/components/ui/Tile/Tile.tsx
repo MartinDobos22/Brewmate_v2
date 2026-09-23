@@ -79,9 +79,9 @@ export const Tile = ({
         {trailing}
       </View>
       <View style={styles.heading}>
-        <Text variant="titleSmall">{title}</Text>
+        <Text variant="rowTitle">{title}</Text>
         {caption === undefined ? null : (
-          <Text variant="labelSmall" tone="muted">
+          <Text variant="captionSmall" tone="muted">
             {caption}
           </Text>
         )}

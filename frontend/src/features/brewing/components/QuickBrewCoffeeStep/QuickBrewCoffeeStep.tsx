@@ -30,8 +30,8 @@ export const QuickBrewCoffeeStep = ({ brew }: QuickBrewCoffeeStepProps): JSX.Ele
 
   return (
     <View style={styles.wrapper}>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.quickBrewCoffeeTitle)}</Text>
-      <Text variant="bodyMedium" tone="muted">
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.quickBrewCoffeeTitle)}</Text>
+      <Text variant="bodyText" tone="muted">
         {t(TRANSLATION_KEYS.quickBrewCoffeeBody)}
       </Text>
       <Input
@@ -42,7 +42,7 @@ export const QuickBrewCoffeeStep = ({ brew }: QuickBrewCoffeeStepProps): JSX.Ele
           brew.describeCoffee({ name });
         }}
       />
-      <Text variant="labelMedium" tone="muted">
+      <Text variant="eyebrow" tone="muted">
         {t(TRANSLATION_KEYS.quickBrewRoastLabel)}
       </Text>
       <View style={styles.roasts}>
@@ -64,11 +64,11 @@ export const QuickBrewCoffeeStep = ({ brew }: QuickBrewCoffeeStepProps): JSX.Ele
           />
         ))}
       </View>
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {t(TRANSLATION_KEYS.quickBrewCoffeeOptionalNote)}
       </Text>
       {brew.hasFailed ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(TRANSLATION_KEYS.quickBrewError)}
         </Text>
       ) : null}

@@ -37,8 +37,8 @@ export const CoffeeMatchCard = ({ match, profile }: CoffeeMatchCardProps): JSX.E
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.matchTitle)}</Text>
-      <Text variant="bodyLarge">{t(MATCH_BAND_KEYS[match.band])}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.matchTitle)}</Text>
+      <Text variant="bodyAnswer">{t(MATCH_BAND_KEYS[match.band])}</Text>
       {match.band === MATCH_BANDS.unknown ? null : (
         <>
           <TasteRadarChart
@@ -50,7 +50,7 @@ export const CoffeeMatchCard = ({ match, profile }: CoffeeMatchCardProps): JSX.E
           <View style={styles.reasons}>
             {reasons.map((reason: MatchReason): JSX.Element => (
               <View key={reason.axis} style={styles.reason}>
-                <Text variant="bodyMedium" tone={reason.isAgainst ? 'muted' : 'default'}>
+                <Text variant="bodyText" tone={reason.isAgainst ? 'muted' : 'default'}>
                   {t(reason.labelKey)}
                 </Text>
               </View>

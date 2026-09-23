@@ -41,14 +41,14 @@ export const PreBrewFailureNotice = ({
 
   return (
     <View style={styles.failure}>
-      <Text variant="bodyMedium" tone="error">
+      <Text variant="bodyText" tone="error">
         {t(keys.titleKey)}
       </Text>
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="caption" tone="muted">
         {t(keys.bodyKey, keys.bodyValues)}
       </Text>
       {reference === null ? null : (
-        <Text variant="bodySmall" tone="tertiary" numeric>
+        <Text variant="caption" tone="tertiary" numeric>
           {t(
             reference.requestId === null
               ? TRANSLATION_KEYS.preBrewErrorCode

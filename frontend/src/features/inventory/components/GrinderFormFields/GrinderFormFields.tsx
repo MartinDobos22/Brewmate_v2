@@ -116,10 +116,10 @@ export const GrinderFormFields = ({
           onChange({ typicalUse });
         }}
       />
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {t(TRANSLATION_KEYS.grinderAddCalibrationHelp)}
       </Text>
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="caption" tone="muted">
         {t(TRANSLATION_KEYS.grinderAddVisibilityHelp)}
       </Text>
     </View>

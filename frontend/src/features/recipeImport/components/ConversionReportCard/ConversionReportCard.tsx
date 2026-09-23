@@ -41,8 +41,8 @@ export const ConversionReportCard = ({ report }: ConversionReportCardProps): JSX
         }}
       >
         <View style={styles.header}>
-          <Text variant="titleMedium">{t(TRANSLATION_KEYS.conversionReportTitle)}</Text>
-          <Text variant="labelMedium" tone="secondary">
+          <Text variant="cardTitle">{t(TRANSLATION_KEYS.conversionReportTitle)}</Text>
+          <Text variant="eyebrow" tone="secondary">
             {t(
               isOpen
                 ? TRANSLATION_KEYS.conversionReportClose
@@ -51,7 +51,7 @@ export const ConversionReportCard = ({ report }: ConversionReportCardProps): JSX
           </Text>
         </View>
       </Pressable>
-      <Text variant="bodySmall" tone="tertiary">
+      <Text variant="captionSmall" tone="tertiary">
         {t(TRANSLATION_KEYS.conversionGrindStartingPoint)}
       </Text>
       {isOpen ? (

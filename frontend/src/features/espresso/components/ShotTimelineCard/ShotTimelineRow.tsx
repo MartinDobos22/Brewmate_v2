@@ -30,11 +30,11 @@ export const ShotTimelineRow = ({ entry }: ShotTimelineRowProps): JSX.Element =>
 
   return (
     <View style={styles.entry}>
-      <Text variant="labelMedium">
+      <Text variant="eyebrow">
         {t(TRANSLATION_KEYS.dialInShotNumber, { number: entry.shotNumber })}
       </Text>
       <View style={styles.facts}>
-        <Text variant="bodySmall" tone="secondary" numeric>
+        <Text variant="caption" tone="secondary" numeric>
           {t(TRANSLATION_KEYS.dialInShotFacts, {
             dose: entry.doseGrams ?? UNKNOWN,
             yield: entry.yieldGrams ?? UNKNOWN,
@@ -42,12 +42,12 @@ export const ShotTimelineRow = ({ entry }: ShotTimelineRowProps): JSX.Element =>
           })}
         </Text>
         {entry.grindSetting === null ? null : (
-          <Text variant="bodySmall" tone="muted" numeric>
+          <Text variant="caption" tone="muted" numeric>
             {t(TRANSLATION_KEYS.dialInGrindAt, { setting: entry.grindSetting })}
           </Text>
         )}
       </View>
-      <Text variant="bodySmall" tone={entry.trend === SHOT_TRENDS.further ? 'tertiary' : 'muted'}>
+      <Text variant="caption" tone={entry.trend === SHOT_TRENDS.further ? 'tertiary' : 'muted'}>
         {entry.change === DIAL_IN_CHANGES.none || direction === null
           ? t(DIAL_IN_CHANGE_KEYS[entry.change])
           : t(TRANSLATION_KEYS.dialInChangeSummary, {

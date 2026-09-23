@@ -73,7 +73,7 @@ export const AddGrinderForm = ({ onAdded }: AddGrinderFormProps): JSX.Element =>
         }}
       />
       {errorKey === null ? null : (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(errorKey)}
         </Text>
       )}

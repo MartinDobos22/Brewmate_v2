@@ -50,7 +50,7 @@ export const MotionTrack = ({ label, duration }: MotionTrackProps): JSX.Element 
       accessibilityRole="button"
       accessibilityLabel={label}
     >
-      <Text variant="labelSmall" tone="muted">
+      <Text variant="captionSmall" tone="muted">
         {label}
       </Text>
       <Animated.View style={styles.track}>

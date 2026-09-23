@@ -59,7 +59,7 @@ export const EquipmentSetFormFields = ({
         </View>
       </View>
       <View style={styles.field}>
-        <Text variant="labelMedium" tone="muted">
+        <Text variant="eyebrow" tone="muted">
           {t(TRANSLATION_KEYS.setupSetsItemsLabel)}
         </Text>
         <View style={styles.row}>
@@ -77,7 +77,7 @@ export const EquipmentSetFormFields = ({
         </View>
       </View>
       <View style={styles.field}>
-        <Text variant="labelMedium" tone="muted">
+        <Text variant="eyebrow" tone="muted">
           {t(TRANSLATION_KEYS.setupSetsConstraintsLabel)}
         </Text>
         <View style={styles.row}>

@@ -48,7 +48,7 @@ export const AddCoffeeBagForm = ({ onAdded }: AddCoffeeBagFormProps): JSX.Elemen
         }}
       />
       {mutation.isError ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {errorCopy.description}
         </Text>
       ) : null}

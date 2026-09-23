@@ -15,7 +15,7 @@ export const MotionSection = (): JSX.Element => {
       <MotionTrack label={t(TRANSLATION_KEYS.dsMotionShort)} duration="short" />
       <MotionTrack label={t(TRANSLATION_KEYS.dsMotionMedium)} duration="medium" />
       <MotionTrack label={t(TRANSLATION_KEYS.dsMotionLong)} duration="long" />
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {t(reduceMotion ? TRANSLATION_KEYS.dsReducedMotionOn : TRANSLATION_KEYS.dsReducedMotionOff)}
       </Text>
     </SectionBlock>

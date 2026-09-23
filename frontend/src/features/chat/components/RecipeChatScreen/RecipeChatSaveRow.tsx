@@ -31,13 +31,13 @@ export const RecipeChatSaveRow = ({ recipe }: RecipeChatSaveRowProps): JSX.Eleme
   return (
     <View style={styles.save}>
       {recipe.isSaved ? (
-        <Text variant="bodySmall" tone="secondary">
+        <Text variant="bodyText" tone="secondary">
           {t(TRANSLATION_KEYS.recipeSavedNotice)}
         </Text>
       ) : (
         <>
           {update.isError ? (
-            <Text variant="bodySmall" tone="error">
+            <Text variant="captionSmall" tone="error">
               {t(TRANSLATION_KEYS.recipeSaveError)}
             </Text>
           ) : null}

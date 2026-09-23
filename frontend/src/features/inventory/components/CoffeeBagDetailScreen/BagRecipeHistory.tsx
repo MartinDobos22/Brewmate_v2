@@ -63,7 +63,7 @@ export const BagRecipeHistory = ({ recipes, bagId }: BagRecipeHistoryProps): JSX
     <View>
       {groupRecipesByMethod(recipes).map((group: RecipeMethodGroup): JSX.Element => (
         <View key={group.methodId} style={styles.group}>
-          <Text variant="labelMedium" tone="muted">
+          <Text variant="eyebrow" tone="muted">
             {nameFor(group.methodId)}
           </Text>
           <View style={styles.recipes}>

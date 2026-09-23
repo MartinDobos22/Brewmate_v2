@@ -74,7 +74,7 @@ export const CoffeeSourceBagList = ({
 
   return (
     <View style={styles.options}>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.preBrewCoffeeChoose)}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.preBrewCoffeeChoose)}</Text>
       {items.map((bag: CoffeeBag): JSX.Element => (
         <PreBrewBagOption key={bag.id} bag={bag} selected={NOT_SELECTED} onChoose={onChoose} />
       ))}

@@ -48,7 +48,7 @@ export const DialInBody = ({ session, method }: DialInBodyProps): JSX.Element | 
       />
       <ShotTimelineCard timeline={session.timeline} />
       {session.messages.length === NOTHING ? (
-        <Text variant="bodyMedium" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.dialInOpening)}
         </Text>
       ) : (
@@ -57,7 +57,7 @@ export const DialInBody = ({ session, method }: DialInBodyProps): JSX.Element | 
       <ShotForm session={session} />
       <View style={styles.finish}>
         {session.isFinished ? (
-          <Text variant="bodySmall" tone="secondary">
+          <Text variant="bodyText" tone="secondary">
             {t(TRANSLATION_KEYS.dialInFinished)}
           </Text>
         ) : (

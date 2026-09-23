@@ -45,15 +45,15 @@ export const CoffeeTasteCard = ({
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.coffeeTasteTitle)}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.coffeeTasteTitle)}</Text>
       {known ? null : (
-        <Text variant="bodyMedium" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.coffeeTasteUnknown)}
         </Text>
       )}
       {known ? (
         <>
-          {summary === null ? null : <Text variant="bodyLarge">{summary}</Text>}
+          {summary === null ? null : <Text variant="bodyAnswer">{summary}</Text>}
           <TasteRadarChart axes={estimate.axes} axisConfidence={estimate.axisConfidence} />
           <TasteReading axes={estimate.axes} axisConfidence={estimate.axisConfidence} />
           {flavourNotes.length === 0 ? null : (
@@ -66,7 +66,7 @@ export const CoffeeTasteCard = ({
                  * rather than to a translation file.
                  */
                 <View key={note} style={styles.note}>
-                  <Text variant="labelMedium" tone="secondary">
+                  <Text variant="eyebrow" tone="secondary">
                     {note}
                   </Text>
                 </View>
@@ -77,7 +77,7 @@ export const CoffeeTasteCard = ({
       ) : null}
       <CoffeeTasteEvidence signals={estimate.signals} isRefining={isRefining} />
       {estimate.source === COFFEE_ESTIMATE_SOURCES.label && !isRefining ? (
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.coffeeTasteFromLabelOnly)}
         </Text>
       ) : null}

@@ -75,12 +75,12 @@ export const EquipmentSetForm = ({ equipment }: EquipmentSetFormProps): JSX.Elem
         }}
       />
       {error === null ? null : (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(error)}
         </Text>
       )}
       {create.isError ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(TRANSLATION_KEYS.setupErrorSaveFailed)}
         </Text>
       ) : null}

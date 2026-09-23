@@ -34,12 +34,12 @@ export const TasteTuningSheet = ({
       onClose={onClose}
     >
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-        <Text variant="bodyMedium" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.profileTuneBody)}
         </Text>
         <TasteAxisSliders axes={tuning.axes} onChange={tuning.setAxis} />
         {tuning.hasFailed ? (
-          <Text variant="bodySmall" tone="error">
+          <Text variant="captionSmall" tone="error">
             {t(TRANSLATION_KEYS.profileTuneError)}
           </Text>
         ) : null}

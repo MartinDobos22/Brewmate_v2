@@ -58,7 +58,7 @@ export const RecipeSummaryCard = ({
       </View>
       <View style={styles.notes}>
         {notes.map((note: string): JSX.Element => (
-          <Text key={note} variant="bodySmall" tone="muted">
+          <Text key={note} variant="bodyText" tone="muted">
             {note}
           </Text>
         ))}

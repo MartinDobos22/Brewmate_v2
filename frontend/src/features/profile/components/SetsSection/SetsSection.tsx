@@ -13,7 +13,7 @@ export const SetsSection = (): JSX.Element => {
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileSetsTitle)}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.profileSetsTitle)}</Text>
       <EquipmentSetList />
       <PillButton
         tone="surface"

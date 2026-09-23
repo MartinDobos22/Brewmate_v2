@@ -35,7 +35,7 @@ export const RoastDateField = ({
   return (
     <View style={styles.wrapper}>
       {unverified ? (
-        <Text variant="bodySmall" tone="tertiary">
+        <Text variant="captionSmall" tone="tertiary">
           {t(TRANSLATION_KEYS.scanRoastDateUncertain)}
         </Text>
       ) : null}

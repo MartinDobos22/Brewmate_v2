@@ -47,11 +47,11 @@ export const GrinderListItem = ({ grinder, onPress }: GrinderListItemProps): JSX
         }
       />
       <View style={styles.notes}>
-        <Text variant="labelSmall" tone={precisionTone(precision)}>
+        <Text variant="captionSmall" tone={precisionTone(precision)}>
           {t(GRINDER_PRECISION_LABEL_KEYS[precision])}
         </Text>
         {grinder.isVerified ? null : (
-          <Text variant="labelSmall" tone="muted">
+          <Text variant="captionSmall" tone="muted">
             {t(TRANSLATION_KEYS.grinderOwnEntry)}
           </Text>
         )}

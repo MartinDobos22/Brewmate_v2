@@ -70,7 +70,7 @@ export const DropdownSheet = ({
       <ScrollView style={styles.list} keyboardShouldPersistTaps="handled">
         {options.length === NOTHING && search !== undefined ? (
           <View style={styles.empty}>
-            <Text variant="bodyMedium" tone="muted">
+            <Text variant="bodyText" tone="muted">
               {search.emptyLabel}
             </Text>
           </View>

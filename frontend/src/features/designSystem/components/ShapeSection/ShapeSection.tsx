@@ -19,7 +19,7 @@ export const ShapeSection = (): JSX.Element => {
       {PREVIEW_RADIUS_TOKENS.map((token: RadiusToken): JSX.Element => (
         <View key={token} style={styles.item}>
           <View style={[styles.box, boxRadius(theme.radius[token])]} />
-          <Text variant="labelSmall" tone="muted" numeric>
+          <Text variant="captionSmall" tone="muted" numeric>
             {token}
           </Text>
         </View>

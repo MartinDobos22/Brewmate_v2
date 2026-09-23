@@ -3,7 +3,7 @@ import { useLocalSearchParams } from 'expo-router';
 import type { JSX } from 'react';
 
 import { Screen } from '../../../../components/layout';
-import { QueryState, Text } from '../../../../components/ui';
+import { QueryState, ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { BREW_MODE_PARAMS, readRouteParam } from '../../../brewing/components/BrewModeScreen';
 import { useBrewMethods } from '../../../brewing/hooks';
@@ -31,10 +31,7 @@ export const DialInScreen = (): JSX.Element => {
 
   return (
     <Screen scrollable>
-      <Text variant="headlineSmall">{t(TRANSLATION_KEYS.dialInTitle)}</Text>
-      <Text variant="bodyMedium" tone="muted">
-        {t(TRANSLATION_KEYS.dialInIntro)}
-      </Text>
+      <ScreenIntro title={t(TRANSLATION_KEYS.dialInTitle)} lead={t(TRANSLATION_KEYS.dialInIntro)} />
       <QueryState
         isPending={session.isLoading}
         isError={session.isError}

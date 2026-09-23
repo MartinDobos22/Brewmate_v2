@@ -27,7 +27,7 @@ export const SheetSection = (): JSX.Element => {
         closeLabel={t(TRANSLATION_KEYS.actionClose)}
         onClose={close}
       >
-        <Text variant="bodyMedium" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.dsSheetBody)}
         </Text>
         <PillButton tone="espresso" label={t(TRANSLATION_KEYS.actionClose)} onPress={close} />

@@ -66,11 +66,11 @@ export const DropdownTrigger = ({
           </View>
         )}
         <View style={styles.value}>
-          <Text variant="titleMedium" tone={chosen === undefined ? 'muted' : 'default'}>
+          <Text variant="cardTitle" tone={chosen === undefined ? 'muted' : 'default'}>
             {chosen?.label ?? placeholder}
           </Text>
           {chosen?.note === undefined ? null : (
-            <Text variant="bodySmall" tone="muted" numberOfLines={1}>
+            <Text variant="caption" tone="muted" numberOfLines={1}>
               {chosen.note}
             </Text>
           )}

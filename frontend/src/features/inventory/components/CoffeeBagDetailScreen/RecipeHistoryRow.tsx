@@ -28,11 +28,11 @@ export const RecipeHistoryRow = ({ recipe }: RecipeHistoryRowProps): JSX.Element
 
   return (
     <Card depth={recipe.isPinned ? 'emphasis' : 'rest'}>
-      <Text variant="labelSmall" tone={recipe.isPinned ? 'secondary' : 'muted'}>
+      <Text variant="captionSmall" tone={recipe.isPinned ? 'secondary' : 'muted'}>
         {t(recipe.isPinned ? TRANSLATION_KEYS.bagRecipePinned : TRANSLATION_KEYS.bagRecipeSaved)}
       </Text>
       <View style={styles.row}>
-        <Text variant="labelMedium" tone="muted">
+        <Text variant="eyebrow" tone="muted">
           {t(TRANSLATION_KEYS.bagRecipeDose)}
         </Text>
         <Text variant="numericSmall" numeric>
@@ -40,7 +40,7 @@ export const RecipeHistoryRow = ({ recipe }: RecipeHistoryRowProps): JSX.Element
         </Text>
       </View>
       <View style={styles.row}>
-        <Text variant="labelMedium" tone="muted">
+        <Text variant="eyebrow" tone="muted">
           {t(TRANSLATION_KEYS.bagRecipeRatio)}
         </Text>
         <Text variant="numericSmall" numeric>

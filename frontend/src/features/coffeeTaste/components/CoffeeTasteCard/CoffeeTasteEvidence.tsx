@@ -31,7 +31,7 @@ export const CoffeeTasteEvidence = ({
 
   if (isRefining) {
     return (
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {t(TRANSLATION_KEYS.coffeeTasteRefining)}
       </Text>
     );
@@ -39,14 +39,14 @@ export const CoffeeTasteEvidence = ({
 
   if (signals.length === NOTHING) {
     return (
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {t(TRANSLATION_KEYS.coffeeTasteNoEvidence)}
       </Text>
     );
   }
 
   return (
-    <Text variant="bodySmall" tone="muted">
+    <Text variant="bodyText" tone="muted">
       {t(TRANSLATION_KEYS.coffeeTasteEvidence, {
         signals: signals
           .map((signal: CoffeeSignalSource): string => t(SIGNAL_LABEL_KEYS[signal]))

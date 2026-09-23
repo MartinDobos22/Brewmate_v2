@@ -23,7 +23,7 @@ export const DesignSystemSections = (): JSX.Element => {
 
   return (
     <>
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {t(TRANSLATION_KEYS.dsIntro)}
       </Text>
       <ColorSection />

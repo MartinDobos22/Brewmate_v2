@@ -30,7 +30,7 @@ export const EquipmentSummaryList = ({
 
   if (items.length === NOTHING) {
     return (
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {emptyText}
       </Text>
     );

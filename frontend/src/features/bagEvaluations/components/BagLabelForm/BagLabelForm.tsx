@@ -31,8 +31,8 @@ export const BagLabelForm = ({ scan }: BagLabelFormProps): JSX.Element => {
 
   return (
     <>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.scanLabelTitle)}</Text>
-      <Text variant="bodySmall" tone={hasUncertainFields ? 'tertiary' : 'muted'}>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.scanLabelTitle)}</Text>
+      <Text variant="caption" tone={hasUncertainFields ? 'tertiary' : 'muted'}>
         {t(
           hasUncertainFields
             ? TRANSLATION_KEYS.scanLabelCheckUncertain
@@ -40,7 +40,7 @@ export const BagLabelForm = ({ scan }: BagLabelFormProps): JSX.Element => {
         )}
       </Text>
       {scan.photo.failure !== null ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(BAG_PHOTO_FAILURE_KEYS[scan.photo.failure])}
         </Text>
       ) : null}
@@ -51,7 +51,7 @@ export const BagLabelForm = ({ scan }: BagLabelFormProps): JSX.Element => {
         onChange={scan.describeLabel}
       />
       {scan.hasFailed ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(TRANSLATION_KEYS.scanError)}
         </Text>
       ) : null}

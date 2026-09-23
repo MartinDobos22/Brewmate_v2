@@ -55,7 +55,7 @@ export const CoffeeBagInfoCard = ({ bag }: CoffeeBagInfoCardProps): JSX.Element 
   if (!hasAnything) {
     return (
       <Card>
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.bagDetailLabelEmpty)}
         </Text>
       </Card>

@@ -36,8 +36,8 @@ export const CoffeeSourceLabelForm = ({ source }: CoffeeSourceLabelFormProps): J
 
   return (
     <View style={styles.options}>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.preBrewSourceLabelTitle)}</Text>
-      <Text variant="bodySmall" tone={hasUncertainFields ? 'tertiary' : 'muted'}>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.preBrewSourceLabelTitle)}</Text>
+      <Text variant="caption" tone={hasUncertainFields ? 'tertiary' : 'muted'}>
         {t(
           hasUncertainFields
             ? TRANSLATION_KEYS.scanLabelCheckUncertain
@@ -45,7 +45,7 @@ export const CoffeeSourceLabelForm = ({ source }: CoffeeSourceLabelFormProps): J
         )}
       </Text>
       {source.photo.failure !== null ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(BAG_PHOTO_FAILURE_KEYS[source.photo.failure])}
         </Text>
       ) : null}
@@ -56,7 +56,7 @@ export const CoffeeSourceLabelForm = ({ source }: CoffeeSourceLabelFormProps): J
         onChange={source.describeLabel}
       />
       {source.hasFailed ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(TRANSLATION_KEYS.scanError)}
         </Text>
       ) : null}

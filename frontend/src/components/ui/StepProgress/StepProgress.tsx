@@ -51,7 +51,7 @@ export const StepProgress = ({
   return (
     <View style={styles.wrapper}>
       {showCount ? (
-        <Text variant="labelSmall" tone="muted">
+        <Text variant="captionSmall" tone="muted">
           {t(TRANSLATION_KEYS.stepCount, { current, total })}
         </Text>
       ) : null}

@@ -63,10 +63,10 @@ export const BrewRecipeFacts = ({ params }: BrewRecipeFactsProps): JSX.Element =
       {(params.grindLabel === null || params.grindLabel === undefined) &&
       params.grindSetting === null ? null : (
         <View style={styles.grind}>
-          <Text variant="labelMedium" tone="onEspressoMuted">
+          <Text variant="eyebrow" tone="onEspressoMuted">
             {t(TRANSLATION_KEYS.brewModeGrind)}
           </Text>
-          <Text variant="bodyMedium" tone="onEspresso">
+          <Text variant="bodyText" tone="onEspresso">
             {params.grindLabel ?? String(params.grindSetting)}
           </Text>
         </View>

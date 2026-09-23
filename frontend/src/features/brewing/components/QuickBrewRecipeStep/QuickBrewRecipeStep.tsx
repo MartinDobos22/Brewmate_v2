@@ -54,7 +54,7 @@ export const QuickBrewRecipeStep = ({ brew }: QuickBrewRecipeStepProps): JSX.Ele
         }).map((key: TranslationKey): string => t(key))}
       />
       <ConfidenceNotice />
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {t(TRANSLATION_KEYS.quickBrewRecipeNoBagNote)}
       </Text>
       {recipe === undefined ? null : (
@@ -67,19 +67,19 @@ export const QuickBrewRecipeStep = ({ brew }: QuickBrewRecipeStepProps): JSX.Ele
               router.replace(buildBrewModeRoute(recipe.id));
             }}
           />
-          <Text variant="labelSmall" tone="muted">
+          <Text variant="captionSmall" tone="muted">
             {t(TRANSLATION_KEYS.quickBrewBrewHint)}
           </Text>
         </View>
       )}
       <Card>
         <View style={styles.offer}>
-          <Text variant="titleMedium">{t(TRANSLATION_KEYS.quickBrewAddToInventoryTitle)}</Text>
-          <Text variant="bodySmall" tone="muted">
+          <Text variant="cardTitle">{t(TRANSLATION_KEYS.quickBrewAddToInventoryTitle)}</Text>
+          <Text variant="caption" tone="muted">
             {t(TRANSLATION_KEYS.quickBrewAddToInventoryBody)}
           </Text>
           {brew.hasFailed ? (
-            <Text variant="bodySmall" tone="error">
+            <Text variant="captionSmall" tone="error">
               {t(TRANSLATION_KEYS.quickBrewSaveError)}
             </Text>
           ) : null}

@@ -28,7 +28,7 @@ export const BrewMethodGroupSection = ({
 
   return (
     <View style={styles.group}>
-      <Text variant="labelMedium" tone="muted">
+      <Text variant="eyebrow" tone="muted">
         {t(BREW_METHOD_CATEGORY_LABEL_KEYS[group.category])}
       </Text>
       {group.methods.map((method: BrewMethod): JSX.Element => {

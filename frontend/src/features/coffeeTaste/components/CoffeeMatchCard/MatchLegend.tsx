@@ -23,13 +23,13 @@ export const MatchLegend = (): JSX.Element => {
     <View style={styles.legend}>
       <View style={styles.entry}>
         <View style={styles.youSwatch} />
-        <Text variant="labelSmall" tone="muted">
+        <Text variant="captionSmall" tone="muted">
           {t(TRANSLATION_KEYS.matchLegendYou)}
         </Text>
       </View>
       <View style={styles.entry}>
         <View style={styles.coffeeSwatch} />
-        <Text variant="labelSmall" tone="muted">
+        <Text variant="captionSmall" tone="muted">
           {t(TRANSLATION_KEYS.matchLegendCoffee)}
         </Text>
       </View>

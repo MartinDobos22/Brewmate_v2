@@ -30,7 +30,7 @@ export const ShotForm = ({ session }: ShotFormProps): JSX.Element => {
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.dialInShotSection)}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.dialInShotSection)}</Text>
       <View style={styles.row}>
         <View style={styles.field}>
           <Input
@@ -75,12 +75,12 @@ export const ShotForm = ({ session }: ShotFormProps): JSX.Element => {
       />
       <View style={styles.actions}>
         {session.sendFailed ? (
-          <Text variant="bodySmall" tone="error">
+          <Text variant="captionSmall" tone="error">
             {t(TRANSLATION_KEYS.dialInError)}
           </Text>
         ) : null}
         {session.canSend ? null : (
-          <Text variant="bodySmall" tone="muted">
+          <Text variant="bodyText" tone="muted">
             {t(TRANSLATION_KEYS.dialInMissingShot)}
           </Text>
         )}

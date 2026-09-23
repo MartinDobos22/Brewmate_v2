@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 
 import { Screen } from '../../../../components/layout';
-import { StepProgress, Text } from '../../../../components/ui';
+import { ScreenIntro, StepProgress, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { QUICK_BREW_STAGES } from '../../constants/quickBrew';
 import { useQuickBrew } from '../../hooks/useQuickBrew';
@@ -24,10 +24,10 @@ export const QuickBrewScreen = (): JSX.Element => {
 
   return (
     <Screen scrollable>
-      <Text variant="headlineSmall">{t(TRANSLATION_KEYS.quickBrewTitle)}</Text>
+      <ScreenIntro title={t(TRANSLATION_KEYS.quickBrewTitle)} />
       <StepProgress current={steps.current} total={steps.total} />
       {brew.stage === QUICK_BREW_STAGES.method ? (
-        <Text variant="bodyMedium" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.quickBrewIntro)}
         </Text>
       ) : null}

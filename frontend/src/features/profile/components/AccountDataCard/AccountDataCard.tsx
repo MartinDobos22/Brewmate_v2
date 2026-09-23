@@ -41,11 +41,11 @@ export const AccountDataCard = (): JSX.Element => {
         }}
       />
       {exportAccount.isError ? (
-        <Text variant="labelSmall" tone="tertiary">
+        <Text variant="captionSmall" tone="tertiary">
           {t(TRANSLATION_KEYS.privacyExportFailed)}
         </Text>
       ) : null}
-      <Text variant="labelSmall" tone="muted">
+      <Text variant="captionSmall" tone="muted">
         {t(TRANSLATION_KEYS.privacyDeleteNote)}
       </Text>
     </Card>

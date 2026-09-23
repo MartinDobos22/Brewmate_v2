@@ -28,7 +28,7 @@ export const ImportSourceStep = ({ recipeImport }: ImportSourceStepProps): JSX.E
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.importSourceSection)}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.importSourceSection)}</Text>
       <Input
         label={t(TRANSLATION_KEYS.importSourcePasteLabel)}
         value={source.text}
@@ -37,12 +37,12 @@ export const ImportSourceStep = ({ recipeImport }: ImportSourceStepProps): JSX.E
         disabled={source.isReading}
       />
       {source.camera.hasFailed ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(TRANSLATION_KEYS.importSourcePhotoError)}
         </Text>
       ) : null}
       {source.hasFailed ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(TRANSLATION_KEYS.importSourceError)}
         </Text>
       ) : null}
@@ -75,7 +75,7 @@ export const ImportSourceStep = ({ recipeImport }: ImportSourceStepProps): JSX.E
           }}
         />
         {source.canRead ? null : (
-          <Text variant="bodySmall" tone="muted">
+          <Text variant="bodyText" tone="muted">
             {t(TRANSLATION_KEYS.importSourceEmpty)}
           </Text>
         )}

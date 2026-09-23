@@ -15,5 +15,5 @@ export const createTabsStyles = (theme: Theme): TabsStyleMap =>
       borderTopWidth: theme.borderWidth.thin,
       borderTopColor: theme.colors.dividerStrong,
     },
-    tabLabel: { ...theme.typography.labelSmall },
+    tabLabel: { ...theme.typography.tabLabel },
   });

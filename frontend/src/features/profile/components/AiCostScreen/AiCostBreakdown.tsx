@@ -25,9 +25,9 @@ export const AiCostBreakdown = ({ totals }: AiCostBreakdownProps): JSX.Element =
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.aiCostsByFunctionTitle)}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.aiCostsByFunctionTitle)}</Text>
       {totals.length === NOTHING ? (
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.aiCostsByFunctionEmpty)}
         </Text>
       ) : null}
@@ -45,7 +45,7 @@ export const AiCostBreakdown = ({ totals }: AiCostBreakdownProps): JSX.Element =
             subtitle={t(TRANSLATION_KEYS.aiCostsFunctionCalls, { count: total.calls })}
             showDivider={index > NOTHING}
             trailing={
-              <Text variant="labelMedium" tone="muted" numeric>
+              <Text variant="eyebrow" tone="muted" numeric>
                 {amount}
               </Text>
             }
