@@ -9,6 +9,12 @@ import { createCoffeeBagDetailStyles } from './CoffeeBagDetailScreen.styles';
 export interface InfoRowProps {
   readonly label: string;
   readonly value: string | null;
+  /**
+   * An altitude, a weight, a date. Figures are set in the app's numeral face
+   * wherever they appear, so a column of them lines up and none of them reads
+   * as prose.
+   */
+  readonly numeric?: boolean;
 }
 
 /**
@@ -17,7 +23,7 @@ export interface InfoRowProps {
  * @returns null when there is nothing to say. A row that printed a dash would
  * be telling somebody the app has a field, not that their coffee has a farm.
  */
-export const InfoRow = ({ label, value }: InfoRowProps): JSX.Element | null => {
+export const InfoRow = ({ label, value, numeric = false }: InfoRowProps): JSX.Element | null => {
   const styles = useThemedStyles(createCoffeeBagDetailStyles);
 
   if (value === null || value === '') {
@@ -29,7 +35,9 @@ export const InfoRow = ({ label, value }: InfoRowProps): JSX.Element | null => {
       <Text variant="eyebrow" tone="muted">
         {label}
       </Text>
-      <Text variant="bodyText">{value}</Text>
+      <Text variant="bodyText" numeric={numeric}>
+        {value}
+      </Text>
     </View>
   );
 };

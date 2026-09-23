@@ -1,0 +1,1 @@
+export { useRecipeFigures } from './useRecipeFigures';

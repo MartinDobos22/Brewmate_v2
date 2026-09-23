@@ -5,8 +5,8 @@ import { View } from 'react-native';
 
 import { EspressoHeader } from '../../../../components/layout';
 import { FigureRow, Text } from '../../../../components/ui';
+import { useRecipeFigures } from '../../../../hooks';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { formatGrams, formatRatio } from '../../../../lib/formatters';
 import { useTheme, useThemedStyles } from '../../../../theme';
 import { BREW_METHOD_CATEGORY_ICONS } from '../../../brewing/constants';
 import { useBrewMethodCatalog } from '../../../inventory/hooks';
@@ -36,6 +36,7 @@ export const RecipeChatHeader = ({ recipe }: RecipeChatHeaderProps): JSX.Element
   const styles = useThemedStyles(createRecipeChatHeaderStyles);
   const theme = useTheme();
   const { t } = useTranslation();
+  const figures = useRecipeFigures(recipe.params);
   const { methods } = useBrewMethodCatalog();
   const method = methods.find((item: BrewMethod): boolean => item.id === recipe.methodId);
 
@@ -66,19 +67,7 @@ export const RecipeChatHeader = ({ recipe }: RecipeChatHeaderProps): JSX.Element
           </Text>
         </View>
       </View>
-      <FigureRow
-        scale="header"
-        ground="espresso"
-        figures={[
-          { value: formatGrams(recipe.params.doseGrams), label: t(TRANSLATION_KEYS.figureDose) },
-          { value: formatGrams(recipe.params.waterGrams), label: t(TRANSLATION_KEYS.figureWater) },
-          {
-            value: formatRatio(recipe.params.ratio),
-            label: t(TRANSLATION_KEYS.figureRatio),
-            derived: true,
-          },
-        ]}
-      />
+      {figures === null ? null : <FigureRow scale="header" ground="espresso" figures={figures} />}
     </EspressoHeader>
   );
 };

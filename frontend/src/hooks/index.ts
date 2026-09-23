@@ -8,5 +8,6 @@ export type {
   InvalidatingMutationOptions,
   OptimisticEntityMutationOptions,
 } from './useEntityMutation';
+export { useRecipeFigures } from './useRecipeFigures';
 export { useRequestErrorCopy } from './useRequestErrorCopy';
 export type { RequestErrorCopy } from './useRequestErrorCopy';

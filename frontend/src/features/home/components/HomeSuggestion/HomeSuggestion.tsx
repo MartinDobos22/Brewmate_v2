@@ -3,9 +3,9 @@ import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { FigureRow, PillButton, Text } from '../../../../components/ui';
+import { useRecipeFigures } from '../../../../hooks';
 import { ROUTES, buildBrewModeRoute, buildBrewRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { formatGrams, formatRatio } from '../../../../lib/formatters';
 import { useThemedStyles } from '../../../../theme';
 import { HOME_TILE_ICONS } from '../../constants';
 import type { HomeSuggestion as Suggestion } from '../../hooks';
@@ -35,6 +35,7 @@ export const HomeSuggestion = ({ suggestion }: HomeSuggestionProps): JSX.Element
   const { t } = useTranslation();
   const router = useRouter();
   const { suggested, recipe, method } = suggestion;
+  const figures = useRecipeFigures(recipe?.params ?? null);
 
   if (suggested === null) {
     return null;
@@ -46,24 +47,7 @@ export const HomeSuggestion = ({ suggestion }: HomeSuggestionProps): JSX.Element
         {t(TRANSLATION_KEYS.homeSuggestionEyebrow)}
       </Text>
       <SuggestionSubject suggested={suggested} method={method} />
-      {recipe === null ? null : (
-        <FigureRow
-          scale="hero"
-          ground="espresso"
-          figures={[
-            { value: formatGrams(recipe.params.doseGrams), label: t(TRANSLATION_KEYS.figureDose) },
-            {
-              value: formatGrams(recipe.params.waterGrams),
-              label: t(TRANSLATION_KEYS.figureWater),
-            },
-            {
-              value: formatRatio(recipe.params.ratio),
-              label: t(TRANSLATION_KEYS.figureRatio),
-              derived: true,
-            },
-          ]}
-        />
-      )}
+      {figures === null ? null : <FigureRow scale="hero" ground="espresso" figures={figures} />}
       <View style={styles.row}>
         <PillButton
           tone="cream"

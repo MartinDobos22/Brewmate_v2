@@ -11,9 +11,9 @@ import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { FigureRow, PillButton, Text } from '../../../../components/ui';
+import { useRecipeFigures } from '../../../../hooks';
 import { buildRecipeChatRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { formatGrams, formatRatio } from '../../../../lib/formatters';
 import { useTheme, useThemedStyles } from '../../../../theme';
 import { TIMELINE_ICONS } from '../../constants';
 import { ConstraintBadges } from '../ConstraintBadges';
@@ -50,6 +50,7 @@ export const TimelineEntryCard = ({ entry, index, total }: TimelineEntryCardProp
   const styles = useThemedStyles(createTimelineEntryStyles);
   const theme = useTheme();
   const { t } = useTranslation();
+  const figures = useRecipeFigures(entry.recipe.params);
   const router = useRouter();
 
   const version = index + NEXT;
@@ -102,24 +103,7 @@ export const TimelineEntryCard = ({ entry, index, total }: TimelineEntryCardProp
           </View>
         </View>
 
-        <FigureRow
-          ruled={false}
-          figures={[
-            {
-              value: formatGrams(entry.recipe.params.doseGrams),
-              label: t(TRANSLATION_KEYS.figureDose),
-            },
-            {
-              value: formatGrams(entry.recipe.params.waterGrams),
-              label: t(TRANSLATION_KEYS.figureWater),
-            },
-            {
-              value: formatRatio(entry.recipe.params.ratio),
-              label: t(TRANSLATION_KEYS.figureRatio),
-              derived: true,
-            },
-          ]}
-        />
+        {figures === null ? null : <FigureRow ruled={false} figures={figures} />}
 
         {note === undefined ? null : (
           <View style={styles.note}>
