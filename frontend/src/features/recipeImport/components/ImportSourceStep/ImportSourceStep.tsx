@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Card, Input, PillButton, Text } from '../../../../components/ui';
+import { Card, InfoNote, Input, PillButton, SectionHeading, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { BAG_PHOTO_SOURCES } from '../../../bagEvaluations/services';
@@ -28,7 +28,7 @@ export const ImportSourceStep = ({ recipeImport }: ImportSourceStepProps): JSX.E
 
   return (
     <Card>
-      <Text variant="cardTitle">{t(TRANSLATION_KEYS.importSourceSection)}</Text>
+      <SectionHeading title={t(TRANSLATION_KEYS.importSourceSection)} placement="card" />
       <Input
         label={t(TRANSLATION_KEYS.importSourcePasteLabel)}
         value={source.text}
@@ -74,11 +74,7 @@ export const ImportSourceStep = ({ recipeImport }: ImportSourceStepProps): JSX.E
             source.read(recipeImport.toReview);
           }}
         />
-        {source.canRead ? null : (
-          <Text variant="bodyText" tone="muted">
-            {t(TRANSLATION_KEYS.importSourceEmpty)}
-          </Text>
-        )}
+        {source.canRead ? null : <InfoNote text={t(TRANSLATION_KEYS.importSourceEmpty)} />}
         <PillButton
           tone="surface"
           label={t(TRANSLATION_KEYS.importSourceManual)}

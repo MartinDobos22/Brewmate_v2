@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Card, PillButton, Text } from '../../../../components/ui';
+import { Card, InfoNote, PillButton, SectionHeading, Text } from '../../../../components/ui';
 import { buildBrewModeRoute, ROUTES } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
@@ -54,9 +54,7 @@ export const QuickBrewRecipeStep = ({ brew }: QuickBrewRecipeStepProps): JSX.Ele
         }).map((key: TranslationKey): string => t(key))}
       />
       <ConfidenceNotice />
-      <Text variant="bodyText" tone="muted">
-        {t(TRANSLATION_KEYS.quickBrewRecipeNoBagNote)}
-      </Text>
+      <InfoNote text={t(TRANSLATION_KEYS.quickBrewRecipeNoBagNote)} />
       {recipe === undefined ? null : (
         <View style={styles.offer}>
           <PillButton
@@ -74,10 +72,11 @@ export const QuickBrewRecipeStep = ({ brew }: QuickBrewRecipeStepProps): JSX.Ele
       )}
       <Card>
         <View style={styles.offer}>
-          <Text variant="cardTitle">{t(TRANSLATION_KEYS.quickBrewAddToInventoryTitle)}</Text>
-          <Text variant="caption" tone="muted">
-            {t(TRANSLATION_KEYS.quickBrewAddToInventoryBody)}
-          </Text>
+          <SectionHeading
+            title={t(TRANSLATION_KEYS.quickBrewAddToInventoryTitle)}
+            caption={t(TRANSLATION_KEYS.quickBrewAddToInventoryBody)}
+            placement="card"
+          />
           {brew.hasFailed ? (
             <Text variant="captionSmall" tone="error">
               {t(TRANSLATION_KEYS.quickBrewSaveError)}
