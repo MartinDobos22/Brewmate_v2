@@ -11,6 +11,13 @@ import { createListItemStyles } from './ListItem.styles';
 export interface ListItemProps {
   readonly title: string;
   readonly subtitle?: string;
+  /**
+   * The subtitle is a figure rather than a sentence, so it is set in the
+   * app's numeral face like every other figure. A collar range, a capacity,
+   * a dose window - all of them read as measurements and none of them should
+   * be proportionally spaced.
+   */
+  readonly numericSubtitle?: boolean;
   /** A mark in a column of its own before the title. */
   readonly icon?: TileGlyph;
   readonly trailing?: ReactNode;
@@ -22,6 +29,7 @@ export interface ListItemProps {
 export const ListItem = ({
   title,
   subtitle,
+  numericSubtitle = false,
   icon,
   trailing,
   onPress,
@@ -56,7 +64,7 @@ export const ListItem = ({
       <View style={styles.content}>
         <Text variant="rowTitle">{title}</Text>
         {subtitle === undefined ? null : (
-          <Text variant="caption" tone="muted">
+          <Text variant="caption" tone="muted" numeric={numericSubtitle}>
             {subtitle}
           </Text>
         )}

@@ -6,7 +6,6 @@ import {
 } from '@brewmate/shared';
 
 import { TRANSLATION_KEYS, type TranslationKey } from '../../../i18n';
-import { GRINDER_PRECISIONS, type GrinderPrecision } from '../services/grinderPrecision';
 
 /** What the collar counts in, as a person reads it. */
 export const GRINDER_UNIT_LABEL_KEYS: Record<GrinderUnitType, TranslationKey> = {
@@ -19,13 +18,6 @@ export const GRINDER_USE_LABEL_KEYS: Record<GrinderTypicalUse, TranslationKey> =
   [GRINDER_TYPICAL_USES.espresso]: TRANSLATION_KEYS.grinderFilterEspresso,
   [GRINDER_TYPICAL_USES.filter]: TRANSLATION_KEYS.grinderFilterFilter,
   [GRINDER_TYPICAL_USES.both]: TRANSLATION_KEYS.grinderFilterBoth,
-};
-
-/** The sentence that keeps an estimate from reading like a measurement. */
-export const GRINDER_PRECISION_LABEL_KEYS: Record<GrinderPrecision, TranslationKey> = {
-  [GRINDER_PRECISIONS.measured]: TRANSLATION_KEYS.grinderPrecisionMeasured,
-  [GRINDER_PRECISIONS.estimated]: TRANSLATION_KEYS.grinderPrecisionEstimated,
-  [GRINDER_PRECISIONS.missing]: TRANSLATION_KEYS.grinderPrecisionMissing,
 };
 
 /** Left to right, the order the filter chips are offered in. */
