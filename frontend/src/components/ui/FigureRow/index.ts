@@ -1,3 +1,3 @@
 export { FigureRow } from './FigureRow';
 export type { FigureRowProps, Figure } from './FigureRow';
-export type { FigureScale, FigureGround } from './figureColumnScales';
+export type { FigureScale, FigureGround } from './figureRowScales';

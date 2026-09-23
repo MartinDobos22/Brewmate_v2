@@ -5,13 +5,13 @@ import { View } from 'react-native';
 import { useThemedStyles } from '../../../theme';
 
 import { FigureColumn } from './FigureColumn';
-import { createFigureColumnStyles } from './FigureColumn.styles';
+import { createFigureRowStyles } from './FigureRow.styles';
 import {
   DEFAULT_FIGURE_GROUND,
   DEFAULT_FIGURE_SCALE,
   type FigureGround,
   type FigureScale,
-} from './figureColumnScales';
+} from './figureRowScales';
 
 /** One column: a number and what it is. */
 export interface Figure {
@@ -48,7 +48,7 @@ export const FigureRow = ({
   ground = DEFAULT_FIGURE_GROUND,
   ruled = true,
 }: FigureRowProps): JSX.Element => {
-  const styles = useThemedStyles(createFigureColumnStyles);
+  const styles = useThemedStyles(createFigureRowStyles);
 
   return (
     <View style={styles.row}>

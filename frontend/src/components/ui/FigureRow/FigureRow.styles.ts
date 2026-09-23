@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import type { Theme, ViewStyles } from '../../../theme';
 
-type FigureColumnStyleMap = ViewStyles<'row' | 'column' | 'rule'>;
+type FigureRowStyleMap = ViewStyles<'row' | 'column' | 'rule'>;
 
 /**
  * The three numbers a recipe is made of, read left to right as one statement:
@@ -12,7 +12,7 @@ type FigureColumnStyleMap = ViewStyles<'row' | 'column' | 'rule'>;
  * alone would let three unrelated numbers sit in a row - and the rule is what
  * says the third is arithmetic over the first two.
  */
-export const createFigureColumnStyles = (theme: Theme): FigureColumnStyleMap =>
+export const createFigureRowStyles = (theme: Theme): FigureRowStyleMap =>
   StyleSheet.create({
     row: { flexDirection: 'row', alignItems: 'flex-end' },
     column: { flex: 1, minWidth: 0, gap: theme.spacing.xxs },

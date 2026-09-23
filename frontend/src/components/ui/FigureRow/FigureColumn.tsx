@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { useThemedStyles } from '../../../theme';
 import { Text } from '../Text';
 
-import { createFigureColumnStyles } from './FigureColumn.styles';
+import { createFigureRowStyles } from './FigureRow.styles';
 import {
   DEFAULT_FIGURE_GROUND,
   DEFAULT_FIGURE_SCALE,
@@ -14,7 +14,7 @@ import {
   FIGURE_VALUE_VARIANTS,
   type FigureGround,
   type FigureScale,
-} from './figureColumnScales';
+} from './figureRowScales';
 
 export interface FigureColumnProps {
   readonly value: string;
@@ -40,7 +40,7 @@ export const FigureColumn = ({
   ground = DEFAULT_FIGURE_GROUND,
   derived = false,
 }: FigureColumnProps): JSX.Element => {
-  const styles = useThemedStyles(createFigureColumnStyles);
+  const styles = useThemedStyles(createFigureRowStyles);
 
   return (
     <View style={styles.column}>
