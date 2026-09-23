@@ -18,3 +18,4 @@ export { TasteCorrectionCard } from './TasteCorrectionCard';
 export { ProfileToolTiles } from './ProfileToolTiles';
 export { AppearanceCard } from './AppearanceCard';
 export { DeveloperTile } from './DeveloperTile';
+export { UsageMeter } from './UsageMeter';

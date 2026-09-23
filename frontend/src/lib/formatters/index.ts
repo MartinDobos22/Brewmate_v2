@@ -1,4 +1,5 @@
 export { formatCost } from './formatCost';
+export { readCostAmount } from './readCostAmount';
 export { formatDateTime } from './formatDateTime';
 export { formatDecimal } from './formatDecimal';
 export { parseDecimal } from './parseDecimal';

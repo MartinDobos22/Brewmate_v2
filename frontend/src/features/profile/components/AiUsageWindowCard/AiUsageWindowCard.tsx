@@ -1,13 +1,10 @@
 import { AI_LIMIT_KINDS, type AiUsageWindow } from '@brewmate/shared';
 import type { JSX } from 'react';
-import { View } from 'react-native';
 
-import { Card, ProgressBar, Text } from '../../../../components/ui';
+import { Card, InfoNote, SectionHeading } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
-import { formatCost, formatDateTime } from '../../../../lib/formatters';
-import { useThemedStyles } from '../../../../theme';
-
-import { createAiUsageWindowStyles } from './AiUsageWindowCard.styles';
+import { formatCost, formatDateTime, readCostAmount } from '../../../../lib/formatters';
+import { UsageMeter } from '../UsageMeter';
 
 export interface AiUsageWindowCardProps {
   readonly window: AiUsageWindow;
@@ -17,65 +14,61 @@ export interface AiUsageWindowCardProps {
 /**
  * One window, its two ceilings and when it comes back.
  *
- * Both ceilings are shown rather than only the nearer one, because they guard
- * different failures: the call count catches a screen retrying in a loop
- * before it has cost anything, and the money is the actual budget. Showing one
- * would leave somebody wondering why they were refused with room on the bar
- * they can see.
+ * Both are drawn the same way, which is the whole point of the card. They
+ * guard different failures - the call count catches a screen retrying in a
+ * loop before it has cost anything, the money is the actual budget - and they
+ * run out independently, so a card that gave one a bar and the other a
+ * sentence was telling somebody refused with room on the bar they can see
+ * that nothing was wrong.
  *
  * `resetsAt` is printed as a moment rather than as "skús neskôr". A limit
  * without a time attached is a limit nobody can plan around.
  */
 export const AiUsageWindowCard = ({ window, titleKey }: AiUsageWindowCardProps): JSX.Element => {
-  const styles = useThemedStyles(createAiUsageWindowStyles);
   const { t } = useTranslation();
+
+  /** Assembled before the JSX, because a sentence is never built inside it. */
+  const amount = (value: string): string =>
+    t(TRANSLATION_KEYS.aiCostsAmount, {
+      value: formatCost(value),
+      currency: t(TRANSLATION_KEYS.unitCurrency),
+    });
 
   return (
     <Card>
-      <View style={styles.row}>
-        <Text variant="cardTitle">{t(titleKey)}</Text>
-        <Text variant="captionSmall" tone="muted">
-          {t(TRANSLATION_KEYS.aiCostsResetsAt, { time: formatDateTime(window.resetsAt) })}
-        </Text>
-      </View>
-
-      <View style={styles.bar}>
-        <ProgressBar
-          current={window.calls}
-          total={window.callLimit}
-          label={t(TRANSLATION_KEYS.aiCostsCalls, {
-            used: window.calls,
-            limit: window.callLimit,
-          })}
+      <SectionHeading
+        title={t(titleKey)}
+        caption={t(TRANSLATION_KEYS.aiCostsResetsAt, { time: formatDateTime(window.resetsAt) })}
+        placement="card"
+      />
+      <UsageMeter
+        label={t(TRANSLATION_KEYS.aiCostsCallsLabel)}
+        figure={t(TRANSLATION_KEYS.aiCostsRatio, {
+          used: window.calls,
+          limit: window.callLimit,
+        })}
+        used={window.calls}
+        ceiling={window.callLimit}
+      />
+      <UsageMeter
+        label={t(TRANSLATION_KEYS.aiCostsSpentLabel)}
+        figure={t(TRANSLATION_KEYS.aiCostsAmountRatio, {
+          used: amount(window.costEstimate),
+          limit: amount(window.costLimit),
+        })}
+        used={readCostAmount(window.costEstimate)}
+        ceiling={readCostAmount(window.costLimit)}
+      />
+      {window.exhaustedBy === null ? null : (
+        <InfoNote
+          tone="caution"
+          text={t(
+            window.exhaustedBy === AI_LIMIT_KINDS.calls
+              ? TRANSLATION_KEYS.aiCostsExhaustedCalls
+              : TRANSLATION_KEYS.aiCostsExhaustedCost,
+          )}
         />
-      </View>
-
-      <View style={styles.body}>
-        <Text variant="bodyText">
-          {t(TRANSLATION_KEYS.aiCostsCalls, { used: window.calls, limit: window.callLimit })}
-        </Text>
-        <Text variant="caption" tone="muted">
-          {t(TRANSLATION_KEYS.aiCostsSpent, {
-            spent: t(TRANSLATION_KEYS.aiCostsAmount, {
-              value: formatCost(window.costEstimate),
-              currency: t(TRANSLATION_KEYS.unitCurrency),
-            }),
-            limit: t(TRANSLATION_KEYS.aiCostsAmount, {
-              value: formatCost(window.costLimit),
-              currency: t(TRANSLATION_KEYS.unitCurrency),
-            }),
-          })}
-        </Text>
-        {window.exhaustedBy === null ? null : (
-          <Text variant="eyebrow" tone="tertiary">
-            {t(
-              window.exhaustedBy === AI_LIMIT_KINDS.calls
-                ? TRANSLATION_KEYS.aiCostsExhaustedCalls
-                : TRANSLATION_KEYS.aiCostsExhaustedCost,
-            )}
-          </Text>
-        )}
-      </View>
+      )}
     </Card>
   );
 };

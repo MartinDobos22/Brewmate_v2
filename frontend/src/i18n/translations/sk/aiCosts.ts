@@ -12,8 +12,10 @@ export const SK_AI_COSTS = {
 
   aiCostsDayTitle: 'Dnes',
   aiCostsMonthTitle: 'Tento mesiac',
-  aiCostsCalls: '{used} z {limit} otázok',
-  aiCostsSpent: '{spent} z {limit}',
+  aiCostsCallsLabel: 'Otázky',
+  aiCostsSpentLabel: 'Suma',
+  aiCostsRatio: '{used} / {limit}',
+  aiCostsAmountRatio: '{used} z {limit}',
   aiCostsResetsAt: 'Obnoví sa {time}',
   aiCostsExhaustedCalls: 'Počet otázok si na toto obdobie vyčerpal.',
   aiCostsExhaustedCost: 'Sumu si na toto obdobie vyčerpal.',
