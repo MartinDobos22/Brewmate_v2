@@ -34,14 +34,24 @@ export const PILL_BACKGROUNDS = {
   danger: 'error',
 } as const satisfies Record<PillTone, keyof ColorPalette>;
 
+/**
+ * What a pill writes on its own fill.
+ *
+ * Every entry here has to be read against `PILL_BACKGROUNDS` above, because
+ * three of those fills come from the espresso roles and are the same colour
+ * in both schemes. `espresso` carried `onCream` - which is `#3B2415`, the
+ * exact colour of the fill under it - so the loudest button in the app had an
+ * invisible label in both schemes, and its glyph read as an off-centre mark
+ * because the label was still there taking its width.
+ */
 export const PILL_LABEL_TONES = {
   cream: 'onCream',
-  espresso: 'onCream',
+  espresso: 'cream',
   lifted: 'onEspresso',
   surface: 'default',
   surfaceLead: 'default',
   faint: 'muted',
-  danger: 'onPrimary',
+  danger: 'onError',
 } as const satisfies Record<PillTone, TextTone>;
 
 export const PILL_ICON_COLORS = {

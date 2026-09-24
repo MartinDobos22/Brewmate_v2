@@ -48,7 +48,7 @@ export const SK_HOME_TILES = {
   homeTileTasteUnknown: 'Ešte ťa nepoznám. Pár otázok a budem vedieť, čo ti odporúčať.',
 
   homeTileStatsTitle: 'Tvoje varenia',
-  homeTileStatsCaption: 'Posledných sedem dní',
+  homeTileStatsCaption: 'za 7 dní',
   homeTileStatsNone: 'Zatiaľ ani jedno - a to sa dá zmeniť teraz.',
   homeTileStatsTotalLabel: 'Spolu varení',
   homeTileStatsWeekLabel: 'Posledných sedem dní',

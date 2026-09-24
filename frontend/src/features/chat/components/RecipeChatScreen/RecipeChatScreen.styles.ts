@@ -17,7 +17,8 @@ type RecipeChatScreenStyleMap = ViewStyles<
  */
 export const createRecipeChatScreenStyles = (theme: Theme): RecipeChatScreenStyleMap =>
   StyleSheet.create({
-    root: { flex: 1 },
+    /** Composed here rather than through `Screen`, so the ground is painted here. */
+    root: { flex: 1, backgroundColor: theme.colors.background },
     scroll: { flex: 1 },
     thread: { padding: theme.spacing.lgPlus, gap: theme.spacing.lg },
     /** A proposal and the sentence that argued for it are one thing to read. */

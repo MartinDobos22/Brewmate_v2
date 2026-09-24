@@ -24,6 +24,7 @@ export type TextTone =
   | 'secondary'
   | 'tertiary'
   | 'error'
+  | 'onError'
   | 'inverse'
   | 'disabled'
   | 'onEspresso'
@@ -32,6 +33,7 @@ export type TextTone =
   | 'accent'
   | 'accentSoft'
   | 'onCream'
+  | 'cream'
   | 'fresh'
   | 'caution';
 
