@@ -10,5 +10,5 @@ type QuickBrewScreenStyleMap = ViewStyles<'content'>;
  */
 export const createQuickBrewScreenStyles = (theme: Theme): QuickBrewScreenStyleMap =>
   StyleSheet.create({
-    content: { padding: theme.spacing.lgPlus, gap: theme.spacing.lgPlus },
+    content: { flexGrow: 1, padding: theme.spacing.lgPlus, gap: theme.spacing.lgPlus },
   });

@@ -21,6 +21,7 @@ export type TextTone =
   | 'muted'
   | 'primary'
   | 'onPrimary'
+  | 'onPrimaryContainer'
   | 'secondary'
   | 'tertiary'
   | 'error'

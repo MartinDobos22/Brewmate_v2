@@ -12,7 +12,7 @@ export const DARK_COLORS: ColorPalette = {
   onPrimaryContainer: '#F0DECC',
   secondary: '#B6C79A',
   onSecondary: '#253216',
-  secondaryContainer: '#374524',
+  secondaryContainer: '#36402F',
   onSecondaryContainer: '#D6E2C4',
   tertiary: '#DDB27A',
   onTertiary: '#3F2A10',
@@ -41,8 +41,14 @@ export const DARK_COLORS: ColorPalette = {
    * resolve to the Material roles they correspond to rather than to an
    * invented tint: the redesign re-tinted the light containers for a reason it
    * stated, and there is no equivalent decision on dark to copy.
+   *
+   * The green fill is greyer and a shade warmer than the obvious dark-scheme
+   * olive. At full chroma it is the one colour in this palette that belongs to
+   * no other part of it, and on a ground this warm it reads as a foreign
+   * object rather than as the app's own "fresh". It is still plainly green,
+   * which is all it has to be: it only ever means ready, ideal or confirmed.
    */
-  freshContainer: '#374524',
+  freshContainer: '#36402F',
   onFreshContainer: '#D6E2C4',
   onFresh: '#B6C79A',
   cautionContainer: '#5A3F1C',

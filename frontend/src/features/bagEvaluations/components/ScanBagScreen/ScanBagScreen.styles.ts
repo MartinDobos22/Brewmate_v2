@@ -17,7 +17,7 @@ type ScanBagScreenStyleMap = ViewStyles<'content' | 'verdict'>;
  */
 export const createScanBagScreenStyles = (theme: Theme): ScanBagScreenStyleMap =>
   StyleSheet.create({
-    content: { padding: theme.spacing.lgPlus, gap: theme.spacing.lgPlus },
+    content: { flexGrow: 1, padding: theme.spacing.lgPlus, gap: theme.spacing.lgPlus },
     /** Grows, so the outcome question can sit against the bottom edge. */
     verdict: { flexGrow: 1, gap: theme.spacing.lg },
   });

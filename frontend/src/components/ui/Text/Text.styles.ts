@@ -21,6 +21,7 @@ export const createTextStyles = (theme: Theme): TextStyleMap =>
     muted: { color: theme.colors.onSurfaceVariant },
     primary: { color: theme.colors.primary },
     onPrimary: { color: theme.colors.onPrimary },
+    onPrimaryContainer: { color: theme.colors.onPrimaryContainer },
     secondary: { color: theme.colors.secondary },
     tertiary: { color: theme.colors.tertiary },
     error: { color: theme.colors.error },

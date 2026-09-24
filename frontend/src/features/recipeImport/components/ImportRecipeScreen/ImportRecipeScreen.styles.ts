@@ -10,6 +10,6 @@ type ImportRecipeScreenStyleMap = ViewStyles<'content' | 'result'>;
  */
 export const createImportRecipeScreenStyles = (theme: Theme): ImportRecipeScreenStyleMap =>
   StyleSheet.create({
-    content: { padding: theme.spacing.lgPlus, gap: theme.spacing.lgPlus },
+    content: { flexGrow: 1, padding: theme.spacing.lgPlus, gap: theme.spacing.lgPlus },
     result: { gap: theme.spacing.md },
   });

@@ -44,7 +44,7 @@ const resolveChoiceTone = (selected: boolean, disabled: boolean): TextTone => {
     return 'disabled';
   }
 
-  return selected ? 'secondary' : 'muted';
+  return selected ? 'onPrimaryContainer' : 'muted';
 };
 
 /** A single-choice or filter token - or, with no selection, a fact or a shortcut. */
@@ -71,7 +71,11 @@ export const Chip = ({
         <MaterialCommunityIcons
           name={icon}
           size={theme.size.iconTiny}
-          color={isChoice ? theme.colors.onSurfaceVariant : theme.colors[CHIP_ICON_COLORS[tone]]}
+          color={
+            isChoice && selected
+              ? theme.colors.onPrimaryContainer
+              : theme.colors[isChoice ? 'onSurfaceVariant' : CHIP_ICON_COLORS[tone]]
+          }
         />
       )}
       <Text

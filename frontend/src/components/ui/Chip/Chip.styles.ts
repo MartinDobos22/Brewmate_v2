@@ -43,9 +43,18 @@ export const createChipStyles = (theme: Theme): ChipStyleMap =>
       backgroundColor: theme.colors.surface,
       borderColor: theme.colors.outlineVariant,
     },
+    /**
+     * A selection is the app's own accent, never the green.
+     *
+     * Green means one thing here - fresh, ideal, confirmed - and a roast level
+     * somebody picked is not a positive state: "Neviem" painted green is the
+     * app congratulating them on not knowing. It is also the one fill that
+     * read as a foreign colour on the dark scheme's warm brown, because an
+     * olive at that chroma belongs to no other part of this palette.
+     */
     selected: {
-      backgroundColor: theme.colors.secondaryContainer,
-      borderColor: theme.colors.secondaryContainer,
+      backgroundColor: theme.colors.primaryContainer,
+      borderColor: theme.colors.primaryContainer,
     },
     pressed: { opacity: theme.opacity.pressed },
   });

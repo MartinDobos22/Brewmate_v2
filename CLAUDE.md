@@ -409,6 +409,14 @@ own.
   with three heights - 26, 34 and 32 - and three fills. Two heights remain,
   because 34 and 32 are a difference no reader can see and one every new chip
   would have had to guess at.
+- **A selection is the app's own accent, never the green.** Green means one
+  thing here - fresh, ideal, confirmed - so a roast level somebody picked
+  being painted green is the app congratulating them on their answer, and
+  "Neviem" green is it congratulating them on not having one. It is also the
+  one fill that read as a foreign object on the dark scheme's warm brown: an
+  olive at that chroma belongs to no other part of this palette. A chosen chip
+  is `primaryContainer`, which is the same brown family as every other thing
+  in this app that means "this one".
 - **Three tones, and `lifted` is the odd one.** `neutral` and `fresh` are
   fills; `lifted` is the card surface, which is the colour of most of what a
   chip sits on - so it is the one tone that needs a shadow to exist at all.
