@@ -28,6 +28,7 @@ export {
   CONFIDENCE_THRESHOLDS,
   CONFIDENCE_LABEL_KEYS,
   CONFIDENCE_ICON,
+  CONFIDENCE_NOTICE_ICON,
 } from './confidenceLevels';
 export type { ConfidenceLevel } from './confidenceLevels';
 export { ROAST_LEVEL_LABEL_KEYS, MILK_USAGE_LABEL_KEYS } from './preferenceLabels';

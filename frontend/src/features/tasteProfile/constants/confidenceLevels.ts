@@ -1,3 +1,5 @@
+import type { TileGlyph } from '../../../components/ui';
+
 import { CONFIDENCE_LEVELS, type ConfidenceLevel } from '@brewmate/shared';
 
 import { TRANSLATION_KEYS, type TranslationKey } from '../../../i18n';
@@ -20,3 +22,12 @@ export const CONFIDENCE_LABEL_KEYS: Record<ConfidenceLevel, TranslationKey> = {
 
 /** The mark beside how well the app claims to know somebody. */
 export const CONFIDENCE_ICON = 'brain';
+
+/**
+ * The mark on the caveat beside a recommendation.
+ *
+ * The same glyph the shop verdict uses for what it did not know about the
+ * person, because that is exactly what this sentence says. One question about
+ * the reader, drawn the same way wherever the app admits to having it.
+ */
+export const CONFIDENCE_NOTICE_ICON = 'account-question-outline' satisfies TileGlyph;

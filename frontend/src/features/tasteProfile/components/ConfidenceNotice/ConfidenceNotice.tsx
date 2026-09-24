@@ -1,13 +1,10 @@
 import type { JSX } from 'react';
-import { View } from 'react-native';
 
-import { Text } from '../../../../components/ui';
+import { InfoNote } from '../../../../components/ui';
 import { useTranslation } from '../../../../i18n';
-import { useThemedStyles } from '../../../../theme';
+import { CONFIDENCE_NOTICE_ICON } from '../../constants';
 import { useTasteProfile } from '../../hooks';
 import { resolveConfidenceNoticeKey } from '../../services';
-
-import { createConfidenceNoticeStyles } from './ConfidenceNotice.styles';
 
 /**
  * What the app admits about itself, next to whatever it just recommended.
@@ -19,9 +16,14 @@ import { createConfidenceNoticeStyles } from './ConfidenceNotice.styles';
  *
  * Renders nothing while the profile is loading: a caveat that flashes in after
  * the recommendation is worse than one that was always there.
+ *
+ * It is the app's own aside, so it is drawn as one - a ground and a mark -
+ * rather than as a sentence behind a grey rule, which is the shape every
+ * other remark in this app stopped using. The glyph is the one the shop
+ * verdict already uses for what it does not know about the person, because
+ * that is exactly what this says.
  */
 export const ConfidenceNotice = (): JSX.Element | null => {
-  const styles = useThemedStyles(createConfidenceNoticeStyles);
   const { t } = useTranslation();
   const { data: profile } = useTasteProfile();
 
@@ -35,11 +37,5 @@ export const ConfidenceNotice = (): JSX.Element | null => {
     return null;
   }
 
-  return (
-    <View style={styles.wrapper}>
-      <Text variant="bodyText" tone="muted">
-        {t(noticeKey)}
-      </Text>
-    </View>
-  );
+  return <InfoNote text={t(noticeKey)} icon={CONFIDENCE_NOTICE_ICON} />;
 };

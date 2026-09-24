@@ -29,6 +29,12 @@ export interface InfoNoteProps {
  * Always a glyph and a sentence, never a sentence on its own. An aside set in
  * the same grey as everything else around it is one nobody reads, and the mark
  * is what tells it apart from the content it is a remark about.
+ *
+ * The sentence is set at 13/18 rather than at a caption's 12. Twelve points
+ * is the size of a second line under a row, and half of what this component
+ * carries is a caveat beside a recommendation - which is a sentence somebody
+ * is meant to read. It is also what the handoff sets the hint card's body at,
+ * and two note components disagreeing by a point is two note components.
  */
 export const InfoNote = ({
   text,
@@ -46,7 +52,7 @@ export const InfoNote = ({
         color={theme.colors[INFO_NOTE_ICON_COLORS[tone]]}
       />
       <View style={styles.body}>
-        <Text variant="caption" tone={INFO_NOTE_TEXT_TONES[tone]}>
+        <Text variant="bodyMuted" tone={INFO_NOTE_TEXT_TONES[tone]}>
           {text}
         </Text>
       </View>
