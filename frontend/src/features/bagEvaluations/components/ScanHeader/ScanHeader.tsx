@@ -1,14 +1,8 @@
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { JSX } from 'react';
-import { View } from 'react-native';
 
-import { EspressoHeader } from '../../../../components/layout';
-import { Text } from '../../../../components/ui';
+import { FlowHeader } from '../../../../components/layout';
 import { useTranslation, type TranslationKey } from '../../../../i18n';
-import { useTheme, useThemedStyles } from '../../../../theme';
 import { SCAN_ICONS } from '../../constants';
-
-import { createScanHeaderStyles } from './ScanHeader.styles';
 
 export interface ScanHeaderProps {
   readonly titleKey: TranslationKey;
@@ -16,35 +10,16 @@ export interface ScanHeaderProps {
 }
 
 /**
- * The block every stage of the scan up to the verdict is led by.
+ * The scan's own flow block, which is what it says rather than how it is
+ * drawn: the badge is the same glyph the home screen's scanner button
+ * carries, and the copy changes with the stage.
  *
- * It changes what it says rather than disappearing: standing in a shop with a
- * bag in one hand, the thing worth keeping on screen is what this screen is
- * about, and a block that vanished after the first tap would leave three
- * stages that look like three unrelated forms.
+ * The one sentence that makes this feature usable by an account that owns
+ * nothing goes underneath - no cupboard and no history are needed, only the
+ * label.
  */
 export const ScanHeader = ({ titleKey, bodyKey }: ScanHeaderProps): JSX.Element => {
-  const styles = useThemedStyles(createScanHeaderStyles);
-  const theme = useTheme();
   const { t } = useTranslation();
 
-  return (
-    <EspressoHeader>
-      <View style={styles.badge}>
-        <MaterialCommunityIcons
-          name={SCAN_ICONS.scan}
-          size={theme.size.iconMedium}
-          color={theme.colors.accentOnEspresso}
-        />
-      </View>
-      <View style={styles.text}>
-        <Text variant="displayAnswer" tone="onEspresso">
-          {t(titleKey)}
-        </Text>
-        <Text variant="bodyText" tone="onEspressoMuted">
-          {t(bodyKey)}
-        </Text>
-      </View>
-    </EspressoHeader>
-  );
+  return <FlowHeader icon={SCAN_ICONS.scan} title={t(titleKey)} body={t(bodyKey)} />;
 };

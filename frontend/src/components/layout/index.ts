@@ -1,5 +1,7 @@
 export { EspressoHeader } from './EspressoHeader';
 export type { EspressoHeaderProps } from './EspressoHeader';
+export { FlowHeader } from './FlowHeader';
+export type { FlowHeaderProps } from './FlowHeader';
 export {
   Screen,
   TAB_SCREEN_EDGES,
