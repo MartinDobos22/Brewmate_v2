@@ -10,6 +10,7 @@ type PreBrewHeaderStyleMap = ViewStyles<
   | 'badgeEmpty'
   | 'body'
   | 'meta'
+  | 'metaState'
   | 'dot'
   | 'actions'
   | 'pressed'
@@ -54,6 +55,12 @@ export const createPreBrewHeaderStyles = (theme: Theme): PreBrewHeaderStyleMap =
     badgeEmpty: { backgroundColor: theme.colors.espresso },
     body: { flex: 1, minWidth: 0, gap: theme.spacing.xxs },
     meta: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xs },
+    /**
+     * The state shrinks and the weight does not. A figure is three characters
+     * and always fits; "Má to najlepšie za sebou" is the one that has to give
+     * way, and a row that let neither give way printed both off the screen.
+     */
+    metaState: { flexShrink: 1, minWidth: 0 },
     /** The separator between two facts that are not a sentence. */
     dot: {
       width: theme.size.metaDotSize,

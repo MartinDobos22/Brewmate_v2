@@ -10,7 +10,7 @@ import {
   type PillTone,
 } from './pillButtonTones';
 
-type PillButtonStyleMap = ViewStyles<'base' | 'grows' | 'fullWidth' | 'pressed' | 'disabled'>;
+type PillButtonStyleMap = ViewStyles<'base' | 'grows' | 'fullWidth' | 'pressed' | 'pending'>;
 
 /**
  * Every button in this app that is shaped like a pill.
@@ -44,7 +44,8 @@ export const createPillButtonStyles = (theme: Theme): PillButtonStyleMap =>
      */
     fullWidth: { alignSelf: 'stretch' },
     pressed: { opacity: theme.opacity.pressed },
-    disabled: { opacity: theme.opacity.disabled },
+    /** Only while a request is in flight. A disabled pill changes tone instead. */
+    pending: { opacity: theme.opacity.disabled },
   });
 
 /**

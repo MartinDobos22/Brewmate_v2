@@ -24,6 +24,16 @@ export type PillTone =
 
 export const DEFAULT_PILL_TONE: PillTone = 'surface';
 
+/**
+ * What a pill with nothing to do yet is drawn as.
+ *
+ * A tone rather than an opacity: an espresso pill dimmed to 38% on a light
+ * foot bar is a ghost of a button, and the one thing the screen most wants
+ * pressed becomes the hardest thing on it to read. `faint` is the state this
+ * list already had a name for.
+ */
+export const DISABLED_PILL_TONE: PillTone = 'faint';
+
 export const PILL_BACKGROUNDS = {
   cream: 'cream',
   espresso: 'espresso',

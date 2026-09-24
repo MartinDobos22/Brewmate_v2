@@ -15,6 +15,7 @@ import {
 import {
   DEFAULT_PILL_SIZE,
   DEFAULT_PILL_TONE,
+  DISABLED_PILL_TONE,
   PILL_ICON_COLORS,
   PILL_ICON_SIZES,
   PILL_LABEL_TONES,
@@ -81,17 +82,30 @@ export const PillButton = ({
   const styles = useThemedStyles(createPillButtonStyles);
   const theme = useTheme();
   const isBlocked = disabled || isPending;
-  const iconColor = theme.colors[PILL_ICON_COLORS[tone]];
+  /**
+   * A control with nothing to do yet is `faint`, not its own tone at 38%.
+   *
+   * That is what `faint` was built for, and what the chat composer's send
+   * button already does over an empty box. An espresso pill dimmed to 38% on
+   * a light foot bar is a ghost of a button - the fill washes out, the label
+   * washes out with it, and the one thing the screen most wants pressed
+   * becomes the hardest thing on it to read.
+   *
+   * Pending keeps its own tone: a spinner is running on it, the button is
+   * still the button, and it is about to come back.
+   */
+  const shown = disabled && !isPending ? DISABLED_PILL_TONE : tone;
+  const iconColor = theme.colors[PILL_ICON_COLORS[shown]];
 
   const resolveStyle = ({ pressed }: { pressed: boolean }): StyleProp<ViewStyle> => [
     styles.base,
-    pillAppearance(theme, tone, size),
+    pillAppearance(theme, shown, size),
     label === undefined && pillCircle(theme, size),
-    raised && pillRaised(theme),
+    raised && !disabled && pillRaised(theme),
     grows && styles.grows,
     fullWidth && styles.fullWidth,
     pressed && !isBlocked && styles.pressed,
-    isBlocked && styles.disabled,
+    isPending && styles.pending,
   ];
 
   return (
@@ -112,7 +126,7 @@ export const PillButton = ({
         />
       ) : null}
       {label === undefined ? null : (
-        <Text variant={PILL_LABEL_VARIANTS[size]} tone={PILL_LABEL_TONES[tone]} numberOfLines={1}>
+        <Text variant={PILL_LABEL_VARIANTS[size]} tone={PILL_LABEL_TONES[shown]} numberOfLines={1}>
           {label}
         </Text>
       )}

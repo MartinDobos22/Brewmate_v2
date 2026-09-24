@@ -28,6 +28,12 @@ export interface PreBrewCoffeeRowProps {
  * ready. They are the three the rest of this screen is written around - the
  * dose window, the roast the recipe assumes, whether the bag is worth opening
  * this morning - so they belong in the block the screen leads with.
+ *
+ * The meta row is a slot for tokens, not for sentences. A bag nobody weighed
+ * says "Nezvážené" here and keeps the cupboard's own "Neviem, koľko ti jej
+ * ostáva" for the card, where there is a line to spare; and whatever the
+ * state turns out to be, it shrinks and ellipsises rather than running off
+ * the side of the phone - Slovak has no short way to say several of them.
  */
 export const PreBrewCoffeeRow = ({
   bag,
@@ -71,15 +77,17 @@ export const PreBrewCoffeeRow = ({
               size={theme.size.iconTiny}
               color={theme.colors.onEspressoVariant}
             />
-            <Text variant="caption" tone="onEspressoMuted" numeric>
+            <Text variant="caption" tone="onEspressoMuted" numeric numberOfLines={1}>
               {bag.remainingGrams === null
-                ? t(TRANSLATION_KEYS.inventoryRemainingUnknown)
+                ? t(TRANSLATION_KEYS.inventorySummaryUnweighed)
                 : `${formatGrams(bag.remainingGrams)} ${t(TRANSLATION_KEYS.unitGrams)}`}
             </Text>
             <View style={styles.dot} />
-            <Text variant="caption" tone="accentSoft">
-              {t(BAG_FRESHNESS_LABEL_KEYS[resolveBagFreshness(bag).freshness])}
-            </Text>
+            <View style={styles.metaState}>
+              <Text variant="caption" tone="accentSoft" numberOfLines={1}>
+                {t(BAG_FRESHNESS_LABEL_KEYS[resolveBagFreshness(bag).freshness])}
+              </Text>
+            </View>
           </View>
         )}
       </View>
