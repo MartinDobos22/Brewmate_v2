@@ -47,8 +47,6 @@ export const SK_RECIPE_IMPORT = {
   importResultChat: 'Chcem sa na to opýtať',
 
   conversionReportTitle: 'Čo je presné a čo odhad',
-  conversionReportOpen: 'Ukáž, čo je presné a čo odhad',
-  conversionReportClose: 'Skryť podrobnosti',
   conversionGrindStartingPoint:
     'Mletie je vždy len štartovací bod. Uvar jednu a odtiaľ dolaď - dva mlynčeky sa dajú porovnať len cez to, čo naozaj namelú.',
 
