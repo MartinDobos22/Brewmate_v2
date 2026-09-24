@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import type { Theme, ViewStyles } from '../../../../theme';
 
-type VerifyEmailScreenStyleMap = ViewStyles<'account' | 'actions'>;
+type VerifyEmailScreenStyleMap = ViewStyles<'account' | 'status' | 'actions'>;
 
 export const createVerifyEmailScreenStyles = (theme: Theme): VerifyEmailScreenStyleMap =>
   StyleSheet.create({
@@ -13,5 +13,7 @@ export const createVerifyEmailScreenStyles = (theme: Theme): VerifyEmailScreenSt
       borderRadius: theme.shape.insetBlock,
       backgroundColor: theme.colors.espressoDeep,
     },
+    /** The glyph and its words are one statement, so they sit tighter. */
+    status: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xs },
     actions: { gap: theme.spacing.md },
   });

@@ -8,4 +8,13 @@ export {
   GOOGLE_ID_TOKEN_PARAM,
   AUTH_SESSION_RESULTS,
 } from './firebaseAuthErrorCodes';
-export { BRAND_BREATH, AUTH_ICONS, AUTH_INPUT_GROUND } from './authScreen';
+export {
+  BRAND_BREATH,
+  AUTH_ICONS,
+  VERIFY_STATE_ICONS,
+  VERIFY_STATE_TONES,
+  VERIFY_STATE_ICON_COLORS,
+  NOTICE_KEYS,
+  AUTH_INPUT_GROUND,
+} from './authScreen';
+export type { VerifyState } from './authScreen';

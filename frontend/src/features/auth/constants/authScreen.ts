@@ -1,7 +1,9 @@
 import type MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { ComponentProps } from 'react';
 
-import type { InputGround } from '../../../components/ui';
+import type { InputGround, TextTone } from '../../../components/ui';
+import type { ColorPalette } from '../../../theme';
+import { TRANSLATION_KEYS, type TranslationKey } from '../../../i18n';
 
 type MaterialIconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
 
@@ -31,6 +33,43 @@ export const AUTH_ICONS = {
   submit: 'arrow-right',
   google: 'google',
 } as const satisfies Record<string, MaterialIconName>;
+
+/** Whether the address has been confirmed yet. */
+export type VerifyState = 'verified' | 'pending';
+
+/**
+ * The state as a glyph, and not only as a colour.
+ *
+ * The same rule the cupboard's freshness line and the grinder catalogue's
+ * precision line follow: a line that relies on the difference between a green
+ * and a muted grey is a line somebody cannot read, and this one is the whole
+ * answer the screen came back to give.
+ */
+export const VERIFY_STATE_ICONS = {
+  verified: 'check-circle',
+  pending: 'email-sync-outline',
+} as const satisfies Record<VerifyState, MaterialIconName>;
+
+export const VERIFY_STATE_TONES = {
+  verified: 'positiveOnEspresso',
+  pending: 'onEspressoMuted',
+} as const satisfies Record<VerifyState, TextTone>;
+
+/**
+ * The same decision as a palette key, because an icon takes a colour where a
+ * `Text` takes a role - and the two halves of one line must not land on
+ * different greens.
+ */
+export const VERIFY_STATE_ICON_COLORS = {
+  verified: 'onEspressoPositive',
+  pending: 'onEspressoVariant',
+} as const satisfies Record<VerifyState, keyof ColorPalette>;
+
+/** Which of the two the screen is reporting. */
+export const NOTICE_KEYS = {
+  verified: TRANSLATION_KEYS.authVerifiedNotice,
+  pending: TRANSLATION_KEYS.authVerifyPendingNotice,
+} as const satisfies Record<VerifyState, TranslationKey>;
 
 /**
  * These screens are dark in both colour schemes, so their fields have to be
