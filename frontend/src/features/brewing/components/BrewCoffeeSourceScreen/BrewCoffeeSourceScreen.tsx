@@ -1,12 +1,15 @@
 import type { CoffeeBag } from '@brewmate/shared';
 import type { JSX } from 'react';
+import { View } from 'react-native';
 
-import { Screen } from '../../../../components/layout';
+import { EspressoHeader, HEADER_SCREEN_EDGES, Screen } from '../../../../components/layout';
 import { ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { useThemedStyles } from '../../../../theme';
 import { useCoffeeSource } from '../../hooks/useCoffeeSource';
 
 import { CoffeeSourceStageContent } from './CoffeeSourceStageContent';
+import { createBrewCoffeeSourceStyles } from './BrewCoffeeSourceScreen.styles';
 
 export interface BrewCoffeeSourceScreenProps {
   /** Called with the coffee, or with null when it is not written down anywhere. */
@@ -29,24 +32,35 @@ export interface BrewCoffeeSourceScreenProps {
  * a roast level, and those two facts change a recipe more than anything else
  * on this screen. The alternative is a sentence of free text, which is exactly
  * what "Nemám ju zapísanú" still is for anybody who wants it.
+ *
+ * The question is asked in the same block the rest of the brewing tab is led
+ * by. This screen and the form behind it are one screen as far as anybody
+ * using them is concerned, and answering one question should not turn a light
+ * page into a dark-headed one.
  */
 export const BrewCoffeeSourceScreen = ({ onChoose }: BrewCoffeeSourceScreenProps): JSX.Element => {
+  const styles = useThemedStyles(createBrewCoffeeSourceStyles);
   const { t } = useTranslation();
   const source = useCoffeeSource(onChoose);
 
   return (
-    <Screen scrollable>
-      <ScreenIntro
-        title={t(TRANSLATION_KEYS.preBrewSourceTitle)}
-        lead={t(TRANSLATION_KEYS.preBrewSourceIntro)}
-      />
-      <CoffeeSourceStageContent
-        source={source}
-        onChoose={onChoose}
-        onUnrecorded={(): void => {
-          onChoose(null);
-        }}
-      />
+    <Screen scrollable padded={false} edges={HEADER_SCREEN_EDGES}>
+      <EspressoHeader>
+        <ScreenIntro
+          ground="espresso"
+          title={t(TRANSLATION_KEYS.preBrewSourceTitle)}
+          lead={t(TRANSLATION_KEYS.preBrewSourceIntro)}
+        />
+      </EspressoHeader>
+      <View style={styles.content}>
+        <CoffeeSourceStageContent
+          source={source}
+          onChoose={onChoose}
+          onUnrecorded={(): void => {
+            onChoose(null);
+          }}
+        />
+      </View>
     </Screen>
   );
 };
