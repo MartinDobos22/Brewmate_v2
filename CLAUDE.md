@@ -241,8 +241,8 @@ frontend/
     │   │               ProgressBar, StepProgress, Dial, FigureRow, DriftingRings,
     │   │               StateMark, EmptyState, LoadingState, ErrorState,
     │   │               QueryState, ValueDisplay - each its own folder
-    │   └── layout/     Screen, EspressoHeader, TileRow, AppProviders, RootStack,
-    │                   TabsNavigator, TabBarIcon, BottomNavBar
+    │   └── layout/     Screen, EspressoHeader, FlowHeader, TileRow, AppProviders,
+    │                   RootStack, TabsNavigator, TabBarIcon, BottomNavBar
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
     │                   chat, tasteProfile, coffeeTaste, bagEvaluations,
     │                   recipeImport, espresso, history, onboarding, profile,
@@ -256,7 +256,7 @@ frontend/
     │                   timeline and the insights; `profile` owns the cost
     │                   dashboard and the data export
     ├── hooks/          only genuinely global hooks, incl. useEntityMutation,
-    │                   useDebouncedValue and useAnalyticsFlush
+    │                   useDebouncedValue, useRecipeFigures and useAnalyticsFlush
     ├── lib/            apiClient, firebase, queryClient, queryCache, formatters,
     │                   fingerprint, requestErrors, text, analytics,
     │                   errorTracking
@@ -355,9 +355,12 @@ own.
   is the loudest thing on the home screen and an ordinary answer inside a card,
   and only the first is lifted off what it sits on.
 - **The three figures are one row, taken as data.** Dose, water and the ratio
-  that divides them appear on the home block, in the conversation's header and
-  on every version in the timeline; the three copies differed by exactly two
-  type variants and a colour. The rules between the columns belong to the row,
+  that divides them appear on the home block, in the conversation's header, on
+  every version in the timeline and on every saved recipe on a coffee's own
+  screen; the copies differed by exactly two type variants and a colour.
+  `useRecipeFigures` is what goes into it - four places assembling the same
+  three fields and the same three keys is four places for the ratio to stop
+  being marked as arithmetic over the other two. The rules between the columns belong to the row,
   because a rule sits _between_ two figures and a column drawing its own
   leading edge would print one against the card's padding.
 
@@ -480,6 +483,88 @@ a `ground` rather than being copied for the second one.
 - **A field's label is an eyebrow with an optional glyph.** Small and tracked
   out, so a column of them reads as labels rather than as a column of headings,
   and the mark is what turns one back into a heading for the box under it.
+
+### How a screen says what it is
+
+Three shapes, and which one a screen gets is decided by what the screen is,
+never by who wrote it.
+
+- **A screen that starts straight into content says its name with
+  `ScreenIntro`.** The cupboard, the catalogue, the insights, the timeline,
+  the cost dashboard, every onboarding step. It is the title, an optional
+  lead and an optional note, and it is deliberately not `SectionHeading`: a
+  screen whose title is set at the size of the label over its third card is a
+  screen with no top.
+- **A screen led by an espresso block says it inside the block**, through the
+  same component with `ground="espresso"`. Three screens - home, the pre-brew
+  form and the kit - had each written that out by hand, which is the
+  twenty-three-screen problem `ScreenIntro` was built to end, surviving in the
+  half of the app it could not be used on.
+- **The lead's size follows the ground as well as its colour** - 13/18 inside
+  a block, 15/22 on a content screen. The block is a dense object holding the
+  one thing a screen most wants read and the lead is there to qualify the
+  title; on a content screen it is the instruction for everything below it.
+  The first is what the handoff sets the home greeting's subtitle at.
+- **A flow gets `FlowHeader`**: a badge, a question and a promise, on
+  espresso. Three things in this app are worked through a stage at a time on
+  the way to an answer - a bag in a shop, somebody else's recipe, a quick brew
+  - and all three are reached from somewhere else, which is why each opens
+    with a block saying what it is rather than with a title on the page. The
+    badge is the glyph of whatever sent somebody there, so pressing one and
+    arriving at the other is recognisably the same errand.
+- **The block stays rather than disappearing after the first tap.** Standing
+  in a shop with a bag in one hand, the thing worth keeping on screen is what
+  this screen is about; a block that vanished would leave three stages that
+  look like three unrelated forms. Whether its copy _changes_ per stage is the
+  one decision left to the flow: the scan's block asks the stage's question
+  and its stages carry no heading, while the import and the quick brew have an
+  errand with a name worth keeping and let each stage ask its own.
+- **A flow header's title is a size under a screen's own** - 28/34 against
+  30/36. This is a question being asked rather than a page being named.
+- **Which screens get a block is the handoff's own list**, and nothing else
+  decides it: the home screen, the brewing tab, the profile, the signed-out
+  screens, the scanner, the conversation after a cup. A reporting screen never
+  gets one - the cupboard, the insights, the timeline, the questionnaire, the
+  verdict and the cost dashboard all start straight into content, because what
+  leads them is a card and not a sentence.
+- **A tab does not change shape when it is answered.** `/brew` opens on the
+  coffee question and becomes the brewing form one tap later; those are one
+  screen as far as anybody using them is concerned, so the question is asked
+  in the same block the form behind it uses.
+
+### A mark is how a classification is read
+
+Colour is the second thing a state says, never the first.
+
+- **Every classified line carries a glyph as well as a tone.** A bag's
+  freshness, a catalogue entry's precision, whether an e-mail has been
+  confirmed, whether a shot came closer to the target, how a converted number
+  was arrived at. A line that relies on the difference between a green and an
+  ochre is a line somebody cannot read, and each of these is the one fact its
+  screen exists to report.
+- **The glyph classifies and never grades.** An instrument, an approximation,
+  a question, an arrow towards a target - never a tick and never a cross. An
+  estimate is not a failure; it is the honest answer to a question the source
+  did not answer, and a green check beside it would turn a caveat into an
+  endorsement of itself.
+- **Only the exception is painted.** A shot going the wrong way is marked and
+  one coming closer is quiet, because an interface that congratulates itself
+  on every step is one nobody reads by the fourth.
+- **The icon's colour and the text's tone live in one file**, as two maps over
+  the same key - `bagFreshnessLabels.ts`, `grinderPrecisionMarks.ts`,
+  `shotTimelineLabels.ts`, `authScreen.ts`. An icon takes a colour where a
+  `Text` takes a role, and keeping the pair together is what stops the two
+  halves of one line landing on different greens.
+- **An aside is a ground and a mark, never a sentence behind a rule.**
+  `InfoNote` is every remark this app makes about itself, and its sentence is
+  set at 13/18 rather than at a caption's 12: half of what it carries is a
+  caveat beside a recommendation, which is a sentence somebody is meant to
+  read, and twelve points is the size of a second line under a row.
+- **An argument is never behind a tap.** The shop verdict's reasoning and the
+  conversion report both used to fold away on the argument that the answer is
+  wanted first. That was true and cost both screens their purpose: the only
+  reason to believe a verdict rather than a number, or an estimate rather than
+  a measurement, is that the argument is right there.
 
 ### Getting out of a screen
 
@@ -1370,6 +1455,10 @@ reason}` in machine names: `exact` came across untouched or is arithmetic
   `params.conversion` rather than beside it in the response. A card reopened next
   month that has lost the sentence about the grind has turned an estimate into a
   measurement by doing nothing at all.
+- **The report is printed open**, each note marked with how its number was
+  arrived at. "Every number says how much it is worth" is the whole claim this
+  feature makes, and behind a disclosure button it is a claim nobody sees the
+  evidence for.
 
 ### Where the grind starts
 
@@ -1536,7 +1625,7 @@ as a fact rather than asked for one.
   it.
 - **The run is a list of shots, not a chart.** Each row carries the time, the
   yield, what changed since the shot before it and whether that moved the cup
-  towards the target window - which is four facts, and a chart can plot one of
+  towards the target window - the last as an arrow and not only a colour - which is four facts, and a chart can plot one of
   them. A dial-in is three to six shots long, so the picture would be a line
   through four points with the reason for each of them printed beside it
   anyway. This is written down because the derivation behind the rows reads
@@ -1795,9 +1884,18 @@ The first product screen: `/grinders`, reached from the inventory tab.
   key, so each term keeps its own cache entry.
 - **Every entry says how much its numbers are worth.**
   `resolveGrinderPrecision` reduces an entry to measured, estimated or missing,
-  and the list prints the matching sentence underneath it. A micron figure
-  reads like a fact whatever it says, so the interface is the place that has to
-  disagree.
+  and the list prints the matching sentence underneath it, with the glyph of
+  what kind of claim it is. A micron figure reads like a fact whatever it says,
+  so the interface is the place that has to disagree - and a disagreement
+  carried by a colour alone is one half the readers never see.
+- **The catalogue is one sheet, not a hundred cards.** The surface belongs to
+  the list and the rows are transparent on it, separated by the same in-card
+  rule the cupboard's own card uses; the last row draws none. A hundred cards
+  each with their own shadow is a screen with no hierarchy and a scroll that
+  flickers.
+- **Whose entry it is, is a chip.** It is a fact about the row rather than a
+  caveat about the numbers, and two stacked quiet captions read as one hedge in
+  two parts.
 - **Not finding a grinder is a normal outcome.** The empty state offers the add
   form, and so does a button under the list. The form asks for brand, model,
   scale, range and step - never a calibration curve, because nobody has one to
