@@ -22,9 +22,11 @@ import {
   WATER_GRAMS_MIN,
   WATER_TEMP_C_MAX,
   WATER_TEMP_C_MIN,
+  cupReadingSchema,
   flavorAffinitiesSchema,
   partialTasteAxesSchema,
   type BrewConstraints,
+  type CupReading,
 } from '@brewmate/shared';
 import { z } from 'zod';
 
@@ -113,6 +115,14 @@ export interface CoachAnswer {
   readonly reply: string;
   readonly recipePatch: CoachRecipePatch | null;
   readonly tasteObservation: CoachTasteObservation | null;
+  /**
+   * What they said about how the cup came out, for the brewing profile.
+   *
+   * Optional as well as nullable: a message that is not about a cup has
+   * nothing to put here, and an answer that leaves the key out has said
+   * exactly that.
+   */
+  readonly cupReading?: CupReading | null;
 }
 
 /**
@@ -158,5 +168,6 @@ export const resolveCoachAnswerSchema = (constraints: BrewConstraints): z.ZodTyp
       })
       .nullable(),
     tasteObservation: tasteObservationSchema.nullable(),
+    cupReading: cupReadingSchema.nullable().optional(),
   });
 };

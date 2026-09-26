@@ -42,6 +42,7 @@ const shot = (index: number, actualParams: PartialBrewParams): ShotSource => ({
     waterType: WATER_TYPES.filtered,
     durationSeconds: null,
     profileLearningWeight: FULL_WEIGHT,
+    cupReading: null,
     createdAt: '2026-01-01T00:00:00.000Z',
   } satisfies BrewLog,
   grindSetting: actualParams.grindSetting ?? null,

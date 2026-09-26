@@ -15,6 +15,7 @@ import type { BrewingProfile } from './brewingProfileSchema.js';
 import type { HabitFigure } from './constants/habitBlindSpots.js';
 import type { GrindHabit } from './grindHabitSchema.js';
 import type { MethodHabit } from './methodHabitSchema.js';
+import { readCupTarget } from './readCupTarget.js';
 import { isBlindTo, readCupWeight } from './readCupWeight.js';
 import { weightedMedian, type WeightedValue } from './weightedMedian.js';
 
@@ -33,11 +34,11 @@ const clamp = (value: number, min: number, max: number): number =>
   Math.min(Math.max(value, min), max);
 
 /** Cups in the order they arrived, grouped by whatever key the caller reads. */
-const groupBy = <Key>(
-  cups: readonly BrewedCup[],
-  keyOf: (cup: BrewedCup) => Key,
-): ReadonlyMap<Key, readonly BrewedCup[]> => {
-  const groups = new Map<Key, BrewedCup[]>();
+const groupBy = <Cup extends BrewedCup, Key>(
+  cups: readonly Cup[],
+  keyOf: (cup: Cup) => Key,
+): ReadonlyMap<Key, readonly Cup[]> => {
+  const groups = new Map<Key, Cup[]>();
 
   for (const cup of cups) {
     const key = keyOf(cup);
@@ -53,18 +54,17 @@ const groupBy = <Key>(
   return groups;
 };
 
-/** Every cup that can speak about this figure, with what it said and what it is worth. */
+/** Every cup that can speak about this figure, with where it should have been and what it is worth. */
 const readFigure = (
   cups: readonly BrewedCup[],
   figure: HabitFigure,
-  valueOf: (cup: BrewedCup) => number | null,
 ): readonly (WeightedValue & { readonly cup: BrewedCup })[] =>
   cups.flatMap((cup: BrewedCup) => {
-    const value = valueOf(cup);
+    const value = readCupTarget(cup, figure);
 
     return value === null || isBlindTo(cup, figure)
       ? []
-      : [{ value, weight: readCupWeight(cup), cup }];
+      : [{ value, weight: readCupWeight(cup, figure), cup }];
   });
 
 /**
@@ -76,10 +76,9 @@ const readFigure = (
 const readHabit = (
   cups: readonly BrewedCup[],
   figure: HabitFigure,
-  valueOf: (cup: BrewedCup) => number | null,
   step: number,
 ): number | null => {
-  const values = readFigure(cups, figure, valueOf);
+  const values = readFigure(cups, figure);
   const median = values.length < BREWING_HABIT_MIN_CUPS ? null : weightedMedian(values);
 
   return median === null ? null : toStep(median, step);
@@ -88,14 +87,9 @@ const readHabit = (
 const readMethodHabit = (methodId: string, cups: readonly BrewedCup[]): MethodHabit => ({
   methodId,
   cupCount: cups.length,
-  doseGrams: readHabit(cups, 'doseGrams', (cup): number | null => cup.doseGrams, HABIT_DOSE_STEP),
-  ratio: readHabit(cups, 'ratio', (cup): number | null => cup.ratio, HABIT_RATIO_STEP),
-  waterTempC: readHabit(
-    cups,
-    'waterTempC',
-    (cup): number | null => cup.waterTempC,
-    HABIT_TEMPERATURE_STEP,
-  ),
+  doseGrams: readHabit(cups, 'doseGrams', HABIT_DOSE_STEP),
+  ratio: readHabit(cups, 'ratio', HABIT_RATIO_STEP),
+  waterTempC: readHabit(cups, 'waterTempC', HABIT_TEMPERATURE_STEP),
 });
 
 /**
@@ -105,8 +99,12 @@ const readMethodHabit = (methodId: string, cups: readonly BrewedCup[]): MethodHa
  * fraction nobody could taste - which is still a habit, and a different answer
  * from not knowing.
  */
-const readGrindHabit = (category: BrewMethodCategory, cups: readonly BrewedCup[]): GrindHabit => {
-  const values = readFigure(cups, 'grind', (cup): number | null => cup.grindShift);
+const readGrindHabit = (
+  grinderEquipmentId: string,
+  category: BrewMethodCategory,
+  cups: readonly BrewedCup[],
+): GrindHabit => {
+  const values = readFigure(cups, 'grind');
   const coffeeCount = new Set(values.map((entry): string => entry.cup.coffeeKey)).size;
   const median =
     values.length < BREWING_HABIT_MIN_CUPS || coffeeCount < GRIND_HABIT_MIN_COFFEES
@@ -118,6 +116,7 @@ const readGrindHabit = (category: BrewMethodCategory, cups: readonly BrewedCup[]
       : toDecimals(clamp(median, -HABIT_SHIFT_LIMIT, HABIT_SHIFT_LIMIT), HABIT_SHIFT_DECIMALS);
 
   return {
+    grinderEquipmentId,
     methodCategory: category,
     cupCount: values.length,
     coffeeCount,
@@ -125,14 +124,29 @@ const readGrindHabit = (category: BrewMethodCategory, cups: readonly BrewedCup[]
   };
 };
 
+type GroundCup = BrewedCup & { readonly grinderId: string };
+
+const isGround = (cup: BrewedCup): cup is GroundCup => cup.grinderId !== null;
+
+/** One habit per grinder per family - a hand grinder and an electric one are two collars. */
+const readGrindHabits = (cups: readonly BrewedCup[]): readonly GrindHabit[] =>
+  [...groupBy(cups.filter(isGround), (cup): string => cup.grinderId)].flatMap(
+    ([grinderId, onGrinder]): readonly GrindHabit[] =>
+      [...groupBy(onGrinder, (cup): BrewMethodCategory => cup.methodCategory)].map(
+        ([category, group]): GrindHabit => readGrindHabit(grinderId, category, group),
+      ),
+  );
+
 /**
  * How somebody brews, folded out of the cups they brewed.
  *
- * Nothing here is told; everything is watched. The dose and the ratio are what
- * they actually weighed and poured, the temperature is what their kettle was
- * set to, and the grind is where their collar sat measured against where the
- * bag alone would have put it. The more cups, the better the answer - which is
- * the whole promise of the thing, and the reason it asks nobody anything.
+ * Everything is watched, and one thing is listened to. The dose and the ratio
+ * are what they actually weighed and poured, the temperature is what their
+ * kettle was set to, and the grind is where their collar sat measured against
+ * where the bag alone would have put it. What they said about a cup afterwards
+ * then moves that cup's numbers to where they wanted them - "bola kyslá" is a
+ * grind that should have been finer - and "presne takto" makes the cup count
+ * double. The more cups, the better the answer.
  *
  * Deterministic and free, like every other piece of arithmetic this product
  * makes claims with. The caller decides which cups are recent enough to count;
@@ -142,7 +156,5 @@ export const foldBrewingProfile = (cups: readonly BrewedCup[]): BrewingProfile =
   methods: [...groupBy(cups, (cup): string => cup.methodId)].map(([methodId, group]): MethodHabit =>
     readMethodHabit(methodId, group),
   ),
-  grind: [...groupBy(cups, (cup): BrewMethodCategory => cup.methodCategory)].map(
-    ([category, group]): GrindHabit => readGrindHabit(category, group),
-  ),
+  grind: [...readGrindHabits(cups)],
 });

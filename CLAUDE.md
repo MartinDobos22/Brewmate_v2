@@ -114,13 +114,14 @@ Run from the repository root.
 
 Server-only:
 
-| Command                                      | What it does                                  |
-| -------------------------------------------- | --------------------------------------------- |
-| `pnpm --filter @brewmate/server db:generate` | Generate a migration from the Drizzle schema  |
-| `pnpm --filter @brewmate/server db:migrate`  | Apply pending migrations                      |
-| `pnpm --filter @brewmate/server db:seed`     | Fill the two catalogues (idempotent)          |
-| `pnpm --filter @brewmate/server db:studio`   | Drizzle Studio                                |
-| `pnpm --filter @brewmate/server test`        | Integration tests (needs `TEST_DATABASE_URL`) |
+| Command                                                | What it does                                                                  |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| `pnpm --filter @brewmate/server db:generate`           | Generate a migration from the Drizzle schema                                  |
+| `pnpm --filter @brewmate/server db:migrate`            | Apply pending migrations                                                      |
+| `pnpm --filter @brewmate/server db:seed`               | Fill the two catalogues (idempotent)                                          |
+| `pnpm --filter @brewmate/server db:backfill-purchases` | Record purchases for bags written before purchase learning (once, idempotent) |
+| `pnpm --filter @brewmate/server db:studio`             | Drizzle Studio                                                                |
+| `pnpm --filter @brewmate/server test`                  | Integration tests (needs `TEST_DATABASE_URL`)                                 |
 
 ---
 
@@ -1205,6 +1206,15 @@ the questionnaire, the only thing that teaches it anything.
   claimed. "Different from what I expected" believes the label much less,
   and "depends on the recipe" halves the whole rating, because it was half
   about the brewing.
+- **The flavours printed on the label teach too.** "Čokoláda, lieskový orech"
+  on a loved bag leans the profile towards chocolate and nuts; on a disliked
+  one it leans away, less firmly. Read through `readNoteFlavors` - the lexicon
+  lives in `shared/src/flavors/` now, because the server learns from it and the
+  shop verdict argues from it, and two copies would be one flavour spelt two
+  ways. A printed note points at `NOTE_FLAVOR_AFFINITY` rather than at a full
+  like: it is the roaster's word, not the drinker's palate, so a tapped tag
+  about the same flavour overrides it. Matched on the start of a word, so a
+  stem cannot be found in the middle of an unrelated one.
 - **A purchase is a lean the ratings confirm, weaken or cancel.** Writing a bag
   into the cupboard is recorded as a weak vote for the kind of coffee it is.
   Each rating carries how much of that vote it leaves standing -
@@ -1549,6 +1559,15 @@ mechanism by which this product learns anything.
   learnt to talk people out of exactly the coffees their grinder had been
   unkind to. An observation naming no axis at all is dropped rather than stored
   as an event nothing can use.
+- **It reaches the brewing profile instead, as `cupReading`.** The same answer
+  that proposes a change reads the remark into brewing terms - `extraction`
+  under, over or balanced, `strength` weak, strong or right, each null until
+  somebody spoke to it - and the server writes it onto the cup:
+  `brew_logs.cup_reading`, merged field by field so a second message about the
+  same cup adds to the first. The cup the conversation named, or the latest cup
+  of the recipe when it named none; a recipe nobody brewed has no cup to write
+  it on. The prompt says a guess here becomes a habit, and to leave it null
+  when in doubt. The dial-in writes the same reading onto the shot it was about.
 - **The event points at the message it came from**, so what Brewmate concluded
   can always be traced back to the sentence somebody actually wrote.
 - **The quick chips are shortcuts to writing, not a menu of answers.** Each
@@ -1750,8 +1769,8 @@ as a fact rather than asked for one.
   arithmetic does. It is the difference between starting two clicks out and
   starting ten, which over a new bag is two shots instead of six.
 - **A fourth input is learned rather than looked up: `habitShift`.** Where this
-  person's own cups have settled past what their bags explained, from the
-  brewing profile. It moves the start inside the same window the bag does,
+  person's own cups have settled past what their bags explained, on this
+  grinder, from the brewing profile. It moves the start inside the same window the bag does,
   under its own cap (`HABIT_SHIFT_LIMIT`) rather than a share of the bean's, so
   a dark roast still starts coarser for somebody who habitually grinds fine -
   and it is reported as its own reason, because it is the one part of the
@@ -1761,7 +1780,8 @@ as a fact rather than asked for one.
 
 `shared/src/brewingProfile/`, folded by `GET /brewing-profile` over the most
 recent two hundred cups, and the answer to "čím viac kávy si spravíš, tým
-lepšie". Nothing in it is told; everything is watched.
+lepšie". Everything in it is watched, and one thing is listened to: what
+somebody said about a cup afterwards.
 
 - **Two profiles, and neither reads the other.** The taste profile says which
   coffee somebody should buy and is taught by what they answered, bought and
@@ -1772,11 +1792,23 @@ lepšie". Nothing in it is told; everything is watched.
   numbers that are already theirs. It shows up as one quiet line under the
   amounts - "dávku a pomer som vzal z tvojich 12 doterajších šálok" instead of
   the method's middle - and as one reason under the grind. That is all of it.
-- **Per method for what is weighed, per family for the grind.** A dose and a
-  ratio are facts about a brewer: an AeroPress and a French press are both
-  immersion and nobody puts the same dose in both. A grind habit is a fraction
-  of a family's window, the unit the guidance already moves in, so two
-  drippers share one.
+- **Per method for what is weighed, per grinder and family for the grind.** A
+  dose and a ratio are facts about a brewer: an AeroPress and a French press
+  are both immersion and nobody puts the same dose in both. A grind habit is
+  half about the person and half about the collar - burr alignment, how far the
+  catalogue curve is off for that unit - so it belongs to the owned grinder: the
+  hand grinder packed for travel and the electric one at home each have their
+  own, and neither borrows the other's. Within a grinder it is a fraction of a
+  family's window, the unit the guidance already moves in, so two drippers
+  share one.
+- **What was said about a cup moves that cup's numbers to where it should have
+  been.** A cup called sour is a grind that should have been a tasteable step
+  finer (`READING_GRIND_CORRECTION`, the same step the guidance advises) and
+  water two degrees hotter; a watery one a ratio six hundredths tighter, never
+  a heavier dose. A cup called right counts `CONFIRMED_CUP_WEIGHT` times, and
+  only for the figures the remark was about. This is what lets "bola kyslá"
+  teach something without anybody brewing again - and it stays out of the taste
+  profile, where it would be read as a dislike of acidity.
 - **Every figure is a weighted median, and waits for three cups.** A median
   because habits are lumpy - weekday 1:16 and a 1:12 for a guest is a habit of
   1:16, and a mean would report a ratio nobody ever brewed. Weighted by each
@@ -2827,6 +2859,11 @@ knowing before changing anything:
   history: the day somebody buys a kettle with temperature control, every
   disappointing cup they made at a cabin would turn into evidence about their
   taste.
+- **`brew_logs.cup_reading` is the one column written after the fact**, and no
+  client may write it: it is read by the server out of what somebody said in
+  the conversation afterwards, and the brewing profile corrects the cup's
+  numbers by it. A reading anybody could post would be a habit anybody could
+  write, the same reason the learning weight is not in the request.
 - **`grinders_catalog.created_by_user_id` is nulled, not cascaded.** The entry
   is shared data other people's equipment points at; only the attribution is
   personal.
@@ -3024,7 +3061,14 @@ on its own axis, that a coffee which tasted different is believed less through
 its label and one that depended on the recipe counts for half, that the last
 cups of a bag weigh less than its middle, that each impression leaves a
 different share of the purchase standing, and that a bag whose label says
-nothing teaches nothing by being bought. The brewing profile is tested for the
+nothing teaches nothing by being bought - and the flavours printed on the label:
+that a loved bag leans towards them, a disliked one away and less firmly, three
+stars say nothing, a coffee that tasted different is believed less, a tapped tag
+overrides the printed note, and a purchase learns printed flavours even where no
+axis could be read. The lexicon itself is tested for reading a Slovak note
+however it is declined and accented, the English words roasters print, naming a
+flavour once however many notes name it, and matching word starts rather than
+the middle of an unrelated word. The brewing profile is tested for the
 two promises it rests on. That it learns honestly: two cups state nothing, the
 usual ratio beats the average of it and a guest's, a cup without a thermometer
 teaches its dose but not its temperature and one without a scale the reverse, a
@@ -3035,7 +3079,10 @@ read at all. And that the loop stands still: a setting the bag alone would have
 started at reads as no habit on both a curve and a published range, a start
 moved by a habit reads that habit back, the same setting is a coarser habit for
 a light roast than a dark one, and the habit reaches the guidance as its own
-capped reason.
+capped reason. And that it listens: a cup called sour reads as a grind a
+tasteable step finer and water two degrees hotter, a watery one as a tighter
+ratio with the dose left alone, a cup called right outweighs two nobody
+commented on, and each grinder keeps its own habit.
 
 Everything else is integration tests, running against the real Neon test branch
 through `app.inject()` - no mocked database, no testcontainers (everything is
@@ -3127,8 +3174,14 @@ tested end to end: that an account with no cups has none, that two cups are
 counted without claiming a habit, that the third states the dose, the ratio and
 the temperature, that cups without a thermometer keep their dose and lose their
 temperature, that another account's cups are never read, that a grind is
-measured against its bag once two coffees agree, and that the temperature and
-the grind habit both reach the recipe engine's prompt.
+measured against its bag once two coffees agree and is kept per grinder, that
+the temperature and the grind habit both reach the recipe engine's prompt, and
+that three cups called sour in the chat raise the habitual temperature. The
+chat is tested for where the remark lands: on the cup it named, on the latest
+cup of the recipe when it named none, and nowhere for a recipe nobody brewed.
+The purchase backfill is tested for recording a bag written down before
+purchase learning - flavours included - for recording nothing the second time,
+and for leaving a bag bought afterwards alone.
 
 Tests are skipped in CI when `TEST_DATABASE_URL` is not configured, and fail
 loudly when it is set but unreachable.

@@ -1,5 +1,6 @@
 import {
   RECIPE_SOURCES,
+  chooseGrinderEquipment,
   findGrindHabitShift,
   findMethodHabit,
   readGrindCoffeeFacts,
@@ -167,7 +168,11 @@ export const createRecipeGenerationService = ({
           methodCategory: method.category,
           coffee: readGrindCoffeeFacts(context.bag, now),
           grinder: context.grinder,
-          habitShift: findGrindHabitShift(habits, method.category),
+          habitShift: findGrindHabitShift(
+            habits,
+            method.category,
+            chooseGrinderEquipment(context.equipment)?.id,
+          ),
         }),
         describeBrewingHabit(findMethodHabit(habits, method.id)),
         describeChosenAmounts({

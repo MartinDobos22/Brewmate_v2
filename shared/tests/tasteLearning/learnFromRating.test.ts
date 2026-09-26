@@ -5,6 +5,7 @@ import {
   BAG_RATING_STAGES,
   BAG_RATING_TAGS,
   COFFEE_ESTIMATE_SOURCES,
+  FLAVOR_TAGS,
   TASTE_AXIS_NEUTRAL,
   learnFromPurchase,
   learnFromRating,
@@ -31,6 +32,8 @@ const HATED = 1;
 const BAG_ID = '8f5c2f70-9a3e-4a54-9b27-6c1f0a0c2b11';
 const NOTHING = 0;
 const EVERYTHING = 1;
+const NO_NOTES: readonly string[] = [];
+const CHOCOLATE_NOTES: readonly string[] = ['Horká čokoláda', 'lieskový orech'];
 
 const axes = (overrides: Partial<TasteAxes> = {}): TasteAxes => ({
   acidity: MIDDLE,
@@ -69,6 +72,7 @@ const blankCoffee: CoffeeTasteEstimate = {
 const rate = (overrides: Partial<RatingInput> = {}): ReturnType<typeof learnFromRating> =>
   learnFromRating({
     coffee: brightCoffee,
+    tastingNotes: NO_NOTES,
     bagId: BAG_ID,
     stage: BAG_RATING_STAGES.halfway,
     stars: LOVED,
@@ -140,6 +144,7 @@ describe('learnFromRating', () => {
   it('reads a tag even about an axis the label never mentioned', () => {
     const learnt = learnFromRating({
       coffee: blankCoffee,
+      tastingNotes: NO_NOTES,
       bagId: BAG_ID,
       stage: BAG_RATING_STAGES.halfway,
       stars: SHRUG,
@@ -161,6 +166,7 @@ describe('learnFromRating', () => {
     expect(
       learnFromRating({
         coffee: lowSweetness,
+        tastingNotes: NO_NOTES,
         bagId: BAG_ID,
         stage: BAG_RATING_STAGES.halfway,
         stars: SHRUG,
@@ -238,7 +244,7 @@ describe('resolvePurchaseFactor', () => {
 
 describe('learnFromPurchase', () => {
   it('records the kind of coffee chosen, only where its label says anything', () => {
-    const learnt = learnFromPurchase(brightCoffee, BAG_ID);
+    const learnt = learnFromPurchase(brightCoffee, NO_NOTES, BAG_ID);
 
     expect(learnt?.axes).toEqual({ acidity: BRIGHT, sweetness: SWEET });
     expect(learnt?.axisWeights?.acidity).toBe(KNOWN);
@@ -247,6 +253,61 @@ describe('learnFromPurchase', () => {
 
   /** A coffee nobody can describe teaches nothing about the person who bought it. */
   it('learns nothing from a bag whose label says nothing', () => {
-    expect(learnFromPurchase(blankCoffee, BAG_ID)).toBeNull();
+    expect(learnFromPurchase(blankCoffee, NO_NOTES, BAG_ID)).toBeNull();
+  });
+
+  it('leans towards the flavours the label prints', () => {
+    const learnt = learnFromPurchase(brightCoffee, CHOCOLATE_NOTES, BAG_ID);
+
+    expect(learnt?.flavorAffinities?.[FLAVOR_TAGS.chocolate]).toBeGreaterThan(NOTHING);
+    expect(learnt?.flavorAffinities?.[FLAVOR_TAGS.nutty]).toBeGreaterThan(NOTHING);
+  });
+
+  it('learns from printed flavours even where no axis could be read', () => {
+    expect(learnFromPurchase(blankCoffee, CHOCOLATE_NOTES, BAG_ID)).not.toBeNull();
+  });
+});
+
+describe('the flavours printed on a rated bag', () => {
+  it('points towards them for a coffee somebody loved', () => {
+    const learnt = rate({ tastingNotes: CHOCOLATE_NOTES });
+
+    expect(learnt.flavorAffinities?.[FLAVOR_TAGS.chocolate]).toBeGreaterThan(NOTHING);
+  });
+
+  it('points away from them, less firmly, for one somebody disliked', () => {
+    const loved = rate({ tastingNotes: CHOCOLATE_NOTES }).flavorAffinities?.[FLAVOR_TAGS.chocolate];
+    const hated = rate({ tastingNotes: CHOCOLATE_NOTES, stars: HATED }).flavorAffinities?.[
+      FLAVOR_TAGS.chocolate
+    ];
+
+    expect(hated).toBeLessThan(NOTHING);
+    expect(Math.abs(hated ?? NOTHING)).toBeLessThan(loved ?? NOTHING);
+  });
+
+  it('says nothing about them after three stars', () => {
+    expect(rate({ tastingNotes: CHOCOLATE_NOTES, stars: SHRUG }).flavorAffinities).toEqual({});
+  });
+
+  it('believes them less for a coffee that tasted different from its label', () => {
+    const asPrinted = rate({ tastingNotes: CHOCOLATE_NOTES }).flavorAffinities?.[
+      FLAVOR_TAGS.chocolate
+    ];
+    const different = rate({
+      tastingNotes: CHOCOLATE_NOTES,
+      impression: BAG_IMPRESSIONS.different,
+    }).flavorAffinities?.[FLAVOR_TAGS.chocolate];
+
+    expect(different ?? NOTHING).toBeLessThan(asPrinted ?? NOTHING);
+  });
+
+  it('lets a tapped tag override the printed note about the same flavour', () => {
+    const learnt = rate({
+      tastingNotes: CHOCOLATE_NOTES,
+      stars: HATED,
+      tags: [BAG_RATING_TAGS.chocolate],
+    });
+
+    expect(learnt.flavorAffinities?.[FLAVOR_TAGS.chocolate]).toBe(EVERYTHING);
   });
 });

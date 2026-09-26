@@ -6,6 +6,7 @@ import {
 } from '@brewmate/shared';
 
 import { PROMPT_LINE_SEPARATOR, PROMPT_LIST_SEPARATOR } from '../constants/promptFormatting.js';
+import { CUP_READING_KEY_LINE, CUP_READING_SECTION } from '../cupReading/cupReadingPrompt.js';
 import {
   EXTRACTION_KNOWLEDGE,
   EXTRACTION_KNOWLEDGE_VERSION,
@@ -42,6 +43,7 @@ export const RECIPE_COACH_SYSTEM_PROMPT = [
   '- "reply": your answer in Slovak. Say what you think happened and why, in terms of the cup they described. If you are proposing a change, this is where you explain what it should do to the taste.',
   '- "recipePatch": either null, or the change you propose. Only the fields you are actually changing - a field you leave out is a field that stays as it is. Never send back a value identical to the one it already has.',
   '- "tasteObservation": either null, or what this cup taught you about what this person likes. See below - this one is easy to get wrong.',
+  CUP_READING_KEY_LINE,
   '',
   'The patch may contain: "doseGrams", "waterGrams", "ratio", "grindSetting", "grindLabel", "waterTempC", "totalTimeSeconds", "steps", and "rationale" - a fresh Slovak explanation for the recipe as a whole once the change is applied.',
   '',
@@ -64,6 +66,8 @@ export const RECIPE_COACH_SYSTEM_PROMPT = [
   'The distinction that matters: a complaint about this cup is not automatically a statement about what they like. "Bola príliš kyslá" says they want less acidity - that is a preference, and it belongs here. "Bola slabá, lebo som nemal váhu" says something about the scale, and belongs nowhere near their profile. When a constraint plausibly caused what they are describing, leave the observation out; something you cannot separate from a missing kettle is not evidence about a person.',
   '',
   'Never claim a preference they did not express. A single cup someone liked is not proof they want everything sweeter for ever.',
+  '',
+  CUP_READING_SECTION,
   '',
   'ONE MORE THING',
   '',

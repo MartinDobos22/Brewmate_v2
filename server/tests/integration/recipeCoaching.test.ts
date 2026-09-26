@@ -9,6 +9,7 @@ import {
   resolveRatio,
   tasteProfileEventSchema,
   CHAT_ROLES,
+  CUP_EXTRACTIONS,
   type BrewLog,
   type RecipeChatResponse,
 } from '@brewmate/shared';
@@ -213,5 +214,45 @@ describe('recipe coaching', () => {
 
     expect(response.statusCode).toBe(HTTP_STATUS.badRequest);
     expect(context.completionClient.calls).toHaveLength(NOTHING);
+  });
+
+  const readLog = async (id: string): Promise<BrewLog> =>
+    brewLogSchema.parse(
+      (await api.get(buildApiPath(API_ROUTES.brewLogById, { id }), RETURNING_IDENTITY)).json(),
+    );
+
+  /**
+   * "Bola kyslá" is a grind that should have been finer. Written onto the cup
+   * it was said about, it is what the brewing profile learns from.
+   */
+  it('writes what was said about the cup onto the cup it named', async () => {
+    const log = await createBrewLog({});
+
+    context.completionClient.answerWith(TEST_CHAT_ANSWER);
+    await ask({ recipeId, message: COMPLAINT, brewLogId: log.id });
+
+    expect((await readLog(log.id)).cupReading).toEqual({
+      extraction: CUP_EXTRACTIONS.under,
+      strength: null,
+    });
+  });
+
+  it('writes it onto the latest cup of the recipe when the conversation names none', async () => {
+    const earlier = await createBrewLog({});
+    const latest = await createBrewLog({});
+
+    context.completionClient.answerWith(TEST_CHAT_ANSWER);
+    await ask({ recipeId, message: COMPLAINT });
+
+    expect((await readLog(latest.id)).cupReading?.extraction).toBe(CUP_EXTRACTIONS.under);
+    expect((await readLog(earlier.id)).cupReading).toBeNull();
+  });
+
+  it('writes nothing for a recipe nobody has brewed, and still answers', async () => {
+    context.completionClient.answerWith(TEST_CHAT_ANSWER);
+
+    const { assistantMessage } = await ask({ recipeId, message: COMPLAINT });
+
+    expect(assistantMessage.content).toBe(TEST_CHAT_REPLY);
   });
 });

@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import {
   BREW_METHOD_CATEGORIES,
+  CUP_EXTRACTIONS,
+  CUP_STRENGTHS,
   HABIT_SHIFT_LIMIT,
+  READING_GRIND_CORRECTION,
   foldBrewingProfile,
   type BrewConstraints,
   type BrewedCup,
@@ -16,6 +19,8 @@ const KALITA = '00000000-0000-4000-8000-000000000102';
 const AEROPRESS = '00000000-0000-4000-8000-000000000103';
 const ETHIOPIA = 'bag-ethiopia';
 const KENYA = 'bag-kenya';
+const HOME_GRINDER = '00000000-0000-4000-8000-000000000201';
+const TRAVEL_GRINDER = '00000000-0000-4000-8000-000000000202';
 
 const USUAL_DOSE = 15;
 const USUAL_RATIO = 16;
@@ -25,6 +30,11 @@ const CABIN_TEMPERATURE = 100;
 const ODD_RATIO = 15.8;
 const ROUNDED_ODD_RATIO = 16;
 const FINER_BY_HABIT = -0.3;
+const COARSER_BY_HABIT = 0.3;
+const WATERY_RATIO = 16;
+/** 1:16 pulled six hundredths tighter, and rounded to the half part the form moves in. */
+const WANTED_AFTER_WATERY = 15;
+const WANTED_AFTER_SOUR = 96;
 const TINY_HABIT = 0.05;
 const STRANGE_RUN = -2;
 const FULL_WEIGHT = 1;
@@ -37,6 +47,7 @@ const cup = (overrides: Partial<BrewedCup>): BrewedCup => ({
   methodId: V60,
   methodCategory: BREW_METHOD_CATEGORIES.pourOver,
   coffeeKey: ETHIOPIA,
+  grinderId: HOME_GRINDER,
   learningWeight: FULL_WEIGHT,
   isSuperseded: false,
   constraints: NOTHING_MISSING,
@@ -44,6 +55,7 @@ const cup = (overrides: Partial<BrewedCup>): BrewedCup => ({
   ratio: USUAL_RATIO,
   waterTempC: USUAL_TEMPERATURE,
   grindShift: null,
+  reading: null,
   ...overrides,
 });
 
@@ -53,9 +65,14 @@ const times = (count: number, overrides: Partial<BrewedCup>): readonly BrewedCup
 const methodOf = (profile: BrewingProfile, methodId: string): MethodHabit | undefined =>
   profile.methods.find((habit: MethodHabit): boolean => habit.methodId === methodId);
 
-const grindOf = (profile: BrewingProfile): GrindHabit | undefined =>
+const grindOf = (
+  profile: BrewingProfile,
+  grinderId: string = HOME_GRINDER,
+): GrindHabit | undefined =>
   profile.grind.find(
-    (habit: GrindHabit): boolean => habit.methodCategory === BREW_METHOD_CATEGORIES.pourOver,
+    (habit: GrindHabit): boolean =>
+      habit.methodCategory === BREW_METHOD_CATEGORIES.pourOver &&
+      habit.grinderEquipmentId === grinderId,
   );
 
 describe('the figures somebody weighs and pours', () => {
@@ -138,6 +155,7 @@ describe('where somebody grinds, past what their bags explained', () => {
     const habit = grindOf(foldBrewingProfile(times(THREE, { grindShift: FINER_BY_HABIT })));
 
     expect(habit).toEqual({
+      grinderEquipmentId: HOME_GRINDER,
       methodCategory: BREW_METHOD_CATEGORIES.pourOver,
       cupCount: THREE,
       coffeeCount: 1,
@@ -205,5 +223,77 @@ describe('where somebody grinds, past what their bags explained', () => {
 
     expect(habit?.cupCount).toBe(0);
     expect(habit?.shift).toBeNull();
+  });
+
+  it('keeps each grinder apart, so the travel grinder is not dragged about by the one at home', () => {
+    const profile = foldBrewingProfile([
+      ...times(TWO, { grindShift: FINER_BY_HABIT }),
+      ...times(TWO, { grindShift: FINER_BY_HABIT, coffeeKey: KENYA }),
+      ...times(TWO, { grindShift: COARSER_BY_HABIT, grinderId: TRAVEL_GRINDER }),
+      ...times(TWO, { grindShift: COARSER_BY_HABIT, grinderId: TRAVEL_GRINDER, coffeeKey: KENYA }),
+    ]);
+
+    expect(grindOf(profile)?.shift).toBe(FINER_BY_HABIT);
+    expect(grindOf(profile, TRAVEL_GRINDER)?.shift).toBe(COARSER_BY_HABIT);
+  });
+
+  it('has no grind habit for a cup ground on nothing the catalogue knows', () => {
+    expect(foldBrewingProfile(times(THREE, { grinderId: null })).grind).toEqual([]);
+  });
+});
+
+describe('what was said about a cup afterwards', () => {
+  it('reads a sour cup as a grind that should have been a tasteable step finer', () => {
+    const habit = grindOf(
+      foldBrewingProfile([
+        ...times(TWO, {
+          grindShift: 0,
+          reading: { extraction: CUP_EXTRACTIONS.under, strength: null },
+        }),
+        ...times(TWO, {
+          grindShift: 0,
+          coffeeKey: KENYA,
+          reading: { extraction: CUP_EXTRACTIONS.under, strength: null },
+        }),
+      ]),
+    );
+
+    expect(habit?.shift).toBeCloseTo(-READING_GRIND_CORRECTION);
+  });
+
+  it('reads a sour cup as water that should have been hotter', () => {
+    const habit = methodOf(
+      foldBrewingProfile(
+        times(THREE, { reading: { extraction: CUP_EXTRACTIONS.under, strength: null } }),
+      ),
+      V60,
+    );
+
+    expect(habit?.waterTempC).toBe(WANTED_AFTER_SOUR);
+  });
+
+  it('reads a watery cup as a ratio that should have been tighter, and leaves the dose alone', () => {
+    const habit = methodOf(
+      foldBrewingProfile(
+        times(THREE, {
+          ratio: WATERY_RATIO,
+          reading: { extraction: null, strength: CUP_STRENGTHS.weak },
+        }),
+      ),
+      V60,
+    );
+
+    expect(habit?.ratio).toBe(WANTED_AFTER_WATERY);
+    expect(habit?.doseGrams).toBe(USUAL_DOSE);
+  });
+
+  it('lets a cup called right outweigh two nobody commented on', () => {
+    const profile = foldBrewingProfile([
+      ...times(TWO, { ratio: GUEST_RATIO }),
+      cup({ reading: { extraction: null, strength: CUP_STRENGTHS.right } }),
+      cup({ reading: { extraction: null, strength: CUP_STRENGTHS.right } }),
+    ]);
+
+    expect(methodOf(profile, V60)?.ratio).toBe(USUAL_RATIO);
   });
 });

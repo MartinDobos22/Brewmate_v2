@@ -17,7 +17,7 @@ export type { BagVerdictView, BagVerdictUncertainty, BagVerdictReason } from './
 export type { BagVerdictPoint, BagUncertainty, BagVerdictParts } from './bagVerdictTypes';
 export { readRoastFit } from './readRoastFit';
 export { readAxisFit } from './readAxisFit';
-export { readFlavorFit, readTastingNoteTags } from './readFlavorFit';
+export { readFlavorFit } from './readFlavorFit';
 export { readFreshness } from './readFreshness';
 export { scanHistoryTitle, scanVerdictPreview, resolveScanOutcome } from './scanHistoryEntry';
 export { resolveScanSteps } from './resolveScanSteps';

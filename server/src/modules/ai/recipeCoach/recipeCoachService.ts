@@ -20,6 +20,7 @@ import type { AiUsageService } from '../../aiUsage/aiUsageService.js';
 import { toBrewLog } from '../../brewLogs/brewLogMapper.js';
 import type { BrewLogRepository } from '../../brewLogs/brewLogRepository.js';
 import { calculateLearningWeight } from '../../brewLogs/calculateLearningWeight.js';
+import { recordCupReading } from '../../brewLogs/recordCupReading.js';
 import type { BrewMethodService } from '../../brewMethods/brewMethodService.js';
 import type { RecipeChatService } from '../../recipeChat/recipeChatService.js';
 import { toRecipe } from '../../recipes/recipeMapper.js';
@@ -271,6 +272,18 @@ export const createRecipeCoachService = ({
       });
 
       await teachProfile(userId, completion.value, assistantMessage, log);
+      /**
+       * What they said about the cup, in brewing terms, onto the cup itself -
+       * which is how "bola kyslá" reaches the brewing profile: as a grind that
+       * should have been finer, rather than as a preference about acidity.
+       */
+      await recordCupReading({
+        brewLogRepository,
+        userId,
+        recipeId: recipe.id,
+        log,
+        reading: completion.value.cupReading,
+      });
 
       return { userMessage, assistantMessage };
     },

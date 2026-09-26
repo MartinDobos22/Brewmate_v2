@@ -8,9 +8,11 @@ import {
   GRIND_SETTING_MAX,
   GRIND_SETTING_MIN,
   RECIPE_RATIONALE_MAX_LENGTH,
+  cupReadingSchema,
   flavorAffinitiesSchema,
   partialTasteAxesSchema,
   type BrewConstraints,
+  type CupReading,
   type DialInChange,
 } from '@brewmate/shared';
 import { z } from 'zod';
@@ -57,12 +59,15 @@ export interface DialInAnswer {
   readonly doseGrams?: number;
   readonly rationale?: string;
   readonly tasteObservation: DialInTasteObservation | null;
+  /** What they said about how the shot tasted, for the brewing profile. */
+  readonly cupReading?: CupReading | null;
 }
 
 const commonFields = {
   reply: z.string().min(AT_LEAST_ONE).max(CHAT_MESSAGE_MAX_LENGTH),
   rationale: z.string().max(RECIPE_RATIONALE_MAX_LENGTH).optional(),
   tasteObservation: tasteObservationSchema.nullable(),
+  cupReading: cupReadingSchema.nullable().optional(),
 };
 
 /**

@@ -1,4 +1,4 @@
-import type { BrewConstraints, PartialBrewParams } from '@brewmate/shared';
+import type { BrewConstraints, CupReading, PartialBrewParams } from '@brewmate/shared';
 import { index, integer, jsonb, pgTable, real, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 import { coffeeBagsTable } from './coffeeBagsTable.js';
@@ -27,6 +27,12 @@ const FULL_LEARNING_WEIGHT = 1;
  * cup they ever made at a cabin would retroactively turn into evidence about
  * their taste.
  *
+ * `cup_reading` is the one column written after the fact: what somebody said
+ * about the cup in the conversation afterwards, read into brewing terms. It is
+ * still history - it records what was said about that morning - and it is
+ * what lets the brewing profile learn where they wanted the cup to be rather
+ * than only where it was.
+ *
  * `recipe_id` cascades rather than restricts so that deleting an account
  * cannot deadlock against its own history; the service refuses to delete a
  * recipe that a log points at, which is where that rule belongs.
@@ -54,6 +60,7 @@ export const brewLogsTable = pgTable(
     waterType: waterTypeEnum('water_type').notNull(),
     durationSeconds: integer('duration_seconds'),
     profileLearningWeight: real('profile_learning_weight').notNull().default(FULL_LEARNING_WEIGHT),
+    cupReading: jsonb('cup_reading').$type<CupReading>(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [

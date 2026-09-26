@@ -10,7 +10,6 @@ export {
 export type { BagScanField } from './bagScan';
 export type { BagScanMode, BagScanStage, BagVerdictLevel } from './bagScan';
 export { ROAST_LEVEL_NEAR_DISTANCE } from './bagScan';
-export { FLAVOR_LEXICON } from './flavorLexicon';
 export {
   BAG_PHOTO_QUALITY,
   BAG_PHOTO_MEDIA_TYPES,

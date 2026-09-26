@@ -67,9 +67,10 @@ const nameOf = (grinder: { readonly brand: string; readonly model: string }): st
  * the same way on both sides of the wire.
  *
  * The habit comes in the same way the API reads it - the brewing profile's
- * grind shift for this family, through `findGrindHabitShift` - so the band
- * drawn here and the band the recipe is written from are moved by the same
- * amount, and the reasons under it say so.
+ * grind shift for this grinder and this family, through `findGrindHabitShift`
+ * - so the band drawn here and the band the recipe is written from are moved
+ * by the same amount, and switching to the hand grinder switches the habit
+ * with the collar.
  */
 export const useGrindGuidance = (
   method: BrewMethod | undefined,
@@ -97,7 +98,7 @@ export const useGrindGuidance = (
   const catalogue = useGrinder(chosen?.catalogGrinderId ?? null);
   const grinder = catalogue.data ?? null;
   const category = method?.category;
-  const habitShift = findGrindHabitShift(useBrewingProfile().data, category);
+  const habitShift = findGrindHabitShift(useBrewingProfile().data, category, chosen?.id);
 
   const guidance = useMemo(
     (): GrindGuidance | null =>

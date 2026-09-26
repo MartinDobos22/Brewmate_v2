@@ -1,8 +1,9 @@
 import { z } from 'zod';
 
-import { BREW_METHOD_CATEGORY_VALUES } from '../enums/brewMethodCategories.js';
-
-import { BREWING_PROFILE_METHODS_MAX } from './brewingProfileFieldLimits.js';
+import {
+  BREWING_PROFILE_GRIND_HABITS_MAX,
+  BREWING_PROFILE_METHODS_MAX,
+} from './brewingProfileFieldLimits.js';
 import { grindHabitSchema } from './grindHabitSchema.js';
 import { methodHabitSchema } from './methodHabitSchema.js';
 
@@ -21,7 +22,7 @@ import { methodHabitSchema } from './methodHabitSchema.js';
  */
 export const brewingProfileSchema = z.object({
   methods: z.array(methodHabitSchema).max(BREWING_PROFILE_METHODS_MAX),
-  grind: z.array(grindHabitSchema).max(BREW_METHOD_CATEGORY_VALUES.length),
+  grind: z.array(grindHabitSchema).max(BREWING_PROFILE_GRIND_HABITS_MAX),
 });
 
 export type BrewingProfile = z.infer<typeof brewingProfileSchema>;

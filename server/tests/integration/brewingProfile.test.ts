@@ -1,5 +1,6 @@
 import {
   API_ROUTES,
+  brewLogSchema,
   brewingProfileSchema,
   coffeeBagSchema,
   equipmentSchema,
@@ -18,7 +19,7 @@ import {
 } from '@brewmate/shared';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
-import { TEST_RECIPE_ANSWER } from '../fixtures/testAiAnswers.js';
+import { TEST_CHAT_ANSWER, TEST_RECIPE_ANSWER } from '../fixtures/testAiAnswers.js';
 import { RETURNING_IDENTITY, SECOND_IDENTITY } from '../fixtures/testIdentities.js';
 import { insertTestBrewMethods } from '../fixtures/testBrewMethods.js';
 import { TEST_BREW_PARAMS } from '../fixtures/testPayloads.js';
@@ -34,6 +35,8 @@ const USUAL_DOSE = 18;
 /** The fixture's 1:16.6, in the half parts the form moves in. */
 const USUAL_RATIO = 16.5;
 const USUAL_TEMPERATURE = 94;
+/** Two degrees hotter than the cups were, because every one of them was called sour. */
+const WANTED_TEMPERATURE = 96;
 
 const COLLAR_MIN = 0;
 const COLLAR_MAX = 60;
@@ -99,6 +102,11 @@ describe('the brewing profile', () => {
       await api.post(API_ROUTES.brewLogs, RETURNING_IDENTITY, { recipeId, constraints });
     }
   };
+
+  const brewOne = async (recipeId: string): Promise<string> =>
+    brewLogSchema.parse(
+      (await api.post(API_ROUTES.brewLogs, RETURNING_IDENTITY, { recipeId })).json(),
+    ).id;
 
   const ownFineCollar = async (): Promise<string> => {
     const grinder = grinderSchema.parse(
@@ -194,6 +202,7 @@ describe('the brewing profile', () => {
 
     expect((await readProfile()).grind).toEqual([
       {
+        grinderEquipmentId: grinderId,
         methodCategory: BREW_METHOD_CATEGORIES.pourOver,
         cupCount: FOUR_CUPS,
         coffeeCount: TWO_COFFEES,
@@ -220,5 +229,22 @@ describe('the brewing profile', () => {
 
     expect(prompt).toContain(TEMPERATURE_HABIT_LINE);
     expect(prompt).toContain(GRIND_HABIT_REASON);
+  });
+
+  it('learns from a cup called sour that the water should have been hotter', async () => {
+    const recipeId = await createRecipe({});
+
+    for (let cup = FIRST; cup < THREE_CUPS; cup += 1) {
+      const brewLogId = await brewOne(recipeId);
+
+      context.completionClient.answerWith(TEST_CHAT_ANSWER);
+      await api.post(API_ROUTES.aiRecipeChat, RETURNING_IDENTITY, {
+        recipeId,
+        message: 'Bola kyslá.',
+        brewLogId,
+      });
+    }
+
+    expect((await readProfile()).methods[FIRST]?.waterTempC).toBe(WANTED_TEMPERATURE);
   });
 });

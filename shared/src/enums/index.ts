@@ -22,3 +22,7 @@ export { BAG_RATING_STAGES, BAG_RATING_STAGE_VALUES } from './bagRatingStages.js
 export type { BagRatingStage } from './bagRatingStages.js';
 export { BAG_IMPRESSIONS, BAG_IMPRESSION_VALUES } from './bagImpressions.js';
 export type { BagImpression } from './bagImpressions.js';
+export { CUP_EXTRACTIONS, CUP_EXTRACTION_VALUES } from './cupExtractions.js';
+export type { CupExtraction } from './cupExtractions.js';
+export { CUP_STRENGTHS, CUP_STRENGTH_VALUES } from './cupStrengths.js';
+export type { CupStrength } from './cupStrengths.js';

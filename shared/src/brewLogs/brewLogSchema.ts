@@ -9,6 +9,8 @@ import { partialBrewParamsSchema } from '../brewing/brewParamsSchema.js';
 import { WATER_TYPES } from '../enums/waterTypes.js';
 import { CONFIDENCE_MAX, CONFIDENCE_MIN } from '../tasteProfiles/tasteProfileFieldLimits.js';
 
+import { cupReadingSchema } from './cupReadingSchema.js';
+
 /**
  * A cup that was actually brewed.
  *
@@ -39,6 +41,16 @@ export const brewLogSchema = z.object({
     .max(BREW_DURATION_SECONDS_MAX)
     .nullable(),
   profileLearningWeight: z.number().min(CONFIDENCE_MIN).max(CONFIDENCE_MAX),
+  /**
+   * What was said about this cup afterwards, where anything was.
+   *
+   * Read out of the conversation by the model that answered it and written
+   * here by the server - never declared by a client, for the same reason the
+   * learning weight is not: it is what the brewing profile corrects this cup's
+   * numbers by, and a reading anybody could post is a habit anybody could
+   * write.
+   */
+  cupReading: cupReadingSchema.nullable(),
   createdAt: z.iso.datetime(),
 });
 

@@ -1,4 +1,5 @@
 import type { BrewConstraints } from '../brewing/brewConstraintsSchema.js';
+import type { CupReading } from '../brewLogs/cupReadingSchema.js';
 import type { BrewMethodCategory } from '../enums/brewMethodCategories.js';
 
 /**
@@ -20,6 +21,12 @@ export interface BrewedCup {
    * coffee, because nobody wrote down what was in the grinder.
    */
   readonly coffeeKey: string;
+  /**
+   * The grinder it was ground on - the owned piece of equipment, not the
+   * catalogue model, because two grinders of one model are still two collars.
+   * Null where no catalogued grinder was on the recipe.
+   */
+  readonly grinderId: string | null;
   /** The weight the cup was priced at on the way in. */
   readonly learningWeight: number;
   /** Whether a correction of this cup's recipe was brewed afterwards. */
@@ -31,4 +38,11 @@ export interface BrewedCup {
   readonly waterTempC: number | null;
   /** From `readGrindHabitShift`; null where there was no number to measure. */
   readonly grindShift: number | null;
+  /**
+   * What was said about the cup afterwards - "bola kyslá" - where anything was.
+   *
+   * The numbers say where a cup was; this says where the person wanted it to
+   * be, which is the thing a habit is actually about.
+   */
+  readonly reading: CupReading | null;
 }

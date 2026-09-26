@@ -1,5 +1,6 @@
 import {
   BREW_METHOD_CATEGORIES,
+  chooseGrinderEquipment,
   findGrindHabitShift,
   readGrindCoffeeFacts,
   CHAT_ROLES,
@@ -24,6 +25,7 @@ import type { AiUsageService } from '../../aiUsage/aiUsageService.js';
 import { toBrewLog } from '../../brewLogs/brewLogMapper.js';
 import type { BrewLogRepository } from '../../brewLogs/brewLogRepository.js';
 import type { BrewLogService } from '../../brewLogs/brewLogService.js';
+import { recordCupReading } from '../../brewLogs/recordCupReading.js';
 import type { BrewMethodService } from '../../brewMethods/brewMethodService.js';
 import type { BrewingProfileService } from '../../brewingProfile/brewingProfileService.js';
 import type { RecipeChatService } from '../../recipeChat/recipeChatService.js';
@@ -242,7 +244,11 @@ export const createEspressoDialInService = ({
           methodCategory: method.category,
           coffee: readGrindCoffeeFacts(context.bag, now),
           grinder: context.grinder,
-          habitShift: findGrindHabitShift(habits, method.category),
+          habitShift: findGrindHabitShift(
+            habits,
+            method.category,
+            chooseGrinderEquipment(context.equipment)?.id,
+          ),
         }),
         describeShots(shots),
         describeConstraints(constraints),
@@ -272,8 +278,16 @@ export const createEspressoDialInService = ({
       });
 
       await teachProfile(userId, completion.value, assistantMessage, shot);
+      /** How the shot tasted, onto the shot, for the brewing profile. */
+      const described = await recordCupReading({
+        brewLogRepository,
+        userId,
+        recipeId: recipe.id,
+        log: shot,
+        reading: completion.value.cupReading,
+      });
 
-      return { shot, userMessage, assistantMessage };
+      return { shot: described ?? shot, userMessage, assistantMessage };
     },
   };
 };

@@ -2,6 +2,7 @@ import type {
   BrewConstraints,
   BrewMethodCategory,
   BrewParams,
+  CupReading,
   PartialBrewParams,
   RoastLevel,
 } from '@brewmate/shared';
@@ -37,6 +38,7 @@ export interface BrewedCupRow {
   readonly learningWeight: number;
   readonly constraints: BrewConstraints;
   readonly actualParams: PartialBrewParams;
+  readonly cupReading: CupReading | null;
   readonly recipeParams: BrewParams;
   readonly equipmentIds: readonly string[];
   readonly createdAt: Date;
@@ -78,6 +80,7 @@ export const createBrewingProfileRepository = (db: Database): BrewingProfileRepo
         learningWeight: brewLogsTable.profileLearningWeight,
         constraints: brewLogsTable.constraints,
         actualParams: brewLogsTable.actualParams,
+        cupReading: brewLogsTable.cupReading,
         recipeParams: recipesTable.params,
         equipmentIds: recipesTable.equipmentIds,
         createdAt: brewLogsTable.createdAt,

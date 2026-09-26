@@ -1,28 +1,13 @@
-import type { FlavorAffinities } from '@brewmate/shared';
+import { readNoteFlavors, type FlavorAffinities, type FlavorTag } from '@brewmate/shared';
 
 import { TRANSLATION_KEYS } from '../../../i18n';
-import { normalizeText } from '../../../lib/text';
-import { FLAVOR_AFFINITY_DISPLAY_MIN, type FlavorTag } from '../../tasteProfile/constants';
+import { FLAVOR_AFFINITY_DISPLAY_MIN } from '../../tasteProfile/constants';
 import { BAG_SCAN_FIELDS } from '../constants/bagScan';
-import { FLAVOR_LEXICON } from '../constants/flavorLexicon';
 
 import type { BagVerdictParts } from './bagVerdictTypes';
 
 const NOTHING = 0;
 const DISLIKED = -1;
-
-/** The flavour tags one printed note maps onto, which may be none. */
-const readNote = (note: string): readonly FlavorTag[] => {
-  const text = normalizeText(note);
-
-  return FLAVOR_LEXICON.filter(([stem]: readonly [string, FlavorTag]): boolean =>
-    text.includes(stem),
-  ).map(([, tag]: readonly [string, FlavorTag]): FlavorTag => tag);
-};
-
-/** Every tag the label claims, read through the lexicon. */
-export const readTastingNoteTags = (notes: readonly string[]): readonly FlavorTag[] =>
-  notes.flatMap(readNote);
 
 const affinityOf = (affinities: FlavorAffinities, tag: FlavorTag): number =>
   affinities[tag] ?? NOTHING;
@@ -47,7 +32,11 @@ export const readFlavorFit = (
     };
   }
 
-  const tags = readTastingNoteTags(notes);
+  /*
+   * Read through the same lexicon the server learns from, so the flavour a
+   * verdict argues about and the flavour a purchase taught are one word.
+   */
+  const tags = readNoteFlavors(notes);
   const liked = tags.filter(
     (tag: FlavorTag): boolean => affinityOf(affinities, tag) >= FLAVOR_AFFINITY_DISPLAY_MIN,
   );

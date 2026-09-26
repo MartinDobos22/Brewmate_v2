@@ -6,3 +6,7 @@ export { updateBrewLogRequestSchema } from './updateBrewLogSchema.js';
 export type { UpdateBrewLogRequest } from './updateBrewLogSchema.js';
 export { brewLogQuerySchema } from './brewLogQuerySchema.js';
 export type { BrewLogQuery, BrewLogFilter } from './brewLogQuerySchema.js';
+export { cupReadingSchema } from './cupReadingSchema.js';
+export type { CupReading } from './cupReadingSchema.js';
+export { mergeCupReading } from './mergeCupReading.js';
+export { saysSomethingAboutCup } from './saysSomethingAboutCup.js';

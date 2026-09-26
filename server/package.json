@@ -15,6 +15,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/db/migrate/migrateCli.ts",
     "db:seed": "tsx src/db/seed/seedCli.ts",
+    "db:backfill-purchases": "tsx src/db/backfill/backfillPurchasesCli.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {

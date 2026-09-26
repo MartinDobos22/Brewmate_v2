@@ -11,6 +11,10 @@ export const LOG_MESSAGES = {
   seedStarted: 'seeding reference data',
   seedComplete: 'reference data seeded',
   seedFailed: 'seeding reference data failed',
+  purchaseBackfillStarted:
+    'recording purchases for bags written down before purchases were learned from',
+  purchaseBackfillComplete: 'purchases recorded',
+  purchaseBackfillFailed: 'recording purchases failed',
   databasePingFailed: 'database ping failed',
   firebaseInitialised: 'firebase admin initialised',
   userProvisioned: 'provisioned new user from firebase identity',

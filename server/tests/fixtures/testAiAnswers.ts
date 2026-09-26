@@ -1,4 +1,5 @@
 import {
+  CUP_EXTRACTIONS,
   EMPTY_PARSED_BAG_FIELDS,
   PHOTO_MEDIA_TYPES,
   ROAST_LEVELS,
@@ -183,6 +184,8 @@ export const TEST_CHAT_ANSWER = JSON.stringify({
     rationale: 'Jemnejšie mletie predĺži extrakciu a uberie kyslosti.',
   },
   tasteObservation: { axes: { acidity: LOW_ACIDITY }, note: 'Sťažoval sa na kyslosť.' },
+  /** "Kyslá a prázdna" is an under-extracted cup, and nothing was said about strength. */
+  cupReading: { extraction: CUP_EXTRACTIONS.under, strength: null },
 });
 
 /**

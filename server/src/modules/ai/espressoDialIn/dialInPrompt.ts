@@ -5,6 +5,7 @@ import {
 } from '@brewmate/shared';
 
 import { PROMPT_LINE_SEPARATOR } from '../constants/promptFormatting.js';
+import { CUP_READING_KEY_LINE, CUP_READING_SECTION } from '../cupReading/cupReadingPrompt.js';
 import {
   EXTRACTION_KNOWLEDGE,
   EXTRACTION_KNOWLEDGE_VERSION,
@@ -66,12 +67,15 @@ export const DIAL_IN_SYSTEM_PROMPT = [
   '- "doseGrams": the new dose. Only when you are changing the dose. Half a gram is a real change on an espresso; two grams is a different drink.',
   '- "rationale": one sentence for the recipe card, if the change is worth recording there.',
   '- "tasteObservation": what this shot said about what this person likes, or null.',
+  CUP_READING_KEY_LINE,
   '',
   'WHAT A TASTE OBSERVATION IS',
   '',
   '"Bola príliš kyslá" is a statement about their preferences and belongs here. "Tieklo to za 15 sekúnd" is a statement about the puck and does not. "Bola slabá, lebo som zle utlačil" is about the tamp, not the drinker. When a complaint is really about the equipment or the technique, answer it and record nothing.',
   '',
   'Where they name no axis at all - "nebolo to ono" - use null. An observation that teaches nothing still inflates how much Brewmate thinks it knows about somebody, which is worse than knowing less.',
+  '',
+  CUP_READING_SECTION,
   '',
   'WHAT NOT TO DO',
   '',

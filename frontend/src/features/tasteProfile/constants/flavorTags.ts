@@ -1,28 +1,15 @@
+import { FLAVOR_TAGS, type FlavorTag } from '@brewmate/shared';
+
 import type { TileGlyph } from '../../../components/ui';
 import { TRANSLATION_KEYS, type TranslationKey } from '../../../i18n';
 
 /**
- * The flavour vocabulary Brewmate itself produces.
- *
- * The stored map accepts any tag - the vocabulary belongs to the world, not to
- * the code, and a coffee that tastes of jasmine must not need a migration.
- * These are simply the ones the questionnaire and the calibration reading can
- * write, and therefore the ones the app has a Slovak word for.
+ * The flavour vocabulary lives in `@brewmate/shared`, because the server now
+ * writes it too - a bag bought or rated teaches the flavours its label prints.
+ * Re-exported here so everything that draws a flavour keeps one import.
  */
-export const FLAVOR_TAGS = {
-  fruity: 'fruity',
-  citrus: 'citrus',
-  berry: 'berry',
-  floral: 'floral',
-  herbal: 'herbal',
-  nutty: 'nutty',
-  caramel: 'caramel',
-  chocolate: 'chocolate',
-  spice: 'spice',
-  teaLike: 'tea_like',
-} as const;
-
-export type FlavorTag = (typeof FLAVOR_TAGS)[keyof typeof FLAVOR_TAGS];
+export { FLAVOR_TAGS };
+export type { FlavorTag };
 
 /** A tag outside this map is shown as it was stored, the way a bag's name is. */
 export const FLAVOR_TAG_LABEL_KEYS: Record<FlavorTag, TranslationKey> = {

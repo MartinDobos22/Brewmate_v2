@@ -59,6 +59,9 @@ projects, so this is the last comfortable moment to decide.
       with the production URL in the environment, before there is a deployment).
 - [ ] `node dist/db/seed/seedCli.js` once - the eighteen brewing methods and the
       grinder catalogue. An empty `brew_methods` is an app that cannot brew.
+- [ ] `node dist/db/backfill/backfillPurchasesCli.js` once, only if the branch
+      already holds cupboards from a build before purchase learning - see
+      `backend-hosting.md`. On a fresh branch it records nothing.
 
 ## 3. The API
 

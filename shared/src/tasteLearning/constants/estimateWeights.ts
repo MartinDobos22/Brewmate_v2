@@ -14,3 +14,15 @@ export const DISLIKE_REFLECTION = 0.6;
  * nothing about that axis, and one at an end says the most.
  */
 export const HALF_SCALE = 5;
+
+/**
+ * How far a flavour printed on the label points the profile, against one the
+ * drinker tapped themselves.
+ *
+ * A tag somebody tapped is their own palate at full strength. A printed note
+ * is the roaster's word about the lot - more specific than anything a table
+ * could say, and also marketing - so a coffee loved for its "čokoláda" moves
+ * the affinity for chocolate a good way towards liked, but never as far as
+ * somebody saying so outright.
+ */
+export const NOTE_FLAVOR_AFFINITY = 0.6;

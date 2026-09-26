@@ -12,16 +12,16 @@ wrong one as a misrepresentation rather than as a mistake.
 
 ## 1. Data the app collects
 
-| App Store category    | Collected | Linked to identity | Used for tracking | Purpose           | Where it lives                                                                                                                                                                  |
-| --------------------- | --------- | ------------------ | ----------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Email Address         | Yes       | Yes                | No                | App Functionality | `users.email`, written by `provisionFromIdentity` from the Firebase token                                                                                                       |
-| User ID               | Yes       | Yes                | No                | App Functionality | `users.id`, `users.firebase_uid`                                                                                                                                                |
-| Name                  | Yes       | Yes                | No                | App Functionality | `users.display_name`, only when a provider supplies one                                                                                                                         |
-| Photos                | Yes       | Yes                | No                | App Functionality | Sent to the API with the scan and read there. Nothing retains it - no bucket, no row, no column - but it travels under the caller's own token, so it is answered for as linked. |
-| Other User Content    | Yes       | Yes                | No                | App Functionality | `recipe_chat_messages.content` - what somebody writes about a cup; `bag_ratings` - the stars, impression and tags somebody gives a coffee they bought                           |
-| Product Interaction   | Yes       | Yes                | No                | Analytics         | `analytics_events`, the named flow steps in `ANALYTICS_EVENT_NAMES`                                                                                                             |
-| Crash Data            | Yes       | **No**             | No                | App Functionality | The error tracker sends the error, the platform, the release and a screen name. No account id.                                                                                  |
-| Other Diagnostic Data | Yes       | **No**             | No                | App Functionality | The same reports: release name and platform                                                                                                                                     |
+| App Store category    | Collected | Linked to identity | Used for tracking | Purpose           | Where it lives                                                                                                                                                                                                                                                    |
+| --------------------- | --------- | ------------------ | ----------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Email Address         | Yes       | Yes                | No                | App Functionality | `users.email`, written by `provisionFromIdentity` from the Firebase token                                                                                                                                                                                         |
+| User ID               | Yes       | Yes                | No                | App Functionality | `users.id`, `users.firebase_uid`                                                                                                                                                                                                                                  |
+| Name                  | Yes       | Yes                | No                | App Functionality | `users.display_name`, only when a provider supplies one                                                                                                                                                                                                           |
+| Photos                | Yes       | Yes                | No                | App Functionality | Sent to the API with the scan and read there. Nothing retains it - no bucket, no row, no column - but it travels under the caller's own token, so it is answered for as linked.                                                                                   |
+| Other User Content    | Yes       | Yes                | No                | App Functionality | `recipe_chat_messages.content` - what somebody writes about a cup, and `brew_logs.cup_reading`, the same remark read into "sour / bitter / right" and "weak / strong / right"; `bag_ratings` - the stars, impression and tags somebody gives a coffee they bought |
+| Product Interaction   | Yes       | Yes                | No                | Analytics         | `analytics_events`, the named flow steps in `ANALYTICS_EVENT_NAMES`                                                                                                                                                                                               |
+| Crash Data            | Yes       | **No**             | No                | App Functionality | The error tracker sends the error, the platform, the release and a screen name. No account id.                                                                                                                                                                    |
+| Other Diagnostic Data | Yes       | **No**             | No                | App Functionality | The same reports: release name and platform                                                                                                                                                                                                                       |
 
 **Nothing is used for tracking.** `NSPrivacyTracking` is `false` and
 `NSPrivacyTrackingDomains` is empty, which is only honest because there is no
@@ -44,6 +44,13 @@ in `bag_ratings` with their `user_id` and folded into their taste profile; they
 are exported with the account and deleted with it, like every other table here.
 Nothing about a rating leaves the API - the arithmetic that turns it into a
 profile runs on the server, and no model is asked anything to do it.
+
+**A cup reading is the chat message read once more, not something new.**
+`brew_logs.cup_reading` holds what the model answering a message about a cup
+concluded that message said - under- or over-extracted, too weak or too strong -
+and nothing that message did not already say. It travels nowhere the message
+did not: the message goes to Anthropic to be answered, and the reading comes
+back in the same answer. It is exported with the brew log and deleted with it.
 
 **Product Interaction is linked.** `analytics_events.user_id` is a real column
 with a real foreign key, and pretending otherwise by calling the rows anonymous

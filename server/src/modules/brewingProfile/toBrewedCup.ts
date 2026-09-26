@@ -28,11 +28,12 @@ const readRatio = (row: BrewedCupRow): number => {
     : resolveRatio(doseGrams, waterGrams);
 };
 
-/** The one grinder the recipe was ground on, where the catalogue knows it. */
-const readGrinder = (row: BrewedCupRow, grinders: ReadonlyMap<string, Grinder>): Grinder | null =>
-  row.equipmentIds
-    .map((id: string): Grinder | undefined => grinders.get(id))
-    .find((grinder): grinder is Grinder => grinder !== undefined) ?? null;
+/**
+ * The one grinder the recipe was ground on, where the catalogue knows it - by
+ * the owned equipment row, because the grind habit belongs to that collar.
+ */
+const readGrinderId = (row: BrewedCupRow, grinders: ReadonlyMap<string, Grinder>): string | null =>
+  row.equipmentIds.find((id: string): boolean => grinders.has(id)) ?? null;
 
 /**
  * One brew log, reduced to what the brewing profile reads.
@@ -52,6 +53,8 @@ export const toBrewedCup = (
   supersededRecipeIds: ReadonlySet<string>,
 ): BrewedCup => {
   const grindSetting = row.actualParams.grindSetting ?? row.recipeParams.grindSetting;
+  const grinderId = readGrinderId(row, grinders);
+  const grinder = grinderId === null ? null : (grinders.get(grinderId) ?? null);
   const coffee = readGrindCoffeeFacts(
     row.bagId === null
       ? null
@@ -63,6 +66,7 @@ export const toBrewedCup = (
     methodId: row.methodId,
     methodCategory: row.methodCategory,
     coffeeKey: row.bagId ?? row.recipeId,
+    grinderId,
     learningWeight: row.learningWeight,
     isSuperseded: supersededRecipeIds.has(row.recipeId),
     constraints: row.constraints,
@@ -75,8 +79,9 @@ export const toBrewedCup = (
         : readGrindHabitShift({
             methodCategory: row.methodCategory,
             coffee,
-            grinder: readGrinder(row, grinders),
+            grinder,
             grindSetting,
           }),
+    reading: row.cupReading,
   };
 };

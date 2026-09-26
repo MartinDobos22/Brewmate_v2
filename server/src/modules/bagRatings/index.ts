@@ -6,3 +6,7 @@ export { createBagRatingRepository } from './bagRatingRepository.js';
 export type { BagRatingRepository } from './bagRatingRepository.js';
 export { createBagTasteLearner } from './bagTasteLearner.js';
 export type { BagTasteLearner } from './bagTasteLearner.js';
+export { backfillPurchases } from './backfillPurchases.js';
+export type { PurchaseBackfillSummary } from './backfillPurchases.js';
+export { createPurchaseBackfillRepository } from './purchaseBackfillRepository.js';
+export type { PurchaseBackfillRepository } from './purchaseBackfillRepository.js';

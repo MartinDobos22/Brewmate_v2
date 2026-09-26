@@ -2,6 +2,7 @@ import {
   API_ROUTES,
   BAG_IMPRESSIONS,
   BAG_RATING_STAGES,
+  FLAVOR_TAGS,
   TASTE_AXIS_NEUTRAL,
   TASTE_PROFILE_SOURCES,
   bagRatingSchema,
@@ -24,6 +25,8 @@ const LOVED = 5;
 const SHRUG = 3;
 const HATED = 1;
 const ONE = 1;
+const NOTHING = 0;
+const CHOCOLATE_NOTES = ['Horká čokoláda', 'kakao'];
 
 describe('bag ratings', () => {
   let context: TestContext;
@@ -83,6 +86,18 @@ describe('bag ratings', () => {
     expect(after.acidity).toBeGreaterThan(before.acidity);
     expect(after.acidity).toBeLessThan(TASTE_AXIS_NEUTRAL);
     expect(after.sourceWeights[TASTE_PROFILE_SOURCES.purchase]).toBeDefined();
+  });
+
+  /**
+   * "Čokoláda" on a bag somebody chose is the roaster's word for what is in
+   * it, and a small lean towards liking chocolate.
+   */
+  it('lets the flavours printed on a bought bag lean the profile towards them', async () => {
+    await createHistoryBag(api, RETURNING_IDENTITY, { tastingNotes: CHOCOLATE_NOTES });
+
+    const profile = await readProfile();
+
+    expect(profile.flavorAffinities[FLAVOR_TAGS.chocolate]).toBeGreaterThan(NOTHING);
   });
 
   it('lets a loved bag move the profile further than buying it did', async () => {

@@ -13,6 +13,7 @@ import {
 } from './constants/ratingWeights.js';
 import { TAGS_ONLY_STRENGTH } from './constants/ratingTagEffects.js';
 import { readEstimateEvidence } from './readEstimateEvidence.js';
+import { readNoteFlavorEvidence } from './readNoteFlavorEvidence.js';
 import { readTagEvidence } from './readTagEvidence.js';
 import { resolvePurchaseFactor } from './resolvePurchaseFactor.js';
 
@@ -22,6 +23,8 @@ const NO_STRENGTH = 0;
 export interface RatingInput {
   /** What the label says this coffee tastes like - the place the stars are pinned to. */
   readonly coffee: CoffeeTasteEstimate;
+  /** The flavours printed on the bag, exactly as the label has them. */
+  readonly tastingNotes: readonly string[];
   readonly bagId: string;
   readonly stage: BagRatingStage;
   readonly stars: number;
@@ -34,7 +37,8 @@ export interface RatingInput {
  *
  * Three pieces, weighed separately because they are separately reliable. The
  * stars say how much this coffee suited somebody, and point the profile
- * towards it or away from it on the axes its label actually describes. The
+ * towards it or away from it on the axes its label actually describes and the
+ * flavours its label prints. The
  * tags say which part it was, in the cup's own terms. The impression says how
  * far to believe each: a coffee that did not taste like its label moves the
  * profile little through the label, a coffee that was only good on some
@@ -47,6 +51,7 @@ export interface RatingInput {
  */
 export const learnFromRating = ({
   coffee,
+  tastingNotes,
   bagId,
   stage,
   stars,
@@ -54,11 +59,9 @@ export const learnFromRating = ({
   tags,
 }: RatingInput): TasteProfileEventPayload => {
   const sentiment = (stars - NEUTRAL_STARS) / STAR_SPAN;
-  const estimate = readEstimateEvidence(
-    coffee,
-    sentiment,
-    impression === null ? FULL_TRUST : IMPRESSION_ESTIMATE_TRUST[impression],
-  );
+  const labelTrust = impression === null ? FULL_TRUST : IMPRESSION_ESTIMATE_TRUST[impression];
+  const estimate = readEstimateEvidence(coffee, sentiment, labelTrust);
+  const printed = readNoteFlavorEvidence(tastingNotes, sentiment, labelTrust);
   const tagged = readTagEvidence(coffee, tags);
   const strength = Math.max(
     Math.abs(sentiment),
@@ -68,7 +71,8 @@ export const learnFromRating = ({
   return {
     axes: { ...estimate.axes, ...tagged.axes },
     axisWeights: { ...estimate.axisWeights, ...tagged.axisWeights },
-    flavorAffinities: tagged.flavorAffinities,
+    /** A tapped tag overrides a printed note: it is the cup rather than the label. */
+    flavorAffinities: { ...printed, ...tagged.flavorAffinities },
     weight:
       strength *
       RATING_STAGE_TRUST[stage] *

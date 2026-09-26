@@ -1,6 +1,5 @@
 import {
   TASTE_PROFILE_SOURCES,
-  learnFromPurchase,
   learnFromRating,
   type BagRating,
   type CoffeeBag,
@@ -10,6 +9,7 @@ import type { CoffeeTasteReadingRepository } from '../ai/coffeeTasteEstimate/cof
 import type { TasteProfileService } from '../tasteProfiles/tasteProfileService.js';
 
 import { estimateBagTaste } from './estimateBagTaste.js';
+import { readPurchaseEvidence } from './readPurchaseEvidence.js';
 
 const REF_SEPARATOR = ':';
 
@@ -40,7 +40,7 @@ export const createBagTasteLearner = ({
   readings,
 }: BagTasteLearnerDependencies): BagTasteLearner => ({
   recordPurchase: async (userId, bag): Promise<void> => {
-    const payload = learnFromPurchase(await estimateBagTaste(bag, readings), bag.id);
+    const payload = await readPurchaseEvidence(bag, readings);
 
     if (payload === null) {
       return;
@@ -57,6 +57,7 @@ export const createBagTasteLearner = ({
   recordRating: async (userId, bag, rating): Promise<void> => {
     const payload = learnFromRating({
       coffee: await estimateBagTaste(bag, readings),
+      tastingNotes: bag.tastingNotes,
       bagId: bag.id,
       stage: rating.stage,
       stars: rating.stars,

@@ -219,6 +219,20 @@ The order for a schema change is unchanged: edit `server/src/db/schema/`, run
 the release step apply it. Never hand-edit a migration that has already run
 anywhere.
 
+### One backfill, once
+
+```bash
+node server/dist/db/backfill/backfillPurchasesCli.js
+```
+
+Run once after the migration that shipped purchase learning (`0009`). A bag
+written into a cupboard before that release has no purchase event, so the taste
+profile never heard that somebody chose it; this records one per bag, dated to
+the day the bag was written down, and folds every profile it touched once.
+Idempotent - a second run reads the bags without a purchase, finds none it can
+learn from, and records nothing - so it is safe to leave in a pre-deploy
+command, but it walks every such bag each time, and there is no reason to.
+
 ## In front of the process
 
 - **TLS is the platform's.** iOS App Transport Security refuses plain HTTP, so

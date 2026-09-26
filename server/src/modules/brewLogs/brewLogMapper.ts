@@ -14,5 +14,6 @@ export const toBrewLog = (row: BrewLogRow): BrewLog => ({
   waterType: row.waterType,
   durationSeconds: row.durationSeconds,
   profileLearningWeight: row.profileLearningWeight,
+  cupReading: row.cupReading ?? null,
   createdAt: row.createdAt.toISOString(),
 });

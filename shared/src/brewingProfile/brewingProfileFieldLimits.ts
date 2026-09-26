@@ -1,3 +1,8 @@
+import {
+  TASTE_STEP_FRACTION,
+  WINDOW_HALF_WIDTH_FRACTION,
+} from '../grindGuidance/grindGuidanceFieldLimits.js';
+
 /**
  * Every number the brewing profile leans on, written down once.
  *
@@ -40,6 +45,41 @@ export const GRIND_HABIT_MIN_COFFEES = 2;
 export const SUPERSEDED_CUP_WEIGHT = 0.3;
 
 /**
+ * How far a cup somebody called sour or bitter is moved, in the grind, to
+ * where they would have wanted it - as a fraction of the window's half-width.
+ *
+ * One tasteable adjustment: the same move the guidance would advise after a
+ * cup like that, so the lesson learned from a complaint and the advice given
+ * in answer to it are the same size. Derived from the guidance's own constants
+ * rather than written twice.
+ */
+export const READING_GRIND_CORRECTION = TASTE_STEP_FRACTION / WINDOW_HALF_WIDTH_FRACTION;
+
+/** The same complaint read as a temperature, in degrees - a step anybody can taste. */
+export const READING_TEMPERATURE_CORRECTION = 2;
+
+/**
+ * How far a cup called watery or heavy moves its ratio, as a share of the
+ * ratio itself.
+ *
+ * A share rather than a number of parts, because a part of water is a nudge in
+ * a 1:16 dripper and a different drink in a 1:2 espresso. About one part of a
+ * filter ratio, about a tenth of an espresso one.
+ */
+export const READING_RATIO_CORRECTION = 0.06;
+
+/**
+ * What a cup somebody said was right counts for, against one nobody commented
+ * on.
+ *
+ * "Presne takto" is the best evidence there is about where somebody wants to
+ * be: every other cup is a number that happened, this one is a number that
+ * was approved. Only for the figures the remark was about - a cup called
+ * perfectly strong has said nothing about its grind.
+ */
+export const CONFIRMED_CUP_WEIGHT = 2;
+
+/**
  * The smallest grind habit worth reporting, as a fraction of the window's
  * half-width.
  *
@@ -64,3 +104,6 @@ export const HABIT_SHIFT_DECIMALS = 2;
 
 /** How many methods a profile may describe - far more than anybody owns. */
 export const BREWING_PROFILE_METHODS_MAX = 100;
+
+/** How many grinder-and-family habits it may describe - likewise. */
+export const BREWING_PROFILE_GRIND_HABITS_MAX = 100;
