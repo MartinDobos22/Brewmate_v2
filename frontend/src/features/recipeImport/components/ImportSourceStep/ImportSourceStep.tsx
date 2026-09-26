@@ -33,6 +33,7 @@ export const ImportSourceStep = ({ recipeImport }: ImportSourceStepProps): JSX.E
         label={t(TRANSLATION_KEYS.importSourcePasteLabel)}
         value={source.text}
         placeholder={t(TRANSLATION_KEYS.importSourcePastePlaceholder)}
+        multiline
         onChangeText={source.write}
         disabled={source.isReading}
       />
@@ -48,17 +49,15 @@ export const ImportSourceStep = ({ recipeImport }: ImportSourceStepProps): JSX.E
       ) : null}
       <View style={styles.actions}>
         {source.camera.isSupported ? (
-          <View style={styles.photoRow}>
-            <PillButton
-              tone="surface"
-              label={t(TRANSLATION_KEYS.importSourcePhoto)}
-              fullWidth
-              disabled={source.isReading}
-              onPress={(): void => {
-                source.addPhoto(BAG_PHOTO_SOURCES.library);
-              }}
-            />
-          </View>
+          <PillButton
+            tone="surface"
+            label={t(TRANSLATION_KEYS.importSourcePhoto)}
+            fullWidth
+            disabled={source.isReading}
+            onPress={(): void => {
+              source.addPhoto(BAG_PHOTO_SOURCES.library);
+            }}
+          />
         ) : null}
         <PillButton
           tone="espresso"

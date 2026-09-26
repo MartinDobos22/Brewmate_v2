@@ -56,14 +56,24 @@ export const fieldSurface = (
   backgroundColor: theme.colors[INPUT_FILLS[ground]],
 });
 
-/** That surface at the one height every text field in the app shares. */
+/**
+ * That surface at the one height every text field in the app shares.
+ *
+ * A multiline box takes the same height as a floor rather than as a fixed
+ * height, so it starts where every other field starts and grows with what is
+ * typed into it. Fixed, it sliced the second line of its own placeholder in
+ * half on the one screen that is handed a pasted paragraph.
+ */
 export const inputBox = (
   theme: Theme,
   ground: InputGround,
   ring: keyof ColorPalette | null,
+  multiline = false,
 ): ViewStyle => ({
   ...fieldSurface(theme, ground, ring),
-  height: theme.size.inputHeight,
+  ...(multiline
+    ? { minHeight: theme.size.inputHeight, paddingVertical: theme.spacing.md }
+    : { height: theme.size.inputHeight }),
   opacity: theme.opacity.full,
 });
 
@@ -74,9 +84,10 @@ export const inputDisabled = (theme: Theme): ViewStyle => ({ opacity: theme.opac
  * The value, whose colour is the one thing about the text that follows the
  * ground rather than the type scale.
  */
-export const inputText = (theme: Theme, ground: InputGround): TextStyle => ({
+export const inputText = (theme: Theme, ground: InputGround, multiline = false): TextStyle => ({
   flex: 1,
   minWidth: 0,
+  ...(multiline ? { textAlignVertical: 'top' } : {}),
   ...theme.typography.bodyAnswer,
   color: theme.colors[INPUT_TEXT_COLORS[ground]],
   /**

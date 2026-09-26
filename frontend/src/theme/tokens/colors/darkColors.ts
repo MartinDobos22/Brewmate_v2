@@ -10,10 +10,10 @@ export const DARK_COLORS: ColorPalette = {
   onPrimary: '#3B2415',
   primaryContainer: '#4E3220',
   onPrimaryContainer: '#F0DECC',
-  secondary: '#B6C79A',
+  secondary: '#9DC4AE',
   onSecondary: '#253216',
-  secondaryContainer: '#36402F',
-  onSecondaryContainer: '#D6E2C4',
+  secondaryContainer: '#2B3A33',
+  onSecondaryContainer: '#C6DCD0',
   tertiary: '#DDB27A',
   onTertiary: '#3F2A10',
   tertiaryContainer: '#5A3F1C',
@@ -42,15 +42,20 @@ export const DARK_COLORS: ColorPalette = {
    * invented tint: the redesign re-tinted the light containers for a reason it
    * stated, and there is no equivalent decision on dark to copy.
    *
-   * The green fill is greyer and a shade warmer than the obvious dark-scheme
-   * olive. At full chroma it is the one colour in this palette that belongs to
-   * no other part of it, and on a ground this warm it reads as a foreign
-   * object rather than as the app's own "fresh". It is still plainly green,
-   * which is all it has to be: it only ever means ready, ideal or confirmed.
+   * The green is a pine rather than an olive, and that is the whole of the
+   * decision. Warm and yellow-heavy, it sat a few degrees of hue from the
+   * brown it is printed on and read as that brown gone wrong - muddy rather
+   * than green. Moved the other way, away from the ground instead of towards
+   * it, it stops competing with the palette and starts reading as what it
+   * means: ready, ideal, confirmed.
+   *
+   * Only the dark scheme moves. The light one's `#DFE6D2` is the handoff's
+   * own hint card, measured against a warm white rather than against a warm
+   * brown, and it has never had this problem.
    */
-  freshContainer: '#36402F',
-  onFreshContainer: '#D6E2C4',
-  onFresh: '#B6C79A',
+  freshContainer: '#2B3A33',
+  onFreshContainer: '#C6DCD0',
+  onFresh: '#9DC4AE',
   cautionContainer: '#5A3F1C',
   onCaution: '#DDB27A',
   roastMid: '#A88A6E',

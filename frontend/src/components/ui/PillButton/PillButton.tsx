@@ -91,8 +91,12 @@ export const PillButton = ({
    * washes out with it, and the one thing the screen most wants pressed
    * becomes the hardest thing on it to read.
    *
-   * Pending keeps its own tone: a spinner is running on it, the button is
-   * still the button, and it is about to come back.
+   * Pending keeps its own tone and its own fill. It used to drop to 38% as
+   * well, which on the foot bar's espresso pill read as a button whose
+   * background had fallen off mid-request - and the spinner turning on it
+   * beside a label that says "Píšem recept..." is already the whole signal.
+   * Dimming it on top of that says "broken" where the two together say
+   * "working".
    */
   const shown = disabled && !isPending ? DISABLED_PILL_TONE : tone;
   const iconColor = theme.colors[PILL_ICON_COLORS[shown]];
@@ -105,7 +109,6 @@ export const PillButton = ({
     grows && styles.grows,
     fullWidth && styles.fullWidth,
     pressed && !isBlocked && styles.pressed,
-    isPending && styles.pending,
   ];
 
   return (

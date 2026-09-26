@@ -62,6 +62,16 @@ export interface InputProps {
   /** Lets the platform offer the right saved value - an e-mail, a password. */
   readonly autoComplete?: TextInputProps['autoComplete'];
   readonly textContentType?: TextInputProps['textContentType'];
+  /**
+   * A box for a paragraph rather than for a value.
+   *
+   * One field in this app is handed a whole recipe pasted out of a video
+   * description, and at the single height every other field shares it showed
+   * two lines of its own placeholder with the second one sliced in half. A
+   * pasted recipe is several lines by definition, so the box grows from that
+   * shared height instead of being fixed at it.
+   */
+  readonly multiline?: boolean;
 }
 
 /** Every text field in the app, on either of the two grounds it can stand on. */
@@ -81,6 +91,7 @@ export const Input = ({
   autoCapitalize,
   autoComplete,
   textContentType,
+  multiline = false,
 }: InputProps): JSX.Element => {
   const styles = useThemedStyles(createInputStyles);
   const theme = useTheme();
@@ -104,9 +115,10 @@ export const Input = ({
           {label}
         </Text>
       </View>
-      <View style={[inputBox(theme, ground, ring), disabled && inputDisabled(theme)]}>
+      <View style={[inputBox(theme, ground, ring, multiline), disabled && inputDisabled(theme)]}>
         <TextInput
-          style={inputText(theme, ground)}
+          style={inputText(theme, ground, multiline)}
+          multiline={multiline}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
