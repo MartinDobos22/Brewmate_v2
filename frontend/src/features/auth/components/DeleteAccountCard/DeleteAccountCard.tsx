@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { Card, Text } from '../../../../components/ui';
+import { Card, SectionHeading } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { DeleteAccountButton } from '../DeleteAccountButton';
 
@@ -19,10 +19,11 @@ export const DeleteAccountCard = (): JSX.Element => {
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.authDeleteAccountTitle)}</Text>
-      <Text variant="bodySmall" tone="muted">
-        {t(TRANSLATION_KEYS.authDeleteAccountBody)}
-      </Text>
+      <SectionHeading
+        title={t(TRANSLATION_KEYS.authDeleteAccountTitle)}
+        caption={t(TRANSLATION_KEYS.authDeleteAccountBody)}
+        placement="card"
+      />
       <DeleteAccountButton />
     </Card>
   );

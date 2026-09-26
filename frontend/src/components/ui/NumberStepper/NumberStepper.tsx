@@ -58,7 +58,7 @@ export const NumberStepper = ({
 
   return (
     <View style={styles.wrapper}>
-      <Text variant="labelMedium" tone="muted">
+      <Text variant="eyebrow" tone="muted">
         {label}
       </Text>
       <View style={styles.row}>
@@ -69,7 +69,7 @@ export const NumberStepper = ({
           accessibilityRole="button"
           accessibilityLabel={decreaseLabel}
         >
-          <Text variant="titleLarge">{STEPPER_SYMBOLS.decrease}</Text>
+          <Text variant="itemTitle">{STEPPER_SYMBOLS.decrease}</Text>
         </Pressable>
         <View style={styles.value}>
           <NumberStepperValue
@@ -86,7 +86,7 @@ export const NumberStepper = ({
           accessibilityRole="button"
           accessibilityLabel={increaseLabel}
         >
-          <Text variant="titleLarge">{STEPPER_SYMBOLS.increase}</Text>
+          <Text variant="itemTitle">{STEPPER_SYMBOLS.increase}</Text>
         </Pressable>
       </View>
     </View>

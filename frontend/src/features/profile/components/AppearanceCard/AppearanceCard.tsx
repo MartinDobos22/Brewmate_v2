@@ -10,7 +10,7 @@ export const AppearanceCard = (): JSX.Element => {
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileAppearanceTitle)}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.profileAppearanceTitle)}</Text>
       <AppearancePicker />
     </Card>
   );

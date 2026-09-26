@@ -22,6 +22,7 @@ export const ROAST_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'light',
+      icon: 'white-balance-sunny',
       labelKey: TRANSLATION_KEYS.tqRoastLight,
       noteKey: TRANSLATION_KEYS.tqRoastLightNote,
       effect: {
@@ -31,6 +32,7 @@ export const ROAST_QUESTION: TasteQuestion = {
     },
     {
       id: 'medium',
+      icon: 'scale-balance',
       labelKey: TRANSLATION_KEYS.tqRoastMedium,
       noteKey: TRANSLATION_KEYS.tqRoastMediumNote,
       effect: {
@@ -40,6 +42,7 @@ export const ROAST_QUESTION: TasteQuestion = {
     },
     {
       id: 'dark',
+      icon: 'fire',
       labelKey: TRANSLATION_KEYS.tqRoastDark,
       noteKey: TRANSLATION_KEYS.tqRoastDarkNote,
       effect: {
@@ -49,6 +52,7 @@ export const ROAST_QUESTION: TasteQuestion = {
     },
     {
       id: 'unknown',
+      icon: 'help-circle-outline',
       labelKey: TRANSLATION_KEYS.tqRoastUnknown,
       noteKey: TRANSLATION_KEYS.tqRoastUnknownNote,
       effect: {},

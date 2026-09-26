@@ -1,7 +1,7 @@
 import { EQUIPMENT_TYPES, readKettleParams } from '@brewmate/shared';
 import type { JSX } from 'react';
 
-import { Button, OptionCard, Text } from '../../../../components/ui';
+import { OptionCard, PillButton, ScreenIntro, SectionHeading } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useEquipmentToggle } from '../../../inventory/hooks';
 import { ONBOARDING_STEPS } from '../../constants/onboardingSteps';
@@ -32,11 +32,11 @@ export const GearStep = ({ flow }: GearStepProps): JSX.Element => {
 
   return (
     <OnboardingStepLayout step={ONBOARDING_STEPS.gear} flow={flow}>
-      <Text variant="headlineSmall">{t(TRANSLATION_KEYS.setupGearTitle)}</Text>
-      <Text variant="bodyMedium" tone="muted">
-        {t(TRANSLATION_KEYS.setupGearBody)}
-      </Text>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.setupGearScaleQuestion)}</Text>
+      <ScreenIntro
+        title={t(TRANSLATION_KEYS.setupGearTitle)}
+        lead={t(TRANSLATION_KEYS.setupGearBody)}
+      />
+      <SectionHeading title={t(TRANSLATION_KEYS.setupGearScaleQuestion)} />
       <OptionCard
         label={t(TRANSLATION_KEYS.setupGearScaleYes)}
         selected={scale.item !== undefined}
@@ -51,7 +51,7 @@ export const GearStep = ({ flow }: GearStepProps): JSX.Element => {
         disabled={scale.isPending}
         onPress={scale.setAbsent}
       />
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.setupGearKettleQuestion)}</Text>
+      <SectionHeading title={t(TRANSLATION_KEYS.setupGearKettleQuestion)} />
       <OptionCard
         label={t(TRANSLATION_KEYS.setupGearKettleYes)}
         selected={kettleControl?.hasTemperatureControl === true}
@@ -69,7 +69,12 @@ export const GearStep = ({ flow }: GearStepProps): JSX.Element => {
           kettle.setPresent(NO_CONTROL);
         }}
       />
-      <Button label={t(TRANSLATION_KEYS.onboardingContinue)} onPress={flow.goNext} fullWidth />
+      <PillButton
+        tone="espresso"
+        label={t(TRANSLATION_KEYS.onboardingContinue)}
+        onPress={flow.goNext}
+        fullWidth
+      />
     </OnboardingStepLayout>
   );
 };

@@ -7,6 +7,7 @@ import { Text } from '../Text';
 import type { TileGlyph } from '../Tile';
 
 import { createOptionCardStyles } from './OptionCard.styles';
+import { OPTION_CHOSEN_ICON } from './optionCardIcon';
 
 export interface OptionCardProps {
   readonly label: string;
@@ -28,7 +29,15 @@ export interface OptionCardProps {
   readonly trailing?: ReactNode;
 }
 
-/** A large, single-tap answer: the questionnaire, the water types, the gear. */
+/**
+ * A large, single-tap answer: the questionnaire, the water types, the gear.
+ *
+ * The chosen card draws its own mark rather than taking one through
+ * `trailing`. Being answered is what `selected` means, and a card that
+ * depended on its caller to say so would eventually be used somewhere that
+ * forgot - on the one screen in the app where the only thing a person does is
+ * choose.
+ */
 export const OptionCard = ({
   label,
   note,
@@ -62,20 +71,29 @@ export const OptionCard = ({
           <View style={[styles.badge, selected && styles.badgeSelected]}>
             <MaterialCommunityIcons
               name={icon}
-              size={theme.size.iconMedium}
-              color={selected ? theme.colors.secondary : theme.colors.onSurfaceVariant}
+              size={theme.size.iconLarge}
+              color={selected ? theme.colors.accentOnEspresso : theme.colors.onSurfaceVariant}
             />
           </View>
         )}
         <View style={styles.content}>
-          <Text variant="titleMedium">{label}</Text>
+          <Text variant="cardTitle" tone={selected ? 'onEspresso' : 'default'}>
+            {label}
+          </Text>
           {note === undefined ? null : (
-            <Text variant="bodySmall" tone="muted">
+            <Text variant="caption" tone={selected ? 'onEspressoMuted' : 'muted'}>
               {note}
             </Text>
           )}
         </View>
         {trailing === undefined ? null : <View style={styles.trailing}>{trailing}</View>}
+        {selected ? (
+          <MaterialCommunityIcons
+            name={OPTION_CHOSEN_ICON}
+            size={theme.size.iconLarge}
+            color={theme.colors.onEspressoPositive}
+          />
+        ) : null}
       </View>
     </Pressable>
   );

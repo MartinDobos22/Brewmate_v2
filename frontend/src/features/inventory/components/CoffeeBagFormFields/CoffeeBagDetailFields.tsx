@@ -40,7 +40,7 @@ export const CoffeeBagDetailFields = ({
 
   return (
     <View style={styles.wrapper}>
-      <Text variant="labelMedium" tone="muted">
+      <Text variant="eyebrow" tone="muted">
         {t(TRANSLATION_KEYS.scanDetailTitle)}
       </Text>
       <BagTextField

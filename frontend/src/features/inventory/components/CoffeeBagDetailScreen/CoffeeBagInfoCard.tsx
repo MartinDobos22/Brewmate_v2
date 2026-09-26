@@ -8,9 +8,9 @@ import { formatGrams } from '../../../../lib/formatters';
 import { useThemedStyles } from '../../../../theme';
 
 import { createCoffeeBagDetailStyles } from './CoffeeBagDetailScreen.styles';
+import { InfoChips } from './InfoChips';
 import { InfoRow } from './InfoRow';
 
-const NOTES_SEPARATOR = ', ';
 const NOTHING = 0;
 const EMPTY = '';
 
@@ -29,6 +29,12 @@ const isRecorded = (value: string | null): boolean => value !== null && value.tr
  * card with no rows in it says so in a sentence rather than appearing as an
  * empty frame.
  *
+ * The three figures are set in the numeral face and the tasting notes are
+ * chips, because that is how this app draws a figure and a list of a
+ * roaster's own words everywhere else it draws them. A label card that
+ * printed an altitude as prose and three notes joined by commas would be the
+ * one screen disagreeing with the cupboard's card about what it is looking at.
+ *
  * Reference data, so it sits below the state and the actions: this is what
  * somebody reads once when the bag arrives, not what they came back for.
  */
@@ -38,24 +44,24 @@ export const CoffeeBagInfoCard = ({ bag }: CoffeeBagInfoCardProps): JSX.Element 
 
   const altitude = bag.altitude === null ? null : String(bag.altitude);
   const weight = bag.weightGrams === null ? null : formatGrams(bag.weightGrams);
-  const notes = bag.tastingNotes.length === NOTHING ? null : bag.tastingNotes.join(NOTES_SEPARATOR);
-  const hasAnything = [
-    bag.roaster,
-    bag.originCountry,
-    bag.region,
-    bag.farm,
-    bag.variety,
-    bag.process,
-    bag.roastDate,
-    altitude,
-    weight,
-    notes,
-  ].some(isRecorded);
+  const hasAnything =
+    bag.tastingNotes.length !== NOTHING ||
+    [
+      bag.roaster,
+      bag.originCountry,
+      bag.region,
+      bag.farm,
+      bag.variety,
+      bag.process,
+      bag.roastDate,
+      altitude,
+      weight,
+    ].some(isRecorded);
 
   if (!hasAnything) {
     return (
       <Card>
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.bagDetailLabelEmpty)}
         </Text>
       </Card>
@@ -71,10 +77,10 @@ export const CoffeeBagInfoCard = ({ bag }: CoffeeBagInfoCardProps): JSX.Element 
         <InfoRow label={t(TRANSLATION_KEYS.scanFarmLabel)} value={bag.farm} />
         <InfoRow label={t(TRANSLATION_KEYS.scanVarietyLabel)} value={bag.variety} />
         <InfoRow label={t(TRANSLATION_KEYS.scanProcessLabel)} value={bag.process} />
-        <InfoRow label={t(TRANSLATION_KEYS.scanRoastDateLabel)} value={bag.roastDate} />
-        <InfoRow label={t(TRANSLATION_KEYS.scanAltitudeLabel)} value={altitude} />
-        <InfoRow label={t(TRANSLATION_KEYS.scanWeightLabel)} value={weight} />
-        <InfoRow label={t(TRANSLATION_KEYS.scanNotesLabel)} value={notes} />
+        <InfoRow label={t(TRANSLATION_KEYS.scanRoastDateLabel)} value={bag.roastDate} numeric />
+        <InfoRow label={t(TRANSLATION_KEYS.scanAltitudeLabel)} value={altitude} numeric />
+        <InfoRow label={t(TRANSLATION_KEYS.scanWeightLabel)} value={weight} numeric />
+        <InfoChips label={t(TRANSLATION_KEYS.scanNotesLabel)} values={bag.tastingNotes} />
       </View>
     </Card>
   );

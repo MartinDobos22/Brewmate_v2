@@ -46,10 +46,16 @@ export const createTileStyles = (theme: Theme): TileStyleMap =>
     },
     primary: { backgroundColor: theme.colors.primaryContainer },
     accent: { backgroundColor: theme.colors.secondaryContainer },
+    /**
+     * A tile is a card that has been given a shape, and cards here carry no
+     * border - so the one tone that is not painted is separated from the
+     * screen by depth like every other card, rather than by the hairline the
+     * rest of the app has stopped drawing.
+     */
     neutral: {
       backgroundColor: theme.colors.surface,
-      borderWidth: theme.borderWidth.thin,
-      borderColor: theme.colors.outlineVariant,
+      shadowColor: theme.colors.espresso,
+      ...theme.elevation.card,
     },
     pressed: { opacity: theme.opacity.pressed },
 

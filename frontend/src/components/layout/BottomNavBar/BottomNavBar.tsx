@@ -62,7 +62,7 @@ export const BottomNavBar = (): JSX.Element => {
           }}
         >
           <TabBarIcon name={TAB_ICONS[segment]} color={theme.colors.onSurfaceVariant} />
-          <Text variant="labelSmall" tone="muted">
+          <Text variant="captionSmall" tone="muted">
             {t(TAB_LABEL_KEYS[segment])}
           </Text>
         </Pressable>

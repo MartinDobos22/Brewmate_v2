@@ -1,12 +1,9 @@
 import type { JSX } from 'react';
 
-import { Card, QueryState, Text } from '../../../../components/ui';
-import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { QueryState } from '../../../../components/ui';
 import {
   ConfidenceBoost,
-  ConfidenceIndicator,
   FlavorAffinityChips,
-  TasteRadarChart,
   TasteReading,
 } from '../../../tasteProfile/components';
 import { useTasteProfile } from '../../../tasteProfile/hooks';
@@ -14,17 +11,22 @@ import { useTasteProfile } from '../../../tasteProfile/hooks';
 import { TastePreferenceRows } from './TastePreferenceRows';
 
 /**
- * What Brewmate believes about this person's taste, and how much of it it has
- * actually earned.
+ * What Brewmate believes about this person's taste, said in words.
  *
- * Reporting only. The two ways of correcting it are the card underneath,
- * because this one already carries four things - the chart, the two answers
- * that are a choice rather than a position, the flavours and the confidence -
- * and a card that ended in two buttons under a second heading of its own was a
- * card asking to be two cards.
+ * The web itself lives in the header, where it is the screen's headline. This
+ * is what somebody reads when the shape is not enough: one row per axis, each
+ * carrying the same mark its vertex does, and the flavours underneath.
+ *
+ * What would raise the confidence comes first and only while it is still low.
+ * A confidence figure with no way to move it is a score, and nobody asked to
+ * be scored - the design's own profile is past that point, which is why the
+ * mock does not show it.
+ *
+ * Reporting only otherwise. The two ways of correcting it are the card below,
+ * because a card that ended in two buttons under a second heading of its own
+ * was a card asking to be two cards.
  */
 export const TasteProfileSection = (): JSX.Element => {
-  const { t } = useTranslation();
   const { data: profile, isPending, isError, error, refetch } = useTasteProfile();
 
   if (isPending || isError) {
@@ -41,14 +43,11 @@ export const TasteProfileSection = (): JSX.Element => {
   }
 
   return (
-    <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileTasteTitle)}</Text>
-      <TasteRadarChart axes={profile} axisConfidence={profile.axisConfidence} />
+    <>
+      <ConfidenceBoost profile={profile} />
       <TasteReading axes={profile} axisConfidence={profile.axisConfidence} />
       <TastePreferenceRows profile={profile} />
       <FlavorAffinityChips affinities={profile.flavorAffinities} />
-      <ConfidenceIndicator profile={profile} />
-      <ConfidenceBoost profile={profile} />
-    </Card>
+    </>
   );
 };

@@ -32,8 +32,28 @@ export const BREW_METHOD_CATEGORY_LABEL_KEYS: Record<BrewMethodCategory, Transla
   [BREW_METHOD_CATEGORIES.batch]: TRANSLATION_KEYS.preBrewMethodCategoryBatch,
 };
 
-/** The glyph beside a coffee, and beside the answer that there is not one. */
+/**
+ * The glyphs on the row that reports which coffee is being brewed.
+ *
+ * A bean rather than a bag for the coffee itself: the row is about what is
+ * being brewed, not about the packet it came in - and the packet is what marks
+ * the case where there is no coffee written down at all.
+ */
 export const PRE_BREW_COFFEE_ICONS = {
-  bag: 'package-variant-closed',
-  unknown: 'help-circle-outline',
+  bag: 'seed-outline',
+  unknown: 'package-variant-closed',
+  remaining: 'scale-bathroom',
+  change: 'swap-horizontal',
+  photo: 'camera',
 } as const satisfies Record<string, TileGlyph>;
+
+/**
+ * An account with no brewer written down, which is what the quick-brew flow
+ * hits before onboarding has been through.
+ *
+ * The same glyph the brewers step of onboarding carries, because that is
+ * exactly where this screen's one action goes. A different picture for the
+ * same piece of equipment would make the destination look like a third thing
+ * to do rather than the answer to the sentence above it.
+ */
+export const EMPTY_BREW_METHODS_ICON = 'filter-outline' satisfies TileGlyph;

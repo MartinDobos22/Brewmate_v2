@@ -19,6 +19,7 @@ export const AROMA_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'citrus',
+      icon: 'fruit-citrus',
       labelKey: TRANSLATION_KEYS.tqAromaCitrus,
       effect: {
         axes: { acidity: 8 },
@@ -31,6 +32,7 @@ export const AROMA_QUESTION: TasteQuestion = {
     },
     {
       id: 'nutty',
+      icon: 'peanut-outline',
       labelKey: TRANSLATION_KEYS.tqAromaNutty,
       effect: {
         axes: { acidity: 4, sweetness: 7 },
@@ -39,6 +41,7 @@ export const AROMA_QUESTION: TasteQuestion = {
     },
     {
       id: 'floral',
+      icon: 'flower-outline',
       labelKey: TRANSLATION_KEYS.tqAromaFloral,
       effect: {
         axes: { acidity: 7, body: 4 },
@@ -51,6 +54,7 @@ export const AROMA_QUESTION: TasteQuestion = {
     },
     {
       id: 'cocoa',
+      icon: 'candy-outline',
       labelKey: TRANSLATION_KEYS.tqAromaCocoa,
       effect: {
         axes: { body: 7, bitterness: 6 },

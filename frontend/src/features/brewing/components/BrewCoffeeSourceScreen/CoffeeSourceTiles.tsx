@@ -2,7 +2,7 @@ import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { TileRow } from '../../../../components/layout';
-import { Button, Text, Tile } from '../../../../components/ui';
+import { PillButton, Text, Tile } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { COFFEE_SOURCE_ICONS } from '../../constants';
@@ -60,12 +60,12 @@ export const CoffeeSourceTiles = ({
           onPress={onInventory}
         />
       </TileRow>
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {t(TRANSLATION_KEYS.preBrewSourceUnrecordedHint)}
       </Text>
-      <Button
+      <PillButton
+        tone="surface"
         label={t(TRANSLATION_KEYS.preBrewCoffeeNone)}
-        variant="tertiary"
         fullWidth
         onPress={onUnrecorded}
       />

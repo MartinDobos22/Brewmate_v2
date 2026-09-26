@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, Text } from '../../../../components/ui';
+import { Card, PillButton, SectionHeading, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import type { RecipeImport } from '../../hooks';
@@ -32,34 +32,36 @@ export const ImportReviewStep = ({ recipeImport }: ImportReviewStepProps): JSX.E
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.importReviewTitle)}</Text>
-      <Text variant="bodySmall" tone="muted">
-        {t(TRANSLATION_KEYS.importReviewIntro)}
-      </Text>
+      <SectionHeading
+        title={t(TRANSLATION_KEYS.importReviewTitle)}
+        caption={t(TRANSLATION_KEYS.importReviewIntro)}
+        placement="card"
+      />
       <ImportReviewFields
         values={recipeImport.form}
         disabled={recipeImport.isConverting}
         onChange={recipeImport.edit}
       />
       {recipeImport.parsed.grinderId === null ? (
-        <Text variant="bodySmall" tone="tertiary">
+        <Text variant="captionSmall" tone="tertiary">
           {t(TRANSLATION_KEYS.importReviewGrinderUnknown)}
         </Text>
       ) : null}
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {stepCount === NOTHING
           ? t(TRANSLATION_KEYS.importReviewNoSteps)
           : t(TRANSLATION_KEYS.importReviewSteps, { count: stepCount })}
       </Text>
       <View style={styles.actions}>
-        <Button
+        <PillButton
+          tone="espresso"
           label={t(TRANSLATION_KEYS.actionContinue)}
           fullWidth
           onPress={recipeImport.toTarget}
         />
-        <Button
+        <PillButton
+          tone="surface"
           label={t(TRANSLATION_KEYS.actionBack)}
-          variant="tertiary"
           fullWidth
           onPress={recipeImport.back}
         />

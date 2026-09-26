@@ -2,7 +2,7 @@ import { COFFEE_ESTIMATE_SOURCES, type CoffeeTasteEstimate } from '@brewmate/sha
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Card, Text } from '../../../../components/ui';
+import { Card, Chip, SectionHeading, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { TasteRadarChart, TasteReading } from '../../../tasteProfile/components';
@@ -45,31 +45,28 @@ export const CoffeeTasteCard = ({
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.coffeeTasteTitle)}</Text>
-      {known ? null : (
-        <Text variant="bodyMedium" tone="muted">
-          {t(TRANSLATION_KEYS.coffeeTasteUnknown)}
-        </Text>
-      )}
+      <SectionHeading
+        title={t(TRANSLATION_KEYS.coffeeTasteTitle)}
+        caption={known ? undefined : t(TRANSLATION_KEYS.coffeeTasteUnknown)}
+        placement="card"
+      />
       {known ? (
         <>
-          {summary === null ? null : <Text variant="bodyLarge">{summary}</Text>}
+          {summary === null ? null : <Text variant="bodyAnswer">{summary}</Text>}
           <TasteRadarChart axes={estimate.axes} axisConfidence={estimate.axisConfidence} />
           <TasteReading axes={estimate.axes} axisConfidence={estimate.axisConfidence} />
           {flavourNotes.length === 0 ? null : (
             <View style={styles.notes}>
+              {/*
+                Printed as they were written, the way a coffee's variety is:
+                these are the flavours somebody will actually meet, in the
+                model's own Slovak, and the vocabulary belongs to the world
+                rather than to a translation file. As pills rather than a
+                private copy of one - a note is a fact about this coffee and
+                there is nothing here to choose.
+              */}
               {flavourNotes.map((note: string): JSX.Element => (
-                /**
-                 * Printed as they were written, the way a coffee's variety is:
-                 * these are the flavours somebody will actually meet, in the
-                 * model's own Slovak, and the vocabulary belongs to the world
-                 * rather than to a translation file.
-                 */
-                <View key={note} style={styles.note}>
-                  <Text variant="labelMedium" tone="secondary">
-                    {note}
-                  </Text>
-                </View>
+                <Chip key={note} label={note} size="small" />
               ))}
             </View>
           )}
@@ -77,7 +74,7 @@ export const CoffeeTasteCard = ({
       ) : null}
       <CoffeeTasteEvidence signals={estimate.signals} isRefining={isRefining} />
       {estimate.source === COFFEE_ESTIMATE_SOURCES.label && !isRefining ? (
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.coffeeTasteFromLabelOnly)}
         </Text>
       ) : null}

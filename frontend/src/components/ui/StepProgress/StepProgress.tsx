@@ -14,6 +14,15 @@ export interface StepProgressProps {
   /** Counting from one. Zero draws nothing - the flow is over. */
   readonly current: number;
   readonly total: number;
+  /**
+   * Whether the bar prints its own "krok 2 z 7" above itself.
+   *
+   * Off where the screen already carries the count on a line of its own -
+   * onboarding puts it beside the name of the step, which is the row somebody
+   * reads anyway. Two counts one above the other is the same answer given
+   * twice.
+   */
+  readonly showCount?: boolean;
 }
 
 /**
@@ -27,7 +36,11 @@ export interface StepProgressProps {
  * It draws nothing at zero: a flow that has finished is showing what happened,
  * not a step left to get through.
  */
-export const StepProgress = ({ current, total }: StepProgressProps): JSX.Element | null => {
+export const StepProgress = ({
+  current,
+  total,
+  showCount = true,
+}: StepProgressProps): JSX.Element | null => {
   const styles = useThemedStyles(createStepProgressStyles);
   const { t } = useTranslation();
 
@@ -37,9 +50,11 @@ export const StepProgress = ({ current, total }: StepProgressProps): JSX.Element
 
   return (
     <View style={styles.wrapper}>
-      <Text variant="labelSmall" tone="muted">
-        {t(TRANSLATION_KEYS.stepCount, { current, total })}
-      </Text>
+      {showCount ? (
+        <Text variant="captionSmall" tone="muted">
+          {t(TRANSLATION_KEYS.stepCount, { current, total })}
+        </Text>
+      ) : null}
       <View
         style={styles.track}
         accessibilityRole="progressbar"

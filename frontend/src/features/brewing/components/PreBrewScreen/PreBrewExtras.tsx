@@ -3,11 +3,11 @@ import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button } from '../../../../components/ui';
+import { PillButton } from '../../../../components/ui';
 import { ROUTES, buildDialInRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
-import type { BrewSetup } from '../../hooks/useBrewSetup';
+import type { BrewSetup } from '../../hooks/brewSetup';
 
 import { createPreBrewScreenStyles } from './PreBrewScreen.styles';
 
@@ -37,11 +37,11 @@ export const PreBrewExtras = ({ setup }: PreBrewExtrasProps): JSX.Element => {
   return (
     <View style={styles.extras}>
       {isEspresso ? (
-        <Button
+        <PillButton
+          tone="surface"
           label={t(TRANSLATION_KEYS.preBrewStartDialIn)}
-          variant="secondary"
           fullWidth
-          loading={setup.isPending}
+          isPending={setup.isPending}
           disabled={setup.isPending}
           onPress={(): void => {
             setup.askForRecipe((recipe: Recipe): void => {
@@ -50,9 +50,9 @@ export const PreBrewExtras = ({ setup }: PreBrewExtrasProps): JSX.Element => {
           }}
         />
       ) : null}
-      <Button
+      <PillButton
+        tone="surface"
         label={t(TRANSLATION_KEYS.preBrewImportRecipe)}
-        variant="tertiary"
         fullWidth
         onPress={(): void => {
           router.push(ROUTES.importRecipe);

@@ -1,7 +1,16 @@
 import { useState, type JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, ChatBubble, Input, Text, CHAT_AUTHORS } from '../../../../components/ui';
+import {
+  CHAT_AUTHORS,
+  ChatBubble,
+  Chip,
+  InfoNote,
+  Input,
+  PillButton,
+  SectionHeading,
+  Text,
+} from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import type { CalibrationBrew } from '../../hooks/useCalibrationBrew';
@@ -32,10 +41,11 @@ export const CalibrationChat = ({ calibration }: CalibrationChatProps): JSX.Elem
 
   return (
     <View style={styles.wrapper}>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.calibrationChatTitle)}</Text>
-      <Text variant="bodyMedium" tone="muted">
-        {t(TRANSLATION_KEYS.calibrationChatBody)}
-      </Text>
+      <SectionHeading
+        title={t(TRANSLATION_KEYS.calibrationChatTitle)}
+        caption={t(TRANSLATION_KEYS.calibrationChatBody)}
+        placement="card"
+      />
       {description.trim() === EMPTY ? null : (
         <ChatBubble message={description} author={CHAT_AUTHORS.user} />
       )}
@@ -47,34 +57,31 @@ export const CalibrationChat = ({ calibration }: CalibrationChatProps): JSX.Elem
         disabled={calibration.isPending}
         onChangeText={setDescription}
       />
-      <Button
+      <PillButton
+        tone="espresso"
         label={t(TRANSLATION_KEYS.calibrationChatSend)}
         onPress={(): void => {
           calibration.describe(description);
         }}
         disabled={description.trim() === EMPTY}
-        loading={calibration.isPending}
+        isPending={calibration.isPending}
         fullWidth
       />
       {calibration.notUnderstood ? (
-        <Text variant="bodyMedium" tone="tertiary">
-          {t(TRANSLATION_KEYS.calibrationNotUnderstood)}
-        </Text>
+        <InfoNote tone="caution" text={t(TRANSLATION_KEYS.calibrationNotUnderstood)} />
       ) : null}
       {hasReadings ? (
         <View style={styles.readings}>
-          <Text variant="labelMedium" tone="muted">
-            {t(TRANSLATION_KEYS.calibrationUnderstoodTitle)}
-          </Text>
-          {calibration.readings.map((reading: CalibrationReading): JSX.Element => (
-            <Text key={reading.id} variant="bodyMedium">
-              {t(reading.labelKey)}
-            </Text>
-          ))}
+          <SectionHeading title={t(TRANSLATION_KEYS.calibrationUnderstoodTitle)} placement="card" />
+          <View style={styles.chips}>
+            {calibration.readings.map((reading: CalibrationReading): JSX.Element => (
+              <Chip key={reading.id} label={t(reading.labelKey)} />
+            ))}
+          </View>
         </View>
       ) : null}
       {calibration.hasFailed ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(TRANSLATION_KEYS.calibrationSaveError)}
         </Text>
       ) : null}

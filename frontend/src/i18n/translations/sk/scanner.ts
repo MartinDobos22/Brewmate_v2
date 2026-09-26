@@ -16,14 +16,33 @@ export const SK_SCANNER = {
   scanModeInventoryTitle: 'Túto kávu už mám',
   scanModeInventoryBody: 'Zapíšem ti ju do inventára aj s tým, čo je na balíčku.',
 
+  /*
+   * What the block at the top says once the scan has started.
+   *
+   * It stops introducing the scanner and starts naming the step, because by
+   * then somebody knows what they opened - and a block repeating "poradím ti v
+   * obchode" over a camera would be the app talking about itself instead of
+   * about the bag in the other hand.
+   */
+  scanCaptureTitle: 'Ukáž mi ten balíček',
+  scanCaptureBody: 'Z etikety si prečítam, čo sa dá. Zvyšok doplníš ty - alebo necháš prázdne.',
+
   scanPhotoTitle: 'Odfoť balíček',
   scanPhotoBody:
     'Prečítam z etikety, čo sa dá. Čo neprečítam, nechám prázdne - nikdy si nič nevymyslím.',
   scanPhotoTake: 'Odfotiť',
-  scanPhotoTakeCaption: 'Etiketu prepíšem za teba.',
-  scanPhotoChoose: 'Vybrať z galérie',
-  scanPhotoSkip: 'Zadám to ručne',
-  scanPhotoSkipCaption: 'Keď je etiketa nečitateľná alebo nechceš fotiť.',
+  /* Printed in the window that stands in for the photograph nobody has taken. */
+  scanPhotoViewfinder: 'Etiketu prepíšem za teba',
+  /*
+   * The two ways round the camera, at the width two pills side by side leave
+   * them. The longer sentence each one used to carry is what a screen reader
+   * is given instead: "Galéria" is enough to recognise and not enough to be
+   * told.
+   */
+  scanPhotoChoose: 'Galéria',
+  scanPhotoChooseSpoken: 'Vybrať fotku z galérie',
+  scanPhotoSkip: 'Ručne',
+  scanPhotoSkipSpoken: 'Zadať údaje z balíčka ručne',
   scanPhotoReading: 'Čítam etiketu...',
 
   /*
@@ -81,6 +100,7 @@ export const SK_SCANNER = {
   scanWeightHelp: 'Podľa toho ti počítam, koľko ti kávy ostáva.',
 
   scanLabelTitle: 'Čo je na balíčku?',
+  scanLabelBody: 'Čo som prečítal, je vyplnené. Oprav, čo nesedí - nič si nevymýšľam.',
   scanNameLabel: 'Názov kávy',
   scanNamePlaceholder: 'Napríklad: Sidamo',
   scanRoasterLabel: 'Pražiareň',
@@ -133,7 +153,9 @@ export const SK_SCANNER = {
   scanOutcomeTitle: 'Kúpil si ju?',
   scanOutcomeBody: 'Podľa toho sa naučím, kedy ti moje rady sadli a kedy nie.',
   scanOutcomeBought: 'Áno, kúpil',
-  scanOutcomeSkipped: 'Nie, nechal som ju tam',
+  scanOutcomeSkipped: 'Nechal tam',
+  /** The way out of a verdict that is not an answer to it. */
+  scanAnother: 'Pozrieť ďalšiu',
   scanSavedTitle: 'Zapísané',
   scanSavedBody: 'Kávu som ti pridal do inventára aj s tým, čo o nej viem.',
   scanSkippedTitle: 'Dobre',
@@ -142,7 +164,6 @@ export const SK_SCANNER = {
   scanAddedBody: 'Kávu máš v inventári. Odteraz ti k nej viem odkladať recepty aj varenia.',
 
   scanHistoryTitle: 'Čo som ti už hodnotil',
-  scanHistoryBody: 'Aby som tú istú kávu neposudzoval dvakrát inak.',
   scanHistoryBought: 'Kúpil si ju',
   scanHistoryLeft: 'Nechal si ju tam',
   scanHistoryUndecided: 'Nepovedal si mi, ako to dopadlo',

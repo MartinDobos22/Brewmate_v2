@@ -35,14 +35,13 @@ export const BagRemainingBar = ({ bag }: BagRemainingBarProps): JSX.Element => {
   }
 
   const remaining = Math.min(bag.remainingGrams, bag.weightGrams);
-  const capacity = `${formatGrams(bag.weightGrams)} ${t(TRANSLATION_KEYS.unitGrams)}`;
 
   return (
     <View style={styles.wrapper}>
       <View style={styles.header}>
         <BagRemainingLabel bag={bag} />
-        <Text variant="labelSmall" tone="muted" numeric>
-          {capacity}
+        <Text variant="captionSmall" tone="muted" numeric>
+          {t(TRANSLATION_KEYS.inventoryBagCapacity, { grams: formatGrams(bag.weightGrams) })}
         </Text>
       </View>
       <ProgressBar

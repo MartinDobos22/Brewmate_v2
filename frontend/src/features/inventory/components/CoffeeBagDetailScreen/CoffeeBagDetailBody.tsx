@@ -4,7 +4,7 @@ import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { TileRow } from '../../../../components/layout';
-import { Button, SectionHeading, Tile } from '../../../../components/ui';
+import { PillButton, SectionHeading, Tile } from '../../../../components/ui';
 import { buildBrewRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
@@ -75,11 +75,11 @@ export const CoffeeBagDetailBody = ({ bag, recipes }: CoffeeBagDetailBodyProps):
       <CoffeeBagInfoCard bag={bag} />
 
       <View style={styles.archive}>
-        <Button
+        <PillButton
+          tone="surface"
           label={t(TRANSLATION_KEYS.inventoryBagArchive)}
-          variant="tertiary"
           size="small"
-          loading={archive.isPending}
+          isPending={archive.isPending}
           onPress={(): void => {
             archive.mutate(bag.id, {
               onSuccess: (): void => {

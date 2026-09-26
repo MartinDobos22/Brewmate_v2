@@ -1,11 +1,18 @@
 import type { JSX } from 'react';
+import { View } from 'react-native';
 
-import { Button, Card, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { useThemedStyles } from '../../../../theme';
+import { OUTCOME_ICONS, SCAN_ICONS } from '../../constants';
 import type { BagScan } from '../../hooks/useBagScan';
+
+import { createScanOutcomeStyles } from './ScanOutcomeStep.styles';
 
 export interface ScanOutcomeStepProps {
   readonly scan: BagScan;
+  /** Offered only where there is somewhere to go back to. */
+  readonly onScanAnother?: () => void;
 }
 
 /**
@@ -15,34 +22,50 @@ export interface ScanOutcomeStepProps {
  * bag also writes it into the cupboard, because somebody who just decided to
  * buy a coffee should not have to type its label in a second time.
  */
-export const ScanOutcomeStep = ({ scan }: ScanOutcomeStepProps): JSX.Element => {
+export const ScanOutcomeStep = ({ scan, onScanAnother }: ScanOutcomeStepProps): JSX.Element => {
+  const styles = useThemedStyles(createScanOutcomeStyles);
   const { t } = useTranslation();
 
   return (
-    <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.scanOutcomeTitle)}</Text>
-      <Text variant="bodySmall" tone="muted">
-        {t(TRANSLATION_KEYS.scanOutcomeBody)}
-      </Text>
-      {scan.outcome.hasFailed ? (
-        <Text variant="bodySmall" tone="error">
-          {t(TRANSLATION_KEYS.scanError)}
+    <View style={styles.wrapper}>
+      <View style={styles.words}>
+        <Text variant="sectionHeading">{t(TRANSLATION_KEYS.scanOutcomeTitle)}</Text>
+        <Text variant="bodyMuted" tone="muted">
+          {t(TRANSLATION_KEYS.scanOutcomeBody)}
         </Text>
-      ) : null}
-      <Button
-        label={t(TRANSLATION_KEYS.scanOutcomeBought)}
-        fullWidth
-        loading={scan.outcome.isPending}
-        onPress={(): void => {
-          scan.outcome.recordPurchase(scan.label, t(TRANSLATION_KEYS.inventoryUnnamedCoffee));
-        }}
-      />
-      <Button
-        label={t(TRANSLATION_KEYS.scanOutcomeSkipped)}
-        variant="tertiary"
-        fullWidth
-        onPress={scan.outcome.recordSkipped}
-      />
-    </Card>
+        {scan.outcome.hasFailed ? (
+          <Text variant="bodyMuted" tone="error">
+            {t(TRANSLATION_KEYS.scanError)}
+          </Text>
+        ) : null}
+      </View>
+      <View style={styles.buttons}>
+        <PillButton
+          tone="espresso"
+          grows
+          icon={OUTCOME_ICONS.bought}
+          label={t(TRANSLATION_KEYS.scanOutcomeBought)}
+          isPending={scan.outcome.isPending}
+          onPress={(): void => {
+            scan.outcome.recordPurchase(scan.label, t(TRANSLATION_KEYS.inventoryUnnamedCoffee));
+          }}
+        />
+        <PillButton
+          grows
+          icon={OUTCOME_ICONS.left}
+          label={t(TRANSLATION_KEYS.scanOutcomeSkipped)}
+          onPress={scan.outcome.recordSkipped}
+        />
+      </View>
+      {onScanAnother === undefined ? null : (
+        <PillButton
+          tone="surfaceLead"
+          size="small"
+          icon={SCAN_ICONS.scan}
+          label={t(TRANSLATION_KEYS.scanAnother)}
+          onPress={onScanAnother}
+        />
+      )}
+    </View>
   );
 };

@@ -4,7 +4,7 @@ import { TRANSLATION_KEYS } from '../../../i18n';
 import { MATCH_ALIGNED_KEYS, MATCH_DIRECTION_KEYS } from '../../coffeeTaste/constants';
 import { BAG_SCAN_FIELDS, OFFLINE_MATCH_REASONS } from '../constants/bagScan';
 
-import type { BagVerdictParts } from './bagVerdictTypes';
+import type { BagVerdictParts, BagVerdictPoint } from './bagVerdictTypes';
 
 const NOTHING = 0;
 
@@ -54,10 +54,18 @@ export const readAxisFit = (match: CoffeeMatch): BagVerdictParts => {
   return {
     points: match.comparable
       .slice(NOTHING, OFFLINE_MATCH_REASONS)
-      .map((axis: AxisMatch) =>
+      .map((axis: AxisMatch): BagVerdictPoint =>
         axis.direction === MATCH_DIRECTIONS.aligned
-          ? { key: MATCH_ALIGNED_KEYS[axis.axis], isAgainst: false }
-          : { key: MATCH_DIRECTION_KEYS[axis.axis][axis.direction], isAgainst: true },
+          ? {
+              key: MATCH_ALIGNED_KEYS[axis.axis],
+              field: BAG_SCAN_FIELDS.tasteProfile,
+              isAgainst: false,
+            }
+          : {
+              key: MATCH_DIRECTION_KEYS[axis.axis][axis.direction],
+              field: BAG_SCAN_FIELDS.tasteProfile,
+              isAgainst: true,
+            },
       ),
     uncertainties: [],
   };

@@ -20,16 +20,19 @@ export const MILK_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'never',
+      icon: 'cup-outline',
       labelKey: TRANSLATION_KEYS.tqMilkNever,
       effect: { axes: { body: 5, intensity: 5.5 }, milkUsage: MILK_USAGE_LEVELS.never },
     },
     {
       id: 'sometimes',
+      icon: 'cup',
       labelKey: TRANSLATION_KEYS.tqMilkSometimes,
       effect: { axes: { body: 5.5, intensity: 6 }, milkUsage: MILK_USAGE_LEVELS.sometimes },
     },
     {
       id: 'often',
+      icon: 'coffee',
       labelKey: TRANSLATION_KEYS.tqMilkOften,
       effect: {
         axes: { acidity: 4, body: 7, intensity: 7 },
@@ -38,6 +41,7 @@ export const MILK_QUESTION: TasteQuestion = {
     },
     {
       id: 'always',
+      icon: 'cow',
       labelKey: TRANSLATION_KEYS.tqMilkAlways,
       effect: {
         axes: { acidity: 3.5, sweetness: 7, body: 8, intensity: 7.5 },

@@ -2,25 +2,27 @@ import { StyleSheet, type ViewStyle } from 'react-native';
 
 import type { Theme, ViewStyles } from '../../../../theme';
 
-type BrewStepProgressStyleMap = ViewStyles<'track' | 'segment' | 'done' | 'current' | 'todo'>;
+type BrewStepProgressStyleMap = ViewStyles<'row' | 'track' | 'segment' | 'reached' | 'todo'>;
 
 /**
- * Thicker than the strip the short flows use, and unlabelled.
+ * Thin, and beside a count rather than under a heading.
  *
- * Everything on this screen is sized to be read from half a metre away by
- * somebody whose hands are wet, so it uses `brewProgressHeight` rather than
- * the ordinary progress height - and it carries no "krok 2 z 5" of its own,
- * because the panel above already says exactly that at headline size. Two
- * copies of the same count is one of them nobody reads.
+ * It used to be thick, on the argument that everything on this screen is read
+ * from half a metre away. That was right about the countdown and wrong about
+ * this: how far through the brew is gets glanced at between pours, and a heavy
+ * bar across the top competes with the one number the screen exists for.
+ *
+ * Every segment up to and including the current one is drawn the same. The
+ * step being poured is named in words directly underneath at display size, so
+ * a third colour here would be a second answer to a question already answered.
  */
 export const createBrewStepProgressStyles = (theme: Theme): BrewStepProgressStyleMap =>
   StyleSheet.create({
-    track: { flexDirection: 'row', gap: theme.spacing.xs },
-    segment: { height: theme.size.brewProgressHeight, borderRadius: theme.radius.xs },
-    done: { backgroundColor: theme.colors.outline },
-    /** The step being poured, told apart from the ones already behind it. */
-    current: { backgroundColor: theme.colors.primary },
-    todo: { backgroundColor: theme.colors.surfaceContainerHigh },
+    row: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm },
+    track: { flex: 1, flexDirection: 'row', gap: theme.spacing.sm },
+    segment: { height: theme.size.brewProgressHeight, borderRadius: theme.radius.xxs },
+    reached: { backgroundColor: theme.colors.accentOnEspresso },
+    todo: { backgroundColor: theme.colors.brewTrack },
   });
 
 export const segmentWidth = (): ViewStyle => ({ flexGrow: 1, flexBasis: 0 });

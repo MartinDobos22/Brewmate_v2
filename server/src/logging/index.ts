@@ -3,3 +3,6 @@ export type { LogLevel } from './logLevels.js';
 export { REDACT_PATHS, REDACT_PLACEHOLDER } from './redactPaths.js';
 export { LOG_MESSAGES } from './logMessages.js';
 export { createLoggerOptions } from './createLoggerOptions.js';
+export { LOG_FORMATS, DEFAULT_LOG_FORMAT } from './logFormats.js';
+export type { LogFormat } from './logFormats.js';
+export { registerRequestLogging } from './registerRequestLogging.js';

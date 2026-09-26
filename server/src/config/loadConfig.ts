@@ -42,6 +42,6 @@ export const loadConfig = (source: NodeJS.ProcessEnv = process.env): AppConfig =
     ai: resolveAiConfig(env),
     vision: resolveVisionConfig(env),
     telemetry: resolveTelemetryConfig(env),
-    logging: { level: env.LOG_LEVEL },
+    logging: { level: env.LOG_LEVEL, format: env.LOG_FORMAT },
   };
 };

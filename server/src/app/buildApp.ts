@@ -1,11 +1,12 @@
 import { HTTP_HEADERS } from '@brewmate/shared';
-import Fastify, { type FastifyInstance } from 'fastify';
+import Fastify, { LogController, type FastifyInstance } from 'fastify';
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
 
 import { authPlugin } from '../auth/authPlugin.js';
 import { createErrorHandler } from '../errors/errorHandler.js';
 import { notFoundHandler } from '../errors/notFoundHandler.js';
 import { createLoggerOptions } from '../logging/createLoggerOptions.js';
+import { registerRequestLogging } from '../logging/registerRequestLogging.js';
 import { aiRoutes } from '../modules/ai/aiRoutes.js';
 import { aiUsageRoutes } from '../modules/aiUsage/aiUsageRoutes.js';
 import { analyticsRoutes } from '../modules/analytics/analyticsRoutes.js';
@@ -39,7 +40,9 @@ export const buildApp = async (dependencies: AppDependencies): Promise<FastifyIn
   const { config, db, tokenVerifier, identityDeleter, errorTracker, ai } = dependencies;
 
   const app = Fastify({
-    logger: createLoggerOptions(config.environment, config.logging.level),
+    logger: createLoggerOptions(config.environment, config.logging.level, config.logging.format),
+    // Replaced by registerRequestLogging: one line per request instead of two.
+    logController: new LogController({ disableRequestLogging: true }),
     bodyLimit: config.server.bodyLimitBytes,
     requestIdHeader: HTTP_HEADERS.requestId,
   });
@@ -48,6 +51,7 @@ export const buildApp = async (dependencies: AppDependencies): Promise<FastifyIn
   app.setSerializerCompiler(serializerCompiler);
   app.setErrorHandler(createErrorHandler(errorTracker));
   app.setNotFoundHandler(notFoundHandler);
+  registerRequestLogging(app);
 
   const services = createServices({ db, identityDeleter, ai });
 

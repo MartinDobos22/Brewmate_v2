@@ -1,6 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
+import { Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 
@@ -17,43 +18,40 @@ export interface BrewStepProgressProps {
 }
 
 /**
- * How much of the brew is left, as a glance rather than a number.
+ * How much of the brew is left, as a glance rather than a number - with the
+ * number beside it for the glance that was not enough.
  *
  * A pour-over is four or five pours and somebody is watching a countdown that
  * resets at each one. Without this the only answer to "am I nearly done" was a
  * line of small text, and reading it means looking away from the number the
  * whole screen exists for.
- *
- * The step being poured is drawn in the primary colour and the ones behind it
- * in outline, so the shape says both how far in and which one is live - the
- * same bar filled uniformly would answer only the first.
  */
 export const BrewStepProgress = ({ stepNumber, total }: BrewStepProgressProps): JSX.Element => {
   const styles = useThemedStyles(createBrewStepProgressStyles);
   const { t } = useTranslation();
 
   return (
-    <View
-      style={styles.track}
-      accessibilityRole="progressbar"
-      accessibilityLabel={t(TRANSLATION_KEYS.brewModeStepProgressLabel)}
-      accessibilityValue={{ min: NONE, max: total, now: stepNumber }}
-    >
-      {Array.from({ length: total }, (_unused: unknown, index: number): JSX.Element => {
-        const isDone = index < stepNumber - PREVIOUS;
-        const isCurrent = index === stepNumber - PREVIOUS;
-
-        return (
+    <View style={styles.row}>
+      <View
+        style={styles.track}
+        accessibilityRole="progressbar"
+        accessibilityLabel={t(TRANSLATION_KEYS.brewModeStepProgressLabel)}
+        accessibilityValue={{ min: NONE, max: total, now: stepNumber }}
+      >
+        {Array.from({ length: total }, (_unused: unknown, index: number): JSX.Element => (
           <View
             key={`${KEY_PREFIX}${String(index)}`}
             style={[
               styles.segment,
-              isCurrent ? styles.current : isDone ? styles.done : styles.todo,
+              index <= stepNumber - PREVIOUS ? styles.reached : styles.todo,
               segmentWidth(),
             ]}
           />
-        );
-      })}
+        ))}
+      </View>
+      <Text variant="numericLabel" tone="onEspressoMuted" numeric>
+        {t(TRANSLATION_KEYS.brewModeStepCount, { current: stepNumber, total })}
+      </Text>
     </View>
   );
 };

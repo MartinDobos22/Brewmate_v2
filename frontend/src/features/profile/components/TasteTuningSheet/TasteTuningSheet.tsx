@@ -2,7 +2,7 @@ import type { TasteProfile } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { ScrollView } from 'react-native';
 
-import { Button, Sheet, Text } from '../../../../components/ui';
+import { PillButton, Sheet, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { TasteAxisSliders } from '../../../tasteProfile/components';
@@ -34,18 +34,19 @@ export const TasteTuningSheet = ({
       onClose={onClose}
     >
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-        <Text variant="bodyMedium" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.profileTuneBody)}
         </Text>
         <TasteAxisSliders axes={tuning.axes} onChange={tuning.setAxis} />
         {tuning.hasFailed ? (
-          <Text variant="bodySmall" tone="error">
+          <Text variant="captionSmall" tone="error">
             {t(TRANSLATION_KEYS.profileTuneError)}
           </Text>
         ) : null}
-        <Button
+        <PillButton
+          tone="espresso"
           label={t(TRANSLATION_KEYS.profileTuneSave)}
-          loading={tuning.isPending}
+          isPending={tuning.isPending}
           fullWidth
           onPress={(): void => {
             tuning.save(onClose);

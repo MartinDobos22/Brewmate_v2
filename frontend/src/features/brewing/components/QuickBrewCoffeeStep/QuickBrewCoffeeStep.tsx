@@ -2,7 +2,15 @@ import { ROAST_LEVEL_VALUES, type RoastLevel } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Chip, Input, Text } from '../../../../components/ui';
+import {
+  Card,
+  Chip,
+  InfoNote,
+  Input,
+  PillButton,
+  SectionHeading,
+  Text,
+} from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { ROAST_LEVEL_LABEL_KEYS } from '../../../tasteProfile/constants';
@@ -30,59 +38,63 @@ export const QuickBrewCoffeeStep = ({ brew }: QuickBrewCoffeeStepProps): JSX.Ele
 
   return (
     <View style={styles.wrapper}>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.quickBrewCoffeeTitle)}</Text>
-      <Text variant="bodyMedium" tone="muted">
-        {t(TRANSLATION_KEYS.quickBrewCoffeeBody)}
-      </Text>
-      <Input
-        label={t(TRANSLATION_KEYS.quickBrewCoffeeNameLabel)}
-        placeholder={t(TRANSLATION_KEYS.quickBrewCoffeeNamePlaceholder)}
-        value={brew.coffee.name}
-        onChangeText={(name: string): void => {
-          brew.describeCoffee({ name });
-        }}
-      />
-      <Text variant="labelMedium" tone="muted">
-        {t(TRANSLATION_KEYS.quickBrewRoastLabel)}
-      </Text>
-      <View style={styles.roasts}>
-        <Chip
-          label={t(TRANSLATION_KEYS.quickBrewRoastUnknown)}
-          selected={brew.coffee.roastLevel === UNKNOWN_ROAST}
-          onPress={(): void => {
-            brew.describeCoffee({ roastLevel: UNKNOWN_ROAST });
+      <Card>
+        <SectionHeading
+          title={t(TRANSLATION_KEYS.quickBrewCoffeeTitle)}
+          caption={t(TRANSLATION_KEYS.quickBrewCoffeeBody)}
+          placement="card"
+        />
+        <Input
+          label={t(TRANSLATION_KEYS.quickBrewCoffeeNameLabel)}
+          placeholder={t(TRANSLATION_KEYS.quickBrewCoffeeNamePlaceholder)}
+          value={brew.coffee.name}
+          onChangeText={(name: string): void => {
+            brew.describeCoffee({ name });
           }}
         />
-        {ROAST_LEVEL_VALUES.map((roastLevel: RoastLevel): JSX.Element => (
-          <Chip
-            key={roastLevel}
-            label={t(ROAST_LEVEL_LABEL_KEYS[roastLevel])}
-            selected={brew.coffee.roastLevel === roastLevel}
-            onPress={(): void => {
-              brew.describeCoffee({ roastLevel });
-            }}
-          />
-        ))}
-      </View>
-      <Text variant="bodySmall" tone="muted">
-        {t(TRANSLATION_KEYS.quickBrewCoffeeOptionalNote)}
-      </Text>
+        <View style={styles.field}>
+          <Text variant="eyebrow" tone="muted">
+            {t(TRANSLATION_KEYS.quickBrewRoastLabel)}
+          </Text>
+          <View style={styles.roasts}>
+            <Chip
+              label={t(TRANSLATION_KEYS.quickBrewRoastUnknown)}
+              selected={brew.coffee.roastLevel === UNKNOWN_ROAST}
+              onPress={(): void => {
+                brew.describeCoffee({ roastLevel: UNKNOWN_ROAST });
+              }}
+            />
+            {ROAST_LEVEL_VALUES.map((roastLevel: RoastLevel): JSX.Element => (
+              <Chip
+                key={roastLevel}
+                label={t(ROAST_LEVEL_LABEL_KEYS[roastLevel])}
+                selected={brew.coffee.roastLevel === roastLevel}
+                onPress={(): void => {
+                  brew.describeCoffee({ roastLevel });
+                }}
+              />
+            ))}
+          </View>
+        </View>
+      </Card>
+      <InfoNote text={t(TRANSLATION_KEYS.quickBrewCoffeeOptionalNote)} />
       {brew.hasFailed ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(TRANSLATION_KEYS.quickBrewError)}
         </Text>
       ) : null}
-      <Button
+      <PillButton
+        tone="espresso"
         label={t(TRANSLATION_KEYS.quickBrewSubmit)}
         fullWidth
-        loading={brew.isPending}
+        isPending={brew.isPending}
         onPress={(): void => {
           brew.askForRecipe(t(TRANSLATION_KEYS.quickBrewRationale));
         }}
       />
-      <Button
+      <PillButton
+        tone="surface"
         label={t(TRANSLATION_KEYS.actionBack)}
-        variant="tertiary"
         fullWidth
         onPress={brew.back}
       />

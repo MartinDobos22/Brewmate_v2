@@ -15,6 +15,7 @@ export const GOAL_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'sweet',
+      icon: 'candy-outline',
       labelKey: TRANSLATION_KEYS.tqGoalSweet,
       effect: {
         axes: { sweetness: 8.5 },
@@ -23,6 +24,7 @@ export const GOAL_QUESTION: TasteQuestion = {
     },
     {
       id: 'bright',
+      icon: 'white-balance-sunny',
       labelKey: TRANSLATION_KEYS.tqGoalBright,
       effect: {
         axes: { acidity: 8.5 },
@@ -31,11 +33,13 @@ export const GOAL_QUESTION: TasteQuestion = {
     },
     {
       id: 'strong',
+      icon: 'flash-outline',
       labelKey: TRANSLATION_KEYS.tqGoalStrong,
       effect: { axes: { body: 8, intensity: 8 } },
     },
     {
       id: 'clean',
+      icon: 'water-check',
       labelKey: TRANSLATION_KEYS.tqGoalClean,
       effect: {
         axes: { acidity: 6.5, body: 3.5, bitterness: 3 },

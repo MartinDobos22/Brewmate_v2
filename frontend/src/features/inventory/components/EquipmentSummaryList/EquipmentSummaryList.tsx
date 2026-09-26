@@ -2,7 +2,7 @@ import type { Equipment } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, ListItem, Text } from '../../../../components/ui';
+import { ListItem, PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { EQUIPMENT_TYPE_LABEL_KEYS } from '../../constants';
@@ -30,7 +30,7 @@ export const EquipmentSummaryList = ({
 
   if (items.length === NOTHING) {
     return (
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {emptyText}
       </Text>
     );
@@ -45,9 +45,9 @@ export const EquipmentSummaryList = ({
           subtitle={t(EQUIPMENT_TYPE_LABEL_KEYS[item.type])}
           trailing={
             onRemove === undefined ? undefined : (
-              <Button
+              <PillButton
+                tone="surface"
                 label={t(TRANSLATION_KEYS.profileEquipmentRemove)}
-                variant="tertiary"
                 size="small"
                 onPress={(): void => {
                   onRemove(item.id);

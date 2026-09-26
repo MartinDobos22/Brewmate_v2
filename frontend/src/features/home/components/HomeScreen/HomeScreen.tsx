@@ -1,48 +1,45 @@
 import type { JSX } from 'react';
+import { View } from 'react-native';
 
-import { Screen, TileRow } from '../../../../components/layout';
-import { BrewHistoryCard } from '../BrewHistoryCard';
-import { BrewTile } from '../BrewTile';
-import { GettingStartedCard } from '../GettingStartedCard';
-import { HomeDataRow } from '../HomeDataRow';
-import { HomeGreeting } from '../HomeGreeting';
-import { HomeHintTile } from '../HomeHintTile';
-import { QuickBrewTile } from '../QuickBrewTile';
-import { ScanTile } from '../ScanTile';
-import { TasteProfileTile } from '../TasteProfileTile';
+import { HEADER_SCREEN_EDGES, Screen } from '../../../../components/layout';
+import { useThemedStyles } from '../../../../theme';
+import { BrewWeekCard } from '../BrewWeekCard';
+import { HomeCupboard } from '../HomeCupboard';
+import { HomeHeader } from '../HomeHeader';
+import { HomeHintCard } from '../HomeHintCard';
+import { TasteCard } from '../TasteCard';
+
+import { createHomeScreenStyles } from './HomeScreen.styles';
 
 /**
- * The home screen, as a grid rather than a column.
+ * The home screen: one block that says what to do, then what the account
+ * amounts to.
  *
  * The order is the order things repay attention, and it does not change as the
- * account fills up: what to do about the coffee right now, then the two ways
- * to start brewing, then what Brewmate believes and what it has been told.
- * Tiles rather than cards because these are destinations - a card invites
- * reading, and nothing on this screen is worth reading for its own sake.
+ * account fills up - what to brew, the one thing worth knowing today, what has
+ * been brewed and what the app believes, and finally the shelf. What changes
+ * is what each of those is able to say: the block leads with a checklist
+ * before it can lead with a coffee, and the two cards report a glyph and a
+ * sentence before they can report a number.
  *
- * Three of the rows are allowed to be absent. The getting-started card leaves
- * once its three steps are done, the hint waits until it knows enough to be
- * right, and the reporting row does not appear until there is something to
- * report. What is left on a brand-new account is still four things to do - not
- * a dashboard with nothing in its frames, which is the state a product gets
- * judged on.
+ * Nothing here is ever an empty frame. A dashboard with nothing in it is the
+ * state a product gets judged on, and every piece of this screen either has
+ * something to say or says why it does not.
  */
-export const HomeScreen = (): JSX.Element => (
-  <Screen scrollable>
-    <HomeGreeting />
-    <GettingStartedCard />
-    <HomeHintTile />
-    <TileRow>
-      <ScanTile />
-    </TileRow>
-    <TileRow>
-      <QuickBrewTile />
-      <BrewTile />
-    </TileRow>
-    <TileRow>
-      <TasteProfileTile />
-    </TileRow>
-    <HomeDataRow />
-    <BrewHistoryCard />
-  </Screen>
-);
+export const HomeScreen = (): JSX.Element => {
+  const styles = useThemedStyles(createHomeScreenStyles);
+
+  return (
+    <Screen scrollable padded={false} edges={HEADER_SCREEN_EDGES}>
+      <HomeHeader />
+      <View style={styles.content}>
+        <HomeHintCard />
+        <View style={styles.cards}>
+          <BrewWeekCard />
+          <TasteCard />
+        </View>
+        <HomeCupboard />
+      </View>
+    </Screen>
+  );
+};

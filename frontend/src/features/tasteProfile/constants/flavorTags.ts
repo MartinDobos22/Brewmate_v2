@@ -1,3 +1,4 @@
+import type { TileGlyph } from '../../../components/ui';
 import { TRANSLATION_KEYS, type TranslationKey } from '../../../i18n';
 
 /**
@@ -46,3 +47,23 @@ export const FLAVOR_AFFINITY_DISPLAY_MIN = 0.12;
 
 /** The profile shows the strongest few, not the whole vocabulary. */
 export const FLAVOR_AFFINITY_DISPLAY_MAX = 6;
+
+/**
+ * One glyph per flavour the app has a word for.
+ *
+ * A tag Brewmate has never met gets no mark rather than a guessed one: the
+ * vocabulary belongs to the world, and drawing a cookie beside a word nobody
+ * wrote a rule for would be the interface inventing a classification.
+ */
+export const FLAVOR_TAG_ICONS = {
+  [FLAVOR_TAGS.fruity]: 'fruit-cherries',
+  [FLAVOR_TAGS.citrus]: 'fruit-citrus',
+  [FLAVOR_TAGS.berry]: 'fruit-grapes',
+  [FLAVOR_TAGS.floral]: 'flower-outline',
+  [FLAVOR_TAGS.herbal]: 'leaf',
+  [FLAVOR_TAGS.nutty]: 'peanut-outline',
+  [FLAVOR_TAGS.caramel]: 'candy-outline',
+  [FLAVOR_TAGS.chocolate]: 'cookie-outline',
+  [FLAVOR_TAGS.spice]: 'fire',
+  [FLAVOR_TAGS.teaLike]: 'tea-outline',
+} as const satisfies Record<FlavorTag, TileGlyph>;

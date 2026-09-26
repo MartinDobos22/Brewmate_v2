@@ -2,7 +2,7 @@ import type { BrewMethod, Equipment } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, OptionCard, Text } from '../../../../components/ui';
+import { OptionCard, PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { BREW_METHOD_CATEGORY_LABEL_KEYS } from '../../constants';
@@ -28,7 +28,7 @@ export const BrewMethodGroupSection = ({
 
   return (
     <View style={styles.group}>
-      <Text variant="labelMedium" tone="muted">
+      <Text variant="eyebrow" tone="muted">
         {t(BREW_METHOD_CATEGORY_LABEL_KEYS[group.category])}
       </Text>
       {group.methods.map((method: BrewMethod): JSX.Element => {
@@ -45,9 +45,9 @@ export const BrewMethodGroupSection = ({
               }}
             />
             {brewer === undefined ? null : (
-              <Button
+              <PillButton
+                tone="surface"
                 label={t(TRANSLATION_KEYS.setupBrewersDetailAction)}
-                variant="tertiary"
                 size="small"
                 onPress={(): void => {
                   onOpenDetails(method, brewer);

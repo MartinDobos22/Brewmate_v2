@@ -18,7 +18,7 @@ export const createStepProgressStyles = (theme: Theme): StepProgressStyleMap =>
     track: { flexDirection: 'row', gap: theme.spacing.xs },
     segment: { height: theme.size.progressBarHeight, borderRadius: theme.radius.xs },
     done: { backgroundColor: theme.colors.primary },
-    todo: { backgroundColor: theme.colors.surfaceContainerHigh },
+    todo: { backgroundColor: theme.colors.outlineFaint },
   });
 
 /** Every segment is the same width, whatever the flow turns out to be. */

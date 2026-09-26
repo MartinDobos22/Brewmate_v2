@@ -59,6 +59,16 @@ export const SK_PRE_BREW = {
   preBrewMethodSearchPlaceholder: 'Napríklad: v60, prelievaná, aeropress',
   preBrewMethodSearchEmpty: 'Nič také tu nemám. Skús to napísať inak.',
   preBrewMethodEmpty: 'Katalóg metód sa nepodarilo načítať. Skús to o chvíľu znova.',
+  /** Over the cards, which are only the methods the cupboard vouches for. */
+  preBrewMethodOwnedHint: 'len to, na čo máš vybavenie',
+  /**
+   * The way to the rest of the catalogue, under the cards.
+   *
+   * Every method stays reachable. Hiding the ones nothing in the cupboard
+   * points at reads as helpful and behaves as a trap: a cupboard nobody has
+   * filled in is indistinguishable from an empty one.
+   */
+  preBrewMethodMore: 'Iná príprava',
 
   /*
    * The recipe this pair already has.
@@ -118,6 +128,19 @@ export const SK_PRE_BREW = {
   preBrewYieldLabel: 'Výtlačok',
   preBrewRatioLabel: 'Pomer',
   preBrewAmountsHint: 'Zmeň ktorékoľvek číslo a zvyšné sa dopočítajú.',
+  /** The same thing at the size of a caption, beside the card's own heading. */
+  preBrewAmountsHeaderHint: 'zmeň jedno, dopočítam zvyšok',
+  /**
+   * What the screen says where there is no bag behind the brew.
+   *
+   * New copy, and the point of the whole no-bag branch: brewing is never
+   * blocked on a cupboard entry, and saying so plainly is what stops the
+   * dashed row above reading as an error.
+   */
+  preBrewNoCoffeeNote:
+    'Variť môžeš aj tak. Recept ti napíšem z toho, v čom variš - kávu si zapíšeš, keď budeš chcieť.',
+  /** The foot bar's second line where no bag was chosen. */
+  preBrewFootNoCoffee: 'káva nezapísaná',
   /*
    * Which number moves which, said outright.
    *

@@ -1,21 +1,25 @@
 import type { JSX } from 'react';
+import { View } from 'react-native';
 
 import { LoadingState } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { useThemedStyles } from '../../../../theme';
 import { CoffeeTasteSection } from '../../../coffeeTaste/components';
 import { toParsedBagData } from '../../../inventory/services';
 import { BAG_SCAN_STAGES } from '../../constants/bagScan';
 import type { BagScan } from '../../hooks/useBagScan';
 import { BagLabelForm } from '../BagLabelForm';
 import { BagPhotoStep } from '../BagPhotoStep';
-import { BagVerdictCard } from '../BagVerdictCard';
+import { BagVerdictCard, VerdictReasons } from '../BagVerdictCard';
 import { ScanModeStep } from '../ScanModeStep';
 import { ScanOutcomeStep } from '../ScanOutcomeStep';
 
+import { createScanBagScreenStyles } from './ScanBagScreen.styles';
 import { ScanDoneStep } from './ScanDoneStep';
 
 /** One stage of the scan at a time, chosen where the stage is named. */
 export const ScanStageContent = ({ scan }: { readonly scan: BagScan }): JSX.Element => {
+  const styles = useThemedStyles(createScanBagScreenStyles);
   const { t } = useTranslation();
 
   if (scan.stage === BAG_SCAN_STAGES.mode) {
@@ -41,15 +45,19 @@ export const ScanStageContent = ({ scan }: { readonly scan: BagScan }): JSX.Elem
     return scan.verdict.view === null ? (
       <LoadingState label={t(TRANSLATION_KEYS.scanVerdictWaiting)} />
     ) : (
-      <>
+      <View style={styles.verdict}>
         <BagVerdictCard
           verdict={scan.verdict.view}
           coffeeName={scan.label.name}
           roaster={scan.label.roaster}
         />
+        <VerdictReasons
+          reasons={scan.verdict.view.reasons}
+          uncertainties={scan.verdict.view.uncertainties}
+        />
         <CoffeeTasteSection coffee={toParsedBagData(scan.label)} />
-        <ScanOutcomeStep scan={scan} />
-      </>
+        <ScanOutcomeStep scan={scan} onScanAnother={scan.reset} />
+      </View>
     );
   }
 

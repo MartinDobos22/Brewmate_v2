@@ -3,19 +3,38 @@
  * so they live here rather than inside a StyleSheet.
  */
 export const SIZE = {
-  buttonHeightSmall: 36,
-  buttonHeightMedium: 48,
-  inputHeight: 48,
+  /**
+   * Every text field in the app, and the round button beside the one in the
+   * chat composer - a field and the control that submits it reading as two
+   * different heights is the one thing a bar of two elements must not do.
+   */
+  inputHeight: 52,
   chipHeight: 32,
+  /**
+   * A chip that states a fact rather than offering a choice. Smaller than a
+   * control, because nothing about it is a touch target.
+   */
+  attributeChipHeight: 26,
   listItemMinHeight: 56,
-  tabBarHeight: 56,
+  iconTiny: 13,
   iconSmall: 16,
   iconMedium: 24,
-  avatarMedium: 40,
+  /**
+   * The two steps the redesign needed between `iconSmall` and `iconMedium`: a
+   * glyph that leads a row of a table, and one on a control that is pressed
+   * rather than read.
+   */
+  iconRow: 18,
+  iconLarge: 20,
   sheetHandleWidth: 32,
   sheetHandleHeight: 4,
-  sliderTrackHeight: 4,
-  sliderThumbSize: 24,
+  sliderTrackHeight: 6,
+  /**
+   * Big enough to take hold of with a thumb rather than aim at with a
+   * fingertip. It carries a ring of the surface under it, so it needs the
+   * extra points to still read as a circle once that is subtracted.
+   */
+  sliderThumbSize: 30,
   stepperButtonSize: 40,
   /**
    * The floor under a stepper's value, and the reason the control stopped
@@ -36,8 +55,25 @@ export const SIZE = {
    */
   stepperFieldMinWidth: 64,
   swatchSize: 56,
-  /** A bar in the taste profile chart: readable, but not a block of colour. */
-  profileBarHeight: 10,
+  /**
+   * A version's node on the timeline's rail, and the rail itself.
+   *
+   * The node carries the version's number rather than a dot, because the one
+   * question this screen answers - what did changing that do - is asked about
+   * a particular version, and counting dots down a column to find the third
+   * one is not how anybody reads.
+   */
+  timelineNodeSize: 36,
+  timelineRailWidth: 2,
+  /** A pill saying what was missing on the morning a cup was made. */
+  constraintBadgeHeight: 28,
+  /**
+   * One row of a count in the history report: the name it belongs to on the
+   * left and the figure on the right, both at fixed widths so the bars between
+   * them start and end in one column down the card.
+   */
+  insightNameWidth: 78,
+  insightCountWidth: 26,
   /**
    * The taste profile as a five-sided web, on the profile screen.
    *
@@ -53,6 +89,15 @@ export const SIZE = {
   radarChartLabelInset: 46,
   /** The same web on a home tile, where it is read as a shape and has no labels. */
   radarChartCompactSize: 96,
+  /** The circle a signed-in person is represented by. */
+  profileAvatarSize: 46,
+  /** One axis's glyph in the list under the chart. */
+  axisRowGlyph: 19,
+  /**
+   * How far a divider is inset past that glyph, so the marks form a column of
+   * their own and the rows read as a list rather than as five stacked cards.
+   */
+  axisRowDividerInset: 49,
   /** The box one axis label is centred in, so five of them cannot overlap. */
   radarLabelWidth: 76,
   /** The swatch that says which shape on the web is you and which is the coffee. */
@@ -61,8 +106,105 @@ export const SIZE = {
   legendSwatchBorder: 2,
   /** The onboarding progress bar, thinner than a slider track is tall. */
   progressBarHeight: 6,
+  /** A bar that measures a quantity rather than counting steps through a flow. */
+  measureBarHeight: 8,
+  /**
+   * A dial: a ring with a figure inside it.
+   *
+   * Two sizes and no more. The large one carries a bag's freshness on the
+   * cupboard, the small one the profile's confidence - and they are the same
+   * object at two sizes rather than two objects, because both answer the same
+   * shape of question: how far through something are we.
+   */
+  dialLarge: 76,
+  dialLargeStroke: 7,
+  dialSmall: 58,
+  dialSmallStroke: 6,
+  /**
+   * The conversation after the cup.
+   *
+   * The avatar marks who is speaking rather than showing anybody a face, so
+   * it is small; the send button is the ordinary field height, so the two sit
+   * on one line without either having to be measured against the other.
+   */
+  chatAvatarSize: 30,
+  /** The hairline between two figures inside an espresso header's own row. */
+  headerRuleHeight: 28,
+  /** A round icon button in a screen's title row. */
+  headerButtonSize: 44,
+  /** The hairline between two figures in a summary row. */
+  summaryRuleHeight: 36,
+  /**
+   * The mark on an empty screen: two dashed rings round the glyph of the thing
+   * that is not there yet. The app's own ring motif with nothing in it, which
+   * is what an absence looks like without a screen having to say so.
+   */
+  emptyMarkOuter: 104,
+  emptyMarkInner: 70,
+  emptyMarkGlyph: 38,
+  /** How wide an empty state's sentence may run before it is hard to read. */
+  emptyBodyMaxWidth: 300,
+  /**
+   * The concentric rings behind an espresso header.
+   *
+   * Pushed off the top left corner and clipped by the block they sit in, which
+   * is what makes them read as depth rather than as a diagram. Drawn from the
+   * same stroke as every other decoration here - this app ships no artwork.
+   */
+  headerRingsSize: 300,
+  /** The same mark on a card, which is smaller than a header block. */
+  cardRingsSize: 250,
+  ringStroke: 2,
+  /** The circle a glyph sits in inside an espresso header's own row. */
+  headerBadgeSize: 38,
+  /** A brewer's own glyph, which is the most visual decision on its screen. */
+  methodGlyphSize: 27,
+  /** A round button inside a calculator row. */
+  calculatorButtonSize: 42,
+  /** The dot between two facts on a meta line. */
+  metaDotSize: 3,
+  /** One of the three segments counting the first steps off. */
+  startSegmentHeight: 5,
+  /** The coloured spine down the left of a bag's row, saying what state it is in. */
+  bagSpineWidth: 4,
+  bagSpineHeight: 40,
+  /** The glyph and the one button on a card reporting that nothing is there yet. */
+  emptyRowBadge: 44,
+  /**
+   * The four heights every pill button in the app is drawn at.
+   *
+   * Four rather than the ten the screens had accumulated. Those ten came from
+   * tracing a design one screen at a time - 46, 48, 50, 52, 54 and 56 all
+   * appeared, and no reader could tell any pair of them apart. A scale is what
+   * stops the next screen inventing an eleventh.
+   *
+   * `large` is the one thing a screen most wants pressed and is sized to be
+   * hit without aiming; `medium` is the ordinary button; `small` is a pair of
+   * alternatives sharing a row; `compact` is a round control inside a row of
+   * text.
+   */
+  pillLarge: 56,
+  pillMedium: 52,
+  pillSmall: 46,
+  pillCompact: 40,
   /** A questionnaire answer card. Big enough to tap without aiming. */
   optionCardMinHeight: 72,
+  /** The disc its glyph sits in, which is what makes a column of them scannable. */
+  optionBadgeSize: 40,
+  /**
+   * The scanner's own block: the badge over its title, and the window that
+   * stands in for the photograph nobody has taken yet.
+   *
+   * The window is sized to be a picture rather than a button - it is the one
+   * thing on that card that says what the camera is for, and at button height
+   * it would read as a third control between the two real ones.
+   */
+  scanBadgeSize: 46,
+  scanViewfinderHeight: 170,
+  scanViewfinderInset: 22,
+  /** The round way back and the pill out of a step of onboarding. */
+  onboardingBackSize: 42,
+  onboardingSkipHeight: 38,
   /** Height of a boxed preview on the design system screen. */
   previewBoxHeight: 180,
   motionTrackHeight: 8,
@@ -75,11 +217,26 @@ export const SIZE = {
    * rules. A control is a third bigger than the smallest a guideline allows,
    * and the countdown is set at a size that carries across a kitchen.
    */
-  brewControlSize: 64,
-  brewPrimaryControlSize: 88,
-  /** The dot that says which step of the brew is running. */
-  brewStepDotSize: 10,
-  brewProgressHeight: 12,
+  brewControlSize: 66,
+  brewPrimaryControlSize: 90,
+  /**
+   * The step bar above the pour, which is thin on purpose.
+   *
+   * It used to be thick, on the argument that everything on this screen is
+   * read from half a metre away. That was right about the countdown and wrong
+   * about this: how far through a brew is is glanced at between pours, and a
+   * heavy bar across the top competes with the one number the screen exists
+   * for. The count beside it is what gets read; the bar is the shape of it.
+   */
+  brewProgressHeight: 4,
+  /**
+   * How wide a brew instruction is allowed to run.
+   *
+   * An instruction is read in one go, so it is held to a width that breaks
+   * into two or three even lines rather than one that runs the full width of
+   * the phone and has to be tracked back across with wet hands.
+   */
+  brewInstructionMaxWidth: 300,
 
   /**
    * The home screen is a grid of tiles rather than a column of cards, so a
@@ -104,16 +261,8 @@ export const SIZE = {
   tileRingOffset: -46,
   /** The miniature brewing chart on the home screen. */
   tileChartHeight: 52,
-  /**
-   * One axis of the miniature taste profile. Thinner than the labelled chart's
-   * own bar, because five of these are read as a shape rather than as five
-   * measurements.
-   */
-  tileTrackHeight: 6,
   /** The smallest a bar in a miniature chart may be drawn at. */
   tileBarMinHeight: 3,
-  /** One bag in the cupboard tile's freshness strip. */
-  tilePipSize: 10,
 
   /**
    * The mark on the signed-out screens.
@@ -123,8 +272,10 @@ export const SIZE = {
    * scheme their phone is set to, and a raster icon would be right in one of
    * the two and wrong in the other from the day it was added.
    */
-  brandMarkSize: 64,
+  brandMarkSize: 72,
   brandMarkInner: 34,
+  /** The ring set hanging off the top of a signed-out screen, behind the mark. */
+  authRingsSize: 380,
 } as const;
 
 /** Dimensions expressed as a share of the parent. */

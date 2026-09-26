@@ -31,15 +31,15 @@ export const BagPhotoIssueNotice = ({ issues }: BagPhotoIssueNoticeProps): JSX.E
 
   return (
     <Card>
-      <Text variant="titleSmall">{t(TRANSLATION_KEYS.scanPhotoRefused)}</Text>
+      <Text variant="rowTitle">{t(TRANSLATION_KEYS.scanPhotoRefused)}</Text>
       <View style={styles.reasons}>
         {issues.map((issue: LabelPhotoIssue): JSX.Element => (
-          <Text key={issue} variant="bodySmall">
+          <Text key={issue} variant="bodyText">
             {t(BAG_PHOTO_ISSUE_KEYS[issue])}
           </Text>
         ))}
       </View>
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {t(TRANSLATION_KEYS.scanPhotoRefusedHint)}
       </Text>
     </Card>

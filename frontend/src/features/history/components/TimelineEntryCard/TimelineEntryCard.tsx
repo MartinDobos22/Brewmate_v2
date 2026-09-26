@@ -1,3 +1,4 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import {
   CHAT_ROLES,
   hasAnyConstraint,
@@ -9,14 +10,16 @@ import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, Text, ValueDisplay } from '../../../../components/ui';
+import { FigureRow, PillButton, Text } from '../../../../components/ui';
+import { useRecipeFigures } from '../../../../hooks';
 import { buildRecipeChatRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { formatGrams, formatRatio } from '../../../../lib/formatters';
-import { useThemedStyles } from '../../../../theme';
+import { useTheme, useThemedStyles } from '../../../../theme';
+import { TIMELINE_ICONS } from '../../constants';
 import { ConstraintBadges } from '../ConstraintBadges';
 
 import { createTimelineEntryStyles } from './TimelineEntryCard.styles';
+import { TimelineCount } from './TimelineCount';
 
 const NOTHING = 0;
 const NEXT = 1;
@@ -45,9 +48,13 @@ const lastUserNote = (messages: readonly RecipeChatMessage[]): RecipeChatMessage
  */
 export const TimelineEntryCard = ({ entry, index, total }: TimelineEntryCardProps): JSX.Element => {
   const styles = useThemedStyles(createTimelineEntryStyles);
+  const theme = useTheme();
   const { t } = useTranslation();
+  const figures = useRecipeFigures(entry.recipe.params);
   const router = useRouter();
 
+  const version = index + NEXT;
+  const isLatest = version === total;
   const note = lastUserNote(entry.messages);
   /**
    * The first cup that was actually missing something, which is the one whose
@@ -61,78 +68,93 @@ export const TimelineEntryCard = ({ entry, index, total }: TimelineEntryCardProp
   );
 
   return (
-    <Card>
-      <View style={styles.header}>
-        <Text variant="titleSmall">
-          {t(TRANSLATION_KEYS.historyVersionLabel, { number: index + NEXT })}
-        </Text>
-        <Text variant="labelSmall" tone="muted">
-          {t(
-            index + NEXT === total
-              ? TRANSLATION_KEYS.historyVersionLatest
-              : TRANSLATION_KEYS.historyVersionFirst,
-          )}
-        </Text>
-      </View>
-
-      <View style={styles.numbers}>
-        <ValueDisplay
-          value={formatGrams(entry.recipe.params.doseGrams)}
-          label={t(TRANSLATION_KEYS.preBrewDoseLabel)}
-          unit={t(TRANSLATION_KEYS.unitGrams)}
-          size="medium"
-        />
-        <ValueDisplay
-          value={formatGrams(entry.recipe.params.waterGrams)}
-          label={t(TRANSLATION_KEYS.preBrewWaterLabel)}
-          unit={t(TRANSLATION_KEYS.unitGrams)}
-          size="medium"
-        />
-        <ValueDisplay
-          value={formatRatio(entry.recipe.params.ratio)}
-          label={t(TRANSLATION_KEYS.preBrewRatioLabel)}
-          size="medium"
-        />
-      </View>
-
-      {note === undefined ? null : (
-        <View style={styles.note}>
-          <Text variant="bodySmall" tone="muted">
-            {note.content}
+    <View style={styles.entry}>
+      <View style={styles.rail}>
+        <View style={[styles.node, isLatest && styles.nodeLatest]}>
+          <Text variant="numericFoot" tone={isLatest ? 'onCream' : 'muted'} numeric>
+            {String(version)}
           </Text>
         </View>
-      )}
-
-      {entry.hasConstrainedBrew && constrained !== undefined ? (
-        <View style={styles.body}>
-          <ConstraintBadges constraints={constrained.constraints} />
-          <Text variant="labelSmall" tone="muted">
-            {t(TRANSLATION_KEYS.historyConstrainedNote)}
-          </Text>
-        </View>
-      ) : null}
-
-      <View style={styles.counts}>
-        <Text variant="labelSmall" tone="muted">
-          {t(
-            entry.brewCount === NOTHING
-              ? TRANSLATION_KEYS.historyBrewCountNone
-              : TRANSLATION_KEYS.historyBrewCount,
-            { count: entry.brewCount },
-          )}
-        </Text>
-        <Text variant="labelSmall" tone="muted">
-          {t(TRANSLATION_KEYS.historyMessageCount, { count: entry.messageCount })}
-        </Text>
+        {isLatest ? null : <View style={styles.line} />}
       </View>
 
-      <Button
-        label={t(TRANSLATION_KEYS.historyOpenChat)}
-        variant="tertiary"
-        onPress={(): void => {
-          router.push(buildRecipeChatRoute(entry.recipe.id));
-        }}
-      />
-    </Card>
+      <View style={[styles.card, isLatest && styles.cardLatest]}>
+        <View style={styles.header}>
+          <View style={styles.title}>
+            <Text variant="rowTitle">
+              {t(TRANSLATION_KEYS.historyVersionLabel, { number: version })}
+            </Text>
+          </View>
+          <View style={[styles.chip, isLatest && styles.chipLatest]}>
+            {isLatest ? (
+              <MaterialCommunityIcons
+                name={TIMELINE_ICONS.latest}
+                size={theme.size.iconTiny}
+                color={theme.colors.onFreshContainer}
+              />
+            ) : null}
+            <Text variant="eyebrow" tone={isLatest ? 'fresh' : 'muted'}>
+              {t(
+                isLatest
+                  ? TRANSLATION_KEYS.historyVersionLatest
+                  : TRANSLATION_KEYS.historyVersionFirst,
+              )}
+            </Text>
+          </View>
+        </View>
+
+        {figures === null ? null : <FigureRow ruled={false} figures={figures} />}
+
+        {note === undefined ? null : (
+          <View style={styles.note}>
+            <MaterialCommunityIcons
+              name={TIMELINE_ICONS.quote}
+              size={theme.size.iconRow}
+              color={theme.colors.onSurfaceVariant}
+            />
+            <View style={styles.noteText}>
+              <Text variant="bodyMuted" tone="muted">
+                {note.content}
+              </Text>
+            </View>
+          </View>
+        )}
+
+        {entry.hasConstrainedBrew && constrained !== undefined ? (
+          <View style={styles.constrained}>
+            <ConstraintBadges constraints={constrained.constraints} />
+            <Text variant="captionSmall" tone="muted">
+              {t(TRANSLATION_KEYS.historyConstrainedNote)}
+            </Text>
+          </View>
+        ) : null}
+
+        <View style={styles.counts}>
+          <TimelineCount
+            icon={TIMELINE_ICONS.brews}
+            label={t(
+              entry.brewCount === NOTHING
+                ? TRANSLATION_KEYS.historyBrewCountNone
+                : TRANSLATION_KEYS.historyBrewCount,
+              { count: entry.brewCount },
+            )}
+          />
+          <TimelineCount
+            icon={TIMELINE_ICONS.notes}
+            label={t(TRANSLATION_KEYS.historyMessageCount, { count: entry.messageCount })}
+          />
+        </View>
+
+        <PillButton
+          tone="surfaceLead"
+          size="small"
+          icon={TIMELINE_ICONS.chat}
+          label={t(TRANSLATION_KEYS.historyOpenChat)}
+          onPress={(): void => {
+            router.push(buildRecipeChatRoute(entry.recipe.id));
+          }}
+        />
+      </View>
+    </View>
   );
 };

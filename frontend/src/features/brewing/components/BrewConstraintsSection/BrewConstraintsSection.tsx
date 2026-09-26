@@ -79,7 +79,7 @@ export const BrewConstraintsSection = ({
       {isOpen ? (
         <View style={styles.list}>
           {fromSet ? (
-            <Text variant="bodySmall" tone="muted">
+            <Text variant="bodyText" tone="muted">
               {t(TRANSLATION_KEYS.preBrewConstraintsFromSet)}
             </Text>
           ) : null}

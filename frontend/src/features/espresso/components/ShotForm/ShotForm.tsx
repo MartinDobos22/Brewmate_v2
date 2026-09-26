@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, Input, Text } from '../../../../components/ui';
+import { Card, Input, PillButton, SectionHeading, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import type { DialInSession } from '../../hooks';
@@ -30,7 +30,7 @@ export const ShotForm = ({ session }: ShotFormProps): JSX.Element => {
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.dialInShotSection)}</Text>
+      <SectionHeading title={t(TRANSLATION_KEYS.dialInShotSection)} placement="card" />
       <View style={styles.row}>
         <View style={styles.field}>
           <Input
@@ -75,21 +75,22 @@ export const ShotForm = ({ session }: ShotFormProps): JSX.Element => {
       />
       <View style={styles.actions}>
         {session.sendFailed ? (
-          <Text variant="bodySmall" tone="error">
+          <Text variant="captionSmall" tone="error">
             {t(TRANSLATION_KEYS.dialInError)}
           </Text>
         ) : null}
         {session.canSend ? null : (
-          <Text variant="bodySmall" tone="muted">
+          <Text variant="bodyText" tone="muted">
             {t(TRANSLATION_KEYS.dialInMissingShot)}
           </Text>
         )}
-        <Button
+        <PillButton
+          tone="espresso"
           label={t(
             session.isSending ? TRANSLATION_KEYS.dialInSending : TRANSLATION_KEYS.dialInSend,
           )}
           fullWidth
-          loading={session.isSending}
+          isPending={session.isSending}
           disabled={!session.canSend || session.isSending}
           onPress={session.send}
         />

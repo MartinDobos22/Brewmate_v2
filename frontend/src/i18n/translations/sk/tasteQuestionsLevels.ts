@@ -21,7 +21,6 @@ export const SK_TASTE_QUESTIONS_LEVELS = {
   tqLevelExpertNote:
     'Vážiš, meriaš, rozlišuješ pôvody. Žiadne otázky o čokoláde - pýtam sa rovno na to, čo chceš z kávy dostať.',
 
-  tqProgress: 'Otázka {current} z {total}',
   tqSaving: 'Ukladám odpovede...',
   tqSaveFailed:
     'Odpovede sa nepodarilo uložiť. Skús to prosím znova - nič z toho, čo si naklikal, sa nestratilo.',

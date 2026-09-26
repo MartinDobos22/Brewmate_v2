@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { BAG_PHOTO_FAILURE_KEYS } from '../../../bagEvaluations/constants';
@@ -36,8 +36,8 @@ export const CoffeeSourceLabelForm = ({ source }: CoffeeSourceLabelFormProps): J
 
   return (
     <View style={styles.options}>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.preBrewSourceLabelTitle)}</Text>
-      <Text variant="bodySmall" tone={hasUncertainFields ? 'tertiary' : 'muted'}>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.preBrewSourceLabelTitle)}</Text>
+      <Text variant="caption" tone={hasUncertainFields ? 'tertiary' : 'muted'}>
         {t(
           hasUncertainFields
             ? TRANSLATION_KEYS.scanLabelCheckUncertain
@@ -45,7 +45,7 @@ export const CoffeeSourceLabelForm = ({ source }: CoffeeSourceLabelFormProps): J
         )}
       </Text>
       {source.photo.failure !== null ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(BAG_PHOTO_FAILURE_KEYS[source.photo.failure])}
         </Text>
       ) : null}
@@ -56,22 +56,23 @@ export const CoffeeSourceLabelForm = ({ source }: CoffeeSourceLabelFormProps): J
         onChange={source.describeLabel}
       />
       {source.hasFailed ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(TRANSLATION_KEYS.scanError)}
         </Text>
       ) : null}
       <View style={styles.actions}>
-        <Button
+        <PillButton
+          tone="espresso"
           label={t(TRANSLATION_KEYS.preBrewSourceKeep)}
           fullWidth
-          loading={source.isSaving}
+          isPending={source.isSaving}
           onPress={(): void => {
             source.keepLabel(t(TRANSLATION_KEYS.inventoryUnnamedCoffee));
           }}
         />
-        <Button
+        <PillButton
+          tone="surface"
           label={t(TRANSLATION_KEYS.preBrewSourceBack)}
-          variant="tertiary"
           fullWidth
           disabled={source.isSaving}
           onPress={source.back}

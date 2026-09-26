@@ -15,12 +15,12 @@ export interface BrewTimerDisplayProps {
 }
 
 /**
- * The one number that carries the screen.
+ * The one number that carries the screen, set inside the ring it is drawn by.
  *
- * Set at a size no heading in the app uses, because for the length of a brew
- * this is the screen: read from half a metre away, by somebody whose hands are
- * wet and whose glasses are somewhere else. The elapsed time sits underneath
- * it in small type - useful afterwards, never the thing being watched.
+ * Read from half a metre away by somebody whose hands are wet and whose
+ * glasses are somewhere else, which is why it is larger than any heading in
+ * the app. The total sits under it in mono at a fifth the size: useful
+ * afterwards, never the thing being watched.
  *
  * A step with no countdown says so in words instead of showing a zero. Zero
  * and "there is no number here" are different facts, and only one of them
@@ -36,15 +36,15 @@ export const BrewTimerDisplay = ({
   return (
     <View style={styles.wrapper}>
       {remainingSeconds === null ? (
-        <Text variant="headlineMedium" align="center">
+        <Text variant="displayTitle" tone="onEspresso" align="center">
           {t(TRANSLATION_KEYS.brewModeNoTimeStep)}
         </Text>
       ) : (
-        <Text variant="numericDisplay" align="center" numeric>
+        <Text variant="numericDisplay" tone="onEspresso" align="center" numeric>
           {formatDuration(Math.ceil(remainingSeconds))}
         </Text>
       )}
-      <Text variant="bodyMedium" tone="muted" align="center" numeric>
+      <Text variant="numericCaption" tone="onEspressoMuted" align="center" numeric>
         {t(TRANSLATION_KEYS.brewModeElapsed, {
           time: formatDuration(Math.floor(elapsedSeconds)),
         })}

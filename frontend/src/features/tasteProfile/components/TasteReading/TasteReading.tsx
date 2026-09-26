@@ -1,14 +1,17 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { TasteAxes, TasteAxisConfidence } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { useThemedStyles } from '../../../../theme';
-import { AXIS_BAND_LABEL_KEYS, TASTE_AXIS_LABEL_KEYS } from '../../constants';
+import { useTheme, useThemedStyles } from '../../../../theme';
+import { AXIS_BAND_LABEL_KEYS, TASTE_AXIS_ICONS, TASTE_AXIS_LABEL_KEYS } from '../../constants';
 import { readTasteAxisReadings, type TasteAxisReading } from '../../services';
 
 import { createTasteReadingStyles } from './TasteReading.styles';
+
+const FIRST = 0;
 
 export interface TasteReadingProps {
   readonly axes: TasteAxes;
@@ -32,22 +35,35 @@ export interface TasteReadingProps {
  */
 export const TasteReading = ({ axes, axisConfidence }: TasteReadingProps): JSX.Element => {
   const styles = useThemedStyles(createTasteReadingStyles);
+  const theme = useTheme();
   const { t } = useTranslation();
 
   return (
-    <View style={styles.wrapper}>
-      {readTasteAxisReadings(axes, axisConfidence).map((reading: TasteAxisReading): JSX.Element => (
-        <View key={reading.axis} style={styles.row}>
-          <Text variant="labelMedium" tone="muted">
-            {t(TASTE_AXIS_LABEL_KEYS[reading.axis])}
-          </Text>
-          <Text variant="bodyMedium" tone={reading.known ? 'default' : 'muted'} align="right">
-            {reading.known
-              ? t(AXIS_BAND_LABEL_KEYS[reading.axis][reading.band])
-              : t(TRANSLATION_KEYS.profileAxisUnknown)}
-          </Text>
-        </View>
-      ))}
+    <View style={styles.card}>
+      {readTasteAxisReadings(axes, axisConfidence).map(
+        (reading: TasteAxisReading, index: number): JSX.Element => (
+          <View key={reading.axis}>
+            {index === FIRST ? null : <View style={styles.divider} />}
+            <View style={styles.row}>
+              <MaterialCommunityIcons
+                name={TASTE_AXIS_ICONS[reading.axis]}
+                size={theme.size.axisRowGlyph}
+                color={theme.colors.onSurfaceVariant}
+              />
+              <View style={styles.name}>
+                <Text variant="eyebrow" tone="muted">
+                  {t(TASTE_AXIS_LABEL_KEYS[reading.axis])}
+                </Text>
+              </View>
+              <Text variant="bodyText" tone={reading.known ? 'default' : 'muted'} align="right">
+                {reading.known
+                  ? t(AXIS_BAND_LABEL_KEYS[reading.axis][reading.band])
+                  : t(TRANSLATION_KEYS.profileAxisUnknown)}
+              </Text>
+            </View>
+          </View>
+        ),
+      )}
     </View>
   );
 };

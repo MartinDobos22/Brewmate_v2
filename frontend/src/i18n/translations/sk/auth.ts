@@ -18,6 +18,17 @@ export const SK_AUTH = {
   authEmailPlaceholder: 'meno@priklad.sk',
   authPasswordLabel: 'Heslo',
   authPasswordPlaceholder: 'Aspoň 6 znakov',
+
+  /*
+   * The eye on the password field, said out loud rather than printed.
+   *
+   * A password typed wrong on a keyboard that capitalised the first letter is
+   * answered by a failure nobody can see the cause of, so the field offers to
+   * show it - and a screen reader has to be able to say which of the two
+   * states the button is about to put it in.
+   */
+  authRevealPassword: 'Zobraziť heslo',
+  authConcealPassword: 'Skryť heslo',
   authSignInAction: 'Prihlásiť sa',
   authSignUpAction: 'Vytvoriť účet',
   authForgotPasswordAction: 'Zabudnuté heslo?',

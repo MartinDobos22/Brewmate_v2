@@ -1,5 +1,5 @@
-export { LIGHT_COLORS, DARK_COLORS } from './colors';
-export type { ColorPalette } from './colors';
+export { LIGHT_COLORS, DARK_COLORS, ESPRESSO, BREW_GROUND } from './colors';
+export type { ColorPalette, EspressoRoles, BrewGroundRoles } from './colors';
 export { SPACING, LAYOUT_SPACING } from './spacing';
 export type { SpacingToken, LayoutSpacingToken } from './spacing';
 export { RADIUS } from './radius';
@@ -12,10 +12,10 @@ export { DURATION, EASING } from './motion';
 export type { DurationToken, EasingToken, EasingCurve } from './motion';
 export { SIZE, RELATIVE_SIZE } from './sizing';
 export type { SizeToken, RelativeSizeToken } from './sizing';
-export { FONT_FAMILIES, TYPE_SCALE, NUMERIC_SCALE, TYPOGRAPHY } from './typography';
+export { FONT_FAMILIES, REDESIGN_SCALE, NUMERIC_SCALE, TYPOGRAPHY } from './typography';
 export type {
   FontFamilyToken,
-  TypeScaleToken,
+  RedesignScaleToken,
   NumericScaleToken,
   TypographyStyle,
   TypographyToken,

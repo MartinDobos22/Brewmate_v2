@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, Input, Text } from '../../../../components/ui';
+import { Card, InfoNote, Input, PillButton, SectionHeading, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { BAG_PHOTO_SOURCES } from '../../../bagEvaluations/services';
@@ -28,59 +28,55 @@ export const ImportSourceStep = ({ recipeImport }: ImportSourceStepProps): JSX.E
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.importSourceSection)}</Text>
+      <SectionHeading title={t(TRANSLATION_KEYS.importSourceSection)} placement="card" />
       <Input
         label={t(TRANSLATION_KEYS.importSourcePasteLabel)}
         value={source.text}
         placeholder={t(TRANSLATION_KEYS.importSourcePastePlaceholder)}
+        multiline
         onChangeText={source.write}
         disabled={source.isReading}
       />
       {source.camera.hasFailed ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(TRANSLATION_KEYS.importSourcePhotoError)}
         </Text>
       ) : null}
       {source.hasFailed ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(TRANSLATION_KEYS.importSourceError)}
         </Text>
       ) : null}
       <View style={styles.actions}>
         {source.camera.isSupported ? (
-          <View style={styles.photoRow}>
-            <Button
-              label={t(TRANSLATION_KEYS.importSourcePhoto)}
-              variant="secondary"
-              fullWidth
-              disabled={source.isReading}
-              onPress={(): void => {
-                source.addPhoto(BAG_PHOTO_SOURCES.library);
-              }}
-            />
-          </View>
+          <PillButton
+            tone="surface"
+            label={t(TRANSLATION_KEYS.importSourcePhoto)}
+            fullWidth
+            disabled={source.isReading}
+            onPress={(): void => {
+              source.addPhoto(BAG_PHOTO_SOURCES.library);
+            }}
+          />
         ) : null}
-        <Button
+        <PillButton
+          tone="espresso"
           label={t(
             source.isReading
               ? TRANSLATION_KEYS.importSourceReading
               : TRANSLATION_KEYS.importSourceRead,
           )}
           fullWidth
-          loading={source.isReading}
+          isPending={source.isReading}
           disabled={!source.canRead || source.isReading}
           onPress={(): void => {
             source.read(recipeImport.toReview);
           }}
         />
-        {source.canRead ? null : (
-          <Text variant="bodySmall" tone="muted">
-            {t(TRANSLATION_KEYS.importSourceEmpty)}
-          </Text>
-        )}
-        <Button
+        {source.canRead ? null : <InfoNote text={t(TRANSLATION_KEYS.importSourceEmpty)} />}
+        <PillButton
+          tone="surface"
           label={t(TRANSLATION_KEYS.importSourceManual)}
-          variant="tertiary"
           fullWidth
           disabled={source.isReading}
           onPress={recipeImport.startManually}

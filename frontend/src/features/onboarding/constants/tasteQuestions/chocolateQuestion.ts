@@ -19,6 +19,7 @@ export const CHOCOLATE_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'milk',
+      icon: 'cow',
       labelKey: TRANSLATION_KEYS.tqChocolateMilk,
       effect: {
         axes: { sweetness: 8, bitterness: 3 },
@@ -27,6 +28,7 @@ export const CHOCOLATE_QUESTION: TasteQuestion = {
     },
     {
       id: 'dark',
+      icon: 'candy-outline',
       labelKey: TRANSLATION_KEYS.tqChocolateDark,
       effect: {
         axes: { sweetness: 4, bitterness: 7.5, intensity: 7.5 },
@@ -35,6 +37,7 @@ export const CHOCOLATE_QUESTION: TasteQuestion = {
     },
     {
       id: 'both',
+      icon: 'scale-balance',
       labelKey: TRANSLATION_KEYS.tqChocolateBoth,
       effect: {
         axes: { sweetness: 6.5, bitterness: 5.5 },

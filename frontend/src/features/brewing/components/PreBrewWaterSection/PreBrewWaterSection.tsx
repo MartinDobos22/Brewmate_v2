@@ -27,9 +27,9 @@ export const PreBrewWaterSection = ({
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.preBrewWaterSection)}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.preBrewWaterSection)}</Text>
       <WaterTypeDropdown selected={waterType} onSelect={onChoose} />
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="bodyText" tone="muted">
         {t(TRANSLATION_KEYS.preBrewWaterHint)}
       </Text>
     </Card>

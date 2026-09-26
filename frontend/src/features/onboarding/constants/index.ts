@@ -29,3 +29,4 @@ export {
 } from './calibrationRecipe';
 export type { CalibrationStage } from './calibrationRecipe';
 export { CALIBRATION_LEXICON } from './calibrationLexicon';
+export { ONBOARDING_HEADER_ICONS, ONBOARDING_STEP_ICONS } from './onboardingIcons';

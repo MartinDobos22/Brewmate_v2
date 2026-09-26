@@ -1,7 +1,7 @@
 import type { AiUsageFunctionTotal } from '@brewmate/shared';
 import type { JSX } from 'react';
 
-import { Card, ListItem, Text } from '../../../../components/ui';
+import { Card, ListItem, SectionHeading, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { formatCost } from '../../../../lib/formatters';
 import { resolveAiFunctionLabelKey } from '../../constants';
@@ -25,9 +25,9 @@ export const AiCostBreakdown = ({ totals }: AiCostBreakdownProps): JSX.Element =
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.aiCostsByFunctionTitle)}</Text>
+      <SectionHeading title={t(TRANSLATION_KEYS.aiCostsByFunctionTitle)} placement="card" />
       {totals.length === NOTHING ? (
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.aiCostsByFunctionEmpty)}
         </Text>
       ) : null}
@@ -45,7 +45,7 @@ export const AiCostBreakdown = ({ totals }: AiCostBreakdownProps): JSX.Element =
             subtitle={t(TRANSLATION_KEYS.aiCostsFunctionCalls, { count: total.calls })}
             showDivider={index > NOTHING}
             trailing={
-              <Text variant="labelMedium" tone="muted" numeric>
+              <Text variant="numericRow" numeric>
                 {amount}
               </Text>
             }

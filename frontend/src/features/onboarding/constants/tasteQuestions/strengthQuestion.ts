@@ -17,18 +17,21 @@ export const STRENGTH_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'high',
+      icon: 'flash-outline',
       labelKey: TRANSLATION_KEYS.tqStrengthHigh,
       noteKey: TRANSLATION_KEYS.tqStrengthHighNote,
       effect: { axes: { body: 7, intensity: 8.5 } },
     },
     {
       id: 'medium',
+      icon: 'scale-balance',
       labelKey: TRANSLATION_KEYS.tqStrengthMedium,
       noteKey: TRANSLATION_KEYS.tqStrengthMediumNote,
       effect: { axes: { intensity: 5.5 } },
     },
     {
       id: 'low',
+      icon: 'feather',
       labelKey: TRANSLATION_KEYS.tqStrengthLow,
       noteKey: TRANSLATION_KEYS.tqStrengthLowNote,
       effect: { axes: { body: 4, intensity: 3 } },

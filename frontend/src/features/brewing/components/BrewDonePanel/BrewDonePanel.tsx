@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, Text } from '../../../../components/ui';
+import { Card, PillButton, SectionHeading, Text } from '../../../../components/ui';
 import { ROUTES, buildRecipeChatRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
@@ -27,6 +27,10 @@ export interface BrewDonePanelProps {
  * A brew that could not be sent says so plainly and still leads onwards. The
  * conversation needs a stored cup to be about, so where there is none the
  * screen offers the way home instead of a button that would fail.
+ *
+ * It carries brew mode's own tones because it is drawn on brew mode's ground,
+ * which is dark in both colour schemes: a heading taking its colour from the
+ * active scheme would be invisible on half the phones this runs on.
  */
 export const BrewDonePanel = ({
   recipeId,
@@ -40,31 +44,33 @@ export const BrewDonePanel = ({
 
   return (
     <View style={styles.wrapper}>
-      <Text variant="headlineMedium" align="center">
+      <Text variant="displayTitle" tone="onEspresso" align="center">
         {t(TRANSLATION_KEYS.brewModeDoneTitle)}
       </Text>
-      <Text variant="bodyLarge" tone="muted" align="center">
+      <Text variant="bodyLead" tone="onEspressoMuted" align="center">
         {t(TRANSLATION_KEYS.brewModeDoneBody)}
       </Text>
       {isQueued ? (
         <Card>
-          <Text variant="titleMedium">{t(TRANSLATION_KEYS.brewModeQueuedTitle)}</Text>
-          <Text variant="bodySmall" tone="muted">
-            {t(TRANSLATION_KEYS.brewModeQueuedBody)}
-          </Text>
+          <SectionHeading
+            title={t(TRANSLATION_KEYS.brewModeQueuedTitle)}
+            caption={t(TRANSLATION_KEYS.brewModeQueuedBody)}
+            placement="card"
+          />
         </Card>
       ) : null}
-      <Button
+      <PillButton
+        tone="espresso"
         label={t(TRANSLATION_KEYS.brewModeDoneChat)}
         fullWidth
-        loading={isPending}
+        isPending={isPending}
         onPress={(): void => {
           router.replace(buildRecipeChatRoute(recipeId, brewLog?.id));
         }}
       />
-      <Button
+      <PillButton
+        tone="surface"
         label={t(TRANSLATION_KEYS.brewModeDoneLater)}
-        variant="tertiary"
         fullWidth
         onPress={(): void => {
           router.replace(ROUTES.home);

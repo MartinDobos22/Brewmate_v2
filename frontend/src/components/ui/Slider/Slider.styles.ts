@@ -3,34 +3,49 @@ import { StyleSheet, type ViewStyle } from 'react-native';
 import type { Theme, ViewStyles } from '../../../theme';
 
 type SliderStyleMap = ViewStyles<
-  'wrapper' | 'header' | 'touchArea' | 'track' | 'fill' | 'thumb' | 'disabled'
+  'wrapper' | 'header' | 'label' | 'touchArea' | 'track' | 'fill' | 'thumb' | 'bounds' | 'disabled'
 >;
 
-/** The thumb is the one circle allowed outside an avatar: it is a control, not a shape. */
+/**
+ * The thumb is the one circle allowed outside an avatar: it is a control, not
+ * a shape - and it carries a ring of the surface it sits on plus a shadow, so
+ * it reads as something to take hold of rather than as a dot on a line.
+ */
 export const createSliderStyles = (theme: Theme): SliderStyleMap =>
   StyleSheet.create({
     wrapper: { gap: theme.spacing.sm, alignSelf: 'stretch' },
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    label: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xs },
     touchArea: { height: theme.size.minTouchTarget, justifyContent: 'center' },
     track: {
       height: theme.size.sliderTrackHeight,
-      borderRadius: theme.radius.xs,
-      backgroundColor: theme.colors.surfaceContainerHigh,
+      borderRadius: theme.shape.pill,
+      backgroundColor: theme.colors.surfaceDim,
     },
     fill: {
       height: theme.size.sliderTrackHeight,
-      borderRadius: theme.radius.xs,
+      borderRadius: theme.shape.pill,
       backgroundColor: theme.colors.primary,
     },
     thumb: {
       position: 'absolute',
       width: theme.size.sliderThumbSize,
       height: theme.size.sliderThumbSize,
-      borderRadius: theme.shape.progressRing,
-      backgroundColor: theme.colors.primary,
-      borderWidth: theme.borderWidth.thick,
+      borderRadius: theme.shape.pill,
+      backgroundColor: theme.colors.espresso,
+      /**
+       * A ring of the surface it sits on, thick enough to separate the thumb
+       * from the fill behind it: at a hairline the two browns meet and the
+       * control reads as a bulge in the track rather than as something to
+       * take hold of.
+       */
+      borderWidth: theme.borderWidth.ring,
       borderColor: theme.colors.surface,
+      shadowColor: theme.colors.espresso,
+      ...theme.elevation.card,
     },
+    /** What the two ends of the track mean, which a slider cannot say itself. */
+    bounds: { flexDirection: 'row', justifyContent: 'space-between' },
     disabled: { opacity: theme.opacity.disabled },
   });
 

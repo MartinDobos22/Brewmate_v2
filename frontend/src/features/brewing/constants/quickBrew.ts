@@ -1,3 +1,5 @@
+import type { TileGlyph } from '../../../components/ui';
+
 /**
  * Where somebody is inside a quick brew.
  *
@@ -13,3 +15,14 @@ export const QUICK_BREW_STAGES = {
 } as const;
 
 export type QuickBrewStage = (typeof QUICK_BREW_STAGES)[keyof typeof QUICK_BREW_STAGES];
+
+/**
+ * The mark the quick brew wears at the top of itself.
+ *
+ * The same bolt the home screen's own round button into this flow carries, so
+ * pressing one and arriving at the other is recognisably the same errand -
+ * the rule the scanner's badge and the import's already follow.
+ */
+export const QUICK_BREW_ICONS = {
+  flow: 'lightning-bolt-outline',
+} as const satisfies Record<string, TileGlyph>;

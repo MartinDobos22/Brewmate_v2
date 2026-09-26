@@ -21,8 +21,8 @@ in this repository. Each of these was checked by running the built server -
 What is _not_ ready has nothing to do with the code. It is the set of things
 only a console can produce: a production Neon branch, a production Firebase
 project and its service account key, an Anthropic key, an account with a host,
-and the `api.brewmate.app` hostname that `frontend/eas.json` already points
-production builds at. [`go-live.md`](./go-live.md) is the order to do them in.
+and eventually the `api.brewmate.app` hostname - until then `frontend/eas.json`
+points builds at the Render service's own `onrender.com` address. [`go-live.md`](./go-live.md) is the order to do them in.
 
 ## What actually has to be hosted
 
@@ -135,7 +135,8 @@ nothing else. In production:
 | `NODE_ENV`                                                               | yes      | `production`                                                          |
 | `PORT`                                                                   | platform | Injected by the host; the default is 3000                             |
 | `HOST`                                                                   | no       | `0.0.0.0` already, which is what a hosted process needs               |
-| `LOG_LEVEL`                                                              | no       | `info` in production; `debug` logs every request                      |
+| `LOG_LEVEL`                                                              | no       | `info` in production; `debug` adds the health probe's own requests    |
+| `LOG_FORMAT`                                                             | no       | `pretty` (default): one readable line per event; `json` for a drain   |
 | `DATABASE_URL`                                                           | yes      | The **pooled** Neon endpoint (hostname contains `-pooler`)            |
 | `DATABASE_URL_UNPOOLED`                                                  | yes      | The direct endpoint. Migrations need a plain session                  |
 | `DATABASE_POOL_MAX`                                                      | no       | Default 10. See the arithmetic below before raising it                |
@@ -223,8 +224,8 @@ anywhere.
 - **TLS is the platform's.** iOS App Transport Security refuses plain HTTP, so
   a production build talking to `http://` is a build that cannot make a single
   request. `frontend/eas.json` sets `EXPO_PUBLIC_API_BASE_URL` to
-  `https://api.brewmate.app` in the `base` profile - either point that hostname
-  at the deployment, or change the value before building.
+  the Render service's `onrender.com` address in the `base` profile; once a
+  custom domain is attached, change the value to it before building.
 - **`/health` is the probe, and it answers 503 when the database is down.**
   That is the right answer for a load balancer and a slightly awkward one for a
   platform that restarts on a failed health check: a Neon branch that briefly
@@ -248,12 +249,17 @@ anywhere.
 
 ## Logs
 
-Pino writes JSON to stdout, which is what every platform above collects.
+Pino writes to stdout, which is what every platform above collects - one
+readable line per event by default (`[req-5] GET /me -> 200 (6 ms)`), or one
+JSON record per line with `LOG_FORMAT=json` once something parses them. Each
+request leaves exactly one line, at `warn` for a 4xx and `error` for a 5xx, so
+filtering on warnings is a list of what went wrong; the host's health probe is
+logged at `debug` so it does not bury everything else.
 `redactPaths` already keeps authorization headers and cookies out, and the
 error tracker deliberately sends only the route pattern, the request id and the
 internal account id - never a path with an id in it, never a body. Set
-`LOG_LEVEL=info`; `debug` logs every request and turns a month of logs into a
-bill of its own.
+`LOG_LEVEL=info`; `debug` also logs the health probe every few seconds and
+turns a month of logs into a bill of its own.
 
 ## Deploying on every push, later
 

@@ -13,7 +13,7 @@ export const createTabsStyles = (theme: Theme): TabsStyleMap =>
     tabBar: {
       backgroundColor: theme.colors.surface,
       borderTopWidth: theme.borderWidth.thin,
-      borderTopColor: theme.colors.outlineVariant,
+      borderTopColor: theme.colors.dividerStrong,
     },
-    tabLabel: { ...theme.typography.labelSmall },
+    tabLabel: { ...theme.typography.tabLabel },
   });

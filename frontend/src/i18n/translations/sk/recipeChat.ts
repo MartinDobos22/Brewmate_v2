@@ -6,11 +6,19 @@
  * answered because it is a question somebody can answer while holding a mug.
  */
 export const SK_RECIPE_CHAT = {
-  recipeChatTitle: 'Ako to dopadlo?',
-  recipeChatAboutTitle: 'O čom sa bavíme',
-  recipeChatAboutHint: 'Toto sú čísla, ktoré práve platia. Keď prijmeš zmenu, prepíšu sa tu.',
   recipeChatInputLabel: 'Povedz mi to vlastnými slovami',
   recipeChatUnknownMethod: 'Neznáma metóda',
+
+  /*
+   * The header block: which brewer, which version of the recipe, and the
+   * three numbers that currently apply.
+   *
+   * The version is said in words rather than counted, because a recipe knows
+   * which recipe it came from and not how many came before that - "verzia 3"
+   * would be a number nothing on the screen can prove.
+   */
+  recipeChatVersionOriginal: 'pôvodný',
+  recipeChatVersionAdjusted: 'upravený',
   recipeChatOpening:
     'Tak čo, aké to bolo? Napíš to pokojne vlastnými slovami - "kyslé", "prázdne", "chcem to sladšie". Aj jedna veta mi stačí.',
   recipeChatPlaceholder: 'Napíš, ako ti chutila...',

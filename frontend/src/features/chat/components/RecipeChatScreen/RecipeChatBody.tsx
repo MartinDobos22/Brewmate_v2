@@ -5,9 +5,9 @@ import {
   type RecipeChatMessage,
 } from '@brewmate/shared';
 import type { JSX } from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
-import { CHAT_AUTHORS, ChatBubble, Text } from '../../../../components/ui';
+import { CHAT_AUTHORS, ChatBubble, InfoNote } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import type { RecipeConversation } from '../../hooks';
@@ -45,49 +45,51 @@ export const RecipeChatBody = ({ recipe, conversation }: RecipeChatBodyProps): J
   const current = conversation.adjusted ?? recipe;
 
   return (
-    <View style={styles.wrapper}>
+    <>
       <RecipeChatHeader recipe={current} />
-      {conversation.messages.length === NOTHING ? (
-        <ChatBubble
-          message={t(TRANSLATION_KEYS.recipeChatOpening)}
-          author={CHAT_AUTHORS.assistant}
-        />
-      ) : null}
-      {conversation.messages.map((message: RecipeChatMessage): JSX.Element => {
-        const patch = message.recipePatch;
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.thread}>
+        {conversation.messages.length === NOTHING ? (
+          <ChatBubble
+            message={t(TRANSLATION_KEYS.recipeChatOpening)}
+            author={CHAT_AUTHORS.assistant}
+          />
+        ) : null}
+        {conversation.messages.map((message: RecipeChatMessage): JSX.Element => {
+          const patch = message.recipePatch;
 
-        return (
-          <View key={message.id} style={styles.message}>
-            <ChatBubble
-              message={message.content}
-              author={message.role === CHAT_ROLES.user ? CHAT_AUTHORS.user : CHAT_AUTHORS.assistant}
-            />
-            {patch === null ? null : (
-              <RecipePatchCard
-                patch={patch}
-                current={recipe.params}
-                isApplied={conversation.appliedMessageId === message.id}
-                isApplying={conversation.isApplying}
-                hasFailed={conversation.applyFailed}
-                onApply={(): void => {
-                  conversation.applyPatch(message.id, patch);
-                }}
+          return (
+            <View key={message.id} style={styles.message}>
+              <ChatBubble
+                message={message.content}
+                author={
+                  message.role === CHAT_ROLES.user ? CHAT_AUTHORS.user : CHAT_AUTHORS.assistant
+                }
               />
-            )}
-          </View>
-        );
-      })}
-      {wasConstrained ? (
-        <Text variant="bodySmall" tone="muted">
-          {t(TRANSLATION_KEYS.recipeChatConstrainedNotice)}
-        </Text>
-      ) : null}
+              {patch === null ? null : (
+                <RecipePatchCard
+                  patch={patch}
+                  current={recipe.params}
+                  isApplied={conversation.appliedMessageId === message.id}
+                  isApplying={conversation.isApplying}
+                  hasFailed={conversation.applyFailed}
+                  onApply={(): void => {
+                    conversation.applyPatch(message.id, patch);
+                  }}
+                />
+              )}
+            </View>
+          );
+        })}
+        {wasConstrained ? (
+          <InfoNote text={t(TRANSLATION_KEYS.recipeChatConstrainedNotice)} />
+        ) : null}
+        <RecipeChatSaveRow recipe={current} />
+      </ScrollView>
       <ChatComposer
         isAnswering={conversation.isAnswering}
         hasFailed={conversation.hasFailed}
         onSend={conversation.say}
       />
-      <RecipeChatSaveRow recipe={current} />
-    </View>
+    </>
   );
 };

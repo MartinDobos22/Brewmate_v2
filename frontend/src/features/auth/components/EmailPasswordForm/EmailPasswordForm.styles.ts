@@ -7,5 +7,6 @@ type EmailPasswordFormStyleMap = ViewStyles<'form' | 'footer'>;
 export const createEmailPasswordFormStyles = (theme: Theme): EmailPasswordFormStyleMap =>
   StyleSheet.create({
     form: { gap: theme.spacing.lg },
-    footer: { alignItems: 'flex-start' },
+    /** Centred, because there is nothing to the left of it to line up with. */
+    footer: { alignItems: 'center' },
   });

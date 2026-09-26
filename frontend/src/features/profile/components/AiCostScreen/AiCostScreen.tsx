@@ -2,7 +2,7 @@ import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { Screen } from '../../../../components/layout';
-import { Card, QueryState, Text } from '../../../../components/ui';
+import { Card, QueryState, ScreenIntro, SectionHeading } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { useAiUsageSummary } from '../../hooks';
@@ -29,10 +29,10 @@ export const AiCostScreen = (): JSX.Element => {
   return (
     <Screen scrollable>
       <View style={styles.intro}>
-        <Text variant="headlineSmall">{t(TRANSLATION_KEYS.aiCostsTitle)}</Text>
-        <Text variant="bodySmall" tone="muted">
-          {t(TRANSLATION_KEYS.aiCostsSubtitle)}
-        </Text>
+        <ScreenIntro
+          title={t(TRANSLATION_KEYS.aiCostsTitle)}
+          lead={t(TRANSLATION_KEYS.aiCostsSubtitle)}
+        />
       </View>
 
       <QueryState
@@ -55,11 +55,12 @@ export const AiCostScreen = (): JSX.Element => {
             titleKey={TRANSLATION_KEYS.aiCostsMonthTitle}
           />
           <AiCostBreakdown totals={summary.data.byFunction} />
-          <Card variant="container">
-            <Text variant="titleMedium">{t(TRANSLATION_KEYS.aiCostsWhatCountsTitle)}</Text>
-            <Text variant="bodySmall" tone="muted">
-              {t(TRANSLATION_KEYS.aiCostsWhatCountsBody)}
-            </Text>
+          <Card>
+            <SectionHeading
+              title={t(TRANSLATION_KEYS.aiCostsWhatCountsTitle)}
+              caption={t(TRANSLATION_KEYS.aiCostsWhatCountsBody)}
+              placement="card"
+            />
           </Card>
         </View>
       )}

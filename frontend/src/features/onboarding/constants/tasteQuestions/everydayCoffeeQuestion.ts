@@ -30,12 +30,14 @@ export const EVERYDAY_COFFEE_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'instant',
+      icon: 'cup-water',
       labelKey: TRANSLATION_KEYS.tqEverydayInstant,
       noteKey: TRANSLATION_KEYS.tqEverydayInstantNote,
       effect: { axes: { acidity: 4, body: 4.5, bitterness: 6, intensity: 5 } },
     },
     {
       id: 'capsule',
+      icon: 'coffee-maker',
       labelKey: TRANSLATION_KEYS.tqEverydayCapsule,
       noteKey: TRANSLATION_KEYS.tqEverydayCapsuleNote,
       effect: {
@@ -45,6 +47,7 @@ export const EVERYDAY_COFFEE_QUESTION: TasteQuestion = {
     },
     {
       id: 'milkDrink',
+      icon: 'coffee',
       labelKey: TRANSLATION_KEYS.tqEverydayMilkDrink,
       noteKey: TRANSLATION_KEYS.tqEverydayMilkDrinkNote,
       effect: {
@@ -55,10 +58,16 @@ export const EVERYDAY_COFFEE_QUESTION: TasteQuestion = {
     },
     {
       id: 'filter',
+      icon: 'filter-outline',
       labelKey: TRANSLATION_KEYS.tqEverydayFilter,
       noteKey: TRANSLATION_KEYS.tqEverydayFilterNote,
       effect: { axes: { acidity: 6, body: 4.5, bitterness: 4, intensity: 4.5 } },
     },
-    { id: 'rarely', labelKey: TRANSLATION_KEYS.tqEverydayRarely, effect: {} },
+    {
+      id: 'rarely',
+      icon: 'sprout-outline',
+      labelKey: TRANSLATION_KEYS.tqEverydayRarely,
+      effect: {},
+    },
   ],
 };

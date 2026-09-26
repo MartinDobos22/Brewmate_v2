@@ -9,7 +9,11 @@ import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { ONBOARDING_STEPS } from '../../../onboarding/constants';
 import { useOnboardingStepLink } from '../../../onboarding/hooks';
-import { BREW_METHOD_CATEGORY_ICONS, BREW_METHOD_CATEGORY_LABEL_KEYS } from '../../constants';
+import {
+  BREW_METHOD_CATEGORY_ICONS,
+  BREW_METHOD_CATEGORY_LABEL_KEYS,
+  EMPTY_BREW_METHODS_ICON,
+} from '../../constants';
 import type { QuickBrew } from '../../hooks/useQuickBrew';
 
 import { createQuickBrewMethodStepStyles } from './QuickBrewMethodStep.styles';
@@ -47,12 +51,13 @@ export const QuickBrewMethodStep = ({ brew }: QuickBrewMethodStepProps): JSX.Ele
   if (brew.methods.length === NOTHING) {
     return (
       <EmptyState
+        icon={EMPTY_BREW_METHODS_ICON}
         title={t(TRANSLATION_KEYS.quickBrewMethodEmptyTitle)}
         description={t(TRANSLATION_KEYS.quickBrewMethodEmptyBody)}
         actions={[
           {
             label: t(TRANSLATION_KEYS.quickBrewMethodEmptyAction),
-            variant: 'primary',
+            tone: 'espresso',
             onPress: (): void => {
               openStep(ONBOARDING_STEPS.brewers);
             },
@@ -70,7 +75,7 @@ export const QuickBrewMethodStep = ({ brew }: QuickBrewMethodStepProps): JSX.Ele
 
   return (
     <View style={styles.options}>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.quickBrewMethodTitle)}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.quickBrewMethodTitle)}</Text>
       {brew.methods.map((method: BrewMethod): JSX.Element => (
         <OptionCard
           key={method.id}

@@ -39,20 +39,38 @@ export const readRoastFit = (
 
   if (apart === 0) {
     return {
-      points: [{ key: TRANSLATION_KEYS.scanPointRoastMatches, isAgainst: false }],
+      points: [
+        {
+          key: TRANSLATION_KEYS.scanPointRoastMatches,
+          field: BAG_SCAN_FIELDS.roastLevel,
+          isAgainst: false,
+        },
+      ],
       uncertainties: [],
     };
   }
 
   if (apart <= ROAST_LEVEL_NEAR_DISTANCE) {
     return {
-      points: [{ key: TRANSLATION_KEYS.scanPointRoastNear, isAgainst: false }],
+      points: [
+        {
+          key: TRANSLATION_KEYS.scanPointRoastNear,
+          field: BAG_SCAN_FIELDS.roastLevel,
+          isAgainst: false,
+        },
+      ],
       uncertainties: [],
     };
   }
 
   return {
-    points: [{ key: TRANSLATION_KEYS.scanPointRoastDiffers, isAgainst: true }],
+    points: [
+      {
+        key: TRANSLATION_KEYS.scanPointRoastDiffers,
+        field: BAG_SCAN_FIELDS.roastLevel,
+        isAgainst: true,
+      },
+    ],
     uncertainties: [],
   };
 };

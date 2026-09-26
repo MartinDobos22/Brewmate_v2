@@ -28,7 +28,7 @@ export const SocialAuthButtons = ({ disabled = false }: SocialAuthButtonsProps):
     <View style={styles.wrapper}>
       <View style={styles.divider}>
         <View style={styles.rule} />
-        <Text variant="labelMedium" tone="muted">
+        <Text variant="captionSmall" tone="onEspressoMuted">
           {t(TRANSLATION_KEYS.authDividerOr)}
         </Text>
         <View style={styles.rule} />

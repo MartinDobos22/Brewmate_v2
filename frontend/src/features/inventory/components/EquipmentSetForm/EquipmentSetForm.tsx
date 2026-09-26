@@ -2,7 +2,7 @@ import type { Equipment } from '@brewmate/shared';
 import { useState, type JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import type { BrewConstraintName } from '@brewmate/shared';
@@ -75,19 +75,20 @@ export const EquipmentSetForm = ({ equipment }: EquipmentSetFormProps): JSX.Elem
         }}
       />
       {error === null ? null : (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(error)}
         </Text>
       )}
       {create.isError ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {t(TRANSLATION_KEYS.setupErrorSaveFailed)}
         </Text>
       ) : null}
-      <Button
+      <PillButton
+        tone="espresso"
         label={t(TRANSLATION_KEYS.setupSetsAddAction)}
         onPress={submit}
-        loading={create.isPending}
+        isPending={create.isPending}
         fullWidth
       />
     </View>

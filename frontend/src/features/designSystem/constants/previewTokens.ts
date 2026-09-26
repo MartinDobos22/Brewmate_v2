@@ -24,9 +24,44 @@ export const PREVIEW_COLOR_ROLES: readonly (keyof ColorPalette)[] = [
   'outlineVariant',
   'error',
   'errorContainer',
+  'surfaceVariant',
+  'surfaceDim',
+  'surfaceTint',
+  'divider',
+  'dividerStrong',
+  'outlineFaint',
+  'outlineDashed',
+  'onSurfaceEmpty',
+  'onSurfaceEmptyStrong',
+  'freshContainer',
+  'cautionContainer',
+  'roastMid',
+  'espresso',
+  'espressoDeep',
+  'espressoLift',
+  'espressoLine',
+  'accentOnEspresso',
+  'accentSoft',
+  'cream',
+  'brewGround',
+  'brewSurface',
+  'brewChip',
+  'brewTrack',
+  'brewArc',
 ];
 
-export const PREVIEW_RADIUS_TOKENS: readonly RadiusToken[] = ['xs', 'sm', 'md', 'lg', 'xl', 'full'];
+export const PREVIEW_RADIUS_TOKENS: readonly RadiusToken[] = [
+  'xxs',
+  'xs',
+  'sm',
+  'md',
+  'lg',
+  'lgPlus',
+  'xl',
+  'xxl',
+  'xxxl',
+  'full',
+];
 
 export const PREVIEW_SPACING_TOKENS: readonly SpacingToken[] = [
   'xs',
@@ -38,7 +73,19 @@ export const PREVIEW_SPACING_TOKENS: readonly SpacingToken[] = [
   'xxxl',
 ];
 
-export const PREVIEW_ELEVATION_TOKENS: readonly ElevationToken[] = ['none', 'raised', 'overlay'];
+export const PREVIEW_ELEVATION_TOKENS: readonly ElevationToken[] = [
+  'none',
+  'raised',
+  'overlay',
+  'card',
+  'cardEmphasis',
+  'buttonDark',
+  'cardSelected',
+  'pillOnEspresso',
+  'cardHero',
+  'brewControl',
+  'footBar',
+];
 
 const isTypographyToken = (key: string): key is TypographyToken => key in TYPOGRAPHY;
 

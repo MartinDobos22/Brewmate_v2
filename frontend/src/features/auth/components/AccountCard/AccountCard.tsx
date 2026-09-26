@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
 
-import { Button, Card } from '../../../../components/ui';
+import { Card, PillButton } from '../../../../components/ui';
 import { ROUTES } from '../../../../constants';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useAuthSession } from '../../context';
@@ -26,20 +26,20 @@ export const AccountCard = (): JSX.Element => {
   return (
     <Card>
       {needsEmailVerification ? (
-        <Button
+        <PillButton
+          tone="surface"
           label={t(TRANSLATION_KEYS.authVerifyResendAction)}
           onPress={(): void => {
             router.push(ROUTES.verifyEmail);
           }}
-          variant="secondary"
           fullWidth
         />
       ) : null}
-      <Button
+      <PillButton
+        tone="surface"
         label={t(TRANSLATION_KEYS.authSignOutAction)}
         onPress={signOut.run}
-        variant="tertiary"
-        loading={signOut.isPending}
+        isPending={signOut.isPending}
         fullWidth
       />
       <AuthErrorMessage errorKey={signOut.errorKey} />

@@ -27,18 +27,21 @@ export const EXTRACTION_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'bright',
+      icon: 'white-balance-sunny',
       labelKey: TRANSLATION_KEYS.tqExtractionBright,
       noteKey: TRANSLATION_KEYS.tqExtractionBrightNote,
       effect: { axes: { acidity: 8.5, body: 4.5, bitterness: 2.5, intensity: 5.5 } },
     },
     {
       id: 'balanced',
+      icon: 'scale-balance',
       labelKey: TRANSLATION_KEYS.tqExtractionBalanced,
       noteKey: TRANSLATION_KEYS.tqExtractionBalancedNote,
       effect: { axes: { acidity: 6, sweetness: 7.5, body: 6, bitterness: 4.5 } },
     },
     {
       id: 'heavy',
+      icon: 'weight',
       labelKey: TRANSLATION_KEYS.tqExtractionHeavy,
       noteKey: TRANSLATION_KEYS.tqExtractionHeavyNote,
       effect: { axes: { acidity: 4, body: 8.5, bitterness: 6, intensity: 8 } },

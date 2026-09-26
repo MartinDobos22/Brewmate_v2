@@ -42,7 +42,7 @@ export const EquipmentSection = (): JSX.Element => {
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileEquipmentTitle)}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.profileEquipmentTitle)}</Text>
       <EquipmentSummaryList
         items={equipment.data?.items ?? NONE}
         emptyText={t(TRANSLATION_KEYS.profileEquipmentEmpty)}

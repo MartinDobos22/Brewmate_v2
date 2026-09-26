@@ -2,7 +2,7 @@ import { useState, type JSX } from 'react';
 import { View } from 'react-native';
 
 import { Screen } from '../../../../components/layout';
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, ScreenIntro } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { useGrinderCatalog } from '../../hooks';
@@ -34,10 +34,10 @@ export const GrinderCatalogScreen = (): JSX.Element => {
   return (
     <Screen>
       <View style={styles.header}>
-        <Text variant="headlineSmall">{t(TRANSLATION_KEYS.grinderCatalogTitle)}</Text>
-        <Text variant="bodySmall" tone="muted">
-          {t(TRANSLATION_KEYS.grinderCatalogSubtitle)}
-        </Text>
+        <ScreenIntro
+          title={t(TRANSLATION_KEYS.grinderCatalogTitle)}
+          lead={t(TRANSLATION_KEYS.grinderCatalogSubtitle)}
+        />
         <GrinderSearchField value={catalog.search} onChange={catalog.setSearch} />
         <GrinderUseFilter selected={catalog.typicalUse} onSelect={catalog.setTypicalUse} />
       </View>
@@ -53,9 +53,9 @@ export const GrinderCatalogScreen = (): JSX.Element => {
           }}
         />
       </View>
-      <Button
+      <PillButton
+        tone="surface"
         label={t(TRANSLATION_KEYS.grinderNotFoundAction)}
-        variant="tertiary"
         fullWidth
         onPress={(): void => {
           setAdding(true);

@@ -23,7 +23,7 @@ export const SectionBlock = ({
 
   return (
     <View style={styles.section}>
-      <Text variant="titleSmall" tone="muted">
+      <Text variant="rowTitle" tone="muted">
         {title}
       </Text>
       <View style={inline ? styles.row : styles.body}>{children}</View>

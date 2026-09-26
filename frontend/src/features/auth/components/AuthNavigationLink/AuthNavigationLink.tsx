@@ -13,6 +13,14 @@ export interface AuthNavigationLinkProps {
   readonly question?: string;
   readonly action: string;
   readonly href: Route;
+  /**
+   * Replaces the current screen rather than pushing onto it.
+   *
+   * For the one link that is a way out of the signed-out flow rather than a
+   * way around inside it: leaving the verification nudge for the app itself
+   * should not leave that nudge behind the back gesture.
+   */
+  readonly replaces?: boolean;
 }
 
 /** The way between the sign-in, registration and password reset screens. */
@@ -20,6 +28,7 @@ export const AuthNavigationLink = ({
   question,
   action,
   href,
+  replaces = false,
 }: AuthNavigationLinkProps): JSX.Element => {
   const styles = useThemedStyles(createAuthNavigationLinkStyles);
   const router = useRouter();
@@ -35,15 +44,21 @@ export const AuthNavigationLink = ({
       accessibilityRole="link"
       accessibilityLabel={action}
       onPress={(): void => {
+        if (replaces) {
+          router.replace(href);
+
+          return;
+        }
+
         router.push(href);
       }}
     >
       {question === undefined ? null : (
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodyMuted" tone="onEspressoMuted">
           {question}
         </Text>
       )}
-      <Text variant="labelLarge" tone="primary">
+      <Text variant="actionLabel" tone="accent">
         {action}
       </Text>
     </Pressable>

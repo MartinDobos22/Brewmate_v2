@@ -2,7 +2,7 @@ import type { BrewMethod, Equipment } from '@brewmate/shared';
 import { useState, type JSX } from 'react';
 import { ScrollView } from 'react-native';
 
-import { Button, Sheet } from '../../../../components/ui';
+import { PillButton, Sheet } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { useUpdateEquipment } from '../../hooks';
@@ -82,10 +82,11 @@ export const BrewerDetailsSheet = ({
             }));
           }}
         />
-        <Button
+        <PillButton
+          tone="espresso"
           label={t(TRANSLATION_KEYS.setupBrewerDetailSave)}
           onPress={submit}
-          loading={update.isPending}
+          isPending={update.isPending}
           fullWidth
         />
       </ScrollView>

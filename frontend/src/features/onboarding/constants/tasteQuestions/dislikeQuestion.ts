@@ -20,19 +20,27 @@ export const DISLIKE_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'sour',
+      icon: 'fruit-citrus',
       labelKey: TRANSLATION_KEYS.tqDislikeSour,
       effect: { axes: { acidity: 2.5 } },
     },
     {
       id: 'bitter',
+      icon: 'leaf',
       labelKey: TRANSLATION_KEYS.tqDislikeBitter,
       effect: { axes: { bitterness: 2.5 } },
     },
     {
       id: 'watery',
+      icon: 'water-outline',
       labelKey: TRANSLATION_KEYS.tqDislikeWatery,
       effect: { axes: { body: 7.5, intensity: 8 } },
     },
-    { id: 'none', labelKey: TRANSLATION_KEYS.tqDislikeNone, effect: {} },
+    {
+      id: 'none',
+      icon: 'emoticon-happy-outline',
+      labelKey: TRANSLATION_KEYS.tqDislikeNone,
+      effect: {},
+    },
   ],
 };

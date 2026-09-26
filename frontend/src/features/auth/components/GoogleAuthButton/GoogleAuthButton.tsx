@@ -1,7 +1,8 @@
 import type { JSX } from 'react';
 
-import { Button } from '../../../../components/ui';
+import { PillButton } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { AUTH_ICONS } from '../../constants';
 import { useGoogleSignIn } from '../../hooks';
 import { AuthErrorMessage } from '../AuthErrorMessage';
 
@@ -19,13 +20,13 @@ export const GoogleAuthButton = ({ disabled = false }: GoogleAuthButtonProps): J
 
   return (
     <>
-      <Button
+      <PillButton
+        tone="lifted"
+        icon={AUTH_ICONS.google}
         label={t(TRANSLATION_KEYS.authGoogleAction)}
         onPress={signIn}
-        variant="tertiary"
-        loading={isPending}
+        isPending={isPending}
         disabled={disabled || !ready}
-        fullWidth
       />
       <AuthErrorMessage errorKey={errorKey} />
     </>

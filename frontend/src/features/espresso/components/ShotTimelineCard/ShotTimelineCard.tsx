@@ -2,7 +2,7 @@ import type { ShotTimelineEntry } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Card, Text } from '../../../../components/ui';
+import { Card, SectionHeading } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import type { ShotTimeline } from '../../hooks';
@@ -35,7 +35,7 @@ export const ShotTimelineCard = ({ timeline }: ShotTimelineCardProps): JSX.Eleme
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.dialInTimelineTitle)}</Text>
+      <SectionHeading title={t(TRANSLATION_KEYS.dialInTimelineTitle)} placement="card" />
       <View style={styles.list}>
         {timeline.entries.map((entry: ShotTimelineEntry): JSX.Element => (
           <ShotTimelineRow key={entry.brewLogId} entry={entry} />

@@ -3,6 +3,9 @@ import type { BrewParams, BrewStep } from '@brewmate/shared';
 const NOTHING = 0;
 const FIRST = 0;
 const NEXT = 1;
+const PREVIOUS = 1;
+const START = 0;
+const COMPLETE = 1;
 
 export interface BrewTimelineStep {
   readonly step: BrewStep;
@@ -96,4 +99,74 @@ export const resolveTargetRemaining = (
   const target = params.totalTimeSeconds ?? null;
 
   return target === null || elapsedSeconds >= target ? null : target - elapsedSeconds;
+};
+
+/**
+ * When a step actually begins, which is not always what the recipe says.
+ *
+ * A recipe may leave a start open - that is the shape a brew declared without
+ * a clock takes - and in that case the step begins when the one before it
+ * ended. The first step of all begins at the first drop of water.
+ */
+const resolveStepStart = (timeline: readonly BrewTimelineStep[], index: number): number => {
+  const declared = timeline[index]?.startsAtSecond ?? null;
+
+  if (declared !== null) {
+    return declared;
+  }
+
+  return timeline[index - PREVIOUS]?.endsAtSecond ?? START;
+};
+
+/**
+ * How far through the current step the brew is, as a share between nought and
+ * one - or null where the step ends on a sight rather than on a clock.
+ *
+ * This is what the pour ring is drawn from, which is the whole reason it is a
+ * function over the timeline rather than a counter the ring keeps: a phone
+ * that spent the bloom in somebody's pocket comes back and the arc is where
+ * the brew is, not where the last frame left it.
+ *
+ * A null is not missing data and must not be drawn as nought. There is no arc
+ * for a step that is waiting for a person, because an arc at nought says the
+ * step has not started and one creeping forward says it is being timed, and
+ * neither is true.
+ */
+export const resolveStepProgress = (
+  timeline: readonly BrewTimelineStep[],
+  index: number,
+  elapsedSeconds: number,
+): number | null => {
+  const end = timeline[index]?.endsAtSecond ?? null;
+
+  if (end === null) {
+    return null;
+  }
+
+  const start = resolveStepStart(timeline, index);
+  const duration = end - start;
+
+  if (duration <= NOTHING) {
+    return null;
+  }
+
+  return Math.min(Math.max((elapsedSeconds - start) / duration, START), COMPLETE);
+};
+
+/**
+ * The same, for a brew that is a stopwatch against a target rather than a
+ * schedule. Null where the recipe named no target, because there is then
+ * nothing for a ring to be a share of.
+ */
+export const resolveTargetProgress = (
+  params: BrewParams,
+  elapsedSeconds: number,
+): number | null => {
+  const target = params.totalTimeSeconds ?? null;
+
+  if (target === null || target <= NOTHING) {
+    return null;
+  }
+
+  return Math.min(elapsedSeconds / target, COMPLETE);
 };

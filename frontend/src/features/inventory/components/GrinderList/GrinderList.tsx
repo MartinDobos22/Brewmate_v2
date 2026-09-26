@@ -6,6 +6,7 @@ import type { Grinder } from '@brewmate/shared';
 import { EmptyState, ErrorState, LoadingState } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
+import { INVENTORY_EMPTY_ICONS } from '../../constants';
 import { GrinderListItem } from '../GrinderListItem';
 
 import { createGrinderListStyles } from './GrinderList.styles';
@@ -23,6 +24,8 @@ export interface GrinderListProps {
 }
 
 const NOTHING = 0;
+/** The last row closes the sheet, so it draws no rule under itself. */
+const LAST = 1;
 
 /**
  * The catalogue itself, with the four states it can be in. The empty one is
@@ -59,6 +62,7 @@ export const GrinderList = ({
   if (items.length === NOTHING) {
     return (
       <EmptyState
+        icon={INVENTORY_EMPTY_ICONS.catalogue}
         title={t(
           isFiltered ? TRANSLATION_KEYS.grinderNoResultsTitle : TRANSLATION_KEYS.grinderEmptyTitle,
         )}
@@ -68,7 +72,7 @@ export const GrinderList = ({
         actions={[
           {
             label: t(TRANSLATION_KEYS.grinderNotFoundAction),
-            variant: 'primary',
+            tone: 'espresso',
             onPress: onAddOwn,
           },
         ]}
@@ -80,10 +84,15 @@ export const GrinderList = ({
     <FlatList
       data={items}
       keyExtractor={(grinder: Grinder): string => grinder.id}
-      renderItem={({ item }: ListRenderItemInfo<Grinder>): JSX.Element => (
-        <GrinderListItem grinder={item} onPress={onSelect} />
+      renderItem={({ item, index }: ListRenderItemInfo<Grinder>): JSX.Element => (
+        <GrinderListItem
+          grinder={item}
+          onPress={onSelect}
+          showDivider={index < items.length - LAST}
+        />
       )}
       contentContainerStyle={styles.content}
+      style={styles.sheet}
       keyboardShouldPersistTaps="handled"
     />
   );

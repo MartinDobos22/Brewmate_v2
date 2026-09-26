@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, ScreenIntro, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { ONBOARDING_STEPS } from '../../constants/onboardingSteps';
 import { TasteRadarChart } from '../../../tasteProfile/components';
@@ -26,15 +26,22 @@ export const DoneStep = ({ flow }: DoneStepProps): JSX.Element => {
 
   return (
     <OnboardingStepLayout step={ONBOARDING_STEPS.done} flow={flow}>
-      <Text variant="headlineMedium">{t(TRANSLATION_KEYS.onboardingDoneTitle)}</Text>
-      <Text variant="bodyLarge">{t(TRANSLATION_KEYS.onboardingDoneBody)}</Text>
+      <ScreenIntro
+        title={t(TRANSLATION_KEYS.onboardingDoneTitle)}
+        lead={t(TRANSLATION_KEYS.onboardingDoneBody)}
+      />
       {profile === undefined ? null : (
         <TasteRadarChart axes={profile} axisConfidence={profile.axisConfidence} />
       )}
-      <Text variant="bodySmall" tone="muted">
+      <Text variant="captionSmall" tone="muted">
         {t(TRANSLATION_KEYS.onboardingDoneProfileHint)}
       </Text>
-      <Button label={t(TRANSLATION_KEYS.onboardingDoneAction)} onPress={flow.goNext} fullWidth />
+      <PillButton
+        tone="espresso"
+        label={t(TRANSLATION_KEYS.onboardingDoneAction)}
+        onPress={flow.goNext}
+        fullWidth
+      />
     </OnboardingStepLayout>
   );
 };

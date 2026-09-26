@@ -2,7 +2,7 @@ import type { CoffeeBag } from '@brewmate/shared';
 import { useState, type JSX } from 'react';
 import { ScrollView } from 'react-native';
 
-import { Button, Text } from '../../../../components/ui';
+import { PillButton, Text } from '../../../../components/ui';
 import { useRequestErrorCopy } from '../../../../hooks';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
@@ -48,14 +48,15 @@ export const AddCoffeeBagForm = ({ onAdded }: AddCoffeeBagFormProps): JSX.Elemen
         }}
       />
       {mutation.isError ? (
-        <Text variant="bodySmall" tone="error">
+        <Text variant="captionSmall" tone="error">
           {errorCopy.description}
         </Text>
       ) : null}
-      <Button
+      <PillButton
+        tone="espresso"
         label={t(TRANSLATION_KEYS.inventoryAddSubmit)}
         fullWidth
-        loading={mutation.isPending}
+        isPending={mutation.isPending}
         onPress={(): void => {
           mutation.mutate(
             toCreateCoffeeBagRequest(values, t(TRANSLATION_KEYS.inventoryUnnamedCoffee)),

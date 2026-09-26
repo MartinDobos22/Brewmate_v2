@@ -25,11 +25,11 @@ export const EquipmentSetSwitcher = (): JSX.Element => {
 
   return (
     <View style={styles.wrapper}>
-      <Text variant="labelMedium" tone="muted">
+      <Text variant="eyebrow" tone="muted">
         {t(TRANSLATION_KEYS.brewSetSwitcherTitle)}
       </Text>
       {switcher.sets.length === NOTHING ? (
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(TRANSLATION_KEYS.brewSetSwitcherEmpty)}
         </Text>
       ) : (

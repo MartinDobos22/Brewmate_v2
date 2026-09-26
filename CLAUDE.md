@@ -235,12 +235,14 @@ frontend/
     │                   brewing, http, time, interpolation
     ├── i18n/           Slovak copy, split by domain under translations/sk/
     ├── components/
-    │   ├── ui/         Button, Card, Tile, SectionHeading, Text, Input, Chip,
-    │   │               OptionCard, Dropdown, Sheet, ListItem, ChatBubble, Slider,
-    │   │               NumberStepper, ProgressBar, EmptyState, LoadingState,
-    │   │               ErrorState, QueryState, ValueDisplay - each its own folder
-    │   └── layout/     Screen, TileRow, AppProviders, RootStack, TabsNavigator,
-    │                   TabBarIcon, BottomNavBar
+    │   ├── ui/         PillButton, Card, Tile, ActionRow, InfoNote,
+    │   │               SectionHeading, Text, Input, Chip, OptionCard, Dropdown,
+    │   │               Sheet, ListItem, ChatBubble, Slider, NumberStepper,
+    │   │               ProgressBar, StepProgress, Dial, FigureRow, DriftingRings,
+    │   │               StateMark, EmptyState, LoadingState, ErrorState,
+    │   │               QueryState, ValueDisplay - each its own folder
+    │   └── layout/     Screen, EspressoHeader, FlowHeader, TileRow, AppProviders,
+    │                   RootStack, TabsNavigator, TabBarIcon, BottomNavBar
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
     │                   chat, tasteProfile, coffeeTaste, bagEvaluations,
     │                   recipeImport, espresso, history, onboarding, profile,
@@ -254,7 +256,7 @@ frontend/
     │                   timeline and the insights; `profile` owns the cost
     │                   dashboard and the data export
     ├── hooks/          only genuinely global hooks, incl. useEntityMutation,
-    │                   useDebouncedValue and useAnalyticsFlush
+    │                   useDebouncedValue, useRecipeFigures and useAnalyticsFlush
     ├── lib/            apiClient, firebase, queryClient, queryCache, formatters,
     │                   fingerprint, requestErrors, text, analytics,
     │                   errorTracking
@@ -308,10 +310,278 @@ file, so it is still not written inside the JSX.
 
 A deliberate deviation from Material Design 3: MD3 gives buttons and chips a
 pill shape; Brewmate does not. `RADIUS` is the raw scale
-(`xs 4, sm 8, md 12, lg 16, xl 24, full`) and `SHAPE` maps each kind of element
-onto one of them (`SHAPE.button = md`, `SHAPE.card = lg`, `SHAPE.sheet = xl`,
-`SHAPE.avatar = full`). Components read `SHAPE`, never `RADIUS`, so the same
-kind of element has the same radius everywhere.
+(`xxs 2, xs 4, sm 8, md 12, lg 16, lgPlus 20, xl 24, xxl 28, xxxl 32, full`) and
+`SHAPE` maps each kind of element onto one of them (`SHAPE.button = md`,
+`SHAPE.card = lg`, `SHAPE.sheet = xl`, `SHAPE.avatar = full`). Components read
+`SHAPE`, never `RADIUS`, so the same kind of element has the same radius
+everywhere.
+
+The steps above `lg` and the `pill` kind belong to the A2 redesign, and nothing
+below them moved: a card that has always been 16 is still 16, and a screen opts
+into the softer geometry by naming it (`SHAPE.softCard`, `SHAPE.heroCard`,
+`SHAPE.headerBlock`, `SHAPE.insetBlock`, `SHAPE.pill`). `pill` is a kind rather
+than a number because the number is different on every element it applies to -
+half the height, whatever the height is - and wrong the moment that changes.
+
+### One pill, one scale
+
+Every button in this app shaped like a pill is `PillButton`, and every trio of
+recipe figures is `FigureRow`. Both exist because the screens had grown their
+own.
+
+- **There is no `Button`.** It was the outlined, square-cornered control the
+  app started from, and by the end it was a second way of drawing the same
+  pill: forty-eight call sites, four variants, and a `danger` that was a
+  component rather than a loudness. Retiring it left one pressable, which is
+  why a new button cannot arrive in a shape the app does not have.
+- **Fifteen pressables had become one shape written fifteen times.** Each
+  carried its own `resolveStyle` closure, its own fill and its own height - and
+  the heights were 40, 46, 48, 50, 52, 54 and 56, six of which no reader can
+  tell apart. `PillButton` has four: `large` for the one thing a screen most
+  wants pressed, `medium` for an ordinary button, `small` for a pair sharing a
+  row, `compact` for a round control inside a line of text.
+- **A caller picks what the button _is_, never what it looks like.** How loud
+  (`tone`), how big (`size`), whether it takes the row (`grows`). The fill, the
+  text colour, the glyph's colour and size and the shadow all follow from
+  those, so a new button cannot arrive in a colour the app does not have.
+- **Seven tones, in three pairs and a state:** one loud and one quiet for a
+  light ground (`espresso`, `surface`), the same two for an espresso one
+  (`cream`, `lifted`), two specials - `surfaceLead`, whose glyph is the primary
+  brown because the mark is what the reader is looking for, and `faint`, which
+  is a control with nothing to do yet rather than a level of loudness - and
+  `danger`, which is a loudness rather than a second component: deleting an
+  account is the same pill saying a different thing.
+- **`raised` is asked for rather than carried by a tone.** The same cream pill
+  is the loudest thing on the home screen and an ordinary answer inside a card,
+  and only the first is lifted off what it sits on.
+- **The three figures are one row, taken as data.** Dose, water and the ratio
+  that divides them appear on the home block, in the conversation's header, on
+  every version in the timeline and on every saved recipe on a coffee's own
+  screen; the copies differed by exactly two type variants and a colour.
+  `useRecipeFigures` is what goes into it - four places assembling the same
+  three fields and the same three keys is four places for the ratio to stop
+  being marked as arithmetic over the other two. The rules between the columns belong to the row,
+  because a rule sits _between_ two figures and a column drawing its own
+  leading edge would print one against the card's padding.
+
+### One type scale
+
+- **There is no Material scale left.** The redesign's type arrived beside
+  `TYPE_SCALE` rather than replacing it, which was right while fifteen screens
+  had been rebuilt and twenty had not - and wrong the moment the last caller
+  went, because two ladders in a theme means the next screen somebody writes
+  picks whichever one they happened to read first. `typeScale.ts` is deleted.
+- **A variant is named after the job, never after a rung.** `displayTitle` is
+  a screen's own title, `bodyLead` is the sentence under it, `caption` is a
+  second line under a row, `eyebrow` is the label over a figure. So migrating
+  was a rename wherever the job was the same - `titleMedium` is a card's title
+  and nothing else - and a decision only where one Material size was doing two
+  jobs. `bodySmall` was the one: forty-one of them were quiet sentences
+  somebody is meant to read, which is `bodyText` at the muted tone, and eight
+  were second lines, which is `caption`. Twelve points is the size of a
+  caption, and a caveat set at it is a caveat nobody reads.
+- **The scale is two files, and the seam is what a piece of text does.**
+  `READING_SCALE` is what a screen says - a title, an answer, the sentence
+  under it. `LABEL_SCALE` is what it names - a group, a card, a row, a
+  control, a figure. None of the second is a sentence, which is why they are
+  the small end and why the only two upper-cased variants in the app are
+  there.
+- **`ScreenIntro` is the one way a screen says what it is.** Twenty-three of
+  them opened with the same three lines written out by hand, in four
+  different variants. Deliberately not `SectionHeading`, which labels a group
+  of cards from inside the page: a screen whose title is set at the same size
+  as the label over its third card is a screen with no top.
+
+### One chip, and what a pill means here
+
+- **A chip that can be selected is a control; one that cannot is a pill.**
+  That is the whole rule, and it is what `selected` means: naming it at all
+  makes the chip a filter token and gives it the square-ish radius the rest of
+  this app's controls have. Material pills its chips and Brewmate does not,
+  precisely so that a pill can mean something - there is nothing to choose
+  here, this is a fact or a shortcut.
+- **Pressing is a separate question.** A shortcut in the chat composer is a
+  pill and is pressed; it fills the box and never stays chosen. A roast level
+  in a form is a control and stays chosen. Reading the two off one prop would
+  have made every shortcut look like an answer somebody had given.
+- **Three pills became one.** An attribute on a bag's card, a flavour the
+  profile has an opinion about and a shortcut to writing were three components
+  with three heights - 26, 34 and 32 - and three fills. Two heights remain,
+  because 34 and 32 are a difference no reader can see and one every new chip
+  would have had to guess at.
+- **A selection is the app's own accent, never the green.** Green means one
+  thing here - fresh, ideal, confirmed - so a roast level somebody picked
+  being painted green is the app congratulating them on their answer, and
+  "Neviem" green is it congratulating them on not having one. It is also the
+  one fill that read as a foreign object on the dark scheme's warm brown: an
+  olive at that chroma belongs to no other part of this palette. A chosen chip
+  is `primaryContainer`, which is the same brown family as every other thing
+  in this app that means "this one".
+- **Three tones, and `lifted` is the odd one.** `neutral` and `fresh` are
+  fills; `lifted` is the card surface, which is the colour of most of what a
+  chip sits on - so it is the one tone that needs a shadow to exist at all.
+  It is for a fact that has to read as present beside one that is painted, and
+  a flavour somebody dislikes is exactly that: as much a fact about them as
+  one they love, so it is quiet rather than absent or marked as wrong.
+
+### One card, two depths
+
+- **There are no borders on cards.** That is the redesign's sentence, not a
+  preference: depth replaced the hairlines outright, so two cards on a screen
+  are told apart by how far each stands off the ground rather than by a line
+  round one of them.
+- **Six variants were two questions asked at once** - which surface, and
+  whether there was an outline. Four of the six differed by a tint no reader
+  compares across a scroll, and the outline was drawn on every card whether or
+  not it was separating anything. What is left is `depth`, which is the only
+  thing a caller still has to decide.
+- **`emphasis` is a comparison, never a level.** The ready bag above the
+  ageing one, the latest version of a recipe above the first, the pinned
+  recipe among the saved ones. A screen with one card on it never names it -
+  a card raised above nothing is a card with a shadow for decoration.
+- **A card does not clip itself.** `overflow: hidden` sets `masksToBounds` on
+  iOS, which removes the one thing the card is now built out of. Anything that
+  needs clipping clips itself, which the progress bar and the tile already do.
+- **The gap inside a card is 16, and a title with its own caption is one
+  child.** Two loose children 16 apart read as two unrelated things, so a
+  heading and the line under it go through `SectionHeading` with
+  `placement="card"` - which drops the top padding a group label carries on a
+  screen, because the card's own padding is already there.
+- **A screen's edge is 20 and its cards sit 16 apart**, and the two moved
+  together for one reason: a card carries no border any more, so what
+  separates it from the glass and from the next card is space alone. Sixteen
+  round a bordered card read as a margin; round a borderless one it read as a
+  card pushed against the edge of the phone.
+- **A `ListItem` is drawn on whatever it sits on.** It used to paint itself
+  the surface colour, which is the colour of the card under it - so the fill
+  did nothing except stop any other ground showing through, and a row on one
+  was a white block on it. A list that wants to read as one continuous sheet
+  paints its own container, which is the grinder catalogue's decision to make
+  rather than the row's.
+
+### One field, two grounds
+
+`Input` is every text box in the app, and the two it replaced say why it takes
+a `ground` rather than being copied for the second one.
+
+- **A control's fill is what separates it from the ground, because unlike a
+  card it has no shadow to do it instead.** So a quiet pill, a stating chip
+  and a text box all carry `surfaceContainerHigh` rather than
+  `surfaceVariant`. The second is a surface _tint_ - a pale inset drawn on
+  white - and on the light scheme it is `#F4EDE5` against a `#F2EDE6` page,
+  which is 1.00:1. Every quiet button standing on the page therefore had no
+  background at all, and a resting field showed its label and its value and
+  nothing else. A card may be the colour of what it sits on; a control may
+  not.
+- **A field is filled, and its ring is kept back for when it has something to
+  say.** The outlined box this replaced drew a border in every state, which
+  left the design nothing to do with one: focus, an error and a value read off
+  a photograph in bad light were the same rectangle in three colours, two of
+  which are only distinguishable side by side. The resting ring is drawn in the
+  fill's own colour rather than left off, because a border that appears on
+  focus and was not there before moves the value it surrounds by two points on
+  the frame the keyboard opens.
+- **`resolveInputRing` decides which of four things is true, and the order is
+  the rule.** An error wins over everything: a ring saying "worth a glance"
+  over a value the form has already refused would be the app hedging about its
+  own complaint. An unverified value wins over focus for the same reason in
+  miniature - a figure read off a photograph is worth marking while somebody is
+  standing in it, not only before they arrive.
+- **The signed-out screens were a second field component.** `AuthField` existed
+  because `Input` could not be told it was standing on brown; everything else
+  about the two was the same box, and the copy had quietly acquired the one
+  thing every masked field on a phone needs - an eye that unmasks it. Merging
+  them gave the shared field the eye and gave the dark form one less component
+  to keep in step.
+- **`autoCapitalize` also decides autocorrect**, because the two answer one
+  question. A field told not to capitalise its first letter is holding
+  something that is not language - an address, a search term, a model number -
+  and every one of those is made worse by a dictionary.
+- **A field's label is an eyebrow with an optional glyph.** Small and tracked
+  out, so a column of them reads as labels rather than as a column of headings,
+  and the mark is what turns one back into a heading for the box under it.
+
+### How a screen says what it is
+
+Three shapes, and which one a screen gets is decided by what the screen is,
+never by who wrote it.
+
+- **A screen that starts straight into content says its name with
+  `ScreenIntro`.** The cupboard, the catalogue, the insights, the timeline,
+  the cost dashboard, every onboarding step. It is the title, an optional
+  lead and an optional note, and it is deliberately not `SectionHeading`: a
+  screen whose title is set at the size of the label over its third card is a
+  screen with no top.
+- **A screen led by an espresso block says it inside the block**, through the
+  same component with `ground="espresso"`. Three screens - home, the pre-brew
+  form and the kit - had each written that out by hand, which is the
+  twenty-three-screen problem `ScreenIntro` was built to end, surviving in the
+  half of the app it could not be used on.
+- **The lead's size follows the ground as well as its colour** - 13/18 inside
+  a block, 15/22 on a content screen. The block is a dense object holding the
+  one thing a screen most wants read and the lead is there to qualify the
+  title; on a content screen it is the instruction for everything below it.
+  The first is what the handoff sets the home greeting's subtitle at.
+- **A flow gets `FlowHeader`**: a badge, a question and a promise, on
+  espresso. Three things in this app are worked through a stage at a time on
+  the way to an answer - a bag in a shop, somebody else's recipe, a quick brew
+  - and all three are reached from somewhere else, which is why each opens
+    with a block saying what it is rather than with a title on the page. The
+    badge is the glyph of whatever sent somebody there, so pressing one and
+    arriving at the other is recognisably the same errand.
+- **The block stays rather than disappearing after the first tap.** Standing
+  in a shop with a bag in one hand, the thing worth keeping on screen is what
+  this screen is about; a block that vanished would leave three stages that
+  look like three unrelated forms. Whether its copy _changes_ per stage is the
+  one decision left to the flow: the scan's block asks the stage's question
+  and its stages carry no heading, while the import and the quick brew have an
+  errand with a name worth keeping and let each stage ask its own.
+- **A flow header's title is a size under a screen's own** - 28/34 against
+  30/36. This is a question being asked rather than a page being named.
+- **Which screens get a block is the handoff's own list**, and nothing else
+  decides it: the home screen, the brewing tab, the profile, the signed-out
+  screens, the scanner, the conversation after a cup. A reporting screen never
+  gets one - the cupboard, the insights, the timeline, the questionnaire, the
+  verdict and the cost dashboard all start straight into content, because what
+  leads them is a card and not a sentence.
+- **A tab does not change shape when it is answered.** `/brew` opens on the
+  coffee question and becomes the brewing form one tap later; those are one
+  screen as far as anybody using them is concerned, so the question is asked
+  in the same block the form behind it uses.
+
+### A mark is how a classification is read
+
+Colour is the second thing a state says, never the first.
+
+- **Every classified line carries a glyph as well as a tone.** A bag's
+  freshness, a catalogue entry's precision, whether an e-mail has been
+  confirmed, whether a shot came closer to the target, how a converted number
+  was arrived at. A line that relies on the difference between a green and an
+  ochre is a line somebody cannot read, and each of these is the one fact its
+  screen exists to report.
+- **The glyph classifies and never grades.** An instrument, an approximation,
+  a question, an arrow towards a target - never a tick and never a cross. An
+  estimate is not a failure; it is the honest answer to a question the source
+  did not answer, and a green check beside it would turn a caveat into an
+  endorsement of itself.
+- **Only the exception is painted.** A shot going the wrong way is marked and
+  one coming closer is quiet, because an interface that congratulates itself
+  on every step is one nobody reads by the fourth.
+- **The icon's colour and the text's tone live in one file**, as two maps over
+  the same key - `bagFreshnessLabels.ts`, `grinderPrecisionMarks.ts`,
+  `shotTimelineLabels.ts`, `authScreen.ts`. An icon takes a colour where a
+  `Text` takes a role, and keeping the pair together is what stops the two
+  halves of one line landing on different greens.
+- **An aside is a ground and a mark, never a sentence behind a rule.**
+  `InfoNote` is every remark this app makes about itself, and its sentence is
+  set at 13/18 rather than at a caption's 12: half of what it carries is a
+  caveat beside a recommendation, which is a sentence somebody is meant to
+  read, and twelve points is the size of a second line under a row.
+- **An argument is never behind a tap.** The shop verdict's reasoning and the
+  conversion report both used to fold away on the argument that the answer is
+  wanted first. That was true and cost both screens their purpose: the only
+  reason to believe a verdict rather than a number, or an estimate rather than
+  a measurement, is that the argument is right there.
 
 ### Getting out of a screen
 
@@ -788,11 +1058,15 @@ where the two meet.
   it. This screen exists to be used inside a building on one bar, and an app
   that answers "skús to znova" there has answered nothing.
 - **The reasoning and the gaps are stored separately**, as the API already
-  models them, and both are printed - folded away behind one tap, because in a
-  shop the sentence is wanted first and the argument is what somebody opens when
-  they want to disagree with it. `profileConfidenceAtTime` is stamped by the
-  server, so how much that afternoon's advice was worth stays readable a month
-  later.
+  models them, and both are printed - open, with no disclosure button. They
+  used to be folded away on the argument that in a shop the sentence is wanted
+  first, which was true and still cost the screen its whole purpose: a verdict
+  whose argument is behind a tap is one nobody checks, and the only reason to
+  believe this one rather than a number is that the argument is right there.
+  Each reason carries the mark of the fact it was argued from - a roast, a set
+  of notes, a date, the taste comparison - which classifies without grading.
+  `profileConfidenceAtTime` is stamped by the server, so how much that
+  afternoon's advice was worth stays readable a month later.
 
 ### Two modes, one parsing layer
 
@@ -1198,6 +1472,10 @@ reason}` in machine names: `exact` came across untouched or is arithmetic
   `params.conversion` rather than beside it in the response. A card reopened next
   month that has lost the sentence about the grind has turned an estimate into a
   measurement by doing nothing at all.
+- **The report is printed open**, each note marked with how its number was
+  arrived at. "Every number says how much it is worth" is the whole claim this
+  feature makes, and behind a disclosure button it is a claim nobody sees the
+  evidence for.
 
 ### Where the grind starts
 
@@ -1358,10 +1636,18 @@ as a fact rather than asked for one.
   the next answer reasons about.
 - **The advice reads the run, not the last shot.** `resolveShotTimeline` derives
   what changed between each pair and whether the shot came closer to the target
-  window, and the same derivation feeds both the chart and the prompt. A grind
+  window, and the same derivation feeds both the screen and the prompt. A grind
   that has already gone finer twice without moving the time is exactly the case
   where the answer has to stop grinding, and a model shown one shot cannot see
   it.
+- **The run is a list of shots, not a chart.** Each row carries the time, the
+  yield, what changed since the shot before it and whether that moved the cup
+  towards the target window - the last as an arrow and not only a colour - which is four facts, and a chart can plot one of
+  them. A dial-in is three to six shots long, so the picture would be a line
+  through four points with the reason for each of them printed beside it
+  anyway. This is written down because the derivation behind the rows reads
+  like something drawn: it is not, and the next person to open that file should
+  not have to work that out.
 - **The timeline is read back from the rows**, not accumulated on screen: the
   gaps between shots are spent grinding and tamping with the phone in a pocket.
 - **A patch is stored, never applied**, as everywhere else in this app. Taking
@@ -1555,6 +1841,27 @@ a limit legible rather than punitive.
 - **`QueryState` is the waiting room every screen shares.** One component for
   the two states that otherwise turn into a blank screen: a query that has not
   answered yet, and one that failed. The failure always carries a retry.
+- **`StateMark` is the one picture an empty screen gets**, and every one of
+  them gets the same one: two dashed rings round the glyph of whatever is
+  missing, built from the same borders and radii as every other decoration
+  here. It was written for the cupboard and is the same object on an empty
+  timeline, an empty catalogue and a route that does not exist - drawn
+  differently on each, those would be four apps. An illustration would have a
+  fixed palette and be wrong in one of the two colour schemes the day it was
+  added.
+- **A state that confirms something draws no mark.** A bag written into the
+  cupboard, a coffee bought and a coffee left on the shelf all use this shape,
+  and none of them has anything missing to draw. The only mark available would
+  be a tick, which on the scan's two endings would grade the decision somebody
+  had just made.
+- **The error state is a disconnected signal, not a warning triangle.** Almost
+  every failure it is drawn for is a request that never arrived, and a triangle
+  tells the reader they did something wrong.
+- **All four take a `ground`**, because two screens in this app are dark in
+  both colour schemes. Brew mode used to work around that by turning itself
+  light until the recipe arrived - so opening it flashed white and then went
+  black, on the one screen in the product held at arm's length over a kettle.
+  The ground now belongs to the route; only the padding follows the content.
 - **No raw error code ever reaches the interface.** `resolveRequestErrorKeys`
   maps every `ERROR_CODES` value and every client-side failure onto a Slovak
   sentence, and the map is total, so a new error code is a type error here
@@ -1594,9 +1901,18 @@ The first product screen: `/grinders`, reached from the inventory tab.
   key, so each term keeps its own cache entry.
 - **Every entry says how much its numbers are worth.**
   `resolveGrinderPrecision` reduces an entry to measured, estimated or missing,
-  and the list prints the matching sentence underneath it. A micron figure
-  reads like a fact whatever it says, so the interface is the place that has to
-  disagree.
+  and the list prints the matching sentence underneath it, with the glyph of
+  what kind of claim it is. A micron figure reads like a fact whatever it says,
+  so the interface is the place that has to disagree - and a disagreement
+  carried by a colour alone is one half the readers never see.
+- **The catalogue is one sheet, not a hundred cards.** The surface belongs to
+  the list and the rows are transparent on it, separated by the same in-card
+  rule the cupboard's own card uses; the last row draws none. A hundred cards
+  each with their own shadow is a screen with no hierarchy and a scroll that
+  flickers.
+- **Whose entry it is, is a chip.** It is a fact about the row rather than a
+  caveat about the numbers, and two stacked quiet captions read as one hedge in
+  two parts.
 - **Not finding a grinder is a normal outcome.** The empty state offers the add
   form, and so does a button under the list. The form asks for brand, model,
   scale, range and step - never a calibration curve, because nobody has one to

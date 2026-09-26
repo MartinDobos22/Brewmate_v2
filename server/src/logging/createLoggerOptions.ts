@@ -2,21 +2,24 @@ import type { FastifyServerOptions } from 'fastify';
 
 import { NODE_ENVIRONMENTS, type NodeEnvironment } from '../config/nodeEnvironment.js';
 
+import { createPrettyStream } from './createPrettyStream.js';
+import { LOG_FORMATS, type LogFormat } from './logFormats.js';
 import type { LogLevel } from './logLevels.js';
 import { REDACT_PATHS, REDACT_PLACEHOLDER } from './redactPaths.js';
-
-const PRETTY_TRANSPORT_TARGET = 'pino-pretty';
-const PRETTY_TIME_FORMAT = 'HH:MM:ss.l';
 
 type LoggerOptions = FastifyServerOptions['logger'];
 
 /**
- * Structured JSON logs everywhere; human-readable output only while developing.
- * Tests stay silent so assertion output is readable.
+ * Readable lines or JSON records, as LOG_FORMAT says, in every environment
+ * but tests - which stay silent so assertion output is readable.
+ *
+ * Redaction applies to both formats: it happens in pino before a record is
+ * serialised, so the pretty-printer never sees a credential to print.
  */
 export const createLoggerOptions = (
   environment: NodeEnvironment,
   level: LogLevel,
+  format: LogFormat,
 ): LoggerOptions => {
   if (environment === NODE_ENVIRONMENTS.test) {
     return false;
@@ -27,15 +30,8 @@ export const createLoggerOptions = (
     censor: REDACT_PLACEHOLDER,
   };
 
-  if (environment === NODE_ENVIRONMENTS.development) {
-    return {
-      level,
-      redact,
-      transport: {
-        target: PRETTY_TRANSPORT_TARGET,
-        options: { colorize: true, translateTime: PRETTY_TIME_FORMAT },
-      },
-    };
+  if (format === LOG_FORMATS.pretty) {
+    return { level, redact, stream: createPrettyStream() };
   }
 
   return { level, redact };

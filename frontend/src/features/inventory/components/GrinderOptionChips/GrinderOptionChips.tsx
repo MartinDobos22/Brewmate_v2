@@ -30,7 +30,7 @@ export const GrinderOptionChips = <TOption extends string>({
 
   return (
     <View style={styles.wrapper}>
-      <Text variant="labelMedium" tone="muted">
+      <Text variant="eyebrow" tone="muted">
         {label}
       </Text>
       <View style={styles.row}>

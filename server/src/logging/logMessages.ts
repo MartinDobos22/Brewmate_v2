@@ -15,6 +15,9 @@ export const LOG_MESSAGES = {
   firebaseInitialised: 'firebase admin initialised',
   userProvisioned: 'provisioned new user from firebase identity',
   requestFailed: 'request failed',
+  /** The one line every request leaves behind, e.g. `GET /me -> 200 (6 ms)`. */
+  requestCompleted: (method: string, url: string, statusCode: number, durationMs: number): string =>
+    `${method} ${url} -> ${String(statusCode)} (${String(durationMs)} ms)`,
   unhandledError: 'unhandled error',
   errorReportingConfigured: 'error reporting configured',
   errorReportingDsnInvalid: 'SENTRY_DSN is not a valid DSN - errors will only be logged',

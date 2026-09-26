@@ -66,7 +66,7 @@ export const PreBrewGrindSection = ({
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.preBrewGrindSection)}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.preBrewGrindSection)}</Text>
       <PreBrewGrinderPicker
         candidates={reading.candidates}
         chosenId={reading.chosenId}
@@ -76,7 +76,7 @@ export const PreBrewGrindSection = ({
         <PreBrewGrindBody reading={reading} guidance={reading.guidance} />
       </View>
       <View style={styles.note}>
-        <Text variant="bodySmall" tone="muted">
+        <Text variant="bodyText" tone="muted">
           {t(
             reading.guidance.source === GRIND_GUIDANCE_SOURCES.publishedRange
               ? TRANSLATION_KEYS.preBrewGrindIntroPublished

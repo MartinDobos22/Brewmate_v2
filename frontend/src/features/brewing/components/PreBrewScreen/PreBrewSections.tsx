@@ -1,11 +1,10 @@
 import type { JSX } from 'react';
 
 import { ConfidenceNotice } from '../../../tasteProfile/components';
-import type { BrewSetup } from '../../hooks/useBrewSetup';
+import type { BrewSetup } from '../../hooks/brewSetup';
 import { BrewConstraintsSection } from '../BrewConstraintsSection';
 import { PreBrewPreviousRecipe } from '../PreBrewPreviousRecipe';
 import { PreBrewAmountsSection } from '../PreBrewAmountsSection';
-import { PreBrewCoffeeSection } from '../PreBrewCoffeeSection';
 import { PreBrewGrindSection } from '../PreBrewGrindSection';
 import { PreBrewMethodSection } from '../PreBrewMethodSection';
 import { PreBrewWaterSection } from '../PreBrewWaterSection';
@@ -16,6 +15,10 @@ export interface PreBrewSectionsProps {
 
 /**
  * The questions, in order.
+ *
+ * The coffee is not among them any more: it is reported in the header, which
+ * is where the screen leads with it. Asking it twice is how two places end up
+ * setting one value and eventually disagreeing about it.
  *
  * The two that depend on a method - what is missing, and how much of each -
  * appear only once one is chosen. Asking somebody for a dose before they have
@@ -30,14 +33,9 @@ export interface PreBrewSectionsProps {
  */
 export const PreBrewSections = ({ setup }: PreBrewSectionsProps): JSX.Element => (
   <>
-    <PreBrewCoffeeSection
-      bag={setup.bag}
-      description={setup.coffeeDescription}
-      onDescribe={setup.describeCoffee}
-      onChange={setup.changeCoffee}
-    />
     <PreBrewMethodSection
       methods={setup.methods}
+      brewers={setup.brewers}
       method={setup.method}
       onChoose={setup.chooseMethod}
     />

@@ -19,7 +19,7 @@ export const ElevationSection = (): JSX.Element => {
       {PREVIEW_ELEVATION_TOKENS.map((token: ElevationToken): JSX.Element => (
         <View key={token} style={styles.item}>
           <View style={[styles.box, elevationStyle(theme.colors.shadow, theme.elevation[token])]} />
-          <Text variant="labelSmall" tone="muted">
+          <Text variant="captionSmall" tone="muted">
             {token}
           </Text>
         </View>

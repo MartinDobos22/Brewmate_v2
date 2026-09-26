@@ -9,6 +9,9 @@
  */
 export const SK_PROFILE_SECTIONS = {
   profileHeaderTitle: 'Tvoj profil',
+  /** What the cog above the profile leads to, now that the gear left this screen. */
+  profileGearTitle: 'Tvoja výbava',
+  profileOpenGear: 'Výbava, voda a sady',
 
   profileSectionTasteTitle: 'Čo o tebe viem',
   profileSectionTasteCaption: 'Chuť, ktorú som sa zatiaľ naučil - a nakoľko si ňou som istý.',

@@ -24,6 +24,7 @@ export const FRUIT_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'citrus',
+      icon: 'fruit-citrus',
       labelKey: TRANSLATION_KEYS.tqFruitCitrus,
       effect: {
         axes: { acidity: 8.5, sweetness: 5 },
@@ -32,6 +33,7 @@ export const FRUIT_QUESTION: TasteQuestion = {
     },
     {
       id: 'berry',
+      icon: 'fruit-cherries',
       labelKey: TRANSLATION_KEYS.tqFruitBerry,
       effect: {
         axes: { acidity: 7, sweetness: 7 },
@@ -40,6 +42,7 @@ export const FRUIT_QUESTION: TasteQuestion = {
     },
     {
       id: 'stone',
+      icon: 'fruit-grapes',
       labelKey: TRANSLATION_KEYS.tqFruitStone,
       effect: {
         axes: { acidity: 5.5, sweetness: 8 },
@@ -48,6 +51,7 @@ export const FRUIT_QUESTION: TasteQuestion = {
     },
     {
       id: 'none',
+      icon: 'close-circle-outline',
       labelKey: TRANSLATION_KEYS.tqFruitNone,
       noteKey: TRANSLATION_KEYS.tqFruitNoneNote,
       effect: { axes: { acidity: 3 } },

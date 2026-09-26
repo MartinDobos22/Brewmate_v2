@@ -1,3 +1,5 @@
+import type { StateGround } from '../../../components/ui';
+
 /** Where a brew run is: not started, running, held, or finished. */
 export const BREW_RUN_STATES = {
   ready: 'ready',
@@ -27,3 +29,13 @@ export const BREW_TICK_MS = 250;
  * already busy.
  */
 export const BREW_CUE_LEAD_SECONDS = 2;
+
+/**
+ * What waiting and failing are drawn on here.
+ *
+ * Brew mode is dark in both colour schemes, so the two states that can appear
+ * before the recipe arrives have to be told so: the state components default
+ * to the light ground every other screen in the app uses, and defaulting is
+ * exactly what a screen painted the other way round must not do.
+ */
+export const BREW_MODE_STATE_GROUND: StateGround = 'espresso';

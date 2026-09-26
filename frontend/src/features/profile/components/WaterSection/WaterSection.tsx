@@ -21,7 +21,7 @@ export const WaterSection = (): JSX.Element => {
 
   return (
     <Card>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.profileWaterTitle)}</Text>
+      <Text variant="cardTitle">{t(TRANSLATION_KEYS.profileWaterTitle)}</Text>
       <WaterTypePicker
         selected={user?.waterType ?? WATER_TYPES.unknown}
         disabled={update.isPending}

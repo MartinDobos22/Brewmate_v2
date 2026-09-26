@@ -20,8 +20,21 @@ const start = async (): Promise<void> => {
 
   await app.listen({ host: config.server.host, port: config.server.port });
 
+  /*
+   * What this instance can do, stated once at start-up. The optional services
+   * degrade silently by design - no model key means /ai/* answers 503 - so
+   * without this line "why does scanning say zadaj to ručne" means reading the
+   * host's environment settings instead of the log.
+   */
   app.log.info(
-    { host: config.server.host, port: config.server.port, environment: config.environment },
+    {
+      host: config.server.host,
+      port: config.server.port,
+      environment: config.environment,
+      model: config.ai !== null,
+      labelReader: config.vision !== null,
+      errorReporting: config.telemetry !== null,
+    },
     LOG_MESSAGES.serverListening,
   );
 };

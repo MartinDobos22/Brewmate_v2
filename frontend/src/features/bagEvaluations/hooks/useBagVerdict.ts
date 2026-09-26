@@ -6,7 +6,11 @@ import { useTasteProfile } from '../../tasteProfile/hooks';
 import { BAG_VERDICT_BODY_KEYS, BAG_VERDICT_TITLE_KEYS } from '../constants/bagScan';
 import type { BagUncertainty, BagVerdictPoint } from '../services/bagVerdictTypes';
 import { evaluateBag } from '../services/evaluateBag';
-import { toBagVerdictView, type BagVerdictView } from '../services/bagVerdictView';
+import {
+  toBagVerdictView,
+  type BagVerdictReason,
+  type BagVerdictView,
+} from '../services/bagVerdictView';
 
 import { useCreateBagEvaluation } from './useCreateBagEvaluation';
 import { useEvaluateCoffee } from './useEvaluateCoffee';
@@ -67,7 +71,10 @@ export const useBagVerdict = (): BagVerdict => {
     }
 
     const answer = evaluateBag(coffee, profile);
-    const reasons = answer.points.map((point: BagVerdictPoint): string => t(point.key));
+    const reasons = answer.points.map((point: BagVerdictPoint): BagVerdictReason => ({
+      text: t(point.key),
+      field: point.field,
+    }));
     const uncertainties = answer.uncertainties.map((item: BagUncertainty) => ({
       field: item.field,
       reason: t(item.reasonKey),
@@ -93,7 +100,7 @@ export const useBagVerdict = (): BagVerdict => {
     const stored: BagEvaluation = await createEvaluation.mutateAsync({
       parsedData: coffee,
       verdictText: t(BAG_VERDICT_BODY_KEYS[answer.level]),
-      reasoning: { points: reasons },
+      reasoning: { points: reasons.map((reason: BagVerdictReason): string => reason.text) },
       uncertainties: { items: uncertainties },
     });
 

@@ -6,5 +6,5 @@ type ScanModeStepStyleMap = ViewStyles<'options'>;
 
 export const createScanModeStepStyles = (theme: Theme): ScanModeStepStyleMap =>
   StyleSheet.create({
-    options: { gap: theme.spacing.md },
+    options: { gap: theme.spacing.sm },
   });

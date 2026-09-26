@@ -46,8 +46,6 @@ export const SK_CUPBOARD_AND_BREW = {
   bagDetailRecipesCaption:
     'Zvlášť pre každú metódu - rovnaké zrná chcú v inom prekvapkávači iné čísla.',
   bagRecipesEmptyAction: 'Uvariť z nej prvú kávu',
-  bagRecipeDose: 'Dávka',
-  bagRecipeRatio: 'Pomer',
 
   preBrewCoffeeReady: 'Pripravená',
   preBrewMethodCategoryPourOver: 'Prelievaná',

@@ -2,7 +2,7 @@ import type { BrewConstraints } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { Button, Text } from '../../../../components/ui';
+import { InfoNote, PillButton, SectionHeading, Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useIsOnline } from '../../../../hooks';
 import { useThemedStyles } from '../../../../theme';
@@ -34,10 +34,11 @@ export const ImportTargetStep = ({ recipeImport }: ImportTargetStepProps): JSX.E
 
   return (
     <View style={styles.sections}>
-      <Text variant="titleMedium">{t(TRANSLATION_KEYS.importTargetTitle)}</Text>
-      <Text variant="bodySmall" tone="muted">
-        {t(TRANSLATION_KEYS.importTargetIntro)}
-      </Text>
+      <SectionHeading
+        title={t(TRANSLATION_KEYS.importTargetTitle)}
+        caption={t(TRANSLATION_KEYS.importTargetIntro)}
+        placement="card"
+      />
       <PreBrewMethodSection
         methods={recipeImport.methods}
         method={recipeImport.method}
@@ -52,29 +53,28 @@ export const ImportTargetStep = ({ recipeImport }: ImportTargetStepProps): JSX.E
       />
       <View style={styles.actions}>
         {recipeImport.convertFailed ? (
-          <Text variant="bodySmall" tone="error">
+          <Text variant="captionSmall" tone="error">
             {t(TRANSLATION_KEYS.importConvertError)}
           </Text>
         ) : null}
         {recipeImport.method === undefined ? (
-          <Text variant="bodySmall" tone="muted">
-            {t(TRANSLATION_KEYS.importMissingMethod)}
-          </Text>
+          <InfoNote text={t(TRANSLATION_KEYS.importMissingMethod)} />
         ) : null}
-        <Button
+        <PillButton
+          tone="espresso"
           label={t(
             recipeImport.isConverting
               ? TRANSLATION_KEYS.importConverting
               : TRANSLATION_KEYS.importConvert,
           )}
           fullWidth
-          loading={recipeImport.isConverting}
+          isPending={recipeImport.isConverting}
           disabled={recipeImport.method === undefined || !isOnline}
           onPress={recipeImport.convert}
         />
-        <Button
+        <PillButton
+          tone="surface"
           label={t(TRANSLATION_KEYS.actionBack)}
-          variant="tertiary"
           fullWidth
           disabled={recipeImport.isConverting}
           onPress={recipeImport.back}

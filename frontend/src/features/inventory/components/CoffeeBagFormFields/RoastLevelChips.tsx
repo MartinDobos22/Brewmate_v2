@@ -29,7 +29,7 @@ export const RoastLevelChips = ({
 
   return (
     <>
-      <Text variant="labelMedium" tone={unverified ? 'tertiary' : 'muted'}>
+      <Text variant="eyebrow" tone={unverified ? 'tertiary' : 'muted'}>
         {t(unverified ? TRANSLATION_KEYS.scanRoastLabelUncertain : TRANSLATION_KEYS.scanRoastLabel)}
       </Text>
       <View style={styles.chips}>

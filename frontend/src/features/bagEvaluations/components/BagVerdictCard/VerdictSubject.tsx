@@ -1,9 +1,12 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { Text } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { useThemedStyles } from '../../../../theme';
+import { useTheme, useThemedStyles } from '../../../../theme';
+import { SCAN_ICONS, VERDICT_REASON_ICONS } from '../../constants';
+import { BAG_SCAN_FIELDS } from '../../constants/bagScan';
 
 import { createBagVerdictCardStyles } from './BagVerdictCard.styles';
 
@@ -25,20 +28,39 @@ export interface VerdictSubjectProps {
  */
 export const VerdictSubject = ({ name, roaster }: VerdictSubjectProps): JSX.Element => {
   const styles = useThemedStyles(createBagVerdictCardStyles);
+  const theme = useTheme();
   const { t } = useTranslation();
   const coffee = name.trim() === EMPTY ? t(TRANSLATION_KEYS.inventoryUnnamedCoffee) : name;
 
   return (
     <View style={styles.subject}>
-      <Text variant="labelSmall" tone="muted">
-        {t(TRANSLATION_KEYS.scanVerdictTitle)}
-      </Text>
-      <Text variant="titleMedium">{coffee}</Text>
-      {roaster.trim() === EMPTY ? null : (
-        <Text variant="bodySmall" tone="muted">
-          {roaster}
+      <View style={styles.badge}>
+        <MaterialCommunityIcons
+          name={SCAN_ICONS.shop}
+          size={theme.size.iconMedium}
+          color={theme.colors.accentOnEspresso}
+        />
+      </View>
+      <View style={styles.subjectBody}>
+        <Text variant="eyebrowEspresso" tone="accent">
+          {t(TRANSLATION_KEYS.scanVerdictTitle)}
         </Text>
-      )}
+        <Text variant="rowTitle" tone="onEspresso">
+          {coffee}
+        </Text>
+        {roaster.trim() === EMPTY ? null : (
+          <View style={styles.roaster}>
+            <MaterialCommunityIcons
+              name={VERDICT_REASON_ICONS[BAG_SCAN_FIELDS.roastLevel]}
+              size={theme.size.iconTiny}
+              color={theme.colors.onEspressoVariant}
+            />
+            <Text variant="caption" tone="onEspressoMuted">
+              {roaster}
+            </Text>
+          </View>
+        )}
+      </View>
     </View>
   );
 };

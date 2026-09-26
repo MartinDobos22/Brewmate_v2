@@ -5,6 +5,7 @@ import Svg from 'react-native-svg';
 
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useTheme, useThemedStyles } from '../../../../theme';
+import { DEFAULT_RADAR_GROUND, type RadarGround } from '../../constants';
 import { readTasteAxisReadings, radarFrame } from '../../services';
 
 import { createTasteRadarChartStyles } from './TasteRadarChart.styles';
@@ -40,6 +41,8 @@ export interface TasteRadarChartProps {
    * charts leave that difference to be worked out by eye across a gap.
    */
   readonly overlay?: RadarOverlay;
+  /** What it is drawn on, which decides the palette and nothing else. */
+  readonly ground?: RadarGround;
 }
 
 /** With no labels there is nothing to reserve room for, so the web fills the square. */
@@ -69,6 +72,7 @@ export const TasteRadarChart = ({
   axisConfidence,
   compact = false,
   overlay,
+  ground = DEFAULT_RADAR_GROUND,
 }: TasteRadarChartProps): JSX.Element => {
   const styles = useThemedStyles(createTasteRadarChartStyles);
   const theme = useTheme();
@@ -96,9 +100,10 @@ export const TasteRadarChart = ({
             readings={readings}
             overlay={overlayReadings}
             theme={theme}
+            ground={ground}
           />
         </Svg>
-        {compact ? null : <TasteRadarLabels frame={frame} readings={readings} />}
+        {compact ? null : <TasteRadarLabels frame={frame} readings={readings} ground={ground} />}
       </View>
     </View>
   );

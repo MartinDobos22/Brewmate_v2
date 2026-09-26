@@ -1,3 +1,4 @@
+import type { InputGround, StateGround, TileGlyph } from '../../../components/ui';
 import { BREW_RATIO, DOSE_GRAMS, GRIND_SETTING, WATER_TEMPERATURE_C } from '../../../constants';
 
 /** Sample values used to demonstrate the components. Never shown in production. */
@@ -14,3 +15,21 @@ export const GRIND_RANGE = {
   max: GRIND_SETTING.max,
   step: GRIND_SETTING.step,
 } as const;
+
+/**
+ * Something for the empty state's mark to draw in the catalogue.
+ *
+ * The rings are optional on `EmptyState` - a state that is a confirmation
+ * rather than an absence draws none - so a preview that left the icon out
+ * would show the one shape this screen exists to let somebody check.
+ */
+export const DS_EMPTY_STATE_ICON = 'tray-remove' satisfies TileGlyph;
+
+/** The dark ground brew mode and the signed-out screens are drawn on. */
+export const DS_STATE_GROUND: StateGround = 'espresso';
+
+/** The dark ground a field is shown against, beside its ordinary one. */
+export const DS_INPUT_GROUND: InputGround = 'espresso';
+
+/** Something for the pill chips to carry, so the mark's spacing is checkable. */
+export const DS_CHIP_ICON = 'fruit-citrus' satisfies TileGlyph;

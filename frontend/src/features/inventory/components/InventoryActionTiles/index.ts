@@ -1,1 +1,0 @@
-export { InventoryActionTiles } from './InventoryActionTiles';

@@ -1,13 +1,17 @@
 import type { JSX } from 'react';
+import { View } from 'react-native';
 
-import { Screen } from '../../../../components/layout';
-import { StepProgress, Text } from '../../../../components/ui';
-import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
+import { HEADER_SCREEN_EDGES, STACK_SCREEN_EDGES, Screen } from '../../../../components/layout';
+import { StepProgress } from '../../../../components/ui';
+import { useThemedStyles } from '../../../../theme';
 import { BAG_SCAN_STAGES, type BagScanMode } from '../../constants/bagScan';
 import { useBagScan } from '../../hooks/useBagScan';
 import { resolveScanSteps } from '../../services';
+import { ScanHeader } from '../ScanHeader';
 import { ScanHistoryList } from '../ScanHistoryList';
 
+import { createScanBagScreenStyles } from './ScanBagScreen.styles';
+import { readScanHeaderCopy } from './scanHeaderCopy';
 import { ScanStageContent } from './ScanStageContent';
 
 export interface ScanBagScreenProps {
@@ -24,22 +28,37 @@ export interface ScanBagScreenProps {
  * when even that is missing it says so instead of guessing. That is why it
  * sits on the home screen rather than three taps inside the inventory.
  *
- * The step strip is there because this is the one flow in the app somebody
- * works through standing in a shop, one-handed, with a bag in the other. The
- * screen changed under them four times and nothing said whether they were
- * nearly finished or had just started.
+ * The step strip appears once the flow has started. At the first question
+ * nothing has been committed to, and a bar under a block saying "krok 1 zo 4"
+ * is a screen counting a journey nobody has set off on; from the camera
+ * onwards it is the answer to a fair question asked one-handed in a shop.
+ *
+ * Which insets the screen takes follows the block. A screen led by one gives
+ * the top away to it, because the block is what reaches the notch; the
+ * verdict and the outcome draw no block, and were running their first card
+ * under the status bar with the clock printed across it.
  */
 export const ScanBagScreen = ({ initialMode }: ScanBagScreenProps): JSX.Element => {
-  const { t } = useTranslation();
+  const styles = useThemedStyles(createScanBagScreenStyles);
   const scan = useBagScan(initialMode);
   const steps = resolveScanSteps(scan.stage, scan.mode, initialMode === undefined);
+  const header = readScanHeaderCopy(scan.stage);
+  const isStarted = scan.stage !== BAG_SCAN_STAGES.mode;
 
   return (
-    <Screen scrollable>
-      <Text variant="headlineSmall">{t(TRANSLATION_KEYS.scanTitle)}</Text>
-      <StepProgress current={steps.current} total={steps.total} />
-      <ScanStageContent scan={scan} />
-      {scan.stage === BAG_SCAN_STAGES.mode ? <ScanHistoryList /> : null}
+    <Screen
+      scrollable
+      padded={false}
+      edges={header === null ? STACK_SCREEN_EDGES : HEADER_SCREEN_EDGES}
+    >
+      {header === null ? null : <ScanHeader titleKey={header.titleKey} bodyKey={header.bodyKey} />}
+      <View style={styles.content}>
+        {isStarted && header !== null ? (
+          <StepProgress current={steps.current} total={steps.total} />
+        ) : null}
+        <ScanStageContent scan={scan} />
+        {scan.stage === BAG_SCAN_STAGES.mode ? <ScanHistoryList /> : null}
+      </View>
     </Screen>
   );
 };

@@ -6,9 +6,14 @@ import { Text } from '../Text';
 
 import { createValueDisplayStyles } from './ValueDisplay.styles';
 import {
+  DEFAULT_VALUE_GROUND,
   DEFAULT_VALUE_SIZE,
+  HIGHLIGHT_TONES,
+  LABEL_TONES,
   UNIT_VARIANTS,
+  VALUE_TONES,
   VALUE_VARIANTS,
+  type ValueDisplayGround,
   type ValueDisplaySize,
 } from './valueDisplaySizes';
 
@@ -19,6 +24,8 @@ export interface ValueDisplayProps {
   readonly unit?: string;
   readonly size?: ValueDisplaySize;
   readonly highlighted?: boolean;
+  /** Which kind of surface this is drawn on, which decides the tones. */
+  readonly ground?: ValueDisplayGround;
 }
 
 /**
@@ -31,20 +38,25 @@ export const ValueDisplay = ({
   unit,
   size = DEFAULT_VALUE_SIZE,
   highlighted = false,
+  ground = DEFAULT_VALUE_GROUND,
 }: ValueDisplayProps): JSX.Element => {
   const styles = useThemedStyles(createValueDisplayStyles);
 
   return (
     <View style={styles.wrapper} accessibilityLabel={label}>
-      <Text variant="labelMedium" tone="muted">
+      <Text variant="eyebrow" tone={LABEL_TONES[ground]}>
         {label}
       </Text>
       <View style={styles.row}>
-        <Text variant={VALUE_VARIANTS[size]} tone={highlighted ? 'tertiary' : 'default'} numeric>
+        <Text
+          variant={VALUE_VARIANTS[size]}
+          tone={highlighted ? HIGHLIGHT_TONES[ground] : VALUE_TONES[ground]}
+          numeric
+        >
           {value}
         </Text>
         {unit === undefined ? null : (
-          <Text variant={UNIT_VARIANTS[size]} tone="muted" numeric>
+          <Text variant={UNIT_VARIANTS[size]} tone={LABEL_TONES[ground]} numeric>
             {unit}
           </Text>
         )}

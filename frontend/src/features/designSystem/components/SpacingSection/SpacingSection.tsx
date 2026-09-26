@@ -19,7 +19,7 @@ export const SpacingSection = (): JSX.Element => {
       {PREVIEW_SPACING_TOKENS.map((token: SpacingToken): JSX.Element => (
         <View key={token} style={styles.row}>
           <View style={[styles.bar, barWidth(theme.spacing[token])]} />
-          <Text variant="labelSmall" tone="muted" numeric>
+          <Text variant="captionSmall" tone="muted" numeric>
             {token}
           </Text>
         </View>

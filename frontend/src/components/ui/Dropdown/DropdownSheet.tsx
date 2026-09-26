@@ -8,6 +8,7 @@ import { Sheet } from '../Sheet';
 import { Text } from '../Text';
 
 import { createDropdownStyles } from './Dropdown.styles';
+import { DROPDOWN_ICONS } from './dropdownIcons';
 import type { DropdownOption } from './dropdownOption';
 
 /** The copy a searchable dropdown needs. Absent means the list is short enough. */
@@ -59,6 +60,7 @@ export const DropdownSheet = ({
       {search === undefined ? null : (
         <Input
           label={search.label}
+          icon={DROPDOWN_ICONS.search}
           placeholder={search.placeholder}
           value={term}
           onChangeText={onTermChange}
@@ -68,7 +70,7 @@ export const DropdownSheet = ({
       <ScrollView style={styles.list} keyboardShouldPersistTaps="handled">
         {options.length === NOTHING && search !== undefined ? (
           <View style={styles.empty}>
-            <Text variant="bodyMedium" tone="muted">
+            <Text variant="bodyText" tone="muted">
               {search.emptyLabel}
             </Text>
           </View>

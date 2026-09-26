@@ -24,6 +24,7 @@ export const PROCESS_QUESTION: TasteQuestion = {
   options: [
     {
       id: 'washed',
+      icon: 'water-outline',
       labelKey: TRANSLATION_KEYS.tqProcessWashed,
       noteKey: TRANSLATION_KEYS.tqProcessWashedNote,
       effect: {
@@ -37,6 +38,7 @@ export const PROCESS_QUESTION: TasteQuestion = {
     },
     {
       id: 'natural',
+      icon: 'fruit-cherries',
       labelKey: TRANSLATION_KEYS.tqProcessNatural,
       noteKey: TRANSLATION_KEYS.tqProcessNaturalNote,
       effect: {
@@ -46,6 +48,7 @@ export const PROCESS_QUESTION: TasteQuestion = {
     },
     {
       id: 'experimental',
+      icon: 'flask-outline',
       labelKey: TRANSLATION_KEYS.tqProcessExperimental,
       noteKey: TRANSLATION_KEYS.tqProcessExperimentalNote,
       effect: {
@@ -57,6 +60,11 @@ export const PROCESS_QUESTION: TasteQuestion = {
         },
       },
     },
-    { id: 'noPreference', labelKey: TRANSLATION_KEYS.tqProcessNone, effect: {} },
+    {
+      id: 'noPreference',
+      icon: 'help-circle-outline',
+      labelKey: TRANSLATION_KEYS.tqProcessNone,
+      effect: {},
+    },
   ],
 };
