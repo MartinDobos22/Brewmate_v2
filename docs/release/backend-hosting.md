@@ -21,8 +21,8 @@ in this repository. Each of these was checked by running the built server -
 What is _not_ ready has nothing to do with the code. It is the set of things
 only a console can produce: a production Neon branch, a production Firebase
 project and its service account key, an Anthropic key, an account with a host,
-and the `api.brewmate.app` hostname that `frontend/eas.json` already points
-production builds at. [`go-live.md`](./go-live.md) is the order to do them in.
+and eventually the `api.brewmate.app` hostname - until then `frontend/eas.json`
+points builds at the Render service's own `onrender.com` address. [`go-live.md`](./go-live.md) is the order to do them in.
 
 ## What actually has to be hosted
 
@@ -223,8 +223,8 @@ anywhere.
 - **TLS is the platform's.** iOS App Transport Security refuses plain HTTP, so
   a production build talking to `http://` is a build that cannot make a single
   request. `frontend/eas.json` sets `EXPO_PUBLIC_API_BASE_URL` to
-  `https://api.brewmate.app` in the `base` profile - either point that hostname
-  at the deployment, or change the value before building.
+  the Render service's `onrender.com` address in the `base` profile; once a
+  custom domain is attached, change the value to it before building.
 - **`/health` is the probe, and it answers 503 when the database is down.**
   That is the right answer for a load balancer and a slightly awkward one for a
   platform that restarts on a failed health check: a Neon branch that briefly

@@ -7,7 +7,7 @@
     "base": {
       "node": "22.19.0",
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://api.brewmate.app"
+        "EXPO_PUBLIC_API_BASE_URL": "https://brewmate-v2.onrender.com"
       }
     },
     "development": {
