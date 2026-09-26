@@ -34,12 +34,27 @@ export const DEFAULT_PILL_TONE: PillTone = 'surface';
  */
 export const DISABLED_PILL_TONE: PillTone = 'faint';
 
+/**
+ * What each tone is filled with.
+ *
+ * The two quiet tones carry `surfaceContainerHigh` rather than
+ * `surfaceVariant`, and the difference is the whole reason they are visible.
+ * `surfaceVariant` is a surface *tint* - a pale inset drawn on white - and on
+ * the light scheme it is `#F4EDE5` against a `#F2EDE6` page, which is a
+ * contrast ratio of 1.00:1. A quiet button standing on the page had no
+ * background at all: "Dopil som ju" and "Späť na výber" were bold text
+ * floating on the ground.
+ *
+ * A control has to separate from both of the grounds it can stand on - the
+ * page and a card - because unlike a card it carries no shadow to do it
+ * instead.
+ */
 export const PILL_BACKGROUNDS = {
   cream: 'cream',
   espresso: 'espresso',
   lifted: 'espressoLift',
-  surface: 'surfaceVariant',
-  surfaceLead: 'surfaceVariant',
+  surface: 'surfaceContainerHigh',
+  surfaceLead: 'surfaceContainerHigh',
   faint: 'outlineFaint',
   danger: 'error',
 } as const satisfies Record<PillTone, keyof ColorPalette>;

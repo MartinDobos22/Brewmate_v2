@@ -26,7 +26,14 @@ export const DEFAULT_INPUT_GROUND: InputGround = 'surface';
  * the text it surrounds by two points on the frame the keyboard opens.
  */
 export const INPUT_FILLS = {
-  surface: 'surfaceVariant',
+  /**
+   * The same control fill the quiet pill carries. At `surfaceVariant` the box
+   * was the page's own colour on the light scheme, so a resting field - whose
+   * ring is deliberately drawn in its own fill - showed its label and its
+   * value and nothing else. "A field is filled" is the rule; it has to be a
+   * fill somebody can see.
+   */
+  surface: 'surfaceContainerHigh',
   espresso: 'espressoDeep',
 } as const satisfies Record<InputGround, keyof ColorPalette>;
 

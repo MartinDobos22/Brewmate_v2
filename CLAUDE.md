@@ -464,6 +464,15 @@ own.
 `Input` is every text box in the app, and the two it replaced say why it takes
 a `ground` rather than being copied for the second one.
 
+- **A control's fill is what separates it from the ground, because unlike a
+  card it has no shadow to do it instead.** So a quiet pill, a stating chip
+  and a text box all carry `surfaceContainerHigh` rather than
+  `surfaceVariant`. The second is a surface _tint_ - a pale inset drawn on
+  white - and on the light scheme it is `#F4EDE5` against a `#F2EDE6` page,
+  which is 1.00:1. Every quiet button standing on the page therefore had no
+  background at all, and a resting field showed its label and its value and
+  nothing else. A card may be the colour of what it sits on; a control may
+  not.
 - **A field is filled, and its ring is kept back for when it has something to
   say.** The outlined box this replaced drew a border in every state, which
   left the design nothing to do with one: focus, an error and a value read off

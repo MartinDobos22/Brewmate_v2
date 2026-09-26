@@ -13,7 +13,8 @@ export type ChipTone = 'neutral' | 'fresh' | 'lifted';
 export const DEFAULT_CHIP_TONE: ChipTone = 'neutral';
 
 export const CHIP_FILLS = {
-  neutral: 'surfaceVariant',
+  /** A control fill, for the reason `PILL_BACKGROUNDS` gives at length. */
+  neutral: 'surfaceContainerHigh',
   fresh: 'freshContainer',
   /**
    * The card surface, which is the same colour as most of what a chip sits
