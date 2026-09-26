@@ -52,6 +52,11 @@ import {
   createBagEvaluationService,
   type BagEvaluationService,
 } from '../modules/bagEvaluations/bagEvaluationService.js';
+import {
+  createBrewingProfileRepository,
+  createBrewingProfileService,
+  type BrewingProfileService,
+} from '../modules/brewingProfile/index.js';
 import { createBrewLogRepository } from '../modules/brewLogs/brewLogRepository.js';
 import { createBrewLogService, type BrewLogService } from '../modules/brewLogs/brewLogService.js';
 import { createBrewMethodRepository } from '../modules/brewMethods/brewMethodRepository.js';
@@ -127,6 +132,7 @@ export interface AppServices {
   readonly recipeService: RecipeService;
   readonly recipeChatService: RecipeChatService;
   readonly brewLogService: BrewLogService;
+  readonly brewingProfileService: BrewingProfileService;
   readonly historyService: HistoryService;
   readonly insightsService: InsightsService;
   readonly aiUsageService: AiUsageService;
@@ -226,6 +232,13 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
   });
 
   /**
+   * How somebody brews, read off their cups. Shared by the route that shows it
+   * and the two features that write a grind, so the starting point the app
+   * draws and the one a recipe is written from are moved by the same habit.
+   */
+  const brewingProfileService = createBrewingProfileService(createBrewingProfileRepository(db));
+
+  /**
    * The one auxiliary model call in the product, and the only reason the
    * insights need a provider at all. Built here rather than inside the
    * insights service so that a deployment without a key produces `null` in
@@ -272,6 +285,7 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
       learner: bagTasteLearner,
     }),
     brewLogService,
+    brewingProfileService,
     coffeeBagParseService:
       ai === null
         ? null
@@ -309,6 +323,7 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
             brewContextResolver,
             recipeRepository,
             brewLogRepository,
+            brewingProfileService,
             recipeService,
             aiUsageService,
           }),
@@ -357,6 +372,7 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
             brewLogRepository,
             brewMethodService,
             brewContextResolver,
+            brewingProfileService,
             tasteProfileService,
             aiUsageService,
           }),

@@ -5,6 +5,7 @@ export * from './errors/index.js';
 export * from './health/index.js';
 export * from './users/index.js';
 export * from './brewing/index.js';
+export * from './brewingProfile/index.js';
 export * from './tasteProfiles/index.js';
 export * from './brewMethods/index.js';
 export * from './grinders/index.js';

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import {
   EQUIPMENT_TYPES,
   chooseGrinderEquipment,
+  findGrindHabitShift,
   readGrindCoffeeFacts,
   resolveGrindGuidance,
   type BrewMethod,
@@ -13,6 +14,8 @@ import {
 
 import { useEquipmentList, useGrinder } from '../../inventory/hooks';
 import { resolveGrinderCandidates } from '../services/resolveGrinderCandidates';
+
+import { useBrewingProfile } from './useBrewingProfile';
 
 const NONE: readonly Equipment[] = [];
 const ACTIVE_ONLY = true;
@@ -62,6 +65,11 @@ const nameOf = (grinder: { readonly brand: string; readonly model: string }): st
  * one and forty on the other. Nobody having said is still the common case, and
  * `chooseGrinderEquipment` - the same rule the API falls back to - settles it
  * the same way on both sides of the wire.
+ *
+ * The habit comes in the same way the API reads it - the brewing profile's
+ * grind shift for this family, through `findGrindHabitShift` - so the band
+ * drawn here and the band the recipe is written from are moved by the same
+ * amount, and the reasons under it say so.
  */
 export const useGrindGuidance = (
   method: BrewMethod | undefined,
@@ -89,6 +97,7 @@ export const useGrindGuidance = (
   const catalogue = useGrinder(chosen?.catalogGrinderId ?? null);
   const grinder = catalogue.data ?? null;
   const category = method?.category;
+  const habitShift = findGrindHabitShift(useBrewingProfile().data, category);
 
   const guidance = useMemo(
     (): GrindGuidance | null =>
@@ -98,8 +107,9 @@ export const useGrindGuidance = (
             methodCategory: category,
             coffee: readGrindCoffeeFacts(bag, new Date()),
             grinder,
+            habitShift,
           }),
-    [category, bag, grinder],
+    [category, bag, grinder, habitShift],
   );
 
   return {

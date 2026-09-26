@@ -61,6 +61,8 @@ const SHIFT_NAMES: Record<GrindShiftSource, string> = {
   [GRIND_SHIFT_SOURCES.roastLevel]: 'how dark it was roasted',
   [GRIND_SHIFT_SOURCES.process]: 'how it was processed',
   [GRIND_SHIFT_SOURCES.restDays]: 'how long ago it was roasted',
+  [GRIND_SHIFT_SOURCES.brewingHabit]:
+    'where this person has ended up on their own cups in this family of brewer, past what their bags explained',
 };
 
 const describeShift = (shift: GrindShift): string =>
@@ -113,6 +115,8 @@ export interface GrindStartDescription {
   readonly methodCategory: BrewMethodCategory;
   readonly coffee: GrindCoffeeFacts;
   readonly grinder: Grinder | null;
+  /** The brewing profile's grind habit for this family, where there is one. */
+  readonly habitShift: number | null;
 }
 
 /**
@@ -126,8 +130,8 @@ export interface GrindStartDescription {
  * same brewer comes back at 18 one morning and 26 the next.
  *
  * With it the number is derived from the method's own micron window, moved by
- * what the bag actually says, and read through the curve for that specific
- * grinder - and the model's job goes back to what a model is for: the pour
+ * what the bag actually says and by where this person's own cups have settled,
+ * and read through the curve for that specific grinder - and the model's job goes back to what a model is for: the pour
  * schedule, the temperature, and explaining the whole thing to somebody
  * standing in their kitchen.
  */
@@ -135,8 +139,9 @@ export const describeGrindStart = ({
   methodCategory,
   coffee,
   grinder,
+  habitShift,
 }: GrindStartDescription): string => {
-  const guidance = resolveGrindGuidance({ methodCategory, coffee, grinder });
+  const guidance = resolveGrindGuidance({ methodCategory, coffee, grinder, habitShift });
 
   return [
     'Where to start the grind. This was computed from the method, the bag and their grinder curve before you were asked, so treat it as a measurement rather than a suggestion:',

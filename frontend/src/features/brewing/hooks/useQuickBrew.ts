@@ -1,8 +1,10 @@
 import {
   EQUIPMENT_TYPES,
   WATER_TYPES,
+  findMethodHabit,
   readKettleParams,
   type BrewMethod,
+  type MethodHabit,
   type BrewParams,
   type Recipe,
 } from '@brewmate/shared';
@@ -28,6 +30,7 @@ import {
 } from '../constants/quickBrew';
 import { buildQuickBrewRecipe } from '../services/buildQuickBrewRecipe';
 import { buildReferenceParams, type ReferenceRecipeInput } from '../services/buildReferenceRecipe';
+import { useBrewingProfile } from './useBrewingProfile';
 import { useCreateRecipe } from './useCreateRecipe';
 
 export interface QuickBrew {
@@ -36,6 +39,8 @@ export interface QuickBrew {
   readonly method: BrewMethod | undefined;
   readonly coffee: CoffeeBagFormValues;
   readonly params: BrewParams | undefined;
+  /** What this person's own cups say about the chosen method, which the numbers above lean on. */
+  readonly habit: MethodHabit | null;
   /**
    * The stored recipe, once there is one.
    *
@@ -85,6 +90,7 @@ export const useQuickBrew = (): QuickBrew => {
   const [method, setMethod] = useState<BrewMethod | undefined>(undefined);
   const [recipe, setRecipe] = useState<Recipe | undefined>(undefined);
   const [coffee, setCoffee] = useState<CoffeeBagFormValues>(EMPTY_COFFEE_BAG_FORM);
+  const habit = findMethodHabit(useBrewingProfile().data, method?.id);
 
   const hasTemperatureControl =
     kettle.item !== undefined &&
@@ -99,6 +105,7 @@ export const useQuickBrew = (): QuickBrew => {
           hasTemperatureControl,
           waterType: user?.waterType ?? WATER_TYPES.unknown,
           roastLevel: coffee.roastLevel,
+          habit,
         };
 
   return {
@@ -109,6 +116,7 @@ export const useQuickBrew = (): QuickBrew => {
     hasTemperatureControl,
     hasScale: scale.item !== undefined,
     params: input === undefined ? undefined : buildReferenceParams(input),
+    habit,
     recipe,
     isLoading: available.isLoading || kettle.isLoading || scale.isLoading,
     isError: available.isError,

@@ -1,5 +1,6 @@
 import {
   BREW_METHOD_CATEGORIES,
+  findGrindHabitShift,
   readGrindCoffeeFacts,
   CHAT_ROLES,
   DIAL_IN_HISTORY_SHOTS,
@@ -24,6 +25,7 @@ import { toBrewLog } from '../../brewLogs/brewLogMapper.js';
 import type { BrewLogRepository } from '../../brewLogs/brewLogRepository.js';
 import type { BrewLogService } from '../../brewLogs/brewLogService.js';
 import type { BrewMethodService } from '../../brewMethods/brewMethodService.js';
+import type { BrewingProfileService } from '../../brewingProfile/brewingProfileService.js';
 import type { RecipeChatService } from '../../recipeChat/recipeChatService.js';
 import { toRecipe } from '../../recipes/recipeMapper.js';
 import type { RecipeRepository } from '../../recipes/recipeRepository.js';
@@ -63,6 +65,7 @@ export interface EspressoDialInDependencies {
   readonly brewLogRepository: BrewLogRepository;
   readonly brewMethodService: BrewMethodService;
   readonly brewContextResolver: BrewContextResolver;
+  readonly brewingProfileService: BrewingProfileService;
   readonly tasteProfileService: TasteProfileService;
   readonly aiUsageService: AiUsageService;
 }
@@ -94,6 +97,7 @@ export const createEspressoDialInService = ({
   brewLogRepository,
   brewMethodService,
   brewContextResolver,
+  brewingProfileService,
   tasteProfileService,
   aiUsageService,
 }: EspressoDialInDependencies): EspressoDialInService => {
@@ -213,7 +217,7 @@ export const createEspressoDialInService = ({
       });
 
       const chain = await readChain(userId, recipe);
-      const [context, shots] = await Promise.all([
+      const [context, shots, habits] = await Promise.all([
         brewContextResolver.resolve({
           userId,
           method,
@@ -222,6 +226,7 @@ export const createEspressoDialInService = ({
           equipmentIds: recipe.equipmentIds,
         }),
         readShots(userId, chain),
+        brewingProfileService.read(userId),
       ]);
 
       const userMessage = await recipeChatService.append(userId, recipe.id, {
@@ -237,6 +242,7 @@ export const createEspressoDialInService = ({
           methodCategory: method.category,
           coffee: readGrindCoffeeFacts(context.bag, now),
           grinder: context.grinder,
+          habitShift: findGrindHabitShift(habits, method.category),
         }),
         describeShots(shots),
         describeConstraints(constraints),

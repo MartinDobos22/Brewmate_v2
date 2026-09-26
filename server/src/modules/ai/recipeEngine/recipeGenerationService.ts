@@ -1,5 +1,7 @@
 import {
   RECIPE_SOURCES,
+  findGrindHabitShift,
+  findMethodHabit,
   readGrindCoffeeFacts,
   type BrewLog,
   type GenerateRecipeRequest,
@@ -15,6 +17,7 @@ import type { AiUsageService } from '../../aiUsage/aiUsageService.js';
 import { toBrewLog } from '../../brewLogs/brewLogMapper.js';
 import type { BrewLogRepository } from '../../brewLogs/brewLogRepository.js';
 import type { BrewMethodService } from '../../brewMethods/brewMethodService.js';
+import type { BrewingProfileService } from '../../brewingProfile/brewingProfileService.js';
 import { toRecipe } from '../../recipes/recipeMapper.js';
 import type { RecipeRepository } from '../../recipes/recipeRepository.js';
 import type { RecipeService } from '../../recipes/recipeService.js';
@@ -25,6 +28,7 @@ import { PROMPT_SECTION_SEPARATOR } from '../constants/promptFormatting.js';
 
 import { describeBrewHistory, type BrewHistoryEntry } from './describeBrewHistory.js';
 import { describeChosenAmounts } from './describeBrew.js';
+import { describeBrewingHabit } from './describeBrewingHabit.js';
 import { describeCoffeeForBrew } from './describeCoffeeForBrew.js';
 import { describeConstraints } from './describeConstraints.js';
 import { describeGear } from './describeGear.js';
@@ -58,6 +62,7 @@ export interface RecipeGenerationDependencies {
   readonly brewContextResolver: BrewContextResolver;
   readonly recipeRepository: RecipeRepository;
   readonly brewLogRepository: BrewLogRepository;
+  readonly brewingProfileService: BrewingProfileService;
   readonly recipeService: RecipeService;
   readonly aiUsageService: AiUsageService;
 }
@@ -76,6 +81,12 @@ export interface RecipeGenerationService {
  * disagrees has to say so in the rationale rather than quietly winning the
  * argument.
  *
+ * How this person brews comes in as well, from the brewing profile: where
+ * their grind habitually ends up, which moves the starting point, and the
+ * temperature they keep settling at. Both are read off their own cups and
+ * nothing else - never off the taste profile, which answers a different
+ * question.
+ *
  * The recipe is stored before the response leaves. Everything downstream needs
  * an id to point at: brew mode logs against it, the conversation hangs off it,
  * and an adjustment becomes its child. It is stored unsaved and unpinned -
@@ -88,6 +99,7 @@ export const createRecipeGenerationService = ({
   brewContextResolver,
   recipeRepository,
   brewLogRepository,
+  brewingProfileService,
   recipeService,
   aiUsageService,
 }: RecipeGenerationDependencies): RecipeGenerationService => {
@@ -142,7 +154,10 @@ export const createRecipeGenerationService = ({
         equipmentSetId: input.equipmentSetId ?? null,
         grinderEquipmentId: input.grinderEquipmentId ?? null,
       });
-      const history = await readHistory(userId, bagId, method.id);
+      const [history, habits] = await Promise.all([
+        readHistory(userId, bagId, method.id),
+        brewingProfileService.read(userId),
+      ]);
       const now = new Date();
 
       const sections = [
@@ -152,7 +167,9 @@ export const createRecipeGenerationService = ({
           methodCategory: method.category,
           coffee: readGrindCoffeeFacts(context.bag, now),
           grinder: context.grinder,
+          habitShift: findGrindHabitShift(habits, method.category),
         }),
+        describeBrewingHabit(findMethodHabit(habits, method.id)),
         describeChosenAmounts({
           doseGrams: input.doseGrams,
           waterGrams: input.waterGrams,

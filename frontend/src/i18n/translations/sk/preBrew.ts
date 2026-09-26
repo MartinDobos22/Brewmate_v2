@@ -159,6 +159,14 @@ export const SK_PRE_BREW = {
     'Do čísel sa dá aj ťuknúť a prepísať ich. Dávka posúva vodu pri rovnakom pomere, voda posúva pomer.',
   preBrewSuggestionNote: 'Toto som ti predvyplnil ja. Posledné slovo máš ty.',
   preBrewSuggestionReason: 'Vychádzam zo stredu pomeru pre {method} a z toho, čo drží tvoj brewer.',
+  /**
+   * The same line once the proposal is somebody's own habit rather than the
+   * method's middle. The method leads the sentence because Slovak would
+   * otherwise want a preposition in front of a brand name whose form it
+   * cannot know - "vo V60", "v AeroPresse".
+   */
+  preBrewHabitReason:
+    '{method}: dávku a pomer som vzal z tvojich {count} doterajších šálok, nie zo stredu rozsahu.',
 
   preBrewOverCapacity: 'Toľko vody sa ti do brewera nezmestí. Zmestí sa zhruba {capacity} g.',
   preBrewOverRemaining: 'V balíčku ti toľko kávy neostáva. Máš {remaining} g.',
@@ -220,6 +228,7 @@ export const SK_PRE_BREW = {
   preBrewGrindShiftRoast: 'praženie',
   preBrewGrindShiftProcess: 'spracovanie',
   preBrewGrindShiftRest: 'čas od upraženia',
+  preBrewGrindShiftHabit: 'kde zvyknú skončiť tvoje šálky',
   preBrewGrindFiner: 'jemnejšie',
   preBrewGrindCoarser: 'hrubšie',
   preBrewGrindNoCurve:

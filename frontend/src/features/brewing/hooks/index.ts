@@ -38,5 +38,6 @@ export type { CoffeeSource } from './useCoffeeSource';
 
 export { usePreviousBrew } from './usePreviousBrew';
 export type { PreviousBrew } from './usePreviousBrew';
+export { useBrewingProfile } from './useBrewingProfile';
 export { useGrindGuidance } from './useGrindGuidance';
 export type { GrindGuidanceReading } from './useGrindGuidance';

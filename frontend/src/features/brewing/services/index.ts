@@ -1,4 +1,5 @@
 export { fetchBrewMethods } from './brewMethodsApi';
+export { fetchBrewingProfile } from './brewingProfileApi';
 export { fetchRecipes, fetchRecipe, createRecipe, updateRecipe, deleteRecipe } from './recipesApi';
 export {
   fetchBrewLogs,
@@ -16,6 +17,8 @@ export { generateRecipe } from './recipeEngineApi';
 export { setDose, setWater, setRatio, isEspressoMethod, midpointRatio } from './resolveBrewAmounts';
 export type { BrewAmounts } from './resolveBrewAmounts';
 export { proposeBrewAmounts } from './proposeBrewAmounts';
+export { seedsAmounts } from './seedsAmounts';
+export { hasBrewingHabit } from './hasBrewingHabit';
 export { checkBrewAmounts } from './checkBrewAmounts';
 export type { BrewAmountCheck, BrewAmountWarning } from './checkBrewAmounts';
 export { countConstraints } from './countConstraints';

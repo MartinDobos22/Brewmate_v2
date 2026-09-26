@@ -45,6 +45,8 @@ export const API_ROUTES = {
 
   historyTimeline: '/history/timeline',
 
+  brewingProfile: '/brewing-profile',
+
   insights: '/insights',
   insightSuggestionAccept: '/insights/suggestion/accept',
   insightSuggestionDismiss: '/insights/suggestion/dismiss',

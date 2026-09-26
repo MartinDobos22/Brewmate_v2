@@ -28,6 +28,19 @@ export const WINDOW_HALF_WIDTH_FRACTION = 0.5;
 export const BEAN_SHIFT_LIMIT = 0.8;
 
 /**
+ * How far this person's own history may move a starting point, on top of what
+ * the bag moved it.
+ *
+ * Kept apart from the bean's own allowance rather than sharing it, because the
+ * two are different evidence and neither should be able to crowd the other
+ * out: a dark roast still starts coarser for somebody who habitually grinds
+ * fine. Capped a little under the bean's allowance, because a habit is read
+ * off a handful of cups made with one grinder and one kettle, and the curve it
+ * is measured against was itself only ever an estimate.
+ */
+export const HABIT_SHIFT_LIMIT = 0.6;
+
+/**
  * How wide the band around the starting point is, as a fraction of the
  * window's half-width.
  *

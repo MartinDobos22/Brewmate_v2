@@ -9,11 +9,10 @@ import {
 } from '../conversion/interpolateMicrons.js';
 import type { MicronWindow } from '../conversion/micronWindowSchema.js';
 import type { Grinder } from '../grinders/grinderSchema.js';
-import type { SettingRange } from '../grinders/settingRangeSchema.js';
 
 import {
-  BEAN_SHIFT_LIMIT,
   GUIDANCE_BAND_FRACTION,
+  HABIT_SHIFT_LIMIT,
   GUIDANCE_MICRON_DECIMALS,
   GUIDANCE_SETTING_DECIMALS,
   SLOPE_MIN_SETTING_SPAN,
@@ -23,8 +22,10 @@ import {
 } from './grindGuidanceFieldLimits.js';
 import type { GrindCoffeeFacts } from './grindCoffeeFacts.js';
 import { GRIND_GUIDANCE_SOURCES, type GrindGuidanceSource } from './grindGuidanceSources.js';
-import type { GrindShift } from './grindShiftSources.js';
+import { GRIND_SHIFT_SOURCES, type GrindShift } from './grindShiftSources.js';
 import { readBeanGrindShift } from './readBeanGrindShift.js';
+import { readPublishedRange } from './readPublishedRange.js';
+import { sumBeanGrindShift } from './sumBeanGrindShift.js';
 
 const NOTHING = 0;
 const ROUNDING_BASE = 10;
@@ -78,14 +79,34 @@ export interface GrindGuidanceRequest {
   readonly methodCategory: BrewMethodCategory;
   readonly coffee: GrindCoffeeFacts;
   readonly grinder: Grinder | null;
+  /**
+   * Where this person's own cups in this family of brewer have settled, past
+   * what their bags alone explain - the brewing profile's reading, in the same
+   * units as every other shift here.
+   *
+   * Absent or null for somebody who has not brewed enough to have a habit,
+   * which is everybody on their first morning and the ordinary case.
+   */
+  readonly habitShift?: number | null;
 }
 
-const totalShift = (shifts: readonly GrindShift[]): number =>
-  clamp(
-    shifts.reduce((sum: number, entry: GrindShift): number => sum + entry.amount, NOTHING),
-    -BEAN_SHIFT_LIMIT,
-    BEAN_SHIFT_LIMIT,
-  );
+/**
+ * The habit as one more reason, or no reason at all.
+ *
+ * Reported beside the bag's facts rather than folded into them, because a
+ * starting point that moved because of somebody's own history has to say so:
+ * "finer, because that is where your cups end up" is the sentence that lets
+ * somebody disagree with the habit rather than with the arithmetic.
+ */
+const readHabit = (habitShift: number | null): readonly GrindShift[] =>
+  habitShift === null || habitShift === NOTHING
+    ? []
+    : [
+        {
+          source: GRIND_SHIFT_SOURCES.brewingHabit,
+          amount: clamp(habitShift, -HABIT_SHIFT_LIMIT, HABIT_SHIFT_LIMIT),
+        },
+      ];
 
 /** The band in microns, before any grinder has been consulted. */
 const resolveMicronBand = (window: MicronWindow, shift: number): GrindBand => {
@@ -187,9 +208,9 @@ const readPublishedBand = (
   category: BrewMethodCategory,
   shift: number,
 ): GrindBand | null => {
-  const range: SettingRange | undefined = grinder.settingRanges?.[category];
+  const range = readPublishedRange(grinder, category);
 
-  if (range === undefined || range.max <= range.min) {
+  if (range === null) {
     return null;
   }
 
@@ -276,6 +297,12 @@ const readStep = (
  * calibrated grinder there is no number at all, only the word - which is what
  * an honest app says rather than inventing a scale to print a number on.
  *
+ * Somebody who has brewed enough cups also brings a habit: where their own
+ * settings have ended up, past what their bags explained. It moves the start
+ * inside the same window the bag does, under its own cap, and is reported as
+ * its own reason - it is the one part of this answer that is learned rather
+ * than looked up, and the one most worth being able to disagree with.
+ *
  * What this is not is a claim to be right. Burr alignment, bean density, how
  * the last person left the collar and the age of the burrs all move a real
  * grind further than this arithmetic does. It is the difference between
@@ -286,10 +313,15 @@ export const resolveGrindGuidance = ({
   methodCategory,
   coffee,
   grinder,
+  habitShift,
 }: GrindGuidanceRequest): GrindGuidance => {
   const window = GRIND_MICRON_WINDOWS[methodCategory];
-  const shifts = readBeanGrindShift(coffee);
-  const shift = totalShift(shifts);
+  const beanShifts = readBeanGrindShift(coffee);
+  const habit = readHabit(habitShift ?? null);
+  const shifts = [...beanShifts, ...habit];
+  const shift =
+    sumBeanGrindShift(beanShifts) +
+    habit.reduce((sum: number, entry: GrindShift): number => sum + entry.amount, NOTHING);
   const fromWindow = resolveMicronBand(window, shift);
   const published = grinder === null ? null : readPublishedBand(grinder, methodCategory, shift);
   const setting = published ?? (grinder === null ? null : readBand(grinder, fromWindow));

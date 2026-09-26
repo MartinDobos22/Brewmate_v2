@@ -5,6 +5,7 @@ import {
   resolveWaterGrams,
   type BrewMethod,
   type Equipment,
+  type MethodHabit,
 } from '@brewmate/shared';
 
 import { AMOUNT_FIELDS } from '../constants/preBrew';
@@ -24,6 +25,12 @@ const clamp = (value: number, min: number, max: number): number =>
  * be a cup that works, so whatever the drinker changes about it reads as their
  * decision rather than as correcting the app.
  *
+ * Once somebody has brewed enough cups with this method, the proposal is
+ * theirs instead: the dose they actually weigh and the ratio they actually
+ * pour, each only once three cups stand behind it. Still clamped to what the
+ * brewer can take - a habit formed on a larger dripper is not a reason to
+ * overfill this one - and still only a proposal.
+ *
  * `lastEdited` starts on the dose, so the first pull on the ratio slider moves
  * the water. That is the right guess: somebody who has not touched anything is
  * about to weigh coffee, and the water is still in the kettle.
@@ -31,17 +38,18 @@ const clamp = (value: number, min: number, max: number): number =>
 export const proposeBrewAmounts = (
   method: BrewMethod,
   brewer: Equipment | undefined,
+  habit: MethodHabit | null,
 ): BrewAmounts => {
   const limits = brewer === undefined ? {} : readBrewerParams(brewer.params);
-  const wanted = isEspressoMethod(method)
-    ? REFERENCE_RECIPE.espressoDoseGrams
-    : REFERENCE_RECIPE.doseGrams;
+  const wanted =
+    habit?.doseGrams ??
+    (isEspressoMethod(method) ? REFERENCE_RECIPE.espressoDoseGrams : REFERENCE_RECIPE.doseGrams);
   const doseGrams = clamp(
     wanted,
     limits.doseMinGrams ?? DOSE_GRAMS_MIN,
     limits.doseMaxGrams ?? DOSE_GRAMS_MAX,
   );
-  const ratio = midpointRatio(method);
+  const ratio = habit?.ratio ?? midpointRatio(method);
 
   return {
     doseGrams,

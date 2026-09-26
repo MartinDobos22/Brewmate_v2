@@ -15,6 +15,7 @@ import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import { ROAST_LEVEL_LABEL_KEYS } from '../../../tasteProfile/constants';
 import type { QuickBrew } from '../../hooks/useQuickBrew';
+import { hasBrewingHabit } from '../../services/hasBrewingHabit';
 
 import { createQuickBrewCoffeeStepStyles } from './QuickBrewCoffeeStep.styles';
 
@@ -89,7 +90,13 @@ export const QuickBrewCoffeeStep = ({ brew }: QuickBrewCoffeeStepProps): JSX.Ele
         fullWidth
         isPending={brew.isPending}
         onPress={(): void => {
-          brew.askForRecipe(t(TRANSLATION_KEYS.quickBrewRationale));
+          brew.askForRecipe(
+            t(
+              hasBrewingHabit(brew.habit)
+                ? TRANSLATION_KEYS.quickBrewHabitRationale
+                : TRANSLATION_KEYS.quickBrewRationale,
+            ),
+          );
         }}
       />
       <PillButton

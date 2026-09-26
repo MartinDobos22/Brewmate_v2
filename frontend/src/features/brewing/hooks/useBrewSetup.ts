@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   WATER_TYPES,
+  findMethodHabit,
   type BrewConstraints,
   type BrewMethod,
   type CoffeeBag,
@@ -19,6 +20,7 @@ import { findBrewerForMethod } from '../../inventory/services';
 import { checkBrewAmounts } from '../services/checkBrewAmounts';
 import type { BrewSetup } from './brewSetup';
 import { useBrewAmounts } from './useBrewAmounts';
+import { useBrewingProfile } from './useBrewingProfile';
 import { useGenerateRecipe } from './useGenerateRecipe';
 
 const NO_CONSTRAINTS: BrewConstraints = {};
@@ -61,7 +63,8 @@ export const useBrewSetup = (initialBagId?: string): BrewSetup => {
   const generate = useGenerateRecipe();
   const brewer =
     method === undefined ? undefined : findBrewerForMethod(available.brewers, method.id);
-  const amounts = useBrewAmounts(method, brewer);
+  const habits = useBrewingProfile().data;
+  const amounts = useBrewAmounts(method, brewer, findMethodHabit(habits, method?.id));
 
   /**
    * A bag opened from its own screen arrives already chosen.

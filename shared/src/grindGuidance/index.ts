@@ -3,6 +3,7 @@ export {
   GUIDANCE_BAND_FRACTION,
   GUIDANCE_MICRON_DECIMALS,
   GUIDANCE_SETTING_DECIMALS,
+  HABIT_SHIFT_LIMIT,
   MILLISECONDS_PER_DAY,
   SLOPE_MIN_SETTING_SPAN,
   STEPLESS_ADVICE_UNIT,
@@ -21,6 +22,10 @@ export { UNKNOWN_COFFEE } from './grindCoffeeFacts.js';
 export type { GrindCoffeeFacts } from './grindCoffeeFacts.js';
 export { readBeanGrindShift } from './readBeanGrindShift.js';
 export { readGrindCoffeeFacts } from './readGrindCoffeeFacts.js';
+export { readGrindHabitShift } from './readGrindHabitShift.js';
+export type { BrewedGrind } from './readGrindHabitShift.js';
+export { readPublishedRange } from './readPublishedRange.js';
+export { sumBeanGrindShift } from './sumBeanGrindShift.js';
 export { resolveGrindGuidance } from './resolveGrindGuidance.js';
 export type {
   GrindBand,

@@ -36,6 +36,8 @@ export const SK_BREWING = {
   quickBrewCoffeeOptionalNote: 'Nič z toho nie je povinné. Keď o káve nevieš nič, rovno pokračuj.',
   quickBrewRationale:
     'Rýchle varenie. Vychádza z tvojho vybavenia a z toho, čo si o káve vedel povedať.',
+  quickBrewHabitRationale:
+    'Rýchle varenie. Kde to šlo, vzal som čísla, pri ktorých zvyčajne skončíš; zvyšok vychádza z tvojho vybavenia a z toho, čo si o káve vedel povedať.',
 
   quickBrewRecipeTitle: 'Tvoj recept',
   quickBrewRecipeNoBagNote: 'Túto kávu nemáš zapísanú, a nevadí. Recept si pamätám aj tak.',

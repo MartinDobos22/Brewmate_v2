@@ -29,11 +29,19 @@ const daysSinceRoast = (roastDate: string | null, now: Date): number | null => {
  * this arithmetic would be two answers to "where do I start" that eventually
  * disagree on the same screen.
  *
+ * Only the three columns are asked for, so the brewing profile can read the
+ * facts a cup was brewed from without assembling a whole bag to do it - and
+ * `now` is whatever moment the question is about, which for a cup brewed last
+ * month is last month.
+ *
  * A brew with no bag behind it maps onto the coffee nobody wrote anything down
  * about rather than onto a refusal - which produces the middle of the method's
  * own window, reported as exactly that.
  */
-export const readGrindCoffeeFacts = (bag: CoffeeBag | null, now: Date): GrindCoffeeFacts =>
+export const readGrindCoffeeFacts = (
+  bag: Pick<CoffeeBag, 'roastLevel' | 'process' | 'roastDate'> | null,
+  now: Date,
+): GrindCoffeeFacts =>
   bag === null
     ? UNKNOWN_COFFEE
     : {

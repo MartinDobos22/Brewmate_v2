@@ -21,6 +21,7 @@ const ROOT = {
   recipes: 'recipes',
   recipeMessages: 'recipeMessages',
   brewLogs: 'brewLogs',
+  brewingProfile: 'brewingProfile',
   aiUsage: 'aiUsage',
   aiUsageSummary: 'aiUsageSummary',
   recipeTimeline: 'recipeTimeline',
@@ -77,6 +78,13 @@ export const QUERY_KEYS = {
 
   brewLogs: (filter?: QueryFilter): AppQueryKey => [ROOT.brewLogs, filter],
   brewLog: (id: string): AppQueryKey => [ROOT.brewLogs, id],
+  /**
+   * Under the brew logs' own root, because it is nothing but a fold over them:
+   * every write that invalidates the cups - a brew, a correction, a deleted
+   * log, a pulled shot - invalidates what they add up to in the same move, and
+   * no mutation has to remember that a second domain depends on the first.
+   */
+  brewingProfile: (): AppQueryKey => [ROOT.brewLogs, ROOT.brewingProfile],
 
   aiUsage: (filter?: QueryFilter): AppQueryKey => [ROOT.aiUsage, filter],
   aiUsageSummary: (): AppQueryKey => [ROOT.aiUsageSummary],

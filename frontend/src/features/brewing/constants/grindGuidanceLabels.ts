@@ -41,4 +41,5 @@ export const GRIND_SHIFT_LABEL_KEYS: Record<GrindShiftSource, TranslationKey> = 
   [GRIND_SHIFT_SOURCES.roastLevel]: TRANSLATION_KEYS.preBrewGrindShiftRoast,
   [GRIND_SHIFT_SOURCES.process]: TRANSLATION_KEYS.preBrewGrindShiftProcess,
   [GRIND_SHIFT_SOURCES.restDays]: TRANSLATION_KEYS.preBrewGrindShiftRest,
+  [GRIND_SHIFT_SOURCES.brewingHabit]: TRANSLATION_KEYS.preBrewGrindShiftHabit,
 };

@@ -30,10 +30,14 @@ of it is wired to one method - everything works for every row in
 `brew_methods`, and an espresso differs from a V60 only in what the model is
 asked for and what the screen prints.
 
-That loop learns about the brewing and nothing else. What somebody likes to
-drink - the taste profile the shop verdict argues from - is taught only by
-evidence about coffees: the questionnaire, the bags they buy, and the stars
-they give those bags halfway through and once they are finished.
+That loop learns about the brewing and nothing else, and what it learns is the
+brewing profile: the dose somebody actually weighs, the ratio they actually
+pour, the temperature they settle at and where their grind ends up past what
+their bags explained - read off their own cups, never drawn, and used to seed
+the next brew. What somebody likes to drink - the taste profile the shop
+verdict argues from - is taught only by evidence about coffees: the
+questionnaire, the bags they buy, and the stars they give those bags halfway
+through and once they are finished. Neither profile reads the other.
 
 Two things now hang off that loop. A recipe somebody found elsewhere can be
 converted onto their own equipment - deterministically, in an isolated module
@@ -81,9 +85,10 @@ set of taps becomes a claim about somebody's taste, `shared/src/coffeeTaste/`,
 which is how a printed label becomes a claim about a coffee, and
 `shared/src/coffeeMatch/`, which is where those two claims are held up against
 each other, `shared/src/tasteLearning/`, which is how a bag somebody bought and
-rated becomes evidence about them, and `shared/src/grindGuidance/`, which is
+rated becomes evidence about them, `shared/src/grindGuidance/`, which is
 where to start grinding a particular coffee in a particular brewer on a
-particular grinder. Each is
+particular grinder, and `shared/src/brewingProfile/`, which is how a run of
+cups becomes a claim about how somebody brews. Each is
 self-contained, depends on nothing but plain values and has its own unit tests
 (`shared/tests/`), so a better algorithm can replace one without touching
 anything else.
@@ -1457,6 +1462,12 @@ leading to one.
   was the same wire in the other direction that let a sour cup teach the shop.
   `createBrewContextResolver` no longer reads the profile at all, and neither do
   the chat or the dial-in.
+- **It is written with the brewing profile instead.** The grind habit moves the
+  starting point inside `describeGrindStart`, where it is named as its own
+  reason, and the temperature somebody keeps settling at for this method is
+  handed over as a habit the rationale may argue with. The dose and the ratio
+  are not - they were already chosen on the screen, and the screen is where
+  the habit seeded them.
 - **The recipe is stored before the response leaves**, unsaved and unpinned.
   Everything downstream needs an id - brew mode logs against it, the
   conversation hangs off it, an adjustment becomes its child - and a proposal
@@ -1738,6 +1749,70 @@ as a fact rather than asked for one.
   the collar and the age of the burrs all move a real grind further than this
   arithmetic does. It is the difference between starting two clicks out and
   starting ten, which over a new bag is two shots instead of six.
+- **A fourth input is learned rather than looked up: `habitShift`.** Where this
+  person's own cups have settled past what their bags explained, from the
+  brewing profile. It moves the start inside the same window the bag does,
+  under its own cap (`HABIT_SHIFT_LIMIT`) rather than a share of the bean's, so
+  a dark roast still starts coarser for somebody who habitually grinds fine -
+  and it is reported as its own reason, because it is the one part of the
+  answer most worth being able to disagree with.
+
+### How somebody brews
+
+`shared/src/brewingProfile/`, folded by `GET /brewing-profile` over the most
+recent two hundred cups, and the answer to "čím viac kávy si spravíš, tým
+lepšie". Nothing in it is told; everything is watched.
+
+- **Two profiles, and neither reads the other.** The taste profile says which
+  coffee somebody should buy and is taught by what they answered, bought and
+  rated. This one says how they brew the coffee they have and is taught by
+  nothing but the cups. A sour cup is evidence about a grind here and about
+  nothing at all there, which is the whole reason they were split.
+- **It is never drawn.** Nobody needs a chart of how they brew; they need
+  numbers that are already theirs. It shows up as one quiet line under the
+  amounts - "dávku a pomer som vzal z tvojich 12 doterajších šálok" instead of
+  the method's middle - and as one reason under the grind. That is all of it.
+- **Per method for what is weighed, per family for the grind.** A dose and a
+  ratio are facts about a brewer: an AeroPress and a French press are both
+  immersion and nobody puts the same dose in both. A grind habit is a fraction
+  of a family's window, the unit the guidance already moves in, so two
+  drippers share one.
+- **Every figure is a weighted median, and waits for three cups.** A median
+  because habits are lumpy - weekday 1:16 and a 1:12 for a guest is a habit of
+  1:16, and a mean would report a ratio nobody ever brewed. Weighted by each
+  cup's learning weight, and a version somebody corrected and then brewed the
+  correction of counts for `SUPERSEDED_CUP_WEIGHT` of itself, so a long dial-in
+  does not outvote the recipe it arrived at. Rounded to the steps the form
+  moves in.
+- **A missing piece of gear blinds a cup to one figure, not to all of them.**
+  `HABIT_BLIND_SPOTS`: a cup without a scale teaches no dose and no ratio but
+  still its temperature; one without a thermometer the other way round; the
+  grind is lost to no grinder, a fixed collar and borrowed equipment. The
+  learning weight discounts the whole cup; this drops only the part it did not
+  measure.
+- **The grind is measured against the bag, never against the recipe's own
+  start.** `readGrindHabitShift` is the guidance run backwards: where the
+  setting sits in the range the guidance would have used, with everything the
+  roast, the process and the age explain taken back off. Measured against the
+  recipe's start instead, a satisfied cup would read as no habit once the habit
+  had been applied, the next start would fall back to the middle, and the
+  correction would switch itself on and off with every other bag.
+- **One coffee is not a grind habit.** `GRIND_HABIT_MIN_COFFEES` is two: a bag
+  that simply wanted grinding finer than its label said would otherwise become
+  a habit of grinding everything finer. And a habit smaller than half a
+  tasteable step is reported as zero - known and nothing to say - which is a
+  different answer from null, not known yet.
+- **Not stored.** A fold over brew logs, recomputed on every read like the
+  insights, so it is always exactly what the cups say and a corrected or
+  deleted log is reflected on the next read. The app keeps it under the brew
+  logs' own query root for the same reason: every write that touches a cup
+  refreshes what the cups add up to.
+- **The form re-seeds when the habit arrives.** On a cold cache the profile can
+  land a moment after the method, and a proposal seeded from the middle and
+  never corrected would print the habit's sentence under numbers that are not
+  the habit's. The quick brew's reference cup takes the same three figures -
+  the calibration brew deliberately does not, because it is the one recipe
+  whose point is that nobody has a habit yet.
 
 ### Dialling in an espresso
 
@@ -2491,6 +2566,7 @@ server/src/
 │   ├── recipeChat/   the conversation about a recipe
 │   ├── brewLogs/     cups that were actually brewed
 │   ├── history/      one recipe line, with its cups and its notes
+│   ├── brewingProfile/ how somebody brews, folded out of their cups
 │   ├── insights/     what a stretch of brewing adds up to
 │   ├── analytics/    the named flow steps a phone reports
 │   └── aiUsage/      model calls, recorded for cost - and the allowance
@@ -2687,6 +2763,7 @@ is not an oracle for other people's ids.
 | GET              | `/ai-usage`                    | this account's model usage; read-only by design  |
 | GET              | `/ai-usage/summary`            | both windows, their ceilings, and where it went  |
 | GET              | `/history/timeline`            | one recipe line: versions, cups and notes        |
+| GET              | `/brewing-profile`             | how this account brews, read off its own cups    |
 | GET              | `/insights`                    | what the history counts, and what it proposes    |
 | POST             | `/insights/suggestion/accept`  | writes the proposal into the taste profile       |
 | POST             | `/insights/suggestion/dismiss` | remembers a refusal against that evidence        |
@@ -2887,7 +2964,7 @@ Two kinds, and the split is deliberate.
 `shared` has unit tests, and only for the conversion module, the shot timeline,
 the taste axis fold, the coffee taste estimate, the match between a coffee and
 a drinker, what a bought and rated bag teaches, where a grind starts and which
-grinder it starts on: pure functions
+grinder it starts on, and how a run of cups becomes a brewing habit: pure functions
 over plain values, testable
 with no database, no model and no server. That is the whole reason the conversion lives there rather than
 in the API - arithmetic this consequential should be checkable in a second. The
@@ -2947,7 +3024,18 @@ on its own axis, that a coffee which tasted different is believed less through
 its label and one that depended on the recipe counts for half, that the last
 cups of a bag weigh less than its middle, that each impression leaves a
 different share of the purchase standing, and that a bag whose label says
-nothing teaches nothing by being bought.
+nothing teaches nothing by being bought. The brewing profile is tested for the
+two promises it rests on. That it learns honestly: two cups state nothing, the
+usual ratio beats the average of it and a guest's, a cup without a thermometer
+teaches its dose but not its temperature and one without a scale the reverse, a
+corrected version counts for less than the one that was kept, one coffee is not
+a grind habit however many cups of it there were, a habit nobody could taste is
+zero rather than unknown, and a grind that was never on their own collar is not
+read at all. And that the loop stands still: a setting the bag alone would have
+started at reads as no habit on both a curve and a published range, a start
+moved by a habit reads that habit back, the same setting is a coarser habit for
+a light roast than a dark one, and the habit reaches the guidance as its own
+capped reason.
 
 Everything else is integration tests, running against the real Neon test branch
 through `app.inject()` - no mocked database, no testcontainers (everything is
@@ -3034,7 +3122,13 @@ refuses `/ai/*` with which ceiling and when it lifts while leaving every other
 route working, that the dashboard reports the same spending the limiter is
 enforcing, that a recipe goes to the larger model and the auxiliary paragraph
 to the smaller one, and that the export carries every user-owned table and
-describes exactly what deleting the account erases.
+describes exactly what deleting the account erases. The brewing profile is
+tested end to end: that an account with no cups has none, that two cups are
+counted without claiming a habit, that the third states the dose, the ratio and
+the temperature, that cups without a thermometer keep their dose and lose their
+temperature, that another account's cups are never read, that a grind is
+measured against its bag once two coffees agree, and that the temperature and
+the grind habit both reach the recipe engine's prompt.
 
 Tests are skipped in CI when `TEST_DATABASE_URL` is not configured, and fail
 loudly when it is set but unreachable.
