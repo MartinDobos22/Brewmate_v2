@@ -18,6 +18,7 @@ export const toTasteProfile = (row: TasteProfileRow): TasteProfile => ({
   axisConfidence: row.axisConfidence,
   confidenceLevel: row.confidenceLevel,
   brewCount: row.brewCount,
+  ratedBagCount: row.ratedBagCount,
   updatedAt: row.updatedAt.toISOString(),
 });
 

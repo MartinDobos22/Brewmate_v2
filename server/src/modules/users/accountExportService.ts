@@ -3,6 +3,7 @@ import { ACCOUNT_EXPORT_FORMAT_VERSION, type AccountExport } from '@brewmate/sha
 import { toStoredAnalyticsEvent } from '../analytics/analyticsMapper.js';
 import { toAiUsageLog } from '../aiUsage/aiUsageMapper.js';
 import { toBagEvaluation } from '../bagEvaluations/bagEvaluationMapper.js';
+import { toBagRating } from '../bagRatings/bagRatingMapper.js';
 import { toBrewLog } from '../brewLogs/brewLogMapper.js';
 import { toCoffeeBag } from '../coffeeBags/coffeeBagMapper.js';
 import { toEquipment } from '../equipment/equipmentMapper.js';
@@ -65,6 +66,7 @@ export const createAccountExportService = ({
       equipmentSets: rows.equipmentSets.map(toEquipmentSet),
       coffeeBags: rows.coffeeBags.map(toCoffeeBag),
       bagEvaluations: rows.bagEvaluations.map(toBagEvaluation),
+      bagRatings: rows.bagRatings.map(toBagRating),
       recipes: rows.recipes.map(toRecipe),
       recipeMessages: rows.recipeMessages.map(toRecipeChatMessage),
       brewLogs: rows.brewLogs.map(toBrewLog),

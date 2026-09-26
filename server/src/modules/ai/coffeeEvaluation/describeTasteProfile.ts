@@ -74,5 +74,5 @@ export const describeTasteProfile = (profile: TasteProfile): string =>
     `${PROMPT_BULLET}preferred roast level${PROMPT_LABEL_SEPARATOR}${profile.roastPreference ?? NO_PREFERENCE}`,
     `${PROMPT_BULLET}milk${PROMPT_LABEL_SEPARATOR}${profile.milkUsage ?? NO_PREFERENCE}`,
     `${PROMPT_BULLET}confidence band${PROMPT_LABEL_SEPARATOR}${resolveConfidenceLevel(profile.confidenceLevel)}`,
-    `${PROMPT_BULLET}brews logged so far${PROMPT_LABEL_SEPARATOR}${String(profile.brewCount)}`,
+    `${PROMPT_BULLET}coffees they have bought and rated so far${PROMPT_LABEL_SEPARATOR}${String(profile.ratedBagCount)}`,
   ].join(PROMPT_LINE_SEPARATOR);

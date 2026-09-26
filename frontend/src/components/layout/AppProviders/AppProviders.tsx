@@ -3,6 +3,7 @@ import { useMemo, type JSX, type ReactNode } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { LIMITS } from '../../../constants/limits';
+import { QUERY_CACHE_BUSTER } from '../../../constants/storageKeys';
 import { createAppPersister, createAppQueryClient } from '../../../lib/queryClient';
 import { ThemeProvider } from '../../../theme';
 
@@ -26,7 +27,7 @@ export const AppProviders = ({ children }: AppProvidersProps): JSX.Element => {
     <SafeAreaProvider>
       <PersistQueryClientProvider
         client={queryClient}
-        persistOptions={{ persister, maxAge: LIMITS.persistMaxAgeMs }}
+        persistOptions={{ persister, maxAge: LIMITS.persistMaxAgeMs, buster: QUERY_CACHE_BUSTER }}
       >
         <ThemeProvider>
           <PendingBrewLogSync>

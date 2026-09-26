@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { storedAnalyticsEventSchema } from '../analytics/analyticsEventSchema.js';
 import { aiUsageLogSchema } from '../aiUsage/aiUsageLogSchema.js';
 import { bagEvaluationSchema } from '../bagEvaluations/bagEvaluationSchema.js';
+import { bagRatingSchema } from '../bagRatings/bagRatingSchema.js';
 import { brewLogSchema } from '../brewLogs/brewLogSchema.js';
 import { coffeeBagSchema } from '../coffeeBags/coffeeBagSchema.js';
 import { equipmentSchema } from '../equipment/equipmentSchema.js';
@@ -23,7 +24,7 @@ import { userSchema } from './userSchema.js';
  * complete copy *of*, and a missing section is otherwise indistinguishable
  * from a section that was empty.
  */
-export const ACCOUNT_EXPORT_FORMAT_VERSION = 1;
+export const ACCOUNT_EXPORT_FORMAT_VERSION = 2;
 
 /**
  * Everything this account has stored, in one document.
@@ -56,6 +57,7 @@ export const accountExportSchema = z.object({
   equipmentSets: z.array(equipmentSetSchema),
   coffeeBags: z.array(coffeeBagSchema),
   bagEvaluations: z.array(bagEvaluationSchema),
+  bagRatings: z.array(bagRatingSchema),
   recipes: z.array(recipeSchema),
   recipeMessages: z.array(recipeChatMessageSchema),
   brewLogs: z.array(brewLogSchema),

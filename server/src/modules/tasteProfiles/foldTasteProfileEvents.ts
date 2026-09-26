@@ -1,8 +1,8 @@
 import {
+  TASTE_PROFILE_SOURCES,
   type TasteAxisConfidence,
   type TasteProfileDelta,
   type TasteProfileSource,
-  type TasteProfileEventPayload,
 } from '@brewmate/shared';
 
 import { clampWeight } from './blendValue.js';
@@ -13,8 +13,11 @@ import {
   MAX_WEIGHT,
   MIN_WEIGHT,
   NO_EVIDENCE,
+  TASTE_SOURCES,
 } from './constants/reducerWeights.js';
 import { applyTasteProfileEvent } from './applyTasteProfileEvent.js';
+import type { FoldableEvent } from './foldableEvent.js';
+import { readBagEvidence, weighPurchase } from './readBagEvidence.js';
 import {
   neutralProfileState,
   noAxisEvidence,
@@ -24,11 +27,17 @@ import {
 
 const ONE_BREW = 1;
 
-export interface FoldableEvent {
-  readonly id: string;
-  readonly source: TasteProfileSource;
-  readonly payload: TasteProfileEventPayload;
-}
+/**
+ * What an event that is not about taste did to the profile: nothing.
+ *
+ * Written beside it rather than left over from whichever fold last touched
+ * it, so the audit trail says what this fold actually did - a brew described
+ * before the profile stopped listening to brews would otherwise go on showing
+ * the move it used to make.
+ */
+const NO_DELTA: TasteProfileDelta = { axes: {}, flavorAffinities: {}, weight: NO_EVIDENCE };
+
+export type { FoldableEvent };
 
 export interface FoldResult {
   readonly state: TasteProfileState;
@@ -63,6 +72,12 @@ const toAxisConfidence = (evidence: AxisEvidence): TasteAxisConfidence => ({
  * Keeping them apart is what lets the profile hold a firm value it openly
  * admits it has barely earned - which is the honest description of almost
  * every account that has answered a questionnaire and nothing else.
+ *
+ * Only `TASTE_SOURCES` are folded. Everything else in the trail is left where
+ * it is and given an empty delta, so the profile can stop listening to a
+ * source without anybody's evidence being deleted - and so is a rating a
+ * later rating of the same bag replaced. A purchase is folded at whatever
+ * weight the ratings of its bag left it.
  */
 export const foldTasteProfileEvents = (events: readonly FoldableEvent[]): FoldResult => {
   const deltas = new Map<string, TasteProfileDelta>();
@@ -72,9 +87,23 @@ export const foldTasteProfileEvents = (events: readonly FoldableEvent[]): FoldRe
   let axisEvidence = noAxisEvidence();
   let totalEvidence = NO_EVIDENCE;
   let brewCount = NO_EVIDENCE;
+  const bags = readBagEvidence(events);
 
   for (const event of events) {
-    const applied = applyTasteProfileEvent(state, axisEvidence, event.source, event.payload);
+    if (BREW_SOURCES.includes(event.source)) {
+      brewCount += ONE_BREW;
+    }
+
+    if (!TASTE_SOURCES.includes(event.source) || bags.supersededIds.has(event.id)) {
+      deltas.set(event.id, NO_DELTA);
+      continue;
+    }
+
+    const payload =
+      event.source === TASTE_PROFILE_SOURCES.purchase
+        ? weighPurchase(event.payload, bags.purchaseFactors)
+        : event.payload;
+    const applied = applyTasteProfileEvent(state, axisEvidence, event.source, payload);
 
     state = applied.state;
     axisEvidence = applied.axisEvidence;
@@ -85,10 +114,6 @@ export const foldTasteProfileEvents = (events: readonly FoldableEvent[]): FoldRe
       event.source,
       (sourceEvidence.get(event.source) ?? NO_EVIDENCE) + applied.delta.weight,
     );
-
-    if (BREW_SOURCES.includes(event.source)) {
-      brewCount += ONE_BREW;
-    }
   }
 
   /** Each source's share of the evidence, which is what `sourceWeights` means. */
@@ -105,6 +130,7 @@ export const foldTasteProfileEvents = (events: readonly FoldableEvent[]): FoldRe
       sourceWeights,
       axisConfidence: toAxisConfidence(axisEvidence),
       brewCount,
+      ratedBagCount: bags.ratedBagCount,
       confidenceLevel: clampWeight(
         totalEvidence / FULL_CONFIDENCE_EVIDENCE,
         MIN_WEIGHT,

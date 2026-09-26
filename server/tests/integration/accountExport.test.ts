@@ -2,6 +2,7 @@ import {
   ACCOUNT_EXPORT_FORMAT_VERSION,
   ANALYTICS_EVENT_NAMES,
   API_ROUTES,
+  BAG_RATING_STAGES,
   TASTE_PROFILE_SOURCES,
   accountExportSchema,
   type AccountExport,
@@ -18,6 +19,9 @@ import { createTestApi, type TestApi } from '../setup/testApi.js';
 
 const NOTHING = 0;
 const ONE = 1;
+/** The purchase of the bag, its rating and the questionnaire. */
+const THREE_EVENTS = 3;
+const FOUR_STARS = 4;
 const HIGH_ACIDITY = 9;
 
 describe('the account export', () => {
@@ -34,6 +38,11 @@ describe('the account export', () => {
     const recipe = await createHistoryRecipe(api, RETURNING_IDENTITY, v60Id, bag.id);
 
     await logBrew(api, RETURNING_IDENTITY, recipe.id);
+    await api.put(API_ROUTES.bagRatings, RETURNING_IDENTITY, {
+      bagId: bag.id,
+      stage: BAG_RATING_STAGES.halfway,
+      stars: FOUR_STARS,
+    });
     await api.post(API_ROUTES.equipment, RETURNING_IDENTITY, TEST_GRINDER_EQUIPMENT);
     await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
       source: TASTE_PROFILE_SOURCES.questionnaire,
@@ -77,9 +86,10 @@ describe('the account export', () => {
     expect(exported.formatVersion).toBe(ACCOUNT_EXPORT_FORMAT_VERSION);
     expect(exported.account.email).toBe(RETURNING_IDENTITY.email);
     expect(exported.tasteProfile).not.toBeNull();
-    expect(exported.tasteProfileEvents).toHaveLength(ONE);
+    expect(exported.tasteProfileEvents).toHaveLength(THREE_EVENTS);
     expect(exported.equipment).toHaveLength(ONE);
     expect(exported.coffeeBags).toHaveLength(ONE);
+    expect(exported.bagRatings).toHaveLength(ONE);
     expect(exported.recipes).toHaveLength(ONE);
     expect(exported.brewLogs).toHaveLength(ONE);
     expect(exported.analyticsEvents).toHaveLength(ONE);
@@ -104,6 +114,7 @@ describe('the account export', () => {
     const afterDeletion = await readExport();
 
     expect(afterDeletion.coffeeBags).toHaveLength(NOTHING);
+    expect(afterDeletion.bagRatings).toHaveLength(NOTHING);
     expect(afterDeletion.recipes).toHaveLength(NOTHING);
     expect(afterDeletion.brewLogs).toHaveLength(NOTHING);
     expect(afterDeletion.tasteProfileEvents).toHaveLength(NOTHING);

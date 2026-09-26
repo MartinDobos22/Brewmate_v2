@@ -5,7 +5,7 @@ import { CONFIDENCE_LEVELS } from '../constants/confidenceLevels';
 
 import { resolveConfidenceLevel } from './resolveConfidenceLevel';
 
-const NO_BREWS = 0;
+const NOTHING_RATED = 0;
 
 /**
  * The sentence that has to sit next to a recommendation, or `null` when the
@@ -14,7 +14,9 @@ const NO_BREWS = 0;
  * Three cases rather than one, because they are three different admissions: an
  * app that knows nothing is guessing outright, an app that has only the
  * questionnaire is repeating what somebody said about chocolate and tea, and
- * an app with a couple of brews behind it is early rather than blind.
+ * an app with a couple of rated coffees behind it is early rather than blind.
+ * Brews are not among them: how a cup came out teaches the recipe, not which
+ * coffee to buy.
  *
  * Above `medium` there is no notice. A caveat that never goes away is read as
  * boilerplate, and then the honest ones stop being read too.
@@ -30,7 +32,7 @@ export const resolveConfidenceNoticeKey = (profile: TasteProfile): TranslationKe
     return null;
   }
 
-  return profile.brewCount === NO_BREWS
+  return profile.ratedBagCount === NOTHING_RATED
     ? TRANSLATION_KEYS.confidenceNoticeQuestionnaire
-    : TRANSLATION_KEYS.confidenceNoticeFewBrews;
+    : TRANSLATION_KEYS.confidenceNoticeFewRatings;
 };

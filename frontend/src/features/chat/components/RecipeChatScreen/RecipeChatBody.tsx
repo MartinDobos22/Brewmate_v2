@@ -1,13 +1,8 @@
-import {
-  CHAT_ROLES,
-  hasAnyConstraint,
-  type Recipe,
-  type RecipeChatMessage,
-} from '@brewmate/shared';
+import { CHAT_ROLES, type Recipe, type RecipeChatMessage } from '@brewmate/shared';
 import type { JSX } from 'react';
 import { ScrollView, View } from 'react-native';
 
-import { CHAT_AUTHORS, ChatBubble, InfoNote } from '../../../../components/ui';
+import { CHAT_AUTHORS, ChatBubble } from '../../../../components/ui';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
 import type { RecipeConversation } from '../../hooks';
@@ -24,7 +19,6 @@ export interface RecipeChatBodyProps {
 }
 
 const NOTHING = 0;
-const NO_CONSTRAINTS = {};
 
 /**
  * The exchange, with each proposal drawn under the sentence that argued for it.
@@ -40,7 +34,6 @@ const NO_CONSTRAINTS = {};
 export const RecipeChatBody = ({ recipe, conversation }: RecipeChatBodyProps): JSX.Element => {
   const styles = useThemedStyles(createRecipeChatScreenStyles);
   const { t } = useTranslation();
-  const wasConstrained = hasAnyConstraint(recipe.params.constraints ?? NO_CONSTRAINTS);
 
   const current = conversation.adjusted ?? recipe;
 
@@ -80,9 +73,6 @@ export const RecipeChatBody = ({ recipe, conversation }: RecipeChatBodyProps): J
             </View>
           );
         })}
-        {wasConstrained ? (
-          <InfoNote text={t(TRANSLATION_KEYS.recipeChatConstrainedNotice)} />
-        ) : null}
         <RecipeChatSaveRow recipe={current} />
       </ScrollView>
       <ChatComposer

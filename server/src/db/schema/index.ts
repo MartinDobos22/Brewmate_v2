@@ -11,6 +11,8 @@ export {
   tasteProfileSourceEnum,
   recipeSourceEnum,
   chatRoleEnum,
+  bagRatingStageEnum,
+  bagImpressionEnum,
 } from './columnEnums.js';
 export { usersTable } from './usersTable.js';
 export type { UserRow, NewUserRow } from './usersTable.js';
@@ -30,6 +32,8 @@ export { coffeeBagsTable } from './coffeeBagsTable.js';
 export type { CoffeeBagRow, NewCoffeeBagRow } from './coffeeBagsTable.js';
 export { bagEvaluationsTable } from './bagEvaluationsTable.js';
 export type { BagEvaluationRow, NewBagEvaluationRow } from './bagEvaluationsTable.js';
+export { bagRatingsTable } from './bagRatingsTable.js';
+export type { BagRatingRow, NewBagRatingRow } from './bagRatingsTable.js';
 export { coffeeBagParsesTable } from './coffeeBagParsesTable.js';
 export type { CoffeeBagParseRow, NewCoffeeBagParseRow } from './coffeeBagParsesTable.js';
 export { coffeeTasteReadingsTable } from './coffeeTasteReadingsTable.js';

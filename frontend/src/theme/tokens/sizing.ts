@@ -212,6 +212,11 @@ export const SIZE = {
   /** Minimum touch target, per the platform accessibility guidelines. */
   minTouchTarget: 44,
   /**
+   * One star of a bag's rating. Big enough that five of them are five targets
+   * a thumb can tell apart, and the row still fits a phone with room to spare.
+   */
+  ratingStar: 36,
+  /**
    * Brew mode is operated with one wet finger while looking at a phone
    * propped up half a metre away, so nothing there is sized by the ordinary
    * rules. A control is a third bigger than the smallest a guideline allows,

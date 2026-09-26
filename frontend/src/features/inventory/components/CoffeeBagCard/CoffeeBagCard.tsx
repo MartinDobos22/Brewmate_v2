@@ -5,6 +5,7 @@ import { Pressable, View } from 'react-native';
 import { Card, Chip, Text } from '../../../../components/ui';
 import { useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
+import { BagRatingPrompt } from '../../../bagRatings/components';
 import { ROAST_LEVEL_LABEL_KEYS } from '../../../tasteProfile/constants';
 import { bagAttributes } from '../../services/bagAttributes';
 
@@ -19,6 +20,8 @@ export interface CoffeeBagCardProps {
   readonly onOpen: (bag: CoffeeBag) => void;
   readonly onBrew: (bag: CoffeeBag) => void;
   readonly onArchive: (bag: CoffeeBag) => void;
+  /** Present only while the bag is halfway gone and nobody has said how it is going. */
+  readonly onRateHalfway?: () => void;
   readonly archiving?: boolean;
   /** The bag this screen most wants opened, lifted a step further off the page. */
   readonly emphasised?: boolean;
@@ -46,6 +49,7 @@ export const CoffeeBagCard = ({
   onOpen,
   onBrew,
   onArchive,
+  onRateHalfway,
   archiving = false,
   emphasised = false,
 }: CoffeeBagCardProps): JSX.Element => {
@@ -75,6 +79,7 @@ export const CoffeeBagCard = ({
         </View>
       </Pressable>
       <BagRemainingBar bag={bag} />
+      {onRateHalfway === undefined ? null : <BagRatingPrompt onPress={onRateHalfway} />}
       <CoffeeBagActions
         archiving={archiving}
         onBrew={(): void => {

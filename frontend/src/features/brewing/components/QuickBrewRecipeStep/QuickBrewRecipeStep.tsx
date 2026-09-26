@@ -6,7 +6,6 @@ import { Card, InfoNote, PillButton, SectionHeading, Text } from '../../../../co
 import { buildBrewModeRoute, ROUTES } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation, type TranslationKey } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
-import { ConfidenceNotice } from '../../../tasteProfile/components';
 import type { QuickBrew } from '../../hooks/useQuickBrew';
 import { buildRecipeNoteKeys } from '../../services/buildRecipeNotes';
 import { RecipeSummaryCard } from '../RecipeSummaryCard';
@@ -53,7 +52,6 @@ export const QuickBrewRecipeStep = ({ brew }: QuickBrewRecipeStepProps): JSX.Ele
           hasScale: brew.hasScale,
         }).map((key: TranslationKey): string => t(key))}
       />
-      <ConfidenceNotice />
       <InfoNote text={t(TRANSLATION_KEYS.quickBrewRecipeNoBagNote)} />
       {recipe === undefined ? null : (
         <View style={styles.offer}>

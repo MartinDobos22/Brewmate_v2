@@ -229,13 +229,17 @@ describe('recipe generation', () => {
     expect(hint?.constraint).toBe('noTemperatureControl');
   });
 
-  /** Nothing about the person travels in the request, so it has to be read. */
-  it('reads the taste profile off the caller rows rather than the body', async () => {
+  /**
+   * The taste profile is about which coffee to buy, not how to brew one, so a
+   * recipe is written without it - a questionnaire answer about chocolate has
+   * no business deciding a grind.
+   */
+  it('writes a recipe without the taste profile', async () => {
     context.completionClient.answerWith(TEST_RECIPE_ANSWER);
 
     await generate(request({}));
 
-    expect(context.completionClient.calls[FIRST]?.prompt).toContain('confidence band');
+    expect(context.completionClient.calls[FIRST]?.prompt).not.toContain('confidence band');
   });
 
   /**

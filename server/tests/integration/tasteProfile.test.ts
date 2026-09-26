@@ -21,6 +21,7 @@ const FULL_WEIGHT = 1;
 const CONSTRAINED_WEIGHT = 0.3;
 const NO_CONFIDENCE = 0;
 const SINGLE_EVENT = 1;
+const TWO_BREWS = 2;
 const QUESTIONNAIRE_REF = 'onboarding-questionnaire-v1';
 
 describe('taste profile', () => {
@@ -107,7 +108,7 @@ describe('taste profile', () => {
    * observations against each other - and until there is a first one to weigh
    * against, every source is simply believed.
    */
-  it('trusts a manual correction more than a remark in chat', async () => {
+  it('trusts a manual correction more than a conclusion drawn from history', async () => {
     const establish = {
       source: TASTE_PROFILE_SOURCES.questionnaire,
       payload: { axes: { acidity: LOW_ACIDITY } },
@@ -116,12 +117,12 @@ describe('taste profile', () => {
 
     await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, establish);
     await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
-      source: TASTE_PROFILE_SOURCES.brewChat,
+      source: TASTE_PROFILE_SOURCES.brewHistory,
       payload: { axes: { acidity: HIGH_ACIDITY } },
-      sourceRef: 'chat-1',
+      sourceRef: 'history-1',
     });
 
-    const afterChat = await readProfile();
+    const afterHistory = await readProfile();
 
     await context.reset();
 
@@ -134,7 +135,7 @@ describe('taste profile', () => {
 
     const afterManual = await readProfile();
 
-    expect(afterManual.acidity).toBeGreaterThan(afterChat.acidity);
+    expect(afterManual.acidity).toBeGreaterThan(afterHistory.acidity);
   });
 
   /**
@@ -241,8 +242,12 @@ describe('taste profile', () => {
       payload: { axes: { acidity: HIGH_ACIDITY, bitterness: LOW_BITTERNESS } },
     });
     await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
-      source: TASTE_PROFILE_SOURCES.calibrationBrew,
+      source: TASTE_PROFILE_SOURCES.manual,
       payload: { axes: { body: HIGH_ACIDITY }, flavorAffinities: { jasmine: 1 } },
+    });
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
+      source: TASTE_PROFILE_SOURCES.calibrationBrew,
+      payload: { axes: { sweetness: HIGH_ACIDITY } },
     });
 
     const before = await readProfile();
@@ -271,9 +276,9 @@ describe('taste profile', () => {
       payload: { axes: { acidity: HIGH_ACIDITY, bitterness: LOW_BITTERNESS } },
     });
     await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
-      source: TASTE_PROFILE_SOURCES.brewChat,
+      source: TASTE_PROFILE_SOURCES.brewHistory,
       payload: { axes: { body: HIGH_ACIDITY }, weight: CONSTRAINED_WEIGHT },
-      sourceRef: 'chat-weighted',
+      sourceRef: 'history-weighted',
     });
 
     const once = tasteProfileSchema.parse(
@@ -293,41 +298,41 @@ describe('taste profile', () => {
   });
 
   /**
-   * The weight a brew log was priced at travels on the event and the fold
-   * respects it. Somebody complaining that a cup was flat when they had no way
-   * to weigh anything is describing their kitchen, not their taste - and this
-   * is the arithmetic that makes that true rather than merely intended.
+   * The profile answers which coffee to buy, and a cup is mostly evidence about
+   * the brew: "bola príliš kyslá" is a grind that was too coarse far more often
+   * than it is somebody who dislikes acidity. So what was said about a cup stays
+   * in the trail and is counted, and moves nothing - otherwise the shop would
+   * learn to talk somebody out of exactly the coffees their grinder was unkind
+   * to.
    */
-  it('lets a cup brewed with nothing to hand teach the profile less', async () => {
-    const establish = {
+  it('never lets a brewed cup move the taste profile', async () => {
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
       source: TASTE_PROFILE_SOURCES.questionnaire,
       payload: { axes: { acidity: LOW_ACIDITY } },
       sourceRef: 'baseline',
-    };
-
-    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, establish);
-    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
-      source: TASTE_PROFILE_SOURCES.brewChat,
-      payload: { axes: { acidity: HIGH_ACIDITY }, weight: CONSTRAINED_WEIGHT },
-      sourceRef: 'constrained-brew',
     });
 
-    const constrained = await readProfile();
+    const before = await readProfile();
 
-    await context.reset();
-
-    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, establish);
     await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
       source: TASTE_PROFILE_SOURCES.brewChat,
       payload: { axes: { acidity: HIGH_ACIDITY }, weight: FULL_WEIGHT },
       sourceRef: 'measured-brew',
     });
+    await api.post(API_ROUTES.tasteProfileEvents, RETURNING_IDENTITY, {
+      source: TASTE_PROFILE_SOURCES.calibrationBrew,
+      payload: { axes: { acidity: HIGH_ACIDITY, bitterness: LOW_BITTERNESS } },
+      sourceRef: 'calibration',
+    });
 
-    const measured = await readProfile();
+    const after = await readProfile();
 
-    expect(constrained.acidity).toBeLessThan(measured.acidity);
-    expect(constrained.confidenceLevel).toBeLessThan(measured.confidenceLevel);
-    expect(constrained.axisConfidence.acidity).toBeLessThan(measured.axisConfidence.acidity);
+    expect(after.acidity).toBe(before.acidity);
+    expect(after.bitterness).toBe(before.bitterness);
+    expect(after.confidenceLevel).toBe(before.confidenceLevel);
+    expect(after.axisConfidence).toEqual(before.axisConfidence);
+    expect(after.sourceWeights[TASTE_PROFILE_SOURCES.brewChat]).toBeUndefined();
+    expect(after.brewCount).toBe(TWO_BREWS);
   });
 
   it('counts brews, not questionnaires, as brews', async () => {

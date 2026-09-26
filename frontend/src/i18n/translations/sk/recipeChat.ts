@@ -61,7 +61,4 @@ export const SK_RECIPE_CHAT = {
   recipeSaveAction: 'Uložiť recept',
   recipeSavedNotice: 'Recept mám uložený pre túto kávu a prípravu.',
   recipeSaveError: 'Recept sa nepodarilo uložiť. Skús to prosím znova.',
-
-  recipeChatConstrainedNotice:
-    'Toto varenie malo obmedzenia, tak z neho o tvojej chuti usudzujem menej.',
 } as const;

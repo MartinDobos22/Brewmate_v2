@@ -15,6 +15,14 @@ import type { TasteProfileSource } from '@brewmate/shared';
  * something they said, and it only ever reaches the trail because they read it
  * and agreed. Trusting it as far as the sliders would let a habit outrank a
  * preference, which is the wrong way round: people buy what the shop had.
+ *
+ * A purchase is the weakest thing here for the same reason, and on its own it
+ * barely moves anything - it is a direction the ratings of the same bag then
+ * confirm, weaken or cancel. A rating is somebody who drank the coffee saying
+ * how it suited them, which is the evidence this profile exists to collect, so
+ * it sits beside the questionnaire; several of them outweigh one, which is the
+ * point. `brew_chat` and `calibration_brew` keep their entries because the
+ * record is total over sources - neither is folded any more.
  */
 export const SOURCE_TRUST: Record<TasteProfileSource, number> = {
   [TASTE_PROFILE_SOURCES.questionnaire]: 0.6,
@@ -22,15 +30,39 @@ export const SOURCE_TRUST: Record<TasteProfileSource, number> = {
   [TASTE_PROFILE_SOURCES.brewChat]: 0.25,
   [TASTE_PROFILE_SOURCES.brewHistory]: 0.7,
   [TASTE_PROFILE_SOURCES.manual]: 1,
+  [TASTE_PROFILE_SOURCES.purchase]: 0.15,
+  [TASTE_PROFILE_SOURCES.bagRating]: 0.5,
 };
+
+/**
+ * The sources a taste profile is folded from.
+ *
+ * What somebody said about the coffee they want, the coffees they bought and
+ * how those turned out, what they changed by hand, and a conclusion about what
+ * they drink that they read and agreed to. A cup
+ * is not on the list. How a brew came out is mostly about the brew - a sour
+ * cup is a grind that was too coarse far more often than it is somebody who
+ * dislikes acidity - and letting it in taught the shop to talk people out of
+ * exactly the coffees their grinder had been unkind to. The profile answers
+ * "which coffee should I buy", so it listens to evidence about coffees and
+ * never to evidence about kitchens.
+ */
+export const TASTE_SOURCES: readonly TasteProfileSource[] = [
+  TASTE_PROFILE_SOURCES.questionnaire,
+  TASTE_PROFILE_SOURCES.manual,
+  TASTE_PROFILE_SOURCES.brewHistory,
+  TASTE_PROFILE_SOURCES.purchase,
+  TASTE_PROFILE_SOURCES.bagRating,
+];
 
 /**
  * Sources whose events represent an actual cup of coffee.
  *
- * `brew_history` is not one of them, however many cups it was drawn from. It
- * is one conclusion about a stretch of brewing, and counting it as a brew
- * would inflate the number the profile screen prints beside its confidence -
- * the one figure whose job is to say how much of this the app has tasted.
+ * They stay in the trail - they are what somebody said about a brew, and the
+ * way they brew is worth learning on its own - but they are counted rather
+ * than folded. `brew_history` is not one of them, however many cups it was
+ * drawn from: it is one conclusion about a stretch of brewing, and counting it
+ * as a brew would inflate the number of cups the app has been told about.
  */
 export const BREW_SOURCES: readonly TasteProfileSource[] = [
   TASTE_PROFILE_SOURCES.calibrationBrew,

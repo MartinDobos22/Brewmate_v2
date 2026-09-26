@@ -18,7 +18,7 @@ wrong one as a misrepresentation rather than as a mistake.
 | User ID               | Yes       | Yes                | No                | App Functionality | `users.id`, `users.firebase_uid`                                                                                                                                                |
 | Name                  | Yes       | Yes                | No                | App Functionality | `users.display_name`, only when a provider supplies one                                                                                                                         |
 | Photos                | Yes       | Yes                | No                | App Functionality | Sent to the API with the scan and read there. Nothing retains it - no bucket, no row, no column - but it travels under the caller's own token, so it is answered for as linked. |
-| Other User Content    | Yes       | Yes                | No                | App Functionality | `recipe_chat_messages.content` - what somebody writes about a cup                                                                                                               |
+| Other User Content    | Yes       | Yes                | No                | App Functionality | `recipe_chat_messages.content` - what somebody writes about a cup; `bag_ratings` - the stars, impression and tags somebody gives a coffee they bought                           |
 | Product Interaction   | Yes       | Yes                | No                | Analytics         | `analytics_events`, the named flow steps in `ANALYTICS_EVENT_NAMES`                                                                                                             |
 | Crash Data            | Yes       | **No**             | No                | App Functionality | The error tracker sends the error, the platform, the release and a screen name. No account id.                                                                                  |
 | Other Diagnostic Data | Yes       | **No**             | No                | App Functionality | The same reports: release name and platform                                                                                                                                     |
@@ -37,6 +37,13 @@ false.
 signed-in user. The server's tracker does attach the internal account id, but
 that is the server's own reporting and not data collected _by the app_ - the
 distinction Apple's form draws.
+
+**A bag rating is Other User Content, not Product Interaction.** The stars,
+the impression and the tags are something somebody says about a coffee, stored
+in `bag_ratings` with their `user_id` and folded into their taste profile; they
+are exported with the account and deleted with it, like every other table here.
+Nothing about a rating leaves the API - the arithmetic that turns it into a
+profile runs on the server, and no model is asked anything to do it.
 
 **Product Interaction is linked.** `analytics_events.user_id` is a real column
 with a real foreign key, and pretending otherwise by calling the rows anonymous

@@ -1,4 +1,6 @@
 import {
+  BAG_IMPRESSION_VALUES,
+  BAG_RATING_STAGE_VALUES,
   BREW_METHOD_CATEGORY_VALUES,
   CHAT_ROLE_VALUES,
   EQUIPMENT_TYPE_VALUES,
@@ -32,3 +34,5 @@ export const milkUsageEnum = pgEnum('milk_usage', MILK_USAGE_VALUES);
 export const tasteProfileSourceEnum = pgEnum('taste_profile_source', TASTE_PROFILE_SOURCE_VALUES);
 export const recipeSourceEnum = pgEnum('recipe_source', RECIPE_SOURCE_VALUES);
 export const chatRoleEnum = pgEnum('chat_role', CHAT_ROLE_VALUES);
+export const bagRatingStageEnum = pgEnum('bag_rating_stage', BAG_RATING_STAGE_VALUES);
+export const bagImpressionEnum = pgEnum('bag_impression', BAG_IMPRESSION_VALUES);

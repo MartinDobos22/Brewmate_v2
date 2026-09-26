@@ -6,14 +6,13 @@ import { BODY_QUESTION } from './bodyQuestion';
 import { CHOCOLATE_QUESTION } from './chocolateQuestion';
 import { DISLIKE_QUESTION } from './dislikeQuestion';
 import { EVERYDAY_COFFEE_QUESTION } from './everydayCoffeeQuestion';
-import { EXTRACTION_QUESTION } from './extractionQuestion';
 import { FRUIT_QUESTION } from './fruitQuestion';
 import { GOAL_QUESTION } from './goalQuestion';
+import { INTENSITY_QUESTION } from './intensityQuestion';
 import { MILK_QUESTION } from './milkQuestion';
 import { ORIGIN_QUESTION } from './originQuestion';
 import { PROCESS_QUESTION } from './processQuestion';
 import { ROAST_QUESTION } from './roastQuestion';
-import { STRENGTH_QUESTION } from './strengthQuestion';
 import { TEA_QUESTION } from './teaQuestion';
 
 /**
@@ -31,6 +30,11 @@ import { TEA_QUESTION } from './teaQuestion';
  * expert level happens to be the better evidence of the two. It opens with
  * something answerable without thinking and closes with what the person is
  * actually chasing.
+ *
+ * Every question is about the coffee somebody should buy, never about how to
+ * brew it. The answers are what the shop verdict argues from on an account's
+ * first day, and a question about extraction or concentration would be
+ * evidence about a kitchen folded into advice about a shelf.
  */
 export const TASTE_QUESTIONS = [
   EVERYDAY_COFFEE_QUESTION,
@@ -44,8 +48,7 @@ export const TASTE_QUESTIONS = [
   MILK_QUESTION,
   BODY_QUESTION,
   AROMA_QUESTION,
-  EXTRACTION_QUESTION,
-  STRENGTH_QUESTION,
+  INTENSITY_QUESTION,
   DISLIKE_QUESTION,
   GOAL_QUESTION,
 ] as const satisfies readonly TasteQuestion[];

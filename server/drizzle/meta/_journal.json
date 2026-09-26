@@ -64,6 +64,13 @@
       "when": 1789578082603,
       "tag": "0008_productive_cobalt_man",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790443797169,
+      "tag": "0009_magical_carlie_cooper",
+      "breakpoints": true
     }
   ]
 }

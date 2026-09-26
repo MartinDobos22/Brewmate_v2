@@ -15,7 +15,13 @@ export interface ConfidenceIndicatorProps {
   readonly profile: TasteProfile;
 }
 
-/** How far the app has got at knowing somebody, drawn as well as said. */
+/**
+ * How far the app has got at knowing somebody, drawn as well as said.
+ *
+ * The number in the dial is how many coffees they have rated, because that is
+ * the evidence that moves this profile most - a count of brews would be a
+ * count of something this profile no longer learns from.
+ */
 export const ConfidenceIndicator = ({ profile }: ConfidenceIndicatorProps): JSX.Element => {
   const styles = useThemedStyles(createConfidenceIndicatorStyles);
   const theme = useTheme();
@@ -32,7 +38,7 @@ export const ConfidenceIndicator = ({ profile }: ConfidenceIndicatorProps): JSX.
         accessibilityLabel={t(TRANSLATION_KEYS.profileConfidenceTitle)}
       >
         <Text variant="numericValue" tone="onEspresso" numeric>
-          {String(profile.brewCount)}
+          {String(profile.ratedBagCount)}
         </Text>
       </Dial>
       <View style={styles.body}>

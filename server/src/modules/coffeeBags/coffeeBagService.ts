@@ -11,6 +11,8 @@ import type { NewCoffeeBagRow } from '../../db/schema/coffeeBagsTable.js';
 import { ERROR_MESSAGES } from '../../errors/errorMessages.js';
 import { notFoundError } from '../../errors/notFoundError.js';
 
+import type { BagTasteLearner } from '../bagRatings/bagTasteLearner.js';
+
 import { toCoffeeBag } from './coffeeBagMapper.js';
 import type { CoffeeBagRepository } from './coffeeBagRepository.js';
 import { resolveRemainingGrams } from './resolveRemainingGrams.js';
@@ -26,7 +28,19 @@ export interface CoffeeBagService {
   archive(userId: string, id: string): Promise<CoffeeBag>;
 }
 
-export const createCoffeeBagService = (repository: CoffeeBagRepository): CoffeeBagService => {
+/**
+ * The cupboard.
+ *
+ * Writing a bag into it is also the first thing the taste profile hears about
+ * that coffee: somebody chose it. That is weak evidence on its own - people buy
+ * what the shop had - and the ratings of the same bag later decide how much of
+ * it stands, which is why the learner is told here rather than left for a
+ * screen to remember.
+ */
+export const createCoffeeBagService = (
+  repository: CoffeeBagRepository,
+  learner: Pick<BagTasteLearner, 'recordPurchase'>,
+): CoffeeBagService => {
   const requireOwned = async (userId: string, id: string): Promise<CoffeeBag> => {
     const row = await repository.findById(id, userId);
 
@@ -61,8 +75,8 @@ export const createCoffeeBagService = (repository: CoffeeBagRepository): CoffeeB
         offset,
       }),
 
-    create: async (userId, input) =>
-      toCoffeeBag(
+    create: async (userId, input): Promise<CoffeeBag> => {
+      const bag = toCoffeeBag(
         await repository.create({
           ...input,
           userId,
@@ -71,7 +85,12 @@ export const createCoffeeBagService = (repository: CoffeeBagRepository): CoffeeB
             remainingGrams: input.remainingGrams ?? null,
           }),
         }),
-      ),
+      );
+
+      await learner.recordPurchase(userId, bag);
+
+      return bag;
+    },
 
     /**
      * The amounts are checked against the state the row will be in after the

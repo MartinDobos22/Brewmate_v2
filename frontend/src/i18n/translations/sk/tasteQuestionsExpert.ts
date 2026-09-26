@@ -1,11 +1,11 @@
 /**
- * The three questions asked only of somebody who already has the vocabulary.
+ * The two questions asked only of somebody who already has the vocabulary.
  *
  * No proxies here at all. Routing a competition barista's preferences through
  * a question about milk chocolate throws away precision they were willing to
- * give directly - and the extraction question in particular is the single most
- * useful answer in the whole questionnaire, because it describes what they
- * want done with a coffee rather than which coffee they want.
+ * give directly. There used to be a third, about which side of a correct
+ * extraction they like to sit on - a good question about brewing, and so the
+ * wrong one for a questionnaire whose whole job is choosing a coffee to buy.
  */
 export const SK_TASTE_QUESTIONS_EXPERT = {
   tqOriginPrompt: 'Po ktorom pôvode siahaš najčastejšie?',
@@ -31,13 +31,4 @@ export const SK_TASTE_QUESTIONS_EXPERT = {
   tqProcessExperimental: 'Anaeróbne a experimentálne',
   tqProcessExperimentalNote: 'Výrazné, niekedy až divoké.',
   tqProcessNone: 'Nerozlišujem, ide mi o konkrétnu kávu',
-
-  tqExtractionPrompt: 'Kde chceš mať extrakciu?',
-  tqExtractionHelp: 'Toto mi povie najviac o tom, aké recepty ti mám dávať.',
-  tqExtractionBright: 'Radšej kúsok pod',
-  tqExtractionBrightNote: 'Živšie a kyslejšie, aj za cenu tenšieho tela.',
-  tqExtractionBalanced: 'V strede, na sladkosti',
-  tqExtractionBalancedNote: 'Maximum sladkosti, kyslosť aj horkosť pod kontrolou.',
-  tqExtractionHeavy: 'Radšej kúsok nad',
-  tqExtractionHeavyNote: 'Plné telo a hĺbka, drobná horkosť mi neprekáža.',
 } as const;

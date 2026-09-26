@@ -9,6 +9,7 @@ export const TABLE_NAMES = {
   equipmentSets: 'equipment_sets',
   coffeeBags: 'coffee_bags',
   bagEvaluations: 'bag_evaluations',
+  bagRatings: 'bag_ratings',
   coffeeBagParses: 'coffee_bag_parses',
   coffeeTasteReadings: 'coffee_taste_readings',
   recipes: 'recipes',

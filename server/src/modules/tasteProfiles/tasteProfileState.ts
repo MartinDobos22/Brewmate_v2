@@ -38,6 +38,7 @@ export interface TasteProfileState extends TasteAxes {
   readonly axisConfidence: TasteAxisConfidence;
   readonly confidenceLevel: number;
   readonly brewCount: number;
+  readonly ratedBagCount: number;
 }
 
 /**
@@ -81,4 +82,5 @@ export const neutralProfileState = (): TasteProfileState => ({
   axisConfidence: everyAxis(NO_CONFIDENCE),
   confidenceLevel: NO_CONFIDENCE,
   brewCount: NO_BREWS,
+  ratedBagCount: NO_BREWS,
 });

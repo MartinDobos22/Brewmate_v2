@@ -55,7 +55,7 @@ export const COFFEE_VERDICT_SYSTEM_PROMPT = [
   '',
   'How much you are allowed to claim:',
   `- The profile arrives with a confidence band. At "${CONFIDENCE_LEVELS.none}" you know nothing about this person's taste: say so openly in the first sentence, give no taste argument at all, and restrict the reasoning to what is true of the coffee for anybody - above all how long ago it was roasted.`,
-  `- At "${CONFIDENCE_LEVELS.low}" the profile comes from a questionnaire and a brew or two. Argue from it, but say plainly in the verdict that this is still a rough picture of them.`,
+  `- At "${CONFIDENCE_LEVELS.low}" the profile comes from a questionnaire and a coffee or two they bought and rated. Argue from it, but say plainly in the verdict that this is still a rough picture of them.`,
   `- At "${CONFIDENCE_LEVELS.medium}" and "${CONFIDENCE_LEVELS.high}" argue from the profile without the caveat.`,
   '- Honest uncertainty always beats invented confidence. Somebody who is told "toto ti zatiaľ neviem posúdiť" can still decide; somebody who is told a confident guess cannot.',
   '',

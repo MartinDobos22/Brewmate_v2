@@ -30,7 +30,6 @@ import type { RecipeRepository } from '../../recipes/recipeRepository.js';
 import type { RecipeService } from '../../recipes/recipeService.js';
 import type { TasteProfileService } from '../../tasteProfiles/tasteProfileService.js';
 import type { BrewContextResolver } from '../brewContext/brewContextResolver.js';
-import { describeTasteProfile } from '../coffeeEvaluation/describeTasteProfile.js';
 import { completeBilledJson } from '../completeBilledJson.js';
 import { AI_FUNCTION_NAMES } from '../constants/aiFunctionNames.js';
 import { PROMPT_SECTION_SEPARATOR } from '../constants/promptFormatting.js';
@@ -232,7 +231,6 @@ export const createEspressoDialInService = ({
 
       const now = new Date();
       const sections = [
-        describeTasteProfile(context.profile),
         describeCoffeeForBrew(context.bag, null, now),
         describeGear({ method, equipment: context.equipment, grinder: context.grinder }),
         describeGrindStart({

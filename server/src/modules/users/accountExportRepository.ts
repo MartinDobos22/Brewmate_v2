@@ -7,6 +7,8 @@ import { analyticsEventsTable } from '../../db/schema/analyticsEventsTable.js';
 import type { AnalyticsEventRow } from '../../db/schema/analyticsEventsTable.js';
 import { bagEvaluationsTable } from '../../db/schema/bagEvaluationsTable.js';
 import type { BagEvaluationRow } from '../../db/schema/bagEvaluationsTable.js';
+import { bagRatingsTable } from '../../db/schema/bagRatingsTable.js';
+import type { BagRatingRow } from '../../db/schema/bagRatingsTable.js';
 import { brewLogsTable } from '../../db/schema/brewLogsTable.js';
 import type { BrewLogRow } from '../../db/schema/brewLogsTable.js';
 import { coffeeBagsTable } from '../../db/schema/coffeeBagsTable.js';
@@ -31,6 +33,7 @@ export interface AccountExportRows {
   readonly equipmentSets: readonly EquipmentSetRow[];
   readonly coffeeBags: readonly CoffeeBagRow[];
   readonly bagEvaluations: readonly BagEvaluationRow[];
+  readonly bagRatings: readonly BagRatingRow[];
   readonly recipes: readonly RecipeRow[];
   readonly recipeMessages: readonly RecipeChatMessageRow[];
   readonly brewLogs: readonly BrewLogRow[];
@@ -75,6 +78,7 @@ export const createAccountExportRepository = (db: Database): AccountExportReposi
       equipmentSets,
       coffeeBags,
       bagEvaluations,
+      bagRatings,
       recipeMessages,
       brewLogs,
       tasteSuggestions,
@@ -106,6 +110,11 @@ export const createAccountExportRepository = (db: Database): AccountExportReposi
         .from(bagEvaluationsTable)
         .where(eq(bagEvaluationsTable.userId, userId))
         .orderBy(asc(bagEvaluationsTable.createdAt)),
+      db
+        .select()
+        .from(bagRatingsTable)
+        .where(eq(bagRatingsTable.userId, userId))
+        .orderBy(asc(bagRatingsTable.createdAt)),
       recipeIds.length === 0
         ? []
         : db
@@ -141,6 +150,7 @@ export const createAccountExportRepository = (db: Database): AccountExportReposi
       equipmentSets,
       coffeeBags,
       bagEvaluations,
+      bagRatings,
       recipes,
       recipeMessages,
       brewLogs,

@@ -23,7 +23,7 @@ export const QUESTION_LEVELS: Record<QuestionAudience, readonly TasteExperienceL
   plainLanguage: [TASTE_EXPERIENCE_LEVELS.beginner, TASTE_EXPERIENCE_LEVELS.regular],
   /** Needs the words for what a cup is doing, and an opinion about them. */
   informed: [TASTE_EXPERIENCE_LEVELS.regular, TASTE_EXPERIENCE_LEVELS.expert],
-  /** Assumes origins, processes and extraction are already familiar ground. */
+  /** Assumes origins and processes are already familiar ground. */
   expertOnly: [TASTE_EXPERIENCE_LEVELS.expert],
   /** Assumes nothing at all, and would be noise to anybody who brews. */
   beginnerOnly: [TASTE_EXPERIENCE_LEVELS.beginner],

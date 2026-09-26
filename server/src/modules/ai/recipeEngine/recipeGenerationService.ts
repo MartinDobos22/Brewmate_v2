@@ -22,7 +22,6 @@ import type { BrewContextResolver } from '../brewContext/brewContextResolver.js'
 import { completeBilledJson } from '../completeBilledJson.js';
 import { AI_FUNCTION_NAMES } from '../constants/aiFunctionNames.js';
 import { PROMPT_SECTION_SEPARATOR } from '../constants/promptFormatting.js';
-import { describeTasteProfile } from '../coffeeEvaluation/describeTasteProfile.js';
 
 import { describeBrewHistory, type BrewHistoryEntry } from './describeBrewHistory.js';
 import { describeChosenAmounts } from './describeBrew.js';
@@ -147,7 +146,6 @@ export const createRecipeGenerationService = ({
       const now = new Date();
 
       const sections = [
-        describeTasteProfile(context.profile),
         describeCoffeeForBrew(context.bag, input.coffeeDescription ?? null, now),
         describeGear({ method, equipment: context.equipment, grinder: context.grinder }),
         describeGrindStart({

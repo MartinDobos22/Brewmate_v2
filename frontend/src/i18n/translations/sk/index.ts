@@ -1,5 +1,6 @@
 import { SK_AI_COSTS } from './aiCosts';
 import { SK_AUTH } from './auth';
+import { SK_BAG_RATINGS } from './bagRatings';
 import { SK_BREWING } from './brewing';
 import { SK_CUPBOARD_AND_BREW } from './cupboardAndBrew';
 import { SK_BREW_MODE } from './brewMode';
@@ -60,6 +61,7 @@ export const SK_TRANSLATIONS = {
   ...SK_RECIPE_IMPORT,
   ...SK_DIAL_IN,
   ...SK_SCANNER,
+  ...SK_BAG_RATINGS,
   ...SK_HOME,
   ...SK_HOME_TILES,
   ...SK_INVENTORY,

@@ -7,6 +7,12 @@ import {
 } from '../modules/ai/coffeeBagParse/coffeeBagParseService.js';
 import { createBrewContextResolver } from '../modules/ai/brewContext/brewContextResolver.js';
 import {
+  createBagRatingRepository,
+  createBagRatingService,
+  createBagTasteLearner,
+  type BagRatingService,
+} from '../modules/bagRatings/index.js';
+import {
   createCoffeeEvaluationService,
   type CoffeeEvaluationService,
 } from '../modules/ai/coffeeEvaluation/coffeeEvaluationService.js';
@@ -117,6 +123,7 @@ export interface AppServices {
   readonly equipmentSetService: EquipmentSetService;
   readonly coffeeBagService: CoffeeBagService;
   readonly bagEvaluationService: BagEvaluationService;
+  readonly bagRatingService: BagRatingService;
   readonly recipeService: RecipeService;
   readonly recipeChatService: RecipeChatService;
   readonly brewLogService: BrewLogService;
@@ -166,6 +173,16 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
     createTasteProfileEventRepository(db),
   );
 
+  /**
+   * What happens to a bag - being bought, being rated - is what teaches the
+   * taste profile about coffee. The label cache is read here and never
+   * written: a rating is free, so it never buys a model's reading.
+   */
+  const bagTasteLearner = createBagTasteLearner({
+    tasteProfileService,
+    readings: createCoffeeTasteReadingRepository(db),
+  });
+
   const recipeService = createRecipeService({
     repository: recipeRepository,
     brewMethodService,
@@ -193,7 +210,6 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
     equipmentRepository,
     equipmentSetRepository,
     grinderRepository,
-    tasteProfileService,
   });
 
   /**
@@ -249,7 +265,12 @@ export const createServices = ({ db, identityDeleter, ai }: ServiceDependencies)
     grinderService: createGrinderService(grinderRepository),
     equipmentService: createEquipmentService(equipmentRepository, equipmentSetRepository),
     equipmentSetService: createEquipmentSetService(equipmentSetRepository, equipmentRepository),
-    coffeeBagService: createCoffeeBagService(coffeeBagRepository),
+    coffeeBagService: createCoffeeBagService(coffeeBagRepository, bagTasteLearner),
+    bagRatingService: createBagRatingService({
+      repository: createBagRatingRepository(db),
+      coffeeBagRepository,
+      learner: bagTasteLearner,
+    }),
     brewLogService,
     coffeeBagParseService:
       ai === null

@@ -1,6 +1,5 @@
 import type { JSX } from 'react';
 
-import { ConfidenceNotice } from '../../../tasteProfile/components';
 import type { BrewSetup } from '../../hooks/brewSetup';
 import { BrewConstraintsSection } from '../BrewConstraintsSection';
 import { PreBrewPreviousRecipe } from '../PreBrewPreviousRecipe';
@@ -60,7 +59,6 @@ export const PreBrewSections = ({ setup }: PreBrewSectionsProps): JSX.Element =>
           grinderEquipmentId={setup.grinderEquipmentId}
           onChooseGrinder={setup.chooseGrinder}
         />
-        <ConfidenceNotice />
       </>
     )}
   </>

@@ -24,10 +24,16 @@ as the scanner's offline fallback.
 
 And at the centre of it, the loop the whole product exists for: the screen
 before the brew, the recipe engine that answers it, hands-free brew mode, and
-the conversation afterwards that is the main way Brewmate learns anything. None
+the conversation afterwards that is the main way Brewmate learns how somebody
+brews. None
 of it is wired to one method - everything works for every row in
 `brew_methods`, and an espresso differs from a V60 only in what the model is
 asked for and what the screen prints.
+
+That loop learns about the brewing and nothing else. What somebody likes to
+drink - the taste profile the shop verdict argues from - is taught only by
+evidence about coffees: the questionnaire, the bags they buy, and the stars
+they give those bags halfway through and once they are finished.
 
 Two things now hang off that loop. A recipe somebody found elsewhere can be
 converted onto their own equipment - deterministically, in an isolated module
@@ -74,8 +80,10 @@ conversion - `shared/src/tasteProfiles/foldAxisObservations.ts`, which is how a
 set of taps becomes a claim about somebody's taste, `shared/src/coffeeTaste/`,
 which is how a printed label becomes a claim about a coffee, and
 `shared/src/coffeeMatch/`, which is where those two claims are held up against
-each other, and `shared/src/grindGuidance/`, which is where to start grinding a
-particular coffee in a particular brewer on a particular grinder. Each is
+each other, `shared/src/tasteLearning/`, which is how a bag somebody bought and
+rated becomes evidence about them, and `shared/src/grindGuidance/`, which is
+where to start grinding a particular coffee in a particular brewer on a
+particular grinder. Each is
 self-contained, depends on nothing but plain values and has its own unit tests
 (`shared/tests/`), so a better algorithm can replace one without touching
 anything else.
@@ -246,8 +254,8 @@ frontend/
     │                   BackButton, ScreenBack, ScreenTopBar
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
     │                   chat, tasteProfile, coffeeTaste, bagEvaluations,
-    │                   recipeImport, espresso, history, onboarding, profile,
-    │                   designSystem);
+    │                   bagRatings, recipeImport, espresso, history,
+    │                   onboarding, profile, designSystem);
     │                   each has services/ for the API calls and hooks/ for the
     │                   queries and mutations over them. `brewing` owns the
     │                   pre-brew screen, the recipe engine client and brew mode;
@@ -280,7 +288,7 @@ frontend/
   `onboarding`, `tasteQuestionsLevels`, `tasteQuestionsDirect`,
   `tasteQuestionsIndirect`, `tasteQuestionsBeginner`, `tasteQuestionsExpert`,
   `equipmentSetup`, `waterAndSets`, `calibration`, `brewing`, `preBrew`,
-  `brewMode`, `recipeChat`, `recipeImport`, `dialIn`, `scanner`,
+  `brewMode`, `recipeChat`, `recipeImport`, `dialIn`, `scanner`, `bagRatings`,
   `tasteProfile`, `tasteAxisBands`, `coffeeTaste`, `coffeeMatch`,
   `profileSections`,
   `history`, `aiCosts`,
@@ -653,7 +661,10 @@ Colour is the second thing a state says, never the first.
 - **TanStack Query** owns server state, persisted to AsyncStorage through
   `PersistQueryClientProvider`. Keys come from `constants/queryKeys.ts`, the
   storage key from `constants/storageKeys.ts`, every duration from
-  `constants/limits.ts`.
+  `constants/limits.ts`. The persisted cache carries `QUERY_CACHE_BUSTER`,
+  changed whenever a response gains a field a screen reads at once: the cache
+  is restored before any request is made, and a profile cached by the previous
+  build would otherwise print "undefined" on the first frame after an update.
 - **Zustand** owns UI state only - at present the theme preference and nothing
   else. Server data never enters the store, and neither does onboarding
   progress: that belongs to the account rather than to the device, so it lives
@@ -1056,7 +1067,7 @@ where the two meet.
   are as welcome as reasons for it, because a verdict that only ever agrees is
   one nobody will believe twice.
 - **Nothing about the person travels in the request.** The profile, its
-  confidence, the brew count and the history are read off the caller's own rows.
+  confidence, the coffees rated and the history are read off the caller's own rows.
   A profile a client could declare would be a profile anybody could declare,
   and the one thing that makes this verdict worth reading is that it is about
   this person.
@@ -1158,6 +1169,53 @@ pointed at the cupboard. One `ScanBagScreen`, told its mode by the route.
   buy a coffee should not then be asked to type its label a second time, and
   everything needed is already on the screen. The bag opens full: its remaining
   amount starts at the printed weight.
+
+### Rating a bag
+
+How the taste profile hears about coffee somebody actually drank - and, beside
+the questionnaire, the only thing that teaches it anything.
+
+- **Twice per bag, and the two moments are different evidence.** Halfway is the
+  fuller answer: the coffee is at its best and the recipe has usually settled,
+  so what somebody says is about the coffee. Finished is the verdict on the
+  whole bag and weighs a little less, because the last cups are often past
+  their peak. The cupboard asks halfway on the card itself once half the
+  printed weight is gone - only for a weighed bag, because "half gone" with
+  nothing to measure against is a guess - and "Dopil som ju" asks for the
+  finished rating before the bag leaves the shelf, with a way past it on the
+  same sheet. A coffee's own screen offers both whenever somebody opens it.
+- **Stars, then an impression, then tags - and only the stars are required.**
+  The stars say how much it suited somebody. The impression says what that
+  means for having bought it, and it exists because a yes-or-no flattened
+  honest answers: fine but not what the label promised, good only on the
+  mornings the recipe lands, not a ten at a price where a ten was never the
+  point. The tags say which part, in the cup's own terms - and every one of
+  them is about the coffee rather than the brew, because a tag like "too weak"
+  would be a recipe complaint wearing a taste costume.
+- **A rating teaches through the label's own estimate.** A loved coffee points
+  the profile towards where that coffee sits, on the axes its label actually
+  describes and at the label's confidence; a disliked one points away, only as
+  firmly as the coffee sat far from the middle. A tag overrides the stars on
+  its axis, because it says what the cup did rather than what the label
+  claimed. "Different from what I expected" believes the label much less,
+  and "depends on the recipe" halves the whole rating, because it was half
+  about the brewing.
+- **A purchase is a lean the ratings confirm, weaken or cancel.** Writing a bag
+  into the cupboard is recorded as a weak vote for the kind of coffee it is.
+  Each rating carries how much of that vote it leaves standing -
+  `resolvePurchaseFactor`, from the impression where there is one and from the
+  stars where there is not - so "presne toto som chcel" keeps all of it and "už
+  by som si ju nekúpil" none.
+- **The arithmetic is in `shared/src/tasteLearning/`, and the estimate is frozen
+  into the event.** The learning rules are pure functions over plain values
+  with their own unit tests, like every other piece of arithmetic this product
+  makes claims with. The server reads the bag's label into an estimate - with
+  a model's reading only where one is already cached, because rating a coffee
+  is free and has to stay free - and writes the result into the trail, so the
+  profile replays to the same thing next year whatever the tables say by then.
+- **Stars are the drinker's, never the app's.** The app still scores nothing it
+  says about a coffee; a star here is somebody's own opinion of one, drawn in
+  the app's accent rather than in gold or green.
 
 ### The brewing loop
 
@@ -1392,6 +1450,13 @@ leading to one.
   plastic dripper holds heat better than an unpreheated ceramic one, and
   somebody who is missing something should also be told what they are not
   missing.
+- **The recipe is written without the taste profile.** The profile says which
+  coffee somebody should buy; how to brew the one in front of them is this
+  coffee, this gear and what this pair has already brewed. Handing the recipe
+  engine a questionnaire answer about chocolate let it decide a grind, and it
+  was the same wire in the other direction that let a sour cup teach the shop.
+  `createBrewContextResolver` no longer reads the profile at all, and neither do
+  the chat or the dial-in.
 - **The recipe is stored before the response leaves**, unsaved and unpinned.
   Everything downstream needs an id - brew mode logs against it, the
   conversation hangs off it, an adjustment becomes its child - and a proposal
@@ -1464,14 +1529,15 @@ mechanism by which this product learns anything.
   somebody weighed and probably already tipped in, and the water is still in
   the kettle. `applyRecipePatch` lives in `@brewmate/shared` so the numbers
   somebody agreed to and the numbers they got are produced by one function.
-- **What the chat teaches the profile is weighed by what the brew was worth.**
-  The event carries the brew log's own `profileLearningWeight` - priced from
-  its constraints on the way in and never recomputed - so somebody complaining
-  that a cup was flat when they had no way to weigh anything is recorded as
-  describing their kitchen, not their taste. The prompt draws the same line:
-  "bola príliš kyslá" is a preference, "bola slabá, lebo som nemal váhu" is
-  not. An observation naming no axis at all is dropped rather than stored as an
-  event the fold cannot use.
+- **What the chat hears about a cup never reaches the taste profile.** It is
+  still written down - an event carrying the brew log's own
+  `profileLearningWeight`, beside the other evidence in the trail - because how
+  somebody brews is worth learning on its own. But the fold no longer reads it:
+  "bola príliš kyslá" is a grind that was too coarse far more often than it is
+  somebody who dislikes acidity, and when it was read as a preference the shop
+  learnt to talk people out of exactly the coffees their grinder had been
+  unkind to. An observation naming no axis at all is dropped rather than stored
+  as an event nothing can use.
 - **The event points at the message it came from**, so what Brewmate concluded
   can always be traced back to the sentence somebody actually wrote.
 - **The quick chips are shortcuts to writing, not a menu of answers.** Each
@@ -1879,18 +1945,19 @@ a limit legible rather than punitive.
 
 `confidence_level` is not decoration, so it is not only on the profile screen.
 
-- **`ConfidenceNotice` sits next to every recommendation** - the quick brew
-  recipe and the shop verdict - and reads the profile itself rather than taking
-  one as a prop, so adding the caveat is one line at the call site. A
-  disclaimer somebody has to remember to add is one that will eventually be
-  left off.
+- **The caveat sits beside the shop verdict**, the one recommendation the
+  taste profile still makes. It used to sit beside the quick-brew recipe and
+  the brewing form too; a recipe no longer reads the profile, and a caveat
+  about how well the app knows somebody's taste beside something written
+  without it would be a disclaimer for a claim nobody made.
 - **It says which of three things is true**: nothing is known, only the
-  questionnaire is known, or a couple of brews are behind it. Above `medium`
-  confidence there is no notice at all: a caveat that never goes away is read
-  as boilerplate, and then the honest ones stop being read too.
+  questionnaire is known, or a couple of rated coffees are behind it. Above
+  `medium` confidence there is no notice at all: a caveat that never goes away
+  is read as boilerplate, and then the honest ones stop being read too.
 - **The profile screen says what would raise it**, and links to the one thing
-  that actually does. A confidence figure with no way to move it is a score,
-  and nobody asked to be scored.
+  that actually does - the cupboard, where the bags waiting to be rated are. A
+  confidence figure with no way to move it is a score, and nobody asked to be
+  scored.
 
 ### Loading, empty and failed
 
@@ -2075,14 +2142,20 @@ get asked is itself the first question.
   the same axis in words nobody can misunderstand, and `everydayCoffee` starts
   from the reference point every recommendation will actually be judged
   against.
-- **The expert questions have no proxies at all.** `origin` and `process`
-  because they are where specialty drinkers actually disagree with each other,
-  and `extraction` because it is the single most useful answer in the whole
-  questionnaire: everything else describes a coffee, and that one describes
-  what to do with it, which is what the recipe engine and the conversation
-  after a cup are deciding. Origin is weighed as behaviour rather than as a
-  preference, for the reason the insights screen already states out loud -
-  people also buy what the shop had.
+- **The expert questions have no proxies at all.** `origin` and `process`,
+  because they are where specialty drinkers actually disagree with each other.
+  Origin is weighed as behaviour rather than as a preference, for the reason
+  the insights screen already states out loud - people also buy what the shop
+  had.
+- **Every question is about which coffee to buy, never about how to brew it.**
+  The questionnaire exists so somebody can pick a good bag off a shelf on their
+  first day. There used to be two questions about the brewing inside it: an
+  expert one about which side of a correct extraction they like, and one about
+  how strong they want their coffee, whose help line said it meant
+  concentration - a ratio, folded into the intensity of the bag they should
+  buy. The first is gone. The second asks about the bean now ("máš radšej
+  výrazné, alebo jemné kávy?") and still feeds the same intensity axis, which
+  is what that axis always meant on a label.
 - **One file per question** under `constants/tasteQuestions/`, each carrying its
   options, its audience and what each option claims. Adding a question is a file
   and a line in the index.
@@ -2150,6 +2223,24 @@ get asked is itself the first question.
 The arithmetic the whole product rests on, and the one thing in it that is
 allowed to be slow to change.
 
+- **Only evidence about coffees is folded.** `TASTE_SOURCES` names what the
+  profile listens to: the questionnaire, the sliders, an insight somebody
+  accepted, a bag bought and a bag rated. The calibration brew and the chat
+  after a cup stay in the trail, counted in `brewCount`, with an empty delta
+  beside them - a profile can stop listening to a source without anybody's
+  evidence being deleted, and a row folded from them is stale by
+  `isStaleProjection`'s own test, because it credits a source the fold no
+  longer reads.
+- **A purchase is a lean, and its ratings decide how much of it stands.**
+  Choosing a coffee is weak evidence - people buy what the shop had - so it is
+  trusted least of anything folded, and it is weighed by `purchaseFactor` from
+  the latest rating of the same bag. The fold reads the bags out of the whole
+  trail before it walks it (`readBagEvidence`), because a rating always
+  arrives after the purchase it judges.
+- **A bag rated twice at the same stage is one opinion corrected.** Every save
+  appends an event; the fold keeps only the latest for each bag and stage.
+  Changing your mind is recorded as having happened, not as a rewrite.
+
 - **Neutral is a placeholder for silence, not a position.** Every axis starts at
   the middle of the scale, and the reducer used to blend the first observation
   towards it - which averages a real statement with a stand-in for nobody having
@@ -2208,11 +2299,12 @@ the cup in their own words.
   drinker word for word before anything is written. "Rozumiem tomu takto" is
   only an honest sentence if the app really can say what it understood.
   Understanding nothing is a normal outcome and saves nothing.
-- **The lexicon reads preferences, not measurements.** "Bola príliš kyslá" is a
-  complaint about this cup and a statement about the next one, so it lands as a
-  low acidity preference. Order is the mechanism: specific phrasings come first,
-  so "nebola horká" is matched before the bare "hork" inside it, and each axis
-  is claimed only once.
+- **The lexicon reads the cup in the words somebody used.** Order is the
+  mechanism: specific phrasings come first, so "nebola horká" is matched before
+  the bare "hork" inside it, and each axis is claimed only once. What it reads
+  is kept in the trail and does not move the taste profile - it is a
+  description of one reference brew, which is evidence about brewing rather
+  than about which coffee to buy.
 - **The description is stored as a chat message on the recipe**, and the taste
   event points at that message id. What the app concluded can always be traced
   back to the sentence somebody actually wrote, and re-sending it counts once.
@@ -2265,9 +2357,9 @@ of the product.
 - **The confidence line matters more than the chart.** A profile built from one
   questionnaire is a guess, and a guess drawn neatly stops looking like one.
   `confidenceLevel` is shown as one of four words rather than a percentage -
-  "0,18" invites the reader to believe the second digit - with the brew count
-  beside it, because "celkom slušne" after no brews means something different
-  from the same word after twenty.
+  "0,18" invites the reader to believe the second digit - with the number of
+  rated coffees beside it, because "celkom slušne" after no rated coffee means
+  something different from the same word after twenty.
 - **Two ways to correct it, side by side.** Answering the questionnaire again is
   evidence; moving the sliders is an instruction. The manual event is sent from
   the most trusted source at full weight, so what the user leaves on the sliders
@@ -2394,6 +2486,7 @@ server/src/
 │   ├── equipmentSets/ saved combinations of it
 │   ├── coffeeBags/   the cupboard
 │   ├── bagEvaluations/ "should I buy this bag?", asked and answered
+│   ├── bagRatings/   what a bag turned out like, and what that teaches the profile
 │   ├── recipes/      one way of brewing one coffee
 │   ├── recipeChat/   the conversation about a recipe
 │   ├── brewLogs/     cups that were actually brewed
@@ -2587,6 +2680,7 @@ is not an oracle for other people's ids.
 | CRUD             | `/equipment-sets`              | saved combinations of it                         |
 | CRUD             | `/coffee-bags`                 | the cupboard; DELETE archives, it does not erase |
 | GET/POST/PATCH   | `/bag-evaluations`             | verdicts on bags seen in a shop                  |
+| GET/PUT          | `/bag-ratings`                 | stars for a bag, halfway and finished            |
 | CRUD             | `/recipes`                     | recipes; DELETE is refused once one was brewed   |
 | GET/POST         | `/recipes/:id/messages`        | the conversation about a recipe                  |
 | CRUD             | `/brew-logs`                   | cups actually brewed                             |
@@ -2623,7 +2717,7 @@ do not add one.
 
 ### The schema, and why it looks like this
 
-Sixteen tables. Everything a user owns carries
+Eighteen tables. Everything a user owns carries
 `user_id references users(id) on delete cascade`, which is what makes
 `DELETE /me` erase an account rather than merely disown it. The decisions worth
 knowing before changing anything:
@@ -2713,6 +2807,12 @@ knowing before changing anything:
   "nothing known" rather than thrown away or asserted into shape: the column is
   open by design, so meeting something the schema does not describe is a normal
   event, not a failure.
+- **`bag_ratings` is one row per bag and stage**, and the unique index makes that
+  a fact: rating the same bag again at the same stage updates the row. The
+  taste event each save writes is appended regardless, because the trail keeps
+  every answer and the fold reads only the latest. It cascades from the bag,
+  which archiving never deletes - finishing a bag is exactly when its second
+  rating is given.
 - **`insight_suggestions` is keyed by the evidence, not by the proposal.**
   `suggestion_ref` fingerprints the counts a suggestion was drawn from, and that
   one decision does three jobs. It makes the sentence beside the numbers free
@@ -2786,7 +2886,8 @@ Two kinds, and the split is deliberate.
 
 `shared` has unit tests, and only for the conversion module, the shot timeline,
 the taste axis fold, the coffee taste estimate, the match between a coffee and
-a drinker, where a grind starts and which grinder it starts on: pure functions
+a drinker, what a bought and rated bag teaches, where a grind starts and which
+grinder it starts on: pure functions
 over plain values, testable
 with no database, no model and no server. That is the whole reason the conversion lives there rather than
 in the API - arithmetic this consequential should be checkable in a second. The
@@ -2836,7 +2937,17 @@ grinder the arithmetic runs on is tested for the same reason it lives in the
 contract at all - both sides of the wire run it and have to agree: that a
 catalogued grinder beats one that merely came first, that everything which is
 not a grinder is ignored, and that owning nothing to grind with stays a
-different answer from owning a grinder the catalogue has never met.
+different answer from owning a grinder the catalogue has never met. What a bag
+teaches is tested for the honesty of each piece: that a loved coffee points the
+profile towards itself only on the axes its label knows, that a disliked one
+points away and less firmly, and says nothing about an axis it sat neutral on,
+that three stars alone teach no axis but still carry the bag and its purchase,
+that a tag is read even where the label said nothing and overrides the stars
+on its own axis, that a coffee which tasted different is believed less through
+its label and one that depended on the recipe counts for half, that the last
+cups of a bag weigh less than its middle, that each impression leaves a
+different share of the purchase standing, and that a bag whose label says
+nothing teaches nothing by being bought.
 
 Everything else is integration tests, running against the real Neon test branch
 through `app.inject()` - no mocked database, no testcontainers (everything is
@@ -2858,8 +2969,13 @@ included - that the first thing heard about an axis is taken at its word rather
 than averaged with the neutral it started at, that confidence is earned per axis
 so an axis nobody has mentioned stays visibly unknown, that an observation may
 declare which of its own axes it is less sure of, that an observation asking for
-_less_ of something is answered rather than refused on the way out, that
-deleting an account takes
+_less_ of something is answered rather than refused on the way out, that a
+brewed cup - described in the chat or at the calibration brew - is counted and
+never moves the taste profile, that a bought bag leans the profile a little
+towards itself and a loved one further, that a coffee which tasted different
+leaves less of its purchase standing, that a second rating of the same bag at
+the same stage replaces the first, that a recipe is written without the taste
+profile, that deleting an account takes
 everything but leaves a contributed catalogue entry without its author, and that
 one account's rows are invisible to another.
 
@@ -2913,8 +3029,7 @@ counts once however often it is tapped, that a refusal survives until the
 evidence itself changes, that a ref the history no longer supports is refused,
 that a timeline reads oldest-first and marks the version whose cup was brewed
 with something missing, that a bagless line and a bag's line stay separate,
-that the fold reproduces itself exactly on a second replay and lets a cup
-brewed with nothing to hand teach the profile less, that a spent allowance
+that the fold reproduces itself exactly on a second replay, that a spent allowance
 refuses `/ai/*` with which ceiling and when it lifts while leaving every other
 route working, that the dashboard reports the same spending the limiter is
 enforcing, that a recipe goes to the larger model and the auxiliary paragraph

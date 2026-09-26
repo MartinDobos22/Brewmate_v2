@@ -19,6 +19,11 @@ export interface TestApi {
     identity: VerifiedToken,
     payload: RequestPayload,
   ): Promise<LightMyRequestResponse>;
+  put(
+    url: string,
+    identity: VerifiedToken,
+    payload: RequestPayload,
+  ): Promise<LightMyRequestResponse>;
   remove(url: string, identity: VerifiedToken): Promise<LightMyRequestResponse>;
   /** Without an Authorization header, to prove a route refuses anonymous callers. */
   anonymousGet(url: string): Promise<LightMyRequestResponse>;
@@ -45,6 +50,14 @@ export const createTestApi = (app: FastifyInstance): TestApi => ({
   patch: async (url, identity, payload) =>
     inject(app, {
       method: HTTP_METHODS.patch,
+      url,
+      headers: authorizationHeaderFor(identity),
+      payload,
+    }),
+
+  put: async (url, identity, payload) =>
+    inject(app, {
+      method: HTTP_METHODS.put,
       url,
       headers: authorizationHeaderFor(identity),
       payload,

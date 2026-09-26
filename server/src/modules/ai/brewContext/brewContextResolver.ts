@@ -8,7 +8,6 @@ import {
   type Equipment,
   type EquipmentSet,
   type Grinder,
-  type TasteProfile,
 } from '@brewmate/shared';
 
 import { ERROR_MESSAGES } from '../../../errors/errorMessages.js';
@@ -21,7 +20,6 @@ import { toEquipmentSet } from '../../equipmentSets/equipmentSetMapper.js';
 import type { EquipmentSetRepository } from '../../equipmentSets/equipmentSetRepository.js';
 import { toGrinder } from '../../grinders/grinderMapper.js';
 import type { GrinderRepository } from '../../grinders/grinderRepository.js';
-import type { TasteProfileService } from '../../tasteProfiles/tasteProfileService.js';
 
 const EVERYTHING_OWNED = 20000;
 const FIRST_PAGE = 0;
@@ -32,7 +30,6 @@ export interface BrewContextDependencies {
   readonly equipmentRepository: EquipmentRepository;
   readonly equipmentSetRepository: EquipmentSetRepository;
   readonly grinderRepository: GrinderRepository;
-  readonly tasteProfileService: TasteProfileService;
 }
 
 export interface BrewContextRequest {
@@ -72,7 +69,6 @@ export interface BrewContext {
   readonly equipment: readonly Equipment[];
   /** The catalogue entry behind their grinder, where there is one. */
   readonly grinder: Grinder | null;
-  readonly profile: TasteProfile;
 }
 
 export interface BrewContextResolver {
@@ -91,13 +87,19 @@ export interface BrewContextResolver {
  * names four drippers does not hand the model three it will not use. A brewer
  * that points at a different method is dropped for the same reason the brew
  * screen never offers it.
+ *
+ * The taste profile is not part of the kitchen, and not part of this picture.
+ * It describes which coffee somebody should buy, and it is taught by what they
+ * answered, bought and rated - never by how a cup came out. A recipe written
+ * from it would let a questionnaire answer about chocolate decide a grind, and
+ * a sour cup that needed a finer grind would, the other way round, have taught
+ * the shop to talk somebody out of a Kenyan.
  */
 export const createBrewContextResolver = ({
   coffeeBagRepository,
   equipmentRepository,
   equipmentSetRepository,
   grinderRepository,
-  tasteProfileService,
 }: BrewContextDependencies): BrewContextResolver => {
   const readBag = async (userId: string, bagId: string | null): Promise<CoffeeBag | null> => {
     if (bagId === null) {
@@ -227,10 +229,9 @@ export const createBrewContextResolver = ({
       grinderEquipmentId,
       equipmentIds,
     }): Promise<BrewContext> => {
-      const [bag, set, profile] = await Promise.all([
+      const [bag, set] = await Promise.all([
         readBag(userId, bagId),
         readSet(userId, equipmentSetId),
-        tasteProfileService.get(userId),
       ]);
       const owned = await readEquipment(userId, set, equipmentIds);
       const usable = owned.filter((item: Equipment): boolean => forThisMethod(item, method));
@@ -241,7 +242,6 @@ export const createBrewContextResolver = ({
         set,
         equipment: withOneGrinder(usable, grinderEquipment),
         grinder: await readCatalogueEntry(userId, grinderEquipment),
-        profile,
       };
     },
   };

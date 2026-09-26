@@ -1,1 +1,0 @@
-export { ConfidenceNotice } from './ConfidenceNotice';

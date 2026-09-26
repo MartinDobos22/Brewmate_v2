@@ -29,7 +29,7 @@ export const SK_CALIBRATION = {
   calibrationNotUnderstood:
     'Z toho som veľa nevyčítal. Skús doplniť, či bola skôr kyslá, horká, slabá alebo sladká.',
   calibrationSavedTitle: 'Zapísané',
-  calibrationSavedBody: 'Zapamätal som si to a podľa toho ti budem ďalšie recepty upravovať.',
+  calibrationSavedBody: 'Zapísal som si to k tomuto receptu.',
   calibrationSaveError: 'Nepodarilo sa to zapísať. Skús to prosím znova.',
 
   calibrationNoEquipmentTitle: 'Zatiaľ nemám z čoho vychádzať',

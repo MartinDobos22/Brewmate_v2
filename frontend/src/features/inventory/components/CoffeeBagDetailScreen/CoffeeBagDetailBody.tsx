@@ -1,22 +1,20 @@
 import type { CoffeeBag, Recipe } from '@brewmate/shared';
 import { useRouter } from 'expo-router';
 import type { JSX } from 'react';
-import { View } from 'react-native';
 
 import { TileRow } from '../../../../components/layout';
-import { PillButton, SectionHeading, Tile } from '../../../../components/ui';
+import { SectionHeading, Tile } from '../../../../components/ui';
 import { buildBrewRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
-import { useThemedStyles } from '../../../../theme';
+import { BagRatingCard } from '../../../bagRatings/components';
 import { CoffeeTasteSection } from '../../../coffeeTaste/components';
 import { INVENTORY_TILE_ICONS } from '../../constants';
-import { useArchiveCoffeeBag } from '../../hooks';
 
+import { BagFinishButton } from './BagFinishButton';
 import { BagRecipeHistory } from './BagRecipeHistory';
 import { CoffeeBagHeader } from './CoffeeBagHeader';
 import { CoffeeBagInfoCard } from './CoffeeBagInfoCard';
 import { CoffeeBagStateCard } from './CoffeeBagStateCard';
-import { createCoffeeBagDetailStyles } from './CoffeeBagDetailScreen.styles';
 
 export interface CoffeeBagDetailBodyProps {
   readonly bag: CoffeeBag;
@@ -34,15 +32,16 @@ export interface CoffeeBagDetailBodyProps {
  * to be missing entirely is the obvious one: a coffee's own screen with no way
  * to brew it is a page about a thing rather than a thing you can use.
  *
- * Finishing the bag archives rather than deletes, and returns to the cupboard
- * - a screen about a bag that is no longer in the cupboard is a screen with
- * nothing left to say.
+ * What somebody thought of it sits under what it will taste like - the
+ * estimate and the verdict of the person drinking it, one above the other.
+ *
+ * Finishing the bag asks how it was, archives rather than deletes, and returns
+ * to the cupboard - a screen about a bag that is no longer in the cupboard is
+ * a screen with nothing left to say.
  */
 export const CoffeeBagDetailBody = ({ bag, recipes }: CoffeeBagDetailBodyProps): JSX.Element => {
-  const styles = useThemedStyles(createCoffeeBagDetailStyles);
   const { t } = useTranslation();
   const router = useRouter();
-  const archive = useArchiveCoffeeBag();
 
   return (
     <>
@@ -61,6 +60,7 @@ export const CoffeeBagDetailBody = ({ bag, recipes }: CoffeeBagDetailBodyProps):
       </TileRow>
 
       <CoffeeTasteSection coffee={bag} />
+      <BagRatingCard bag={bag} />
 
       <SectionHeading
         title={t(TRANSLATION_KEYS.bagRecipesTitle)}
@@ -74,21 +74,7 @@ export const CoffeeBagDetailBody = ({ bag, recipes }: CoffeeBagDetailBodyProps):
       />
       <CoffeeBagInfoCard bag={bag} />
 
-      <View style={styles.archive}>
-        <PillButton
-          tone="surface"
-          label={t(TRANSLATION_KEYS.inventoryBagArchive)}
-          size="small"
-          isPending={archive.isPending}
-          onPress={(): void => {
-            archive.mutate(bag.id, {
-              onSuccess: (): void => {
-                router.back();
-              },
-            });
-          }}
-        />
-      </View>
+      <BagFinishButton bag={bag} />
     </>
   );
 };

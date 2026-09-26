@@ -13,6 +13,7 @@ import { analyticsRoutes } from '../modules/analytics/analyticsRoutes.js';
 import { bagEvaluationRoutes } from '../modules/bagEvaluations/bagEvaluationRoutes.js';
 import { brewLogRoutes } from '../modules/brewLogs/brewLogRoutes.js';
 import { brewMethodRoutes } from '../modules/brewMethods/brewMethodRoutes.js';
+import { bagRatingRoutes } from '../modules/bagRatings/bagRatingRoutes.js';
 import { coffeeBagRoutes } from '../modules/coffeeBags/coffeeBagRoutes.js';
 import { equipmentRoutes } from '../modules/equipment/equipmentRoutes.js';
 import { equipmentSetRoutes } from '../modules/equipmentSets/equipmentSetRoutes.js';
@@ -68,6 +69,7 @@ export const buildApp = async (dependencies: AppDependencies): Promise<FastifyIn
   await app.register(equipmentSetRoutes, { equipmentSetService: services.equipmentSetService });
   await app.register(coffeeBagRoutes, { coffeeBagService: services.coffeeBagService });
   await app.register(bagEvaluationRoutes, { bagEvaluationService: services.bagEvaluationService });
+  await app.register(bagRatingRoutes, { bagRatingService: services.bagRatingService });
   await app.register(recipeRoutes, { recipeService: services.recipeService });
   await app.register(recipeChatRoutes, { recipeChatService: services.recipeChatService });
   await app.register(brewLogRoutes, { brewLogService: services.brewLogService });

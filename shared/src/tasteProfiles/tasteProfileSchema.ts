@@ -36,6 +36,12 @@ export const tasteProfileSchema = tasteAxesSchema.extend({
   axisConfidence: tasteAxisConfidenceSchema,
   confidenceLevel: z.number().min(CONFIDENCE_MIN).max(CONFIDENCE_MAX),
   brewCount: z.number().int().min(BREW_COUNT_MIN),
+  /**
+   * How many coffees this profile has been told about by somebody who drank
+   * them - the evidence that moves it most, and the number the profile screen
+   * prints beside its confidence.
+   */
+  ratedBagCount: z.number().int().min(BREW_COUNT_MIN),
   updatedAt: z.iso.datetime(),
 });
 

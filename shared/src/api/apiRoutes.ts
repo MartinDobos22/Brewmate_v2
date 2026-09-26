@@ -27,6 +27,7 @@ export const API_ROUTES = {
 
   bagEvaluations: '/bag-evaluations',
   bagEvaluationById: '/bag-evaluations/:id',
+  bagRatings: '/bag-ratings',
 
   recipes: '/recipes',
   recipeById: '/recipes/:id',

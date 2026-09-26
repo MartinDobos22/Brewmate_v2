@@ -69,6 +69,8 @@ export const tasteProfilesTable = pgTable(TABLE_NAMES.tasteProfiles, {
     .default(NO_AXIS_CONFIDENCE),
   confidenceLevel: real('confidence_level').notNull().default(NO_CONFIDENCE),
   brewCount: integer('brew_count').notNull().default(NO_BREWS),
+  /** How many bags the fold heard a rating of - the profile's own evidence count. */
+  ratedBagCount: integer('rated_bag_count').notNull().default(NO_BREWS),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 

@@ -17,6 +17,7 @@ const ROOT = {
   equipmentSets: 'equipmentSets',
   coffeeBags: 'coffeeBags',
   bagEvaluations: 'bagEvaluations',
+  bagRatings: 'bagRatings',
   recipes: 'recipes',
   recipeMessages: 'recipeMessages',
   brewLogs: 'brewLogs',
@@ -64,6 +65,7 @@ export const QUERY_KEYS = {
 
   bagEvaluations: (filter?: QueryFilter): AppQueryKey => [ROOT.bagEvaluations, filter],
   bagEvaluation: (id: string): AppQueryKey => [ROOT.bagEvaluations, id],
+  bagRatings: (filter?: QueryFilter): AppQueryKey => [ROOT.bagRatings, filter],
 
   recipes: (filter?: QueryFilter): AppQueryKey => [ROOT.recipes, filter],
   recipe: (id: string): AppQueryKey => [ROOT.recipes, id],
@@ -105,6 +107,7 @@ export const QUERY_ROOTS = {
   equipmentSets: domainRoot(ROOT.equipmentSets),
   coffeeBags: domainRoot(ROOT.coffeeBags),
   bagEvaluations: domainRoot(ROOT.bagEvaluations),
+  bagRatings: domainRoot(ROOT.bagRatings),
   recipes: domainRoot(ROOT.recipes),
   recipeMessages: domainRoot(ROOT.recipeMessages),
   brewLogs: domainRoot(ROOT.brewLogs),

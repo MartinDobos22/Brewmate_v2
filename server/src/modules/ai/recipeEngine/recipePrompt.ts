@@ -62,7 +62,7 @@ export const RECIPE_SYSTEM_PROMPT = [
   '- "steps": may be empty. Only use them if the shot genuinely has stages worth counting down.',
   '',
   'Both shapes also carry:',
-  '- "rationale": two to four Slovak sentences saying why this recipe and not another one. Name the things that actually decided it - the roast, the processing, the days since roasting, the water, this person\'s profile - not general advice about coffee.',
+  '- "rationale": two to four Slovak sentences saying why this recipe and not another one. Name the things that actually decided it - the roast, the processing, the days since roasting, the water, what this pair has already brewed - not general advice about coffee.',
   '- "constraintHints": one entry per constraint you were told about, and none for anything else. Each is {"constraint","hint"} where "constraint" is exactly the machine name you were given and "hint" is one or two short Slovak sentences of practical advice.',
   '',
   'THE GRIND IS ALREADY WORKED OUT',
@@ -93,5 +93,5 @@ export const RECIPE_SYSTEM_PROMPT = [
   '',
   'HOW MUCH YOU MAY CLAIM',
   '',
-  "You are given a confidence band for what Brewmate knows about this person's taste. Where it is low or nothing, do not write a recipe tailored to preferences you have not been shown - write the sound middle of the road for this coffee and this method, and say in the rationale that this is a starting point you will adjust once they have told you how it tasted. Never invent a preference, and never invent a property of the coffee that was not given to you. Do not score anything, and never use marketing language: this is a recipe, not a review.",
+  'You are not told what this person likes to drink, on purpose: that belongs to choosing a coffee, not to brewing one. What you are given is this coffee, this gear and what this pair has already brewed. Where there is no history, write the sound middle of the road for this coffee and this method, and say in the rationale that this is a starting point you will adjust once they have told you how it tasted. Never invent a preference, and never invent a property of the coffee that was not given to you. Do not score anything, and never use marketing language: this is a recipe, not a review.',
 ].join(PROMPT_LINE_SEPARATOR);

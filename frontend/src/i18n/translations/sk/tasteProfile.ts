@@ -33,21 +33,20 @@ export const SK_TASTE_PROFILE = {
   profileConfidenceLow: 'Len zhruba',
   profileConfidenceMedium: 'Celkom slušne',
   profileConfidenceHigh: 'Dobre',
-  profileConfidenceBrewsLabel: 'Varení, z ktorých som sa učil',
-  profileConfidenceHint: 'Číslo rastie s každým varením, ktoré mi opíšeš.',
+  profileConfidenceHint:
+    'Číslo je počet káv, ktoré si ohodnotil. Každá ma naučí viac než dotazník.',
 
   confidenceNoticeNone: 'Zatiaľ o tvojej chuti neviem nič. Toto je bežné odporúčanie, nie tvoje.',
   confidenceNoticeQuestionnaire:
     'Zatiaľ ťa poznám len z dotazníka. Ber to ako začiatok, nie ako pravdu o tebe.',
-  confidenceNoticeFewBrews:
-    'Poznám ťa zatiaľ len z pár varení. Čím viac mi ich opíšeš, tým lepšie budem radiť.',
+  confidenceNoticeFewRatings:
+    'Poznám ťa zatiaľ z dotazníka a z pár káv, ktoré si ohodnotil. Čím viac ich ohodnotíš, tým lepšie budem radiť.',
 
   profileConfidenceBoostTitle: 'Čo mi pomôže spoznať ťa lepšie',
-  profileConfidenceBoostBrew:
-    'Uvar kávu podľa môjho receptu - aj bez toho, aby si ju mal zapísanú.',
-  profileConfidenceBoostDescribe:
-    'Potom mi vlastnými slovami povedz, aká bola. To ma posunie najviac.',
-  profileConfidenceBoostAction: 'Uvariť a opísať',
+  profileConfidenceBoostRate: 'Ohodnoť kávu, ktorú piješ - v polovici balíčka a keď ho dopiješ.',
+  profileConfidenceBoostWhy:
+    'To ma posunie najviac, lebo si ju naozaj pil. Niečo mi povie aj každý balíček, ktorý si zapíšeš.',
+  profileConfidenceBoostAction: 'Otvoriť moju kávu',
 
   profileRoastPreference: 'Praženie',
   profileMilkUsage: 'Mlieko',
