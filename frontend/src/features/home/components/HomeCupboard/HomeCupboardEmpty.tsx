@@ -46,7 +46,7 @@ export const HomeCupboardEmpty = (): JSX.Element => {
         icon={HOME_TILE_ICONS.add}
         spokenLabel={t(TRANSLATION_KEYS.inventoryAddTitle)}
         onPress={(): void => {
-          router.push(ROUTES.scan);
+          router.push(ROUTES.addBag);
         }}
       />
     </View>

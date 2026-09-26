@@ -3,7 +3,7 @@ import { useLocalSearchParams } from 'expo-router';
 import type { JSX } from 'react';
 import { View } from 'react-native';
 
-import { HEADER_SCREEN_EDGES, Screen } from '../../../../components/layout';
+import { HEADER_SCREEN_EDGES, Screen, TAB_SCREEN_EDGES } from '../../../../components/layout';
 import { QueryState } from '../../../../components/ui';
 import { useThemedStyles } from '../../../../theme';
 import { BREW_MODE_PARAMS, readRouteParam } from '../../../brewing/components/BrewModeScreen';
@@ -29,6 +29,10 @@ import { createDialInScreenStyles } from './DialInScreen.styles';
  * the dial-in printed the same three in a card below a title repeating the
  * screen's name. Two screens holding one conversation should not be two
  * objects to recognise.
+ *
+ * Until the recipe has arrived there is no header, so the screen claims the
+ * top inset and the way back is drawn above the waiting state instead of
+ * inside a block that is not there yet.
  */
 export const DialInScreen = (): JSX.Element => {
   const styles = useThemedStyles(createDialInScreenStyles);
@@ -40,7 +44,11 @@ export const DialInScreen = (): JSX.Element => {
   );
 
   return (
-    <Screen scrollable padded={false} edges={HEADER_SCREEN_EDGES}>
+    <Screen
+      scrollable
+      padded={false}
+      edges={session.recipe === undefined ? TAB_SCREEN_EDGES : HEADER_SCREEN_EDGES}
+    >
       {session.recipe === undefined ? null : <RecipeChatHeader recipe={session.recipe} />}
       {session.isLoading || session.isError ? (
         <View style={styles.state}>

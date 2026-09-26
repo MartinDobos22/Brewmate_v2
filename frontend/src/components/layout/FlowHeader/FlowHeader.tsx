@@ -37,14 +37,17 @@ export const FlowHeader = ({ icon, title, body }: FlowHeaderProps): JSX.Element 
   const theme = useTheme();
 
   return (
-    <EspressoHeader>
-      <View style={styles.badge}>
-        <MaterialCommunityIcons
-          name={icon}
-          size={theme.size.iconMedium}
-          color={theme.colors.accentOnEspresso}
-        />
-      </View>
+    <EspressoHeader
+      beside={
+        <View style={styles.badge}>
+          <MaterialCommunityIcons
+            name={icon}
+            size={theme.size.iconMedium}
+            color={theme.colors.accentOnEspresso}
+          />
+        </View>
+      }
+    >
       <View style={styles.text}>
         <Text variant="displayAnswer" tone="onEspresso">
           {title}

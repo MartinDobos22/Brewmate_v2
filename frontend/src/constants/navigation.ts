@@ -29,6 +29,8 @@ export const SCREEN_PRESENTATIONS = {
 export const TAB_ICONS: Record<TabSegment, GlyphName> = {
   [TAB_SEGMENTS.home]: 'home-variant-outline',
   [TAB_SEGMENTS.inventory]: 'package-variant-closed',
+  /** The same mark the home screen's scanner button and the flow's own badge carry. */
+  [TAB_SEGMENTS.scan]: 'barcode-scan',
   [TAB_SEGMENTS.brew]: 'coffee-outline',
   [TAB_SEGMENTS.profile]: 'account-outline',
 };
@@ -56,6 +58,17 @@ export const BOTTOM_BAR_HIDDEN_SEGMENTS: readonly string[] = [
   BREW_MODE_SEGMENT,
 ];
 
+/**
+ * The first route segments that draw their own way back instead of the shared
+ * one.
+ *
+ * Only onboarding. Its steps already carry a round way back and a way out on
+ * every screen, and the way back there is a step of the flow rather than the
+ * screen underneath - a second chevron beside the first would be two buttons
+ * saying "späť" and meaning different things.
+ */
+export const OWN_BACK_SEGMENTS: readonly string[] = [ONBOARDING_SEGMENT];
+
 /** Android status and navigation bar styles. */
 export const BAR_STYLES = {
   light: 'light',
@@ -66,6 +79,7 @@ export const BAR_STYLES = {
 export const TAB_LABEL_KEYS: Record<TabSegment, TranslationKey> = {
   [TAB_SEGMENTS.home]: TRANSLATION_KEYS.tabHome,
   [TAB_SEGMENTS.inventory]: TRANSLATION_KEYS.tabInventory,
+  [TAB_SEGMENTS.scan]: TRANSLATION_KEYS.tabScan,
   [TAB_SEGMENTS.brew]: TRANSLATION_KEYS.tabBrew,
   [TAB_SEGMENTS.profile]: TRANSLATION_KEYS.tabProfile,
 };

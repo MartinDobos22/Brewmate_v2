@@ -2,6 +2,7 @@
 export const SK_NAVIGATION = {
   tabHome: 'Domov',
   tabInventory: 'Moja káva',
+  tabScan: 'Skenovať',
   tabBrew: 'Variť',
   tabProfile: 'Profil',
   titleHome: 'Domov',

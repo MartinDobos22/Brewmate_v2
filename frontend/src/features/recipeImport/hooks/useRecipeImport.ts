@@ -8,9 +8,10 @@ import {
 } from '@brewmate/shared';
 import { useState } from 'react';
 
+import { resolveStepBack } from '../../../lib/flowStages';
 import { useCurrentUser } from '../../auth';
 import { useAvailableBrewMethods, useEquipmentSetSwitcher } from '../../inventory/hooks';
-import { IMPORT_STAGES, type ImportStage } from '../constants';
+import { IMPORT_PREVIOUS_STAGES, IMPORT_STAGES, type ImportStage } from '../constants';
 import { toSourceRecipe, toSourceRecipeForm, type SourceRecipeFormValues } from '../services';
 
 import { useConvertRecipe } from './useConvertRecipe';
@@ -37,6 +38,8 @@ export interface RecipeImport {
   readonly toggleConstraint: (name: keyof BrewConstraints, isSet: boolean) => void;
   readonly convert: () => void;
   readonly back: () => void;
+  /** The stage before this one, or undefined where "späť" is the navigator's. */
+  readonly stepBack: (() => void) | undefined;
 }
 
 /**
@@ -125,5 +128,7 @@ export const useRecipeImport = (): RecipeImport => {
     back: (): void => {
       setStage(stage === IMPORT_STAGES.target ? IMPORT_STAGES.review : IMPORT_STAGES.source);
     },
+
+    stepBack: resolveStepBack(IMPORT_PREVIOUS_STAGES, stage, setStage),
   };
 };

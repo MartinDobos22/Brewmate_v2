@@ -14,7 +14,6 @@ export const SCAN_ICONS = {
   manual: 'pencil-outline',
   verdict: 'comment-question-outline',
   shop: 'storefront-outline',
-  cupboard: 'package-variant-closed',
   /**
    * A reason is a neutral bullet, never a tick.
    *

@@ -11,7 +11,6 @@ import type { BagScan } from '../../hooks/useBagScan';
 import { BagLabelForm } from '../BagLabelForm';
 import { BagPhotoStep } from '../BagPhotoStep';
 import { BagVerdictCard, VerdictReasons } from '../BagVerdictCard';
-import { ScanModeStep } from '../ScanModeStep';
 import { ScanOutcomeStep } from '../ScanOutcomeStep';
 
 import { createScanBagScreenStyles } from './ScanBagScreen.styles';
@@ -21,10 +20,6 @@ import { ScanDoneStep } from './ScanDoneStep';
 export const ScanStageContent = ({ scan }: { readonly scan: BagScan }): JSX.Element => {
   const styles = useThemedStyles(createScanBagScreenStyles);
   const { t } = useTranslation();
-
-  if (scan.stage === BAG_SCAN_STAGES.mode) {
-    return <ScanModeStep onChoose={scan.chooseMode} />;
-  }
 
   if (scan.stage === BAG_SCAN_STAGES.capture) {
     return (

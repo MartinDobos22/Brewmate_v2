@@ -8,6 +8,7 @@ import {
 } from '@brewmate/shared';
 import { useState } from 'react';
 
+import { resolveStepBack } from '../../../lib/flowStages';
 import { useCurrentUser } from '../../auth';
 import {
   useAvailableBrewMethods,
@@ -20,7 +21,11 @@ import {
   toCreateCoffeeBagRequest,
   type CoffeeBagFormValues,
 } from '../../inventory/services';
-import { QUICK_BREW_STAGES, type QuickBrewStage } from '../constants/quickBrew';
+import {
+  QUICK_BREW_PREVIOUS_STAGES,
+  QUICK_BREW_STAGES,
+  type QuickBrewStage,
+} from '../constants/quickBrew';
 import { buildQuickBrewRecipe } from '../services/buildQuickBrewRecipe';
 import { buildReferenceParams, type ReferenceRecipeInput } from '../services/buildReferenceRecipe';
 import { useCreateRecipe } from './useCreateRecipe';
@@ -53,6 +58,8 @@ export interface QuickBrew {
   readonly askForRecipe: (rationale: string) => void;
   readonly keepCoffee: (fallbackName: string) => void;
   readonly back: () => void;
+  /** The stage before this one, or undefined where "späť" is the navigator's. */
+  readonly stepBack: (() => void) | undefined;
 }
 
 /**
@@ -143,5 +150,7 @@ export const useQuickBrew = (): QuickBrew => {
     back: (): void => {
       setStage(QUICK_BREW_STAGES.method);
     },
+
+    stepBack: resolveStepBack(QUICK_BREW_PREVIOUS_STAGES, stage, setStage),
   };
 };

@@ -20,11 +20,16 @@ export const SK_PRE_BREW = {
    * make a refused photograph feel like a broken app.
    */
   preBrewSourceTitle: 'Akú kávu ideš variť?',
-  preBrewSourceIntro: 'Odfoť balíček, alebo si vyber niečo, čo už máš v skrinke.',
+  preBrewSourceIntro:
+    'Odfoť balíček, vyber jeho fotku z galérie, alebo niečo, čo už máš v skrinke.',
   preBrewSourcePhoto: 'Odfotím balíček',
   preBrewSourcePhotoCaption: 'Z etikety prečítam, čo sa dá, a zapíšem ti ju do skrinky.',
   preBrewSourceInventory: 'Mám ju v skrinke',
   preBrewSourceInventoryCaption: 'Vyber si z toho, čo máš doma.',
+  preBrewSourceLibrary: 'Vyberiem z galérie',
+  preBrewSourceLibraryCaption: 'Fotku balíčka už máš v telefóne.',
+  preBrewSourceManual: 'Prepíšem ručne',
+  preBrewSourceManualCaption: 'Vyplníš, čo vidíš na etikete.',
   preBrewSourceUnrecordedHint: 'Alebo ani jedno - recept ti napíšem aj tak.',
   preBrewSourceBack: 'Späť na výber',
   preBrewSourceEmptyTitle: 'V skrinke zatiaľ nič nemáš',

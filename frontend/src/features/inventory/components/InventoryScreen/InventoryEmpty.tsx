@@ -3,10 +3,9 @@ import type { JSX } from 'react';
 import { View } from 'react-native';
 
 import { ActionRow, InfoNote, StateMark, Text } from '../../../../components/ui';
-import { buildScanRoute, ROUTES } from '../../../../constants/routes';
+import { ROUTES } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useThemedStyles } from '../../../../theme';
-import { BAG_SCAN_MODES } from '../../../bagEvaluations/constants';
 import { INVENTORY_EMPTY_ICONS, INVENTORY_TILE_ICONS, SHOP_HELP_ICON } from '../../constants';
 
 import { createInventoryEmptyStyles } from './InventoryEmpty.styles';
@@ -54,7 +53,7 @@ export const InventoryEmpty = ({ onAddManually }: InventoryEmptyProps): JSX.Elem
           title={t(TRANSLATION_KEYS.inventoryTileScanTitle)}
           caption={t(TRANSLATION_KEYS.inventoryTileScanCaption)}
           onPress={(): void => {
-            router.push(buildScanRoute(BAG_SCAN_MODES.inventory));
+            router.push(ROUTES.addBag);
           }}
         />
         <ActionRow

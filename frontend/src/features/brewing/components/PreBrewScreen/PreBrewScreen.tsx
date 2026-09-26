@@ -4,7 +4,7 @@ import type { JSX } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { HEADER_SCREEN_EDGES } from '../../../../components/layout';
+import { HEADER_SCREEN_EDGES, ScreenBackScope } from '../../../../components/layout';
 import { InfoNote } from '../../../../components/ui';
 import { buildBrewModeRoute } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
@@ -40,6 +40,10 @@ export interface PreBrewScreenProps {
  * With nothing in the cupboard the screen is the same screen. The missing
  * coffee is stated in the header and the calculator stays fully usable: the
  * recipe is never blocked on an inventory entry.
+ *
+ * "Späť" from the form is the coffee question, because that is the screen
+ * somebody answered on the way here. Every other answer on the form survives
+ * the trip, exactly as it does when the coffee row is tapped.
  */
 export const PreBrewScreen = ({ initialBagId }: PreBrewScreenProps): JSX.Element => {
   const styles = useThemedStyles(createPreBrewScreenStyles);
@@ -59,29 +63,31 @@ export const PreBrewScreen = ({ initialBagId }: PreBrewScreenProps): JSX.Element
   }
 
   return (
-    <SafeAreaView style={styles.root} edges={HEADER_SCREEN_EDGES}>
-      <ScrollView style={styles.scroll}>
-        <PreBrewHeader
-          bag={setup.bag}
-          description={setup.coffeeDescription}
-          hasCupboard={setup.bag !== null}
-          onChange={setup.changeCoffee}
+    <ScreenBackScope onBack={setup.changeCoffee}>
+      <SafeAreaView style={styles.root} edges={HEADER_SCREEN_EDGES}>
+        <ScrollView style={styles.scroll}>
+          <PreBrewHeader
+            bag={setup.bag}
+            description={setup.coffeeDescription}
+            hasCupboard={setup.bag !== null}
+            onChange={setup.changeCoffee}
+          />
+          <View style={styles.content}>
+            {setup.bag === null ? (
+              <InfoNote tone="fresh" text={t(TRANSLATION_KEYS.preBrewNoCoffeeNote)} />
+            ) : null}
+            <EquipmentSetSwitcher />
+            <PreBrewSections setup={setup} />
+            <PreBrewExtras setup={setup} />
+          </View>
+        </ScrollView>
+        <PreBrewFootBar
+          setup={setup}
+          onWritten={(recipe: Recipe): void => {
+            router.replace(buildBrewModeRoute(recipe.id, setup.activeSet?.id));
+          }}
         />
-        <View style={styles.content}>
-          {setup.bag === null ? (
-            <InfoNote tone="fresh" text={t(TRANSLATION_KEYS.preBrewNoCoffeeNote)} />
-          ) : null}
-          <EquipmentSetSwitcher />
-          <PreBrewSections setup={setup} />
-          <PreBrewExtras setup={setup} />
-        </View>
-      </ScrollView>
-      <PreBrewFootBar
-        setup={setup}
-        onWritten={(recipe: Recipe): void => {
-          router.replace(buildBrewModeRoute(recipe.id, setup.activeSet?.id));
-        }}
-      />
-    </SafeAreaView>
+      </SafeAreaView>
+    </ScreenBackScope>
   );
 };

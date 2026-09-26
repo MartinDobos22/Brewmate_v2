@@ -13,10 +13,11 @@ import { GETTING_STARTED_STEPS, type GettingStartedStepId } from '../constants';
  * copies of this would eventually send somebody to two different screens for
  * the same step.
  *
- * Writing a coffee down leads to the scanner rather than to the cupboard: the
- * step is about getting a first coffee into the app, and photographing a bag
- * is the shortest way there. The cupboard is one tap further on, behind its
- * own "zadám to ručne".
+ * Writing a coffee down leads to the cupboard's camera rather than to the
+ * cupboard: the step is about getting a first coffee into the app, and
+ * photographing a bag is the shortest way there. Typing it in is on the same
+ * screen, and asking about a bag in a shop has a tab of its own - so the step
+ * is done whichever of the two somebody reaches for.
  */
 export const useOpenGettingStartedStep = (): ((id: GettingStartedStepId) => void) => {
   const router = useRouter();
@@ -29,6 +30,6 @@ export const useOpenGettingStartedStep = (): ((id: GettingStartedStepId) => void
       return;
     }
 
-    router.push(id === GETTING_STARTED_STEPS.coffee ? ROUTES.scan : ROUTES.quickBrew);
+    router.push(id === GETTING_STARTED_STEPS.coffee ? ROUTES.addBag : ROUTES.quickBrew);
   };
 };

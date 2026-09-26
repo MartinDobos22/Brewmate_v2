@@ -2,7 +2,11 @@ import type { JSX, ReactNode } from 'react';
 import { KeyboardAvoidingView, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { STACK_SCREEN_EDGES } from '../../../../components/layout';
+import {
+  BACK_BUTTON_GROUNDS,
+  STACK_SCREEN_EDGES,
+  ScreenTopBar,
+} from '../../../../components/layout';
 import { DriftingRings, Text } from '../../../../components/ui';
 import { KEYBOARD_AVOIDING_BEHAVIOR } from '../../../../constants';
 import { useIsOnline } from '../../../../hooks';
@@ -51,6 +55,7 @@ export const AuthScreenLayout = ({
           color={theme.colors.primary}
           placement="topCentre"
         />
+        <ScreenTopBar ground={BACK_BUTTON_GROUNDS.espresso} />
         <KeyboardAvoidingView style={styles.ground} behavior={KEYBOARD_AVOIDING_BEHAVIOR}>
           <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
             <AuthBrandMark />

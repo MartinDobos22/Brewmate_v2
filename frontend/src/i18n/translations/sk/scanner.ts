@@ -7,22 +7,13 @@
  * out loud which parts of the answer rest on a guess.
  */
 export const SK_SCANNER = {
-  scanTitle: 'Poradím ti v obchode',
-  scanIntro:
-    'Nepotrebujem na to inventár ani históriu varení. Stačí to, čo je napísané na balíčku.',
-
-  scanModeVerdictTitle: 'Stojím v obchode a rozmýšľam',
-  scanModeVerdictBody: 'Poviem ti, či ti tá káva podľa mňa sadne - a prečo si to myslím.',
-  scanModeInventoryTitle: 'Túto kávu už mám',
-  scanModeInventoryBody: 'Zapíšem ti ju do inventára aj s tým, čo je na balíčku.',
-
   /*
-   * What the block at the top says once the scan has started.
+   * What the block at the top says while the scan is still a question.
    *
-   * It stops introducing the scanner and starts naming the step, because by
-   * then somebody knows what they opened - and a block repeating "poradím ti v
-   * obchode" over a camera would be the app talking about itself instead of
-   * about the bag in the other hand.
+   * It names the step rather than introducing the scanner. Somebody who opened
+   * the tab knows what they opened, and the first thing worth saying to a
+   * person holding a bag is to show it - not what the app can do, and not a
+   * question about whether they are in a shop.
    */
   scanCaptureTitle: 'Ukáž mi ten balíček',
   scanCaptureBody: 'Z etikety si prečítam, čo sa dá. Zvyšok doplníš ty - alebo necháš prázdne.',

@@ -33,6 +33,9 @@ export interface BrewCoffeeSourceScreenProps {
  * on this screen. The alternative is a sentence of free text, which is exactly
  * what "Nemám ju zapísanú" still is for anybody who wants it.
  *
+ * "Späť" from the list, the form or a refused photograph is the question
+ * again; from the question itself it is wherever somebody came from.
+ *
  * The question is asked in the same block the rest of the brewing tab is led
  * by. This screen and the form behind it are one screen as far as anybody
  * using them is concerned, and answering one question should not turn a light
@@ -44,7 +47,7 @@ export const BrewCoffeeSourceScreen = ({ onChoose }: BrewCoffeeSourceScreenProps
   const source = useCoffeeSource(onChoose);
 
   return (
-    <Screen scrollable padded={false} edges={HEADER_SCREEN_EDGES}>
+    <Screen scrollable padded={false} edges={HEADER_SCREEN_EDGES} onBack={source.stepBack}>
       <EspressoHeader>
         <ScreenIntro
           ground="espresso"

@@ -5,8 +5,9 @@ import { TRANSLATION_KEYS, type TranslationKey } from '../../../i18n';
  *
  * Two modes over one parsing layer: the label is read the same way either
  * way, and only what happens afterwards differs - an opinion, or a row in the
- * cupboard. Asking first is cheaper than guessing, and the two answers lead to
- * genuinely different screens.
+ * cupboard. Which one is the route's to say - the scanner tab asks about a bag
+ * in a shop, the cupboard's camera writes one down - and never a question
+ * somebody holding the bag has to answer first.
  */
 export const BAG_SCAN_MODES = {
   verdict: 'verdict',
@@ -17,7 +18,6 @@ export type BagScanMode = (typeof BAG_SCAN_MODES)[keyof typeof BAG_SCAN_MODES];
 
 /** Where somebody is inside one scan. */
 export const BAG_SCAN_STAGES = {
-  mode: 'mode',
   capture: 'capture',
   label: 'label',
   verdict: 'verdict',
@@ -25,6 +25,19 @@ export const BAG_SCAN_STAGES = {
 } as const;
 
 export type BagScanStage = (typeof BAG_SCAN_STAGES)[keyof typeof BAG_SCAN_STAGES];
+
+/**
+ * Where "späť" leads from inside a scan.
+ *
+ * The form goes back to the camera and the verdict to the form it was argued
+ * from, because from inside the flow those are the screens somebody was just
+ * on. The camera has no stage behind it, and neither does the end: what
+ * happened to the bag is recorded, and the way back from there is out.
+ */
+export const BAG_SCAN_PREVIOUS_STAGES: Partial<Record<BagScanStage, BagScanStage>> = {
+  [BAG_SCAN_STAGES.label]: BAG_SCAN_STAGES.capture,
+  [BAG_SCAN_STAGES.verdict]: BAG_SCAN_STAGES.label,
+};
 
 /**
  * How the verdict comes out.

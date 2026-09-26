@@ -32,7 +32,7 @@ export const QuickBrewScreen = (): JSX.Element => {
   const steps = resolveQuickBrewSteps(brew.stage);
 
   return (
-    <Screen scrollable padded={false} edges={HEADER_SCREEN_EDGES}>
+    <Screen scrollable padded={false} edges={HEADER_SCREEN_EDGES} onBack={brew.stepBack}>
       <FlowHeader
         icon={QUICK_BREW_ICONS.flow}
         title={t(TRANSLATION_KEYS.quickBrewTitle)}

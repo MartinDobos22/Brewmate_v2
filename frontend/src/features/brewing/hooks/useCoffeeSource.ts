@@ -22,13 +22,16 @@ export interface CoffeeSource {
   readonly unverified: readonly ParsedBagFieldName[];
   readonly isSaving: boolean;
   readonly hasFailed: boolean;
-  readonly openCamera: () => void;
   readonly openInventory: () => void;
+  /** Opens the camera or the library straight away, from wherever somebody is. */
   readonly capture: (source: BagPhotoSource) => void;
+  /** The label typed in rather than photographed. */
   readonly skipPhoto: () => void;
   readonly describeLabel: (patch: Partial<CoffeeBagFormValues>) => void;
   readonly keepLabel: (fallbackName: string) => void;
   readonly back: () => void;
+  /** The question again, or undefined on the question itself. */
+  readonly stepBack: (() => void) | undefined;
 }
 
 /**
@@ -46,6 +49,14 @@ export interface CoffeeSource {
  * The camera is an offer here as it is everywhere else. A refused photograph
  * stays on the camera step with reasons; anything else that goes wrong lands
  * on the form with whatever was read so far, and the form always saves.
+ *
+ * The camera and the library open straight from the question. There used to
+ * be a card between the tile and the camera holding a second camera button,
+ * with the library underneath it - so a photograph already on the phone, which
+ * is the ordinary case for somebody who took it at the counter a minute ago,
+ * was two taps and one screen away from a question that offered only the
+ * camera. A photograph somebody backs out of leaves them exactly where they
+ * were.
  */
 export const useCoffeeSource = (onChoose: (bag: CoffeeBag) => void): CoffeeSource => {
   const photo = useBagPhoto();
@@ -53,6 +64,11 @@ export const useCoffeeSource = (onChoose: (bag: CoffeeBag) => void): CoffeeSourc
   const [stage, setStage] = useState<CoffeeSourceStage>(COFFEE_SOURCE_STAGES.choice);
   const [label, setLabel] = useState<CoffeeBagFormValues>(EMPTY_COFFEE_BAG_FORM);
   const [unverified, setUnverified] = useState<readonly ParsedBagFieldName[]>(NOTHING_UNVERIFIED);
+
+  const back = (): void => {
+    photo.forget();
+    setStage(COFFEE_SOURCE_STAGES.choice);
+  };
 
   return {
     stage,
@@ -62,23 +78,24 @@ export const useCoffeeSource = (onChoose: (bag: CoffeeBag) => void): CoffeeSourc
     isSaving: createBag.isPending,
     hasFailed: createBag.isError,
 
-    openCamera: (): void => {
-      /*
-       * A build with no storage bucket has no camera to open, and the tile
-       * that leads here is hidden in one. Typing the label in is the same
-       * screen either way, so the step it lands on is the honest one rather
-       * than a camera that would fail when pressed.
-       */
-      setStage(photo.isSupported ? COFFEE_SOURCE_STAGES.photo : COFFEE_SOURCE_STAGES.label);
-    },
-
     openInventory: (): void => {
       setStage(COFFEE_SOURCE_STAGES.inventory);
     },
 
     capture: (source: BagPhotoSource): void => {
       void photo.capture(source).then(({ outcome, fields }: BagCapture): void => {
-        if (outcome === BAG_CAPTURE_RESULTS.cancelled || outcome === BAG_CAPTURE_RESULTS.refused) {
+        if (outcome === BAG_CAPTURE_RESULTS.cancelled) {
+          return;
+        }
+
+        /*
+         * A refused photograph is the one outcome that needs the camera card:
+         * it prints why, above the button that is about to be pressed again,
+         * with the library and typing it in still underneath.
+         */
+        if (outcome === BAG_CAPTURE_RESULTS.refused) {
+          setStage(COFFEE_SOURCE_STAGES.photo);
+
           return;
         }
 
@@ -107,9 +124,7 @@ export const useCoffeeSource = (onChoose: (bag: CoffeeBag) => void): CoffeeSourc
       });
     },
 
-    back: (): void => {
-      photo.forget();
-      setStage(COFFEE_SOURCE_STAGES.choice);
-    },
+    back,
+    stepBack: stage === COFFEE_SOURCE_STAGES.choice ? undefined : back,
   };
 };

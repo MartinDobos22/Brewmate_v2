@@ -2,7 +2,7 @@ import { StyleSheet, type ViewStyle } from 'react-native';
 
 import type { Theme, ViewStyles } from '../../../theme';
 
-type EspressoHeaderStyleMap = ViewStyles<'block' | 'content'>;
+type EspressoHeaderStyleMap = ViewStyles<'block' | 'content' | 'top'>;
 
 /**
  * A dark block at the top of a light screen, holding the one thing that
@@ -25,6 +25,8 @@ export const createEspressoHeaderStyles = (theme: Theme): EspressoHeaderStyleMap
       overflow: 'hidden',
     },
     content: { gap: theme.spacing.lg },
+    /** The way back, and the mark of the flow beside it where there is one. */
+    top: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md },
   });
 
 /**

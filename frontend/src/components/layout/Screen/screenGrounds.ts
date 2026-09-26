@@ -1,3 +1,5 @@
+import { BACK_BUTTON_GROUNDS, type BackButtonGround } from '../BackButton';
+
 /**
  * What a screen is painted on.
  *
@@ -19,5 +21,11 @@ export const SCREEN_GROUNDS = {
 } as const;
 
 export type ScreenGround = (typeof SCREEN_GROUNDS)[keyof typeof SCREEN_GROUNDS];
+
+/** Which way back each ground carries - the quiet pill for that ground. */
+export const SCREEN_BACK_GROUNDS: Record<ScreenGround, BackButtonGround> = {
+  [SCREEN_GROUNDS.surface]: BACK_BUTTON_GROUNDS.surface,
+  [SCREEN_GROUNDS.brew]: BACK_BUTTON_GROUNDS.brew,
+};
 
 export const DEFAULT_SCREEN_GROUND: ScreenGround = SCREEN_GROUNDS.surface;

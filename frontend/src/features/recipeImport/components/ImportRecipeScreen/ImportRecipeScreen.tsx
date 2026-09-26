@@ -38,7 +38,7 @@ export const ImportRecipeScreen = (): JSX.Element => {
   const steps = resolveImportSteps(recipeImport.stage);
 
   return (
-    <Screen scrollable padded={false} edges={HEADER_SCREEN_EDGES}>
+    <Screen scrollable padded={false} edges={HEADER_SCREEN_EDGES} onBack={recipeImport.stepBack}>
       <FlowHeader
         icon={IMPORT_ICONS.flow}
         title={t(TRANSLATION_KEYS.importRecipeTitle)}

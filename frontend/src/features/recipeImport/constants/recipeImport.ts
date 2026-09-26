@@ -15,5 +15,15 @@ export const IMPORT_STAGES = {
 
 export type ImportStage = (typeof IMPORT_STAGES)[keyof typeof IMPORT_STAGES];
 
+/**
+ * Where "späť" leads from inside an import: the stage before, which is the
+ * screen somebody was just on. Pasting the source has nothing behind it.
+ */
+export const IMPORT_PREVIOUS_STAGES: Partial<Record<ImportStage, ImportStage>> = {
+  [IMPORT_STAGES.review]: IMPORT_STAGES.source,
+  [IMPORT_STAGES.target]: IMPORT_STAGES.review,
+  [IMPORT_STAGES.result]: IMPORT_STAGES.target,
+};
+
 /** Where a photographed recipe is filed in the bucket. */
 export const RECIPE_PHOTO_FOLDER = 'recipe-scans';

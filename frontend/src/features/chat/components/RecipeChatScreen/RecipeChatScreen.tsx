@@ -6,6 +6,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   BottomNavBar,
   HEADER_SCREEN_EDGES,
+  ScreenTopBar,
+  TAB_SCREEN_EDGES,
   useShowsBottomNav,
 } from '../../../../components/layout';
 import { QueryState } from '../../../../components/ui';
@@ -39,6 +41,11 @@ import { createRecipeChatScreenStyles } from './RecipeChatScreen.styles';
  * navigation bar is still drawn, under the composer and by the same rule as
  * everywhere else - this is a screen pushed on top of the tabs, and a way out
  * of it is not optional just because it also has a box to type in.
+ *
+ * The way back is in the header block, as on every screen led by one. Until
+ * the recipe has arrived there is no block to hold it, so the screen claims
+ * the top inset and draws it in a row of its own instead - a conversation that
+ * failed to load is exactly the screen somebody most wants to leave.
  */
 export const RecipeChatScreen = (): JSX.Element => {
   const styles = useThemedStyles(createRecipeChatScreenStyles);
@@ -50,7 +57,11 @@ export const RecipeChatScreen = (): JSX.Element => {
   const conversation = useRecipeConversation(recipe.data, brewLogId);
 
   return (
-    <SafeAreaView style={styles.root} edges={HEADER_SCREEN_EDGES}>
+    <SafeAreaView
+      style={styles.root}
+      edges={recipe.data === undefined ? TAB_SCREEN_EDGES : HEADER_SCREEN_EDGES}
+    >
+      {recipe.data === undefined ? <ScreenTopBar /> : null}
       <KeyboardAvoidingView style={styles.root} behavior={KEYBOARD_AVOIDING_BEHAVIOR}>
         {recipe.data === undefined ? (
           <View style={styles.state}>

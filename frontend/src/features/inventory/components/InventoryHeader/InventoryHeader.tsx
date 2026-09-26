@@ -4,10 +4,9 @@ import type { JSX } from 'react';
 import { Pressable, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { Text } from '../../../../components/ui';
-import { buildScanRoute } from '../../../../constants/routes';
+import { ROUTES } from '../../../../constants/routes';
 import { TRANSLATION_KEYS, useTranslation } from '../../../../i18n';
 import { useTheme, useThemedStyles } from '../../../../theme';
-import { BAG_SCAN_MODES } from '../../../bagEvaluations/constants';
 import { INVENTORY_TILE_ICONS } from '../../constants';
 
 import { createInventoryHeaderStyles } from './InventoryHeader.styles';
@@ -43,7 +42,7 @@ export const InventoryHeader = ({ onAddManually }: InventoryHeaderProps): JSX.El
           accessibilityRole="button"
           accessibilityLabel={t(TRANSLATION_KEYS.inventoryTileScanTitle)}
           onPress={(): void => {
-            router.push(buildScanRoute(BAG_SCAN_MODES.inventory));
+            router.push(ROUTES.addBag);
           }}
         >
           <MaterialCommunityIcons

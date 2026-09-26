@@ -1,5 +1,5 @@
 export { REFERENCE_RECIPE, ROAST_TEMPERATURE_OFFSET_C } from './referenceRecipe';
-export { QUICK_BREW_STAGES, QUICK_BREW_ICONS } from './quickBrew';
+export { QUICK_BREW_STAGES, QUICK_BREW_PREVIOUS_STAGES, QUICK_BREW_ICONS } from './quickBrew';
 export type { QuickBrewStage } from './quickBrew';
 export { BREW_CONSTRAINT_OPTIONS } from './brewConstraints';
 export type { BrewConstraintOption } from './brewConstraints';

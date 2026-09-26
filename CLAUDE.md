@@ -242,7 +242,8 @@ frontend/
     │   │               StateMark, EmptyState, LoadingState, ErrorState,
     │   │               QueryState, ValueDisplay - each its own folder
     │   └── layout/     Screen, EspressoHeader, FlowHeader, TileRow, AppProviders,
-    │                   RootStack, TabsNavigator, TabBarIcon, BottomNavBar
+    │                   RootStack, TabsNavigator, TabBarIcon, BottomNavBar,
+    │                   BackButton, ScreenBack, ScreenTopBar
     ├── features/       one domain = one folder (auth, home, inventory, brewing,
     │                   chat, tasteProfile, coffeeTaste, bagEvaluations,
     │                   recipeImport, espresso, history, onboarding, profile,
@@ -259,7 +260,7 @@ frontend/
     │                   useDebouncedValue, useRecipeFigures and useAnalyticsFlush
     ├── lib/            apiClient, firebase, queryClient, queryCache, formatters,
     │                   fingerprint, requestErrors, text, analytics,
-    │                   errorTracking
+    │                   errorTracking, flowStages
     ├── stores/         Zustand - UI state only
     └── types/
 ```
@@ -528,7 +529,9 @@ never by who wrote it.
   - and all three are reached from somewhere else, which is why each opens
     with a block saying what it is rather than with a title on the page. The
     badge is the glyph of whatever sent somebody there, so pressing one and
-    arriving at the other is recognisably the same errand.
+    arriving at the other is recognisably the same errand. It sits on the same
+    line as the way back, through `EspressoHeader`'s `beside`, rather than
+    under it as a second round object.
 - **The block stays rather than disappearing after the first tap.** Standing
   in a shop with a bag in one hand, the thing worth keeping on screen is what
   this screen is about; a block that vanished would leave three stages that
@@ -610,6 +613,40 @@ Colour is the second thing a state says, never the first.
   shade or a border would read as a different object appearing halfway through a
   flow. Where it appears it takes the bottom safe-area inset for itself; a
   screen that claimed it too would leave a strip of background under the bar.
+- **Five tabs, and the scanner is the middle one.** Home, the cupboard, the
+  scanner, brewing, the profile. The scanner used to be a button on the home
+  screen, which for the one feature a brand-new account can get something real
+  out of in its first minute - and the one used standing in a shop with a bag in
+  the other hand - was one tap and one screen too far away. The middle is where
+  a thumb already rests.
+- **Every screen has a way back wherever there is somewhere to go back to.**
+  The bottom bar is a way _out_, to one of five places; it cannot say "the
+  screen I was just on", and a phone whose back gesture is off - brew mode - or
+  that has none at all left somebody tapping round the app to retrace their
+  steps. `Screen` resolves it once through `ScreenBackScope`, the same way it
+  decides the bar: nobody asks for it, so nobody can forget to.
+- **Where it is drawn follows the top inset.** A screen that claims the top
+  inset starts straight into content, and `ScreenTopBar` puts a round chevron
+  above it, fixed rather than scrolling - a way back that scrolled away four
+  cards ago is not a way back. A screen led by an espresso block gives the inset
+  away to the block, and `EspressoHeader` draws the chevron in its top corner. A
+  screen that composes its own layout - the brewing form, the conversation
+  after a cup, the signed-out screens - reads the same answer through
+  `useScreenBack`, or asks the navigator itself where no screen resolved one.
+- **A flow goes back a stage before it goes back a screen.** Inside the
+  scanner, the question before a brew, the quick brew and an import, the camera
+  somebody just left _is_ the previous screen, and sending them out of the whole
+  flow would throw away what they had answered. Each flow names its previous
+  stages in one map (`BAG_SCAN_PREVIOUS_STAGES`, `QUICK_BREW_PREVIOUS_STAGES`,
+  `IMPORT_PREVIOUS_STAGES`) and `resolveStepBack` turns that into the screen's
+  `onBack`; the first stage and a confirmation at the end have none and hand
+  the word to the navigator. The phone's own back button is told the same
+  thing while the screen is in front, because two buttons saying "späť" and
+  meaning different things is how somebody learns to trust neither.
+- **The home tab has none, and onboarding draws its own.** Home is the bottom
+  of the app, and every other tab goes back to it. Onboarding is listed in
+  `OWN_BACK_SEGMENTS`: its steps already carry a round way back that means the
+  previous step, and a second chevron beside it would be a second meaning.
 
 ### Data
 
@@ -727,11 +764,11 @@ here is allowed to be a blank screen with the words "žiadne dáta".
   hand at any point. The dismissal is the one piece of this that lives in
   `uiStore` rather than on the account, because it is a preference about this
   screen on this phone, like the theme beside it - not progress.
-- **The shop scanner is the one tile painted in the primary tone**, and it
-  spans the grid rather than sharing a row. It is the only feature a brand-new
-  account can use in the first minute and get something real back from: it
-  needs no cupboard and no history, only the questionnaire. Burying it three
-  taps inside the inventory would be hiding the one door that is already open.
+- **The shop scanner is a tab of its own**, and still offered on the home
+  screen as well. It is the only feature a brand-new account can use in the
+  first minute and get something real back from: it needs no cupboard and no
+  history, only the questionnaire. A button on one screen was hiding the one
+  door that is already open.
 - **Quick brewing does not need an inventory.** `/quick-brew` asks for the
   method, then for whatever the drinker happens to know about the beans - a
   roast level, a name, or nothing at all - and answers with a recipe whose
@@ -1070,12 +1107,21 @@ where the two meet.
 
 ### Two modes, one parsing layer
 
-`/scan` is both the shop scanner and the way a bag gets into the cupboard.
+`/scan` is the shop scanner, a tab of its own; `/add-bag` is the same screen
+pointed at the cupboard. One `ScanBagScreen`, told its mode by the route.
 
-- **The mode is asked, not guessed.** A bag in a shop is a question; a bag in a
-  carrier bag is a row in the cupboard. Guessing wrong would put a verdict in
-  front of somebody who already owns the coffee. The cupboard's own buttons
-  skip the question with `?mode=inventory`, because it already knows.
+- **The mode is the route's, never a question.** A bag in a shop is a question;
+  a bag in a carrier bag is a row in the cupboard. The scan used to open by
+  asking which of the two somebody had come for, which in a shop is a question
+  with an obvious answer put to somebody holding a bag in one hand - and the
+  cupboard, the only place the other answer comes from, already knew it. So
+  both open on the camera with "Ukáž mi ten balíček". They are two routes
+  rather than a parameter on the tab because a tab keeps its state between
+  visits, and a shop scan half done must not turn into a cupboard entry because
+  somebody pressed "pridať" elsewhere in the meantime.
+- **What has already been judged sits under the camera in the shop**, because
+  the same bag picked up a second time is exactly when somebody wants to see
+  what they were told the first time.
 - **The photograph is an offer, not a gate.** "Zadám to ručne" is a tile the
   same size as the camera, beside it rather than under it, and every failure
   along the way - a refused permission, an upload that will not go, a label
@@ -1089,11 +1135,12 @@ where the two meet.
 - **The flow says how far through it you are.** This is the one thing in the
   app somebody works through standing in a shop, one-handed, with a bag in the
   other, and "how much more of this is there" is a fair question there. The
-  count cannot be a constant: a scan opened from the cupboard skips the first
-  question and a bag being written down never reaches a verdict, so
-  `resolveScanSteps` builds the list for the scan actually happening. The final
-  screen is outside the count - it is what happened, not a step to get
-  through.
+  count cannot be a constant: a bag being written down never reaches a
+  verdict, so `resolveScanSteps` builds the list for the scan actually
+  happening. The strip appears from the second stage on - the camera is where
+  somebody lands every time they open the tab, and "krok 1 z 3" there counts a
+  journey nobody has set off on. The final screen is outside the count - it is
+  what happened, not a step to get through.
 - **The scan is retried with a widening wait, and only where retrying is
   honest.** The failure this is built for is a signal that comes and goes:
   inside a shop a request fails, and a few seconds later it does not. Three
@@ -1121,8 +1168,8 @@ category, and those two facts are the whole of what makes a shot different from
 a pour-over.
 
 **The first screen of a brew** (`/brew`, before anything else). Which coffee,
-asked on its own screen, as two tiles: photograph the bag, or pick one out of
-the cupboard.
+asked on its own screen, as four tiles: photograph the bag, pick one out of the
+cupboard, choose a photograph of it from the library, or type the label in.
 
 - **It is a screen rather than the first card on the form.** Everything below it
   is written around the answer - the dose window, whether the bag is even ready,
@@ -1135,6 +1182,15 @@ the cupboard.
   in, the other being louder is the screen guessing wrong about them. As a list
   with the cupboard on top, a coffee that had not been written down read as an
   omission to fix before anybody was allowed to make coffee.
+- **The library and typing it in are tiles too, and the camera opens
+  straight away.** Both used to sit behind the camera tile, on a card that
+  offered the camera a second time - so a photograph of the bag already on the
+  phone, the ordinary case for somebody who took it at the counter a minute
+  ago, was two taps and one screen away from a question that did not mention
+  it. The camera card is now reached only by a photograph that was refused,
+  because that is the one outcome with reasons to print above the button that
+  retakes it; backing out of the camera or the library leaves somebody on the
+  question.
 - **A photographed bag lands in the cupboard on the way through.** Not
   bookkeeping: the engine can be handed a bag or a sentence of free text, and
   the free-text path loses exactly the two facts that move a recipe most - the

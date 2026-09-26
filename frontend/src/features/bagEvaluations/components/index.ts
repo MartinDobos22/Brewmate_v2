@@ -5,8 +5,6 @@ export { BagLabelForm } from './BagLabelForm';
 export type { BagLabelFormProps } from './BagLabelForm';
 export { BagVerdictCard } from './BagVerdictCard';
 export type { BagVerdictCardProps } from './BagVerdictCard';
-export { ScanModeStep } from './ScanModeStep';
-export type { ScanModeStepProps } from './ScanModeStep';
 export { BagPhotoIssueNotice } from './BagPhotoIssueNotice';
 export type { BagPhotoIssueNoticeProps } from './BagPhotoIssueNotice';
 export { BagPhotoStep } from './BagPhotoStep';

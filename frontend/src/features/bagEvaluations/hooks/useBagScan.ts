@@ -1,6 +1,7 @@
 import { lowConfidenceFieldNames, type ParsedBagFieldName } from '@brewmate/shared';
 import { useState } from 'react';
 
+import { resolveStepBack } from '../../../lib/flowStages';
 import { usePrefetchCoffeeTaste } from '../../coffeeTaste/hooks';
 import { useCreateCoffeeBag } from '../../inventory/hooks';
 import {
@@ -12,6 +13,7 @@ import {
 } from '../../inventory/services';
 import {
   BAG_SCAN_MODES,
+  BAG_SCAN_PREVIOUS_STAGES,
   BAG_SCAN_STAGES,
   type BagScanMode,
   type BagScanStage,
@@ -35,7 +37,11 @@ export interface BagScan {
   readonly outcome: BagOutcome;
   readonly isSaving: boolean;
   readonly hasFailed: boolean;
-  readonly chooseMode: (mode: BagScanMode) => void;
+  /**
+   * The stage before this one, or undefined at the first stage and at the
+   * end - where "späť" belongs to the navigator rather than to the scan.
+   */
+  readonly stepBack: (() => void) | undefined;
   readonly capture: (source: BagPhotoSource) => void;
   readonly skipPhoto: () => void;
   readonly describeLabel: (patch: Partial<CoffeeBagFormValues>) => void;
@@ -53,16 +59,19 @@ export interface BagScan {
  * Every stage can be reached without a camera. The photograph is an offer, not
  * a gate: nobody standing in a shop should be unable to ask a question because
  * the light is bad or the signal is worse.
+ *
+ * The mode is the route's, never a question. The scan used to open by asking
+ * whether somebody was standing in a shop or already owned the coffee, which
+ * in a shop is a question with an obvious answer asked of somebody holding a
+ * bag in one hand - and the cupboard, the one place the other answer comes
+ * from, already knew it. So both open on the camera.
  */
-export const useBagScan = (initialMode?: BagScanMode): BagScan => {
+export const useBagScan = (mode: BagScanMode): BagScan => {
   const photo = useBagPhoto();
   const verdict = useBagVerdict();
   const prefetchTaste = usePrefetchCoffeeTaste();
   const createBag = useCreateCoffeeBag();
-  const [stage, setStage] = useState<BagScanStage>(
-    initialMode === undefined ? BAG_SCAN_STAGES.mode : BAG_SCAN_STAGES.capture,
-  );
-  const [mode, setMode] = useState<BagScanMode>(initialMode ?? BAG_SCAN_MODES.verdict);
+  const [stage, setStage] = useState<BagScanStage>(BAG_SCAN_STAGES.capture);
   const [label, setLabel] = useState<CoffeeBagFormValues>(EMPTY_COFFEE_BAG_FORM);
   const [unverified, setUnverified] = useState<readonly ParsedBagFieldName[]>(NOTHING_UNVERIFIED);
   const outcome = useBagOutcome(verdict.evaluationId, (): void => {
@@ -88,10 +97,10 @@ export const useBagScan = (initialMode?: BagScanMode): BagScan => {
     isSaving: createBag.isPending || verdict.isPending,
     hasFailed: createBag.isError || verdict.hasFailed || outcome.hasFailed,
 
-    chooseMode: (chosen: BagScanMode): void => {
-      setMode(chosen);
-      setStage(photo.isSupported ? BAG_SCAN_STAGES.capture : BAG_SCAN_STAGES.label);
-    },
+    stepBack: resolveStepBack(BAG_SCAN_PREVIOUS_STAGES, stage, (previous: BagScanStage): void => {
+      photo.forget();
+      setStage(previous);
+    }),
 
     /**
      * Backing out of the camera leaves somebody where they were, and so does a
@@ -148,17 +157,14 @@ export const useBagScan = (initialMode?: BagScanMode): BagScan => {
       });
     },
 
-    /**
-     * Back to the beginning - to the mode question, or straight to the camera
-     * for somebody the cupboard sent here, who never saw that question.
-     */
+    /** Back to the camera, with nothing of the last bag left on the form. */
     reset: (): void => {
       setLabel(EMPTY_COFFEE_BAG_FORM);
       setUnverified(NOTHING_UNVERIFIED);
       photo.forget();
       verdict.forget();
       outcome.forget();
-      setStage(initialMode === undefined ? BAG_SCAN_STAGES.mode : BAG_SCAN_STAGES.capture);
+      setStage(BAG_SCAN_STAGES.capture);
     },
   };
 };

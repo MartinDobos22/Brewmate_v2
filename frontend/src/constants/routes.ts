@@ -16,6 +16,7 @@ export const ROUTES = {
   dialIn: '/dial-in',
   quickBrew: '/quick-brew',
   scan: '/scan',
+  addBag: '/add-bag',
   coffeeBags: '/coffee-bags',
   profile: '/profile',
   gear: '/gear',
@@ -120,21 +121,11 @@ const BREW_BAG_PARAM = '?bagId=';
 export const buildBrewRoute = (bagId: string): string =>
   `${ROUTES.brew}${BREW_BAG_PARAM}${encodeURIComponent(bagId)}`;
 
-const MODE_PARAM = '?mode=';
-
-/**
- * The scanner, opened straight into one of its two modes.
- *
- * The cupboard already knows somebody came to add a bag rather than to ask
- * about one, so it says so instead of making them answer that question again.
- */
-export const buildScanRoute = (mode: string): string =>
-  `${ROUTES.scan}${MODE_PARAM}${encodeURIComponent(mode)}`;
-
 /** Route segment names, as expo-router addresses the files inside `(tabs)`. */
 export const TAB_SEGMENTS = {
   home: 'index',
   inventory: 'inventory',
+  scan: 'scan',
   brew: 'brew',
   profile: 'profile',
 } as const;
@@ -152,14 +143,23 @@ export type TabSegment = (typeof TAB_SEGMENTS)[keyof typeof TAB_SEGMENTS];
 export const TAB_ROUTES: Record<TabSegment, Route> = {
   [TAB_SEGMENTS.home]: ROUTES.home,
   [TAB_SEGMENTS.inventory]: ROUTES.inventory,
+  [TAB_SEGMENTS.scan]: ROUTES.scan,
   [TAB_SEGMENTS.brew]: ROUTES.brew,
   [TAB_SEGMENTS.profile]: ROUTES.profile,
 };
 
-/** Left-to-right order of the bottom tabs. */
+/**
+ * Left-to-right order of the bottom tabs.
+ *
+ * The scanner sits in the middle, where a thumb rests. It is the one thing a
+ * brand-new account can use in its first minute and get something real back
+ * from, and it is used standing in a shop with a bag in the other hand - a
+ * button on the home screen was one tap and one screen too far from that.
+ */
 export const TAB_ORDER = [
   TAB_SEGMENTS.home,
   TAB_SEGMENTS.inventory,
+  TAB_SEGMENTS.scan,
   TAB_SEGMENTS.brew,
   TAB_SEGMENTS.profile,
 ] as const;

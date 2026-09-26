@@ -25,7 +25,6 @@ export {
   TAB_ROUTES,
   AUTH_GROUP_SEGMENT,
   buildBagRoute,
-  buildScanRoute,
   buildBrewRoute,
   buildBrewModeRoute,
   buildRecipeChatRoute,
@@ -60,4 +59,5 @@ export {
   TAB_LABEL_KEYS,
   BAR_STYLES,
   BOTTOM_BAR_HIDDEN_SEGMENTS,
+  OWN_BACK_SEGMENTS,
 } from './navigation';
