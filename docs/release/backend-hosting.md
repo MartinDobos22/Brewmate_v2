@@ -135,7 +135,8 @@ nothing else. In production:
 | `NODE_ENV`                                                               | yes      | `production`                                                          |
 | `PORT`                                                                   | platform | Injected by the host; the default is 3000                             |
 | `HOST`                                                                   | no       | `0.0.0.0` already, which is what a hosted process needs               |
-| `LOG_LEVEL`                                                              | no       | `info` in production; `debug` logs every request                      |
+| `LOG_LEVEL`                                                              | no       | `info` in production; `debug` adds the health probe's own requests    |
+| `LOG_FORMAT`                                                             | no       | `pretty` (default): one readable line per event; `json` for a drain   |
 | `DATABASE_URL`                                                           | yes      | The **pooled** Neon endpoint (hostname contains `-pooler`)            |
 | `DATABASE_URL_UNPOOLED`                                                  | yes      | The direct endpoint. Migrations need a plain session                  |
 | `DATABASE_POOL_MAX`                                                      | no       | Default 10. See the arithmetic below before raising it                |
@@ -248,12 +249,17 @@ anywhere.
 
 ## Logs
 
-Pino writes JSON to stdout, which is what every platform above collects.
+Pino writes to stdout, which is what every platform above collects - one
+readable line per event by default (`[req-5] GET /me -> 200 (6 ms)`), or one
+JSON record per line with `LOG_FORMAT=json` once something parses them. Each
+request leaves exactly one line, at `warn` for a 4xx and `error` for a 5xx, so
+filtering on warnings is a list of what went wrong; the host's health probe is
+logged at `debug` so it does not bury everything else.
 `redactPaths` already keeps authorization headers and cookies out, and the
 error tracker deliberately sends only the route pattern, the request id and the
 internal account id - never a path with an id in it, never a body. Set
-`LOG_LEVEL=info`; `debug` logs every request and turns a month of logs into a
-bill of its own.
+`LOG_LEVEL=info`; `debug` also logs the health probe every few seconds and
+turns a month of logs into a bill of its own.
 
 ## Deploying on every push, later
 

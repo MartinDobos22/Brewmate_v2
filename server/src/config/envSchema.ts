@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { DEFAULT_POOL_MAX_CONNECTIONS } from '../constants/databaseDefaults.js';
 import { DEFAULT_HOST, DEFAULT_PORT, MAX_PORT, MIN_PORT } from '../constants/serverDefaults.js';
+import { DEFAULT_LOG_FORMAT, LOG_FORMATS } from '../logging/logFormats.js';
 import { DEFAULT_LOG_LEVEL, LOG_LEVELS } from '../logging/logLevels.js';
 
 import { CONFIG_ERROR_MESSAGES } from './configErrorMessages.js';
@@ -28,6 +29,7 @@ export const envSchema = z
       z.coerce.number().int().min(MIN_PORT).max(MAX_PORT).default(DEFAULT_PORT),
     ),
     LOG_LEVEL: z.preprocess(emptyAsUndefined, z.enum(LOG_LEVELS).default(DEFAULT_LOG_LEVEL)),
+    LOG_FORMAT: z.preprocess(emptyAsUndefined, z.enum(LOG_FORMATS).default(DEFAULT_LOG_FORMAT)),
 
     DATABASE_URL: z.preprocess(emptyAsUndefined, z.url().optional()),
     DATABASE_URL_UNPOOLED: z.preprocess(emptyAsUndefined, z.url().optional()),

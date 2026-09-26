@@ -56,6 +56,10 @@ services:
         value: 'true'
       - key: LOG_LEVEL
         value: info
+      # One readable line per request in the Logs tab. `json` once a log
+      # drain parses the records instead of a person reading them.
+      - key: LOG_FORMAT
+        value: pretty
 
       # Neon, pooled endpoint - the hostname contains `-pooler`.
       - key: DATABASE_URL
